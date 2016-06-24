@@ -1,6 +1,3 @@
-// leetcode.cpp : Defines the entry point for the console application.
-//
-
 // LCode.cpp : Defines the entry point for the console application.
 //
 
@@ -13,8 +10,469 @@
 #include <iostream>
 #include <set>
 #include <queue>
+#include <unordered_map>
+#include <stack>
 
 using namespace std;
+
+
+//////////////////////////Tag Topological Sort//////////////////////////////////////////
+
+/*207. Course Schedule (medium)*/
+class Solution207 {
+public:
+	/*normal dfs time O(|V| + |E|), space O(|E|)*/
+	bool canFinish(int numCourses, vector<pair<int, int>>& prerequisites) {
+		vector<unordered_set<int>> adj(numCourses);
+
+		for (auto item : prerequisites)
+			adj[item.second].insert(item.first);
+
+		for (int i = 0; i < adj.size(); ++i){
+			vector<int> visit(numCourses, 0);
+			stack<int> nodeque;
+
+			for (auto edge : adj[i]){
+				if (edge == i)
+					return false;
+				visit[edge] = 1;
+				nodeque.push(edge);
+			}
+
+			while (!nodeque.empty()){
+				int tmp = nodeque.top();
+				nodeque.pop();
+
+				for (auto edge : adj[tmp]){
+					if (edge == i)
+						return false;
+
+					if (visit[edge] == 0){
+						visit[edge] = 1;
+						nodeque.push(edge);
+					}
+				}
+			}
+		}
+
+		return true;
+	}
+
+	/*use topological sorting time O(|V| + |E|), space O(|V| + |E|) */
+	bool canFinish1(int numCourses, vector<pair<int, int>>& prerequisites) {
+		vector<unordered_set<int>> adj(numCourses);
+		vector<int> degrees(numCourses, 0);
+
+		/*build graph*/
+		for (auto item : prerequisites)
+			adj[item.second].insert(item.first);
+
+		/*calulate in degrees*/
+		for (auto item : adj){
+			for (auto neighbor : item)
+				++degrees[neighbor];
+		}
+
+		list<int> nodes;
+		for (int i = 0; i < numCourses; ++i){
+			if (0 == degrees[i])
+				nodes.push_back(i);
+		}
+
+		while (!nodes.empty()){
+			int cur = nodes.front();
+			nodes.pop_front();
+
+			for (auto item : adj[cur]){
+				if (0 == --degrees[item])
+					nodes.push_back(item);
+			}
+
+		}
+
+		for (auto item : degrees){
+			if (0 != item)
+				return false;
+		}
+
+		return true;
+	}
+
+	static void main(){
+		Solution207* test = new Solution207;
+		bool result;
+
+		int numCourses1 = 2;//true
+		vector<pair<int, int>> prerequisites1 = { { 1, 0 } };
+		result = test->canFinish(numCourses1, prerequisites1);
+		result = test->canFinish1(numCourses1, prerequisites1);
+
+		int numCourses2 = 3;//true
+		vector<pair<int, int>> prerequisites2 = { { 2, 0 }, { 1, 0 }, { 2, 1 } };
+		result = test->canFinish(numCourses2, prerequisites2);
+		result = test->canFinish1(numCourses2, prerequisites2);
+
+		int numCourses3 = 3;//false
+		vector<pair<int, int>> prerequisites3 = { { 2, 0 }, { 2, 1 }, { 0, 2 } };
+		result = test->canFinish(numCourses3, prerequisites3);
+		result = test->canFinish1(numCourses3, prerequisites3);
+
+		delete test;
+	}
+
+};
+
+/*207. Course Schedule end*/
+
+
+//////////////////////////Tag Topological Sort end//////////////////////////////////////////
+
+
+//////////////////////////Tag Trie//////////////////////////////////////////
+/*336. Palindrome Pairs (hard)*/
+class Solution336 {
+public:
+	bool isPalin(string& str){
+		int len = str.size() - 1;
+		int i = 0;
+
+		while (i <= len){
+			if (str[i++] != str[len--])
+				return false;
+		}
+
+		return true;
+	}
+
+	/*time O(n k ^ 2), space O(n)*/
+	vector<vector<int>> palindromePairs(vector<string>& words) {
+		vector<vector<int>> result;
+
+		if (words.empty())
+			return result;
+
+		unordered_map<string, int> dict;
+
+		for (int i = 0; i < words.size(); ++i)
+			dict[words[i]] = i;
+
+		int len = words.size();
+		for (int i = 0; i < len; ++i){
+			for (int j = 0; j <= words[i].size(); ++j){
+				string str1 = words[i].substr(0, j);
+				string str2 = words[i].substr(j);
+				vector<int> vec(2, 0);
+				if (isPalin(str1)){
+					string str2rev = str2;
+					reverse(str2rev.begin(), str2rev.end());
+
+					if (dict.count(str2rev) > 0 && dict[str2rev] != i){
+						vec[0] = dict[str2rev];
+						vec[1] = i;
+						result.push_back(vec);
+					}
+				}
+
+				if (isPalin(str2)){
+					string str1rev = str1;
+					reverse(str1rev.begin(), str1rev.end());
+
+					if (dict.count(str1rev) > 0 && dict[str1rev] != i && !str2.empty()){
+						vec[1] = dict[str1rev];
+						vec[0] = i;
+						result.push_back(vec);
+					}
+				}
+			}
+		}
+
+		return result;
+	}
+
+	static void main(){
+		Solution336* test = new Solution336;
+		vector<vector<int>> result;
+
+		vector<string> words1 = { "bat", "tab", "cat" };
+		vector<string> words2 = { "abcd", "dcba", "lls", "s", "sssll" };
+
+		result = test->palindromePairs(words1);
+
+		result = test->palindromePairs(words2);
+		delete test;
+	}
+};
+/*336. Palindrome Pairs end*/
+
+/*212. Word Search II (hard)*/
+class Solution212 {
+	class Trie{
+	public:
+		Trie *children[26]; // pointers to its substrings starting with 'a' to 'z'
+		bool leaf;			// if the node is a leaf, or if there is a word stopping at here
+		int idx;			// if it is a leaf, the string index of the array words
+		Trie(){
+			fill_n(children, 26, nullptr);
+			leaf = false;
+			idx = 0;
+		}
+	};
+
+public:
+	void insertWords(Trie *root, vector<string>& words, int idx){
+		int pos = 0, len = words[idx].size();
+
+		while (pos < len){
+			if (NULL == root->children[words[idx][pos] - 'a'])
+				root->children[words[idx][pos] - 'a'] = new Trie();
+
+			root = root->children[words[idx][pos++] - 'a'];
+		}
+
+		root->leaf = true;
+		root->idx = idx;
+	}
+
+	Trie *buildTrie(vector<string>& words){
+		Trie *root = new Trie();
+		int i;
+
+		for (i = 0; i<words.size(); i++)
+			insertWords(root, words, i);
+
+		return root;
+	}
+
+	void checkWords(vector<vector<char>>& board, int i, int j, int row, int col, Trie *root, vector<string> &res, vector<string>& words)
+	{
+		char temp;
+		if (board[i][j] == 'X')
+			return; // visited before;
+
+		if (NULL == root->children[board[i][j] - 'a'])
+			return; // no string with such prefix
+		else{
+			temp = board[i][j];
+
+			if (root->children[temp - 'a']->leaf){  // if it is a leaf
+				res.push_back(words[root->children[temp - 'a']->idx]);
+				root->children[temp - 'a']->leaf = false; // set to false to indicate that we found it already
+			}
+
+			board[i][j] = 'X'; //mark the current position as visited
+			// check all the possible neighbors
+			if (i > 0)
+				checkWords(board, i - 1, j, row, col, root->children[temp - 'a'], res, words);
+
+			if (i + 1 < row)
+				checkWords(board, i + 1, j, row, col, root->children[temp - 'a'], res, words);
+
+			if (j > 0)
+				checkWords(board, i, j - 1, row, col, root->children[temp - 'a'], res, words);
+
+			if (j + 1 < col)
+				checkWords(board, i, j + 1, row, col, root->children[temp - 'a'], res, words);
+
+			board[i][j] = temp; // recover the current position
+		}
+	}
+
+	/*Trie + Backtrace time O(row*col) space O(26*max word length)*/
+	vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {
+		vector<string> result;
+
+		int row = board.size();
+
+		if (0 == row)
+			return result;
+
+		int col = board[0].size();
+
+		if (0 == col)
+			return result;
+
+		int wordCount = words.size();
+		if (0 == wordCount)
+			return result;
+
+		Trie *root = buildTrie(words);
+
+		int i, j;
+		for (i = 0; i < row; ++i){
+			for (j = 0; j < col && wordCount > result.size(); ++j)
+				checkWords(board, i, j, row, col, root, result, words);
+		}
+
+		return result;
+	}
+
+	static void main(){
+		Solution212* test = new Solution212;
+		vector<vector<char>> board1 = { { 'o', 'a', 'a', 'n' }, { 'e', 't', 'a', 'e' }, { 'i', 'h', 'k', 'r' }, { 'i', 'f', 'l', 'v' } };
+		vector<string> words1 = { "oath", "pea", "eat", "rain" };
+
+		vector<string> result;
+
+		result = test->findWords(board1, words1);
+
+		delete test;
+	}
+};
+
+/*212. Word Search II end*/
+
+
+/*211. Add and Search Word - Data structure design (medium)*/
+class WordDictionary211 {
+public:
+
+	struct TreeNode{
+		TreeNode* next[26];
+		bool isword;
+
+		TreeNode(bool bword = false){
+			memset(next, 0x00, sizeof(next));
+			isword = bword;
+		}
+	};
+	// Adds a word into the data structure.
+	void addWord(string word) {
+		TreeNode* ptmp = root;
+
+		for (int i = 0; i < word.size(); ++i){
+			if (ptmp->next[word[i] - 'a'] == NULL)
+				ptmp->next[word[i] - 'a'] = new TreeNode();
+
+			ptmp = ptmp->next[word[i] - 'a'];
+		}
+
+		ptmp->isword = true;
+	}
+
+	// Returns if the word is in the data structure. A word could
+	// contain the dot character '.' to represent any one letter.
+	bool mysearch(string word, TreeNode* father) {
+		int len = word.size();
+
+		if (0 == len)
+			return father->isword;
+		else if (word[0] == '.'){
+			string tmp = word.substr(1);
+			for (int i = 0; i < 26; ++i){
+				if (father->next[i] != NULL && mysearch(tmp, father->next[i]))
+					return true;
+			}
+
+			return false;
+		}
+		else
+			return father->next[word[0] - 'a'] != NULL && mysearch(word.substr(1), father->next[word[0] - 'a']);
+	}
+
+	bool search(string word)
+	{
+		if (word.empty())
+			return false;
+
+		return mysearch(word, root);
+	}
+
+	WordDictionary211(){
+		root = new TreeNode();
+	}
+
+	TreeNode* root;
+
+	static void main(){
+		WordDictionary211* test = new WordDictionary211;
+		bool result;
+
+		test->addWord("aba");
+		result = test->search(".b.");
+		result = test->search(".a.");
+		result = test->search("..a");
+
+		delete test;
+	}
+};
+
+/*211. Add and Search Word - Data structure design end*/
+
+
+/*208. Implement Trie (Prefix Tree) (medium)*/
+class Trie208 {
+public:
+
+	class TrieNode {
+	public:
+		TrieNode* next[26];
+
+		bool is_word;
+		// Initialize your data structure here.
+		TrieNode(bool b = false) {
+			memset(next, 0x00, sizeof(next));
+			is_word = b;
+		}
+	};
+
+	Trie208() {
+		root = new TrieNode();
+	}
+
+	// Inserts a word into the trie.
+	void insert(string word) {
+		TrieNode* p = root;
+		for (int i = 0; i < word.size(); ++i){
+			if (p->next[word[i] - 'a'] == NULL)
+				p->next[word[i] - 'a'] = new TrieNode();
+
+			p = p->next[word[i] - 'a'];
+		}
+
+		p->is_word = true;
+	}
+
+	// Returns if the word is in the trie.
+	bool search(string word) {
+		TrieNode* p = find(word);
+
+		return p && p->is_word;
+	}
+
+	TrieNode* find(string key){
+		TrieNode* p = root;
+
+		for (int i = 0; i < key.size() && p != NULL; ++i){
+			p = p->next[key[i] - 'a'];
+		}
+
+		return p;
+	}
+
+	// Returns if there is any word in the trie
+	// that starts with the given prefix.
+	bool startsWith(string prefix) {
+		return find(prefix) != NULL;
+	}
+
+	static void main(){
+		Trie208* test = new Trie208;
+		bool result;
+
+		test->insert("helloz");
+		result = test->search("helloz");
+		result = test->search("hello");
+
+		delete test;
+	}
+
+private:
+	TrieNode* root;
+};
+/*208. Implement Trie (Prefix Tree) end*/
+
+//////////////////////////Tag Trie end//////////////////////////////////////////
+
 
 
 //////////////////////////Tag Segment Tree//////////////////////////////////////////
@@ -23,33 +481,27 @@ using namespace std;
 /*218. The Skyline Problem (hard)*/
 class Solution218 {
 public:
-	//https://briangordon.github.io/2014/08/the-skyline-problem.html
-
-	vector<pair<int, int>> mergeSkyline(vector<pair<int, int>> &A, vector<pair<int, int>> &B)
-	{
+	//http ://www.geeksforgeeks.org/divide-and-conquer-set-7-the-skyline-problem/
+	vector<pair<int, int>> mergeSkyline(vector<pair<int, int>> &A, vector<pair<int, int>> &B){
 		vector<pair<int, int>> result;
 
 		int h1 = 0, h2 = 0;
 		int i = 0, j = 0;
 
-		while (i < A.size() && j < B.size())
-		{
+		while (i < A.size() && j < B.size()){
 			int x = 0, h = 0;
 
-			if (A[i].first < B[j].first)
-			{
+			if (A[i].first < B[j].first){
 				x = A[i].first;
 				h1 = A[i++].second;
 				h = max(h1, h2);
 			}
-			else if (A[i].first > B[j].first)
-			{
+			else if (A[i].first > B[j].first){
 				x = B[j].first;
 				h2 = B[j++].second;
 				h = max(h1, h2);
 			}
-			else
-			{
+			else{
 				x = B[j].first;
 				h1 = A[i++].second;
 				h2 = B[j++].second;
@@ -70,28 +522,26 @@ public:
 		return result;
 	}
 
-	vector<pair<int, int>> recurSkyline(vector<vector<int>>& buildings, int low, int high)
-	{
+	vector<pair<int, int>> recurSkyline(vector<vector<int>>& buildings, int low, int high){
 		vector<pair<int, int>> result;
-		if (low >= high)
-		{
+
+		if (low >= high){
 			result.push_back(make_pair(buildings[low][0], buildings[low][2]));
 			result.push_back(make_pair(buildings[low][1], 0));
 		}
-		else
-		{
+		else{
 			int mid = low + (high - low) / 2;
 
 			vector<pair<int, int>> left = recurSkyline(buildings, low, mid);
 			vector<pair<int, int>> right = recurSkyline(buildings, mid + 1, high);
 
 			result = mergeSkyline(left, right);
-
 		}
 
 		return result;
 	}
 
+	/*time O(nLogn)*/
 	vector<pair<int, int>> getSkyline1(vector<vector<int>>& buildings) {
 		vector<pair<int, int>> result;
 
@@ -103,6 +553,7 @@ public:
 		return result;
 	}
 
+	//https://briangordon.github.io/2014/08/the-skyline-problem.html
 	/*time O(n log n) space O(n)*/
 	vector<pair<int, int>> getSkyline(vector<vector<int>>& buildings) {
 		vector<pair<int, int>> height, skyline;
@@ -139,6 +590,8 @@ public:
 
 		result = test->getSkyline(buildings1);
 		result = test->getSkyline1(buildings1);
+
+		delete test;
 	}
 
 };
@@ -446,7 +899,7 @@ public:
 		test->addNum(7);
 		test->addNum(2);
 		test->addNum(6);
-		
+
 		result = test->getIntervals();
 
 		delete test;
@@ -480,7 +933,7 @@ public:
 		Solution220* test = new Solution220;
 		bool result;
 		vector<int> nums1 = { 7, 4, 9, 6, 1 };
-		int k1 = 2; 
+		int k1 = 2;
 		int t1 = 2;
 
 
@@ -586,10 +1039,10 @@ public:
 	};
 
 	/** Initialize your data structure here.
-		@param width - screen width
-		@param height - screen height
-		@param food - A list of food positions
-		E.g food = [[1,1], [1,0]] means the first food is positioned at [1,1], the second is at [1,0]. */
+	@param width - screen width
+	@param height - screen height
+	@param food - A list of food positions
+	E.g food = [[1,1], [1,0]] means the first food is positioned at [1,1], the second is at [1,0]. */
 	SnakeGame(int width, int height, vector<pos> food)
 	{
 		m_food = food;
@@ -602,10 +1055,10 @@ public:
 	}
 
 	/** Moves the snake.
-		@param direction - 'U' = Up, 'L' = Left, 'R' = Right, 'D' = Down
-		@return The game's score after the move. Return -1 if game over.
-		Game over when snake crosses the screen boundary or bites its body. */
-	int move(char direction) 
+	@param direction - 'U' = Up, 'L' = Left, 'R' = Right, 'D' = Down
+	@return The game's score after the move. Return -1 if game over.
+	Game over when snake crosses the screen boundary or bites its body. */
+	int move(char direction)
 	{
 		pos head = m_food.front();
 		pos next = head;
@@ -658,7 +1111,7 @@ public:
 	}
 
 
-	bool eat(pos cur) 
+	bool eat(pos cur)
 	{
 		if (m_score >= m_food.size())
 			return false;
@@ -675,7 +1128,7 @@ public:
 
 	static void main()
 	{
-		SnakeGame* test = new SnakeGame(2, 3, { {1, 2}, {0, 1} });
+		SnakeGame* test = new SnakeGame(2, 3, { { 1, 2 }, { 0, 1 } });
 
 		delete test;
 	}
@@ -702,6 +1155,11 @@ private:
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	Solution207::main();
+	Solution336::main();
+	Solution212::main();
+	WordDictionary211::main();
+	Trie208::main();
 	Solution218::main();
 	Solution327::main();
 	Solution315::main();
@@ -709,7 +1167,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	Solution220::main();
 	Solution329::main();
 	SnakeGame::main();
-	
+
 	return 0;
 }
 
