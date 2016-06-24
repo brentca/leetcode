@@ -15,8 +15,206 @@
 
 using namespace std;
 
+//////////////////////////Tag Design//////////////////////////////////////////
+
+
+/*155. Min Stack(easy)*/
+class MinStack155 {
+	struct Node {
+		int val;
+		int min;
+		Node *next;
+	};
+
+private:
+	Node *head;
+
+public:
+	MinStack155(){
+		head = NULL;
+	}
+
+	~MinStack155(){
+		delete head;
+	}
+
+	void push(int x) {
+		Node *tmp = new Node;
+		tmp->val = x;
+		tmp->next = NULL;
+		tmp->min = x;
+
+		if (head == NULL){
+			head = tmp;
+		}
+		else{
+			if (head->min < x)
+				tmp->min = head->min;
+		}
+
+		tmp->next = head;
+
+		head = tmp;
+	}
+
+	void pop() {
+		Node *tmp = head;
+
+		head = head->next;
+		delete tmp;
+
+	}
+
+	int top() {
+		return head->val;
+	}
+
+	int getMin() {
+		return head->min;
+	}
+
+	static void main(){
+		MinStack155* test = new MinStack155;
+		int result;
+
+		test->push(-2);
+		test->push(0);
+		test->push(-3);
+		result = test->getMin();   // Returns - 3
+		test->pop();
+		test->top();      // Returns 0
+		result = test->getMin();   // Returns - 2
+
+		delete test;
+	}
+
+};
+
+class MinStack155_2 {
+	long min;
+	stack<long> nums;
+
+public:
+	MinStack155_2(){
+	}
+
+	void push(int x) {
+		if (nums.empty()){
+			nums.push(0);
+			min = x;
+		}
+		else{
+			nums.push(x - min);//Could be negative if min value needs to change
+			if ( x < min) 
+				min = x;
+		}
+	}
+
+	void pop() {
+		if (nums.empty())
+			return;
+
+		long pop = nums.top();
+		nums.pop();
+
+		if (pop < 0)  
+			min = min - pop;//If negative, increase the min value
+	}
+
+	int top() {
+		long top = nums.top();
+		if (top > 0)
+			return (int)(top + min);
+		else
+			return (int)(min);
+	}
+
+	int getMin() {
+		return (int)min;
+	}
+
+	static void main(){
+		MinStack155_2* test = new MinStack155_2;
+		int result;
+
+		test->push(-2);
+		test->push(0);
+		test->push(-3);
+		result = test->getMin();   // Returns - 3
+		test->pop();
+		test->top();      // Returns 0
+		result = test->getMin();   // Returns - 2
+
+		delete test;
+	}
+};
+/*155. Min Stack end*/
+
+//////////////////////////Tag Design end//////////////////////////////////////////
+
 
 //////////////////////////Tag Topological Sort//////////////////////////////////////////
+/*210. Course Schedule II (medium)*/
+class Solution210 {
+public:
+	vector<int> findOrder(int numCourses, vector<pair<int, int>>& prerequisites) {
+		vector<int> innum(numCourses, 0);
+		queue<int> nodes;
+		vector<int> topsort;
+
+		vector<unordered_set<int>> adj(numCourses);
+
+		for (auto item : prerequisites)
+			adj[item.second].insert(item.first);
+
+		for (auto item : adj)
+		for (int neighbor : item)
+			innum[neighbor] ++;
+
+		for (int i = 0; i < numCourses; ++i){
+			if (0 == innum[i])
+				nodes.push(i);
+		}
+
+		for (int i = 0; i < numCourses; ++i){
+			if (nodes.empty())
+				return{};
+
+			int cur = nodes.front();
+			nodes.pop();
+
+			topsort.push_back(cur);
+
+			for (int item : adj[cur]){
+				if (!--innum[item])
+					nodes.push(item);
+			}
+		}
+
+		return topsort;
+	}
+
+	static void main(){
+		Solution210* test = new Solution210;
+		vector<int> result;
+
+		int numCourses1 = 2;//true
+		vector<pair<int, int>> prerequisites1 = { { 1, 0 } };
+		result = test->findOrder(numCourses1, prerequisites1);
+
+		int numCourses2 = 3;//true
+		vector<pair<int, int>> prerequisites2 = { { 2, 0 }, { 1, 0 }, { 2, 1 } };
+		result = test->findOrder(numCourses2, prerequisites2);
+
+		int numCourses3 = 3;//false
+		vector<pair<int, int>> prerequisites3 = { { 2, 0 }, { 2, 1 }, { 0, 2 } };
+		result = test->findOrder(numCourses3, prerequisites3);
+
+		delete test;
+	}
+};
+/*210. Course Schedule II end*/
+
 
 /*207. Course Schedule (medium)*/
 class Solution207 {
@@ -121,7 +319,6 @@ public:
 	}
 
 };
-
 /*207. Course Schedule end*/
 
 
@@ -395,7 +592,6 @@ public:
 		delete test;
 	}
 };
-
 /*211. Add and Search Word - Data structure design end*/
 
 
@@ -476,8 +672,6 @@ private:
 
 
 //////////////////////////Tag Segment Tree//////////////////////////////////////////
-
-
 /*218. The Skyline Problem (hard)*/
 class Solution218 {
 public:
@@ -694,6 +888,7 @@ public:
 	}
 };
 
+
 /*307. Range Sum Query - Mutable end*/
 
 
@@ -703,8 +898,6 @@ public:
 
 
 //////////////////////////Tag Binary Search Tree//////////////////////////////////////////
-
-
 /*327. Count of Range Sum (hard)*/
 class Solution327 {
 public:
@@ -833,7 +1026,6 @@ public:
 	}
 };
 /*315. Count of Smaller Numbers After Self end*/
-
 
 
 /*352. Data Stream as Disjoint Intervals (hard)*/
@@ -1013,7 +1205,6 @@ public:
 		delete test;
 	}
 };
-
 /*O(mn) time O(mn) space*/
 /*329. Longest Increasing Path in a Matrix end*/
 
@@ -1155,6 +1346,10 @@ private:
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	MinStack155_2::main();
+	MinStack155::main();
+	Solution329::main();
+	Solution210::main();
 	Solution207::main();
 	Solution336::main();
 	Solution212::main();
@@ -1165,7 +1360,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	Solution315::main();
 	SummaryRanges352::main();
 	Solution220::main();
-	Solution329::main();
 	SnakeGame::main();
 
 	return 0;
