@@ -16,6 +16,320 @@
 using namespace std;
 
 //////////////////////////Tag Design//////////////////////////////////////////
+/*295. Find Median from Data Stream (hard)*/
+class MedianFinder295 {
+public:
+
+	// Adds a number into the data structure.
+	void addNum(int num) {
+		small.push(num);
+		large.push(-small.top());
+		small.pop();
+
+		if (large.size() > small.size())
+		{
+			small.push(-large.top());
+			large.pop();
+		}
+	}
+
+	// Returns the median of current data stream
+	double findMedian() {
+		return small.size() > large.size() ? small.top() : (small.top() - large.top()) / 2.0;
+	}
+
+	priority_queue<long> small, large;
+
+	static void main(){
+		MedianFinder295* test = new MedianFinder295;
+		double result;
+
+		test->addNum(1);
+		test->addNum(2);
+		result = test->findMedian();
+
+		delete test;
+	}
+};
+
+/*295. Find Median from Data Stream end*/
+
+
+/*173. Binary Search Tree Iterator (medium)*/
+class BSTIterator173 {
+public:
+	struct TreeNode {
+		int val;
+		TreeNode *left;
+		TreeNode *right;
+		TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+	};
+
+	BSTIterator173(TreeNode *root) {
+		pushall(root);
+	}
+
+	/** @return whether we have a next smallest number */
+	bool hasNext() {
+		return !m_stack.empty();
+	}
+
+	/** @return the next smallest number, time O(h)*/
+	int next() {
+		TreeNode *tmp = m_stack.top();
+		m_stack.pop();
+		pushall(tmp->right);
+		return tmp->val;
+	}
+
+	static void main(){
+		TreeNode *root = new TreeNode(2);
+		TreeNode *node1 = new TreeNode(1);
+		TreeNode *node2 = new TreeNode(3);
+		root->left = node1;
+		root->right = node2;
+		BSTIterator173* test = new BSTIterator173(root);
+
+		while (test->hasNext())
+			cout << test->next() << endl;
+
+		delete test;
+	}
+
+private:
+	void pushall(TreeNode *node)
+	{
+		for (; node != NULL; m_stack.push(node), node = node->left)
+			;
+	}
+	stack<TreeNode *> m_stack;
+};
+
+/**
+* Your BSTIterator will be called like this:
+* BSTIterator i = BSTIterator(root);
+* while (i.hasNext()) cout << i.next();
+*/
+/*173. Binary Search Tree Iterator end*/
+
+
+/*355. Design Twitter (medium)*/
+class Twitter355 {
+public:
+	/** Initialize your data structure here. */
+	Twitter355() {
+		idxfeed = 0;
+	}
+
+	/** Compose a new tweet. */
+	void postTweet(int userId, int tweetId) {
+		twits[userId].push_back(make_pair(idxfeed, tweetId));
+		++idxfeed;
+	}
+
+	/** Retrieve the 10 most recent tweet ids in the user's news feed. Each item in the news feed must be posted by users who the user followed or by the user herself. Tweets must be ordered from most recent to least recent. */
+	vector<int> getNewsFeed(int userId) {
+		vector<int> result;
+		vector<pair<int, int>> feeds;
+
+		for (auto item : follows[userId])
+		{
+			if (twits.count(item) && twits[item].size())
+				feeds.insert(feeds.end(), twits[item].begin(), twits[item].end());
+		}
+
+		if (twits.count(userId) && twits[userId].size())
+			feeds.insert(feeds.end(), twits[userId].begin(), twits[userId].end());
+
+		auto f = [](const pair<int, int>& a, const pair<int, int>& b) {
+			return a.first < b.first;
+		};
+
+		make_heap(feeds.begin(), feeds.end(), f);
+
+		int count = 10;
+		int last_id = -1;
+		for (int i = 0; i < count && !feeds.empty(); ++i)
+		{
+			pop_heap(feeds.begin(), feeds.end(), f);
+			auto& lastfeed = feeds.back();
+			if (last_id != lastfeed.second)
+			{
+				result.push_back(lastfeed.second);
+				last_id = lastfeed.second;
+			}
+
+			feeds.pop_back();
+		}
+
+		return result;
+	}
+
+	/** Follower follows a followee. If the operation is invalid, it should be a no-op. */
+	void follow(int followerId, int followeeId) {
+		if (followerId == followeeId)
+			return;
+
+		if (follows.count(followerId))
+		{
+			if (follows[followerId].count(followeeId) < 1)
+				follows[followerId].insert(followeeId);
+		}
+		else
+			follows[followerId].insert(followeeId);
+	}
+
+	/** Follower unfollows a followee. If the operation is invalid, it should be a no-op. */
+	void unfollow(int followerId, int followeeId) {
+		if (followerId == followeeId)
+			return;
+
+		if (follows.count(followerId) && follows[followerId].count(followeeId))
+			follows[followerId].erase(followeeId);
+	}
+
+	unordered_map<int, unordered_set<int>> follows;
+	unordered_map<int, vector<pair<int, int>>> twits;
+	int idxfeed;
+
+	static void main(){
+		Twitter355* twitter = new Twitter355;
+		vector<int> result;
+
+		// User 1 posts a new tweet (id = 5).
+		twitter->postTweet(1, 5);
+
+		// User 1's news feed should return a list with 1 tweet id -> [5].
+		result = twitter->getNewsFeed(1);
+
+		// User 1 follows user 2.
+		twitter->follow(1, 2);
+
+		// User 2 posts a new tweet (id = 6).
+		twitter->postTweet(2, 6);
+
+		// User 1's news feed should return a list with 2 tweet ids -> [6, 5].
+		// Tweet id 6 should precede tweet id 5 because it is posted after tweet id 5.
+		result = twitter->getNewsFeed(1);
+
+		// User 1 unfollows user 2.
+		twitter->unfollow(1, 2);
+
+		// User 1's news feed should return a list with 1 tweet id -> [5],
+		// since user 1 is no longer following user 2.
+		result = twitter->getNewsFeed(1);
+		delete twitter;
+	}
+};
+
+/**
+* Your Twitter object will be instantiated and called as such:
+* Twitter obj = new Twitter();
+* obj.postTweet(userId,tweetId);
+* vector<int> param_2 = obj.getNewsFeed(userId);
+* obj.follow(followerId,followeeId);
+* obj.unfollow(followerId,followeeId);
+*/
+
+
+/*355. Design Twitter end*/
+
+
+#if 0
+/*284. Peeking Iterator(medium)*/
+// Below is the interface for Iterator, which is already defined for you.
+// **DO NOT** modify the interface for Iterator.
+class Iterator284 {
+	struct Data;
+	Data* data;
+public:
+	Iterator284(const vector<int>& nums);
+	Iterator284(const Iterator284& iter);
+	virtual ~Iterator284();
+	// Returns the next element in the iteration.
+	int next();
+	// Returns true if the iteration has more elements.
+	bool hasNext() const;
+};
+
+
+class PeekingIterator284 : public Iterator284 {
+public:
+	PeekingIterator284(const vector<int>& nums) : Iterator284(nums) {
+		// Initialize any member here.
+		// **DO NOT** save a copy of nums and manipulate it directly.
+		// You should only use the Iterator interface methods.
+
+	}
+
+	// Returns the next element in the iteration without advancing the iterator.
+	int peek() {
+		return Iterator284(*this).next();
+	}
+
+	// hasNext() and next() should behave the same as in the Iterator interface.
+	// Override them if needed.
+	int next() {
+		Iterator284::next();
+	}
+
+	bool hasNext() const {
+		return Iterator284::hasNext();
+	}
+
+	static void main(){
+		vector<int> nums1 = { 3, 2, 5 };
+		PeekingIterator284* test = new PeekingIterator284(nums1);
+		int result;
+
+		result = test->peek();
+		result = test->next();
+		test->hasNext();
+
+		delete test;
+	}
+};
+#endif
+/*284. Peeking Iterator end*/
+
+
+/*225. Implement Stack using Queues (easy)*/
+class Stack225 {
+public:
+	queue<int> num;
+	// Push element x onto stack.
+	void push(int x) {
+		num.push(x);
+		for (int i = 0; i < num.size() - 1; ++i)
+		{
+			num.push(num.front());
+			num.pop();
+		}
+	}
+
+	// Removes the element on top of the stack.
+	void pop() {
+		num.pop();
+	}
+
+	// Get the top element.
+	int top() {
+		return num.front();
+	}
+
+	// Return whether the stack is empty.
+	bool empty() {
+		return num.empty();
+	}
+
+	static void main(){
+		Stack225* test = new Stack225;
+
+		delete test;
+	}
+
+};
+/*225. Implement Stack using Queues end*/
 
 
 /*155. Min Stack(easy)*/
@@ -123,9 +437,9 @@ public:
 
 	int top() {
 		long top = nums.top();
-		if (top > 0)
+		if (top > 0) // current top is the dif with min
 			return (int)(top + min);
-		else
+		else		// current top the min
 			return (int)(min);
 	}
 
@@ -416,6 +730,17 @@ class Solution212 {
 	};
 
 public:
+	void delNode(Trie* node){
+		if (NULL != node){
+			for (int i = 0; i < 26; ++i){
+				delNode(node->children[i]);
+			}
+
+			delete[]node->children;
+			delete node;
+		}
+	}
+
 	void insertWords(Trie *root, vector<string>& words, int idx){
 		int pos = 0, len = words[idx].size();
 
@@ -500,6 +825,7 @@ public:
 				checkWords(board, i, j, row, col, root, result, words);
 		}
 
+		delNode(root);
 		return result;
 	}
 
@@ -615,6 +941,20 @@ public:
 		root = new TrieNode();
 	}
 
+	~Trie208() {
+		delNode(root);
+	}
+
+	void delNode(TrieNode* node){
+		if (NULL != node){
+			for (int i = 0; i < 26; ++i){
+				delNode(node->next[i]);
+			}
+
+			delete[]node->next;
+			delete node;
+		}
+	}
 	// Inserts a word into the trie.
 	void insert(string word) {
 		TrieNode* p = root;
@@ -1346,6 +1686,11 @@ private:
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	MedianFinder295::main();
+	BSTIterator173::main();
+	Twitter355::main();
+	//PeekingIterator284::main();
+	Stack225::main();
 	MinStack155_2::main();
 	MinStack155::main();
 	Solution329::main();
