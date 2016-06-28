@@ -15,6 +15,185 @@
 
 using namespace std;
 
+//////////////////////////Tag Union Find//////////////////////////////////////////
+/*128. Longest Consecutive Sequence (hard)*/
+class Solution128 {
+public:
+	int longestConsecutive(vector<int>& nums) {
+		unordered_map<int, int> map;
+		int result = 0, sum;
+
+		int left, right;
+		for (int i = 0; i < nums.size(); ++i){
+			if (0 == map.count(nums[i])){
+				left = (map.count(nums[i] - 1) > 0) ? map[nums[i] - 1] : 0;
+				right = (map.count(nums[i] + 1) > 0) ? map[nums[i] + 1] : 0;
+
+				sum = left + right + 1;
+				map[nums[i]] = sum;
+				result = max(sum, result);
+				map[nums[i] - left] = sum;
+				map[nums[i] + right] = sum;
+			}
+		}
+
+		return result;
+	}
+
+	static void main() {
+		Solution128* test = new Solution128;
+		int result;
+
+		vector<int> nums1 = { 100, 4, 200, 1, 3, 2 };
+
+		result = test->longestConsecutive(nums1);
+		delete test;
+	}
+};
+/*128. Longest Consecutive Sequence end*/
+
+
+/*200. Number of Islands (Medium)*/
+class Solution200 {
+public:
+	void dfs(vector<vector<char>>& grid, int i, int j){
+		if (i < 0 || i >= grid.size() || j < 0 || j >= grid[0].size() ||
+			grid[i][j] != '1')
+			return;
+
+		grid[i][j] = '0';
+		dfs(grid, i + 1, j);
+		dfs(grid, i - 1, j);
+		dfs(grid, i, j - 1);
+		dfs(grid, i, j + 1);
+	}
+
+	void bfs(vector<vector<char>>& grid, int i, int j){
+		grid[i][j] = '0';
+		queue<vector<int>> adjs;
+		adjs.push({ i,j });
+
+		while (!adjs.empty()){
+			int m = adjs.front()[0];
+			int n = adjs.front()[1];
+			adjs.pop();
+
+			if (m > 0 && grid[m - 1][n] == '1'){
+				adjs.push({ m - 1,n });
+				grid[m - 1][n] = '0';
+			}
+
+			if (m < grid.size() - 1 && grid[m + 1][n] == '1'){
+				adjs.push({ m + 1,n });
+				grid[m + 1][n] = '0';
+			}
+
+			if (n > 0 && grid[m][n - 1] == '1'){
+				adjs.push({ m,n - 1 });
+				grid[m][n - 1] = '0';
+			}
+
+			if (n < grid[0].size() - 1 && grid[m][n + 1] == '1'){
+				adjs.push({ m,n + 1 });
+				grid[m][n + 1] = '0';
+			}
+		}
+	}
+
+	int numIslands(vector<vector<char>>& grid) {
+		if (grid.empty() || grid[0].empty())
+			return 0;
+
+		int ret = 0;
+
+		for (int i = 0; i < grid.size(); ++i)
+			for (int j = 0; j < grid[0].size(); ++j){
+				if (grid[i][j] == '1'){
+					ret++;
+					//dfs(grid, i, j);
+					bfs(grid, i, j);
+				}
+			}
+
+		return ret;
+	}
+
+	static void main() {
+		Solution200* test = new Solution200;
+		int result;
+		vector<vector<char>> grid1 = { { '1', '1', '1', '1', '0'},
+										{ '1', '1', '0', '1', '0' },
+										{ '1', '1', '0', '0', '0' },
+										{ '0', '0', '0', '0', '0' } };
+		result = test->numIslands(grid1);
+		delete test;
+	}
+};
+/*200. Number of Islands end*/
+
+
+/*130. Surrounded Regions (medium)*/
+/*one of solution is to dfs all the elements*/
+class Solution130 {
+public:
+	void solve(vector<vector<char>>& board) {
+		int i, j;
+		int row = board.size();
+		if (!row)
+			return;
+
+		int col = board[0].size();
+
+		for (i = 0; i < row; ++i) {
+			check(board, i, 0, row, col);
+			if (col > 1)
+				check(board, i, col - 1, row, col);
+		}
+
+		for (j = 1; j + 1 < col; ++j) {
+			check(board, 0, j, row, col);
+			if (row > 1)
+				check(board, row - 1, j, row, col);
+		}
+
+		for (i = 0; i < row; i++) {
+			for (j = 0; j < col; j++) {
+				if ('O' == board[i][j])
+					board[i][j] = 'X';
+				else if ('1' == board[i][j])
+					board[i][j] = 'O';
+			}
+		}
+	}
+
+	void check(vector<vector<char> >&vec, int i, int j, int row, int col) {
+		if (i < 0 || i >= row || j < 0 || j >= col)
+			return;
+
+		if (vec[i][j] == 'O') {
+			vec[i][j] = '1';
+			check(vec, i - 1, j, row, col);
+			check(vec, i, j - 1, row, col);
+			check(vec, i + 1, j, row, col);
+			check(vec, i, j + 1, row, col);
+		}
+	}
+
+	static void main() {
+		Solution130* test = new Solution130;
+		vector<vector<char>> board1 = { {'X', 'X', 'X', 'X'},
+										{'X', 'O', 'O', 'X' },
+										{'X', 'X', 'O', 'X' },
+										{'X', 'O', 'X', 'X' } };
+		test->solve(board1);
+		delete test;
+	}
+};
+/*130. Surrounded Regions end*/
+//////////////////////////Tag Union Find end//////////////////////////////////////////
+
+
+
 //////////////////////////Tag Design//////////////////////////////////////////
 /*295. Find Median from Data Stream (hard)*/
 class MedianFinder295 {
@@ -1686,6 +1865,10 @@ private:
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	Solution128::main();
+	Solution200::main();
+	Solution200::main();
+	Solution130::main();
 	MedianFinder295::main();
 	BSTIterator173::main();
 	Twitter355::main();
