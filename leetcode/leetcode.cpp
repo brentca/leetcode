@@ -16,6 +16,366 @@
 
 using namespace std;
 
+//////////////////////////Tag Breadth-first Search//////////////////////////////////////////
+namespace BFS{
+	struct TreeNode {
+		int val;
+		TreeNode *left;
+		TreeNode *right;
+		TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+	};
+
+	void delNode(TreeNode* root){
+		if (NULL != root){
+			delNode(root->left);
+			delNode(root->right);
+			delete root;
+		}
+	}
+
+
+	/*279. Perfect Squares (medium)*/
+	class Solution279 {
+	public:
+		int numSquares(int n) {
+			vector<int> mindp(n + 1, INT_MAX);
+
+			mindp[0] = 0;
+
+			for (int i = 1; i <= n; ++i){
+				for (int j = 1; j*j <= i; ++j)
+					mindp[i] = min(mindp[i], mindp[i - j*j] + 1);
+			}
+
+			return mindp.back();
+		}
+
+		static void main(){
+			Solution279* test = new Solution279;
+			int result;
+
+			//12 = 4 + 4 + 4
+			result = test->numSquares(12);
+
+			//12 = 4 + 9
+			result = test->numSquares(13);
+			delete test;
+		}
+	};
+	/*279. Perfect Squares end*/
+
+
+	/*199. Binary Tree Right Side View (medium)*/
+	class Solution199 {
+	public:
+		vector<int> rightSideView(TreeNode* root) {
+			vector<int> result;
+			if (NULL == root)
+				return result;
+
+			queue<TreeNode*> nodes;
+			TreeNode* tmp = NULL, *pre = NULL;
+
+			nodes.push(root);
+			nodes.push(tmp);
+
+			while (!nodes.empty()){
+				tmp = nodes.front();
+				while (tmp != NULL){
+					pre = tmp;
+					nodes.pop();
+					if (pre->left)
+						nodes.push(pre->left);
+
+					if (pre->right)
+						nodes.push(pre->right);
+
+					tmp = nodes.front();
+				}
+
+				nodes.pop();
+				result.push_back(pre->val);
+
+				if (nodes.empty())
+					break;
+
+				pre = NULL;
+				nodes.push(pre);
+			}
+
+			return result;
+		}
+
+		static void main(){
+			Solution199* test = new Solution199;
+			vector<int> result;
+
+			TreeNode* node1 = new TreeNode(1);
+			TreeNode* node2 = new TreeNode(2);
+			TreeNode* node3 = new TreeNode(3);
+			TreeNode* node4 = new TreeNode(4);
+			TreeNode* node5 = new TreeNode(5);
+
+			node1->left = node2;
+			node1->right = node3;
+			node2->right = node4;
+			node3->right = node5;
+			result = test->rightSideView(node1);
+			delNode(node1);
+			delete test;
+		}
+	};
+	/*199. Binary Tree Right Side View end*/
+
+	
+	/*107. Binary Tree Level Order Traversal II (easy)*/
+	class Solution107 {
+	public:
+		vector<vector<int>> result;
+		void levelorder(TreeNode* root, int depth){
+			if (NULL == root)
+				return;
+
+			//for current layer
+			if (result.size() == depth)
+				result.push_back(vector<int>());
+
+			result[depth].push_back(root->val);
+
+			levelorder(root->left, depth + 1);
+			levelorder(root->right, depth + 1);
+		}
+
+		vector<vector<int>> levelOrderBottom(TreeNode* root) {
+			if (root == NULL)
+				return result;
+
+			levelorder(root, 0);
+			reverse(result.begin(), result.end());
+			return result;
+		}
+
+		vector<vector<int>> levelOrderBottom1(TreeNode* root) {
+			vector<vector<int>> result;
+
+			if (root == NULL)
+				return result;
+
+			queue<TreeNode*> tmpQue;
+
+			tmpQue.push(root);
+			tmpQue.push(NULL);
+
+			vector<int> tmpVec;
+			while (!tmpQue.empty())
+			{
+				TreeNode* tmpNode = tmpQue.front();
+				tmpQue.pop();
+
+				if (NULL == tmpNode){
+					result.push_back(tmpVec);
+					tmpVec.clear();
+
+					if (!tmpQue.empty())
+						tmpQue.push(NULL);
+				}
+				else{
+					tmpVec.push_back(tmpNode->val);
+					if (tmpNode->left)
+						tmpQue.push(tmpNode->left);
+
+					if (tmpNode->right)
+						tmpQue.push(tmpNode->right);
+				}
+			}
+
+			reverse(result.begin(), result.end());
+			return result;
+		}
+
+		static void main(){
+			Solution107* test = new Solution107;
+			vector<vector<int>> result;
+
+			TreeNode* node1 = new TreeNode(1);
+			TreeNode* node2 = new TreeNode(2);
+			TreeNode* node3 = new TreeNode(3);
+			TreeNode* node4 = new TreeNode(4);
+
+			node1->left = node2;
+			node1->right = node3;
+			node2->right = node4;
+
+			result = test->levelOrderBottom1(node1);
+			result = test->levelOrderBottom(node1);
+			delNode(node1);
+			delete test;
+		}
+	};
+	/*107. Binary Tree Level Order Traversal II end*/
+
+	/*111. Minimum Depth of Binary Tree (easy)*/
+	class Solution111 {
+	public:
+		int minDepth(TreeNode* root) {
+			if (root == 0)
+				return 0;
+
+			if (!root->left)
+				return minDepth(root->right) + 1;
+
+			if (!root->right)
+				return minDepth(root->left) + 1;
+
+			int nleft = minDepth(root->left) + 1;
+			int nright = minDepth(root->right) + 1;
+			return nleft > nright ? nright : nleft;
+		}
+
+		static void main(){
+			Solution111* test = new Solution111;
+			int result;
+
+			TreeNode* node1 = new TreeNode(1);
+			TreeNode* node2 = new TreeNode(2);
+			TreeNode* node3 = new TreeNode(3);
+			TreeNode* node4 = new TreeNode(4);
+
+			node1->left = node2;
+			node1->right = node3;
+			node2->right = node4;
+			result = test->minDepth(node1);
+			delNode(node1);
+			delete test;
+		}
+	};
+	/*111. Minimum Depth of Binary Tree end*/
+
+
+	/*102. Binary Tree Level Order Traversal */
+	class Solution102 {
+	public:
+		vector<vector<int>> result;
+
+		void levelorder(TreeNode* root, int depth){
+			if (NULL == root)
+				return;
+
+			//for current layer
+			if (result.size() == depth)
+				result.push_back(vector<int>());
+
+			result[depth].push_back(root->val);
+
+			levelorder(root->left, depth + 1);
+			levelorder(root->right, depth + 1);
+		}
+
+		void levelorder(TreeNode* root){
+			if (NULL == root)
+				return;
+
+			queue<TreeNode*> lst;
+			lst.push(root);
+			lst.push(NULL);
+
+			vector<int> current;
+			while (!lst.empty()){
+				TreeNode* tmp = lst.front();
+				lst.pop();
+
+				if (tmp == NULL){
+					result.push_back(current);
+					current.resize(0);
+
+					if (lst.size())
+						lst.push(NULL);
+				}
+				else{
+					current.push_back(tmp->val);
+					if (tmp->left)
+						lst.push(tmp->left);
+					if (tmp->right)
+						lst.push(tmp->right);
+				}
+
+			}
+		}
+
+		vector<vector<int>> levelOrder(TreeNode* root) {
+			//levelorder(root, 0);
+			levelorder(root);
+			return result;
+		}
+
+		static void main(){
+			Solution102* test = new Solution102;
+			vector<vector<int>> result;
+
+			TreeNode* node1 = new TreeNode(1);
+			TreeNode* node2 = new TreeNode(2);
+			TreeNode* node3 = new TreeNode(3);
+			TreeNode* node4 = new TreeNode(4);
+
+			node1->left = node2;
+			node1->right = node3;
+			node2->right = node4;
+
+			result = test->levelOrder(node1);
+			delNode(node1);
+			delete test;
+		}
+	};
+	/*102. Binary Tree Level Order Traversal end */
+
+
+	/*101. Symmetric Tree (easy)*/
+	class Solution101 {
+	public:
+		bool mySymmetric(TreeNode* left, TreeNode* right){
+			if (left == NULL && right == NULL)
+				return true;
+			else if (right == NULL)
+				return false;
+			else if (left == NULL)
+				return false;
+
+			if (left->val != right->val)
+				return false;
+
+			return mySymmetric(left->left, right->right) && mySymmetric(left->right, right->left);
+		}
+
+		bool isSymmetric(TreeNode* root) {
+			if (root == NULL)
+				return true;
+
+			return mySymmetric(root->left, root->right);
+		}
+
+		static void main(){
+			Solution101* test = new Solution101;
+			bool result;
+
+			TreeNode* node1 = new TreeNode(1);
+			TreeNode* node2 = new TreeNode(2);
+			TreeNode* node3 = new TreeNode(2);
+			TreeNode* node4 = new TreeNode(4);
+
+			node1->left = node2;
+			node1->right = node3;
+			result = test->isSymmetric(node1);
+
+			node2->left = node4;
+			result = test->isSymmetric(node1);
+			delNode(node1);
+			delete test;
+		}
+	};
+	/*101. Symmetric Tree end*/
+	//////////////////////////Tag Breadth-first Search end//////////////////////////////////////////
+}
+
 
 //////////////////////////Tag Graph//////////////////////////////////////////
 /*332. Reconstruct Itinerary (medium)*/
@@ -98,8 +458,6 @@ public:
 					nextleaves.push_back(nextnode);
 			}
 
-			}
-
 			leaves = nextleaves;
 		}
 
@@ -123,7 +481,6 @@ public:
 	}
 };
 /*310. Minimum Height Trees end*/
-
 
 
 /*133. Clone Graph (medium)*/
@@ -189,7 +546,6 @@ public:
 };
 /*133. Clone Graph end*/
 //////////////////////////Tag Graph end//////////////////////////////////////////
-
 
 
 
@@ -369,7 +725,6 @@ public:
 };
 /*130. Surrounded Regions end*/
 //////////////////////////Tag Union Find end//////////////////////////////////////////
-
 
 
 
@@ -764,8 +1119,6 @@ public:
 * obj.follow(followerId,followeeId);
 * obj.unfollow(followerId,followeeId);
 */
-
-
 /*355. Design Twitter end*/
 
 
@@ -997,8 +1350,8 @@ public:
 	}
 };
 /*155. Min Stack end*/
-
 //////////////////////////Tag Design end//////////////////////////////////////////
+
 
 
 //////////////////////////Tag Topological Sort//////////////////////////////////////////
@@ -1168,8 +1521,6 @@ public:
 
 };
 /*207. Course Schedule end*/
-
-
 //////////////////////////Tag Topological Sort end//////////////////////////////////////////
 
 
@@ -1266,11 +1617,9 @@ class Solution212 {
 public:
 	void delNode(Trie* node){
 		if (NULL != node){
-			for (int i = 0; i < 26; ++i){
+			for (int i = 0; i < 26; ++i)
 				delNode(node->children[i]);
-			}
 
-			delete[]node->children;
 			delete node;
 		}
 	}
@@ -1375,7 +1724,6 @@ public:
 		delete test;
 	}
 };
-
 /*212. Word Search II end*/
 
 
@@ -1481,11 +1829,9 @@ public:
 
 	void delNode(TrieNode* node){
 		if (NULL != node){
-			for (int i = 0; i < 26; ++i){
+			for (int i = 0; i < 26; ++i)
 				delNode(node->next[i]);
-			}
 
-			delete[]node->next;
 			delete node;
 		}
 	}
@@ -1540,7 +1886,6 @@ private:
 	TrieNode* root;
 };
 /*208. Implement Trie (Prefix Tree) end*/
-
 //////////////////////////Tag Trie end//////////////////////////////////////////
 
 
@@ -1761,13 +2106,8 @@ public:
 		delete test;
 	}
 };
-
-
 /*307. Range Sum Query - Mutable end*/
-
-
 //////////////////////////Tag Segment Tree end//////////////////////////////////////////
-
 
 
 
@@ -2018,12 +2358,11 @@ public:
 	}
 };
 /*220. Contains Duplicate III end*/
-
 //////////////////////////Tag Binary Search Tree end//////////////////////////////////////////
 
 
-//////////////////////////Tag Memoization//////////////////////////////////////////
 
+//////////////////////////Tag Memoization//////////////////////////////////////////
 /*329. Longest Increasing Path in a Matrix (hard)*/
 class Solution329 {
 public:
@@ -2081,12 +2420,11 @@ public:
 };
 /*O(mn) time O(mn) space*/
 /*329. Longest Increasing Path in a Matrix end*/
-
 //////////////////////////Tag Memoization end//////////////////////////////////////////
 
 
-//////////////////////////Tag Queue//////////////////////////////////////////
 
+//////////////////////////Tag Queue//////////////////////////////////////////
 /* LeetCode 353. Design Snake Game (Medium)*/
 class SnakeGame {
 public:
@@ -2217,9 +2555,14 @@ private:
 /* LeetCode 353. Design Snake Game end*/
 
 //////////////////////////Tag Queue end//////////////////////////////////////////
-
+using namespace BFS;
 int _tmain(int argc, _TCHAR* argv[])
 {
+	Solution199::main();
+	Solution107::main();
+	Solution111::main();
+	Solution102::main();
+	Solution101::main();
 	Solution310::main();
 	Solution133::main();
 	Codec297::main();
