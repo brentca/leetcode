@@ -12,10 +12,352 @@
 #include <queue>
 #include <unordered_map>
 #include <stack>
+#include <sstream>
 
 using namespace std;
 
+
+//////////////////////////Tag Graph//////////////////////////////////////////
+/*332. Reconstruct Itinerary (medium)*/
+class Solution332 {
+public:
+	unordered_map<string, multiset<string>> maps;
+	vector<string> ret;
+
+	vector<string> findItinerary(vector<pair<string, string>> tickets) {
+		if (tickets.empty())
+			return ret;
+
+		for (auto item : tickets)
+			maps[item.first].insert(item.second);
+
+		if (maps.count("JFK") < 1)
+			return ret;
+
+		visit("JFK");
+		return vector<string>(ret.rbegin(), ret.rend());
+	}
+
+	void visit(string port){
+		while (!maps[port].empty()){
+			string tmp = *maps[port].begin();
+			maps[port].erase(maps[port].begin());
+			visit(tmp);
+		}
+
+		ret.push_back(port);
+	}
+
+	static void main(){
+		Solution332* test = new Solution332;
+
+
+		delete test;
+	}
+};
+/*332. Reconstruct Itinerary end*/
+
+
+/*310. Minimum Height Trees (medium)*/
+class Solution310 {
+public:
+	vector<int> findMinHeightTrees(int n, vector<pair<int, int>>& edges) {
+		vector<unordered_set<int>> adj(n);
+
+		for (pair<int, int> item : edges){
+			adj[item.first].insert(item.second);
+			adj[item.second].insert(item.first);
+		}
+
+		vector<int> leaves;
+		if (n == 1){
+			leaves.push_back(0);
+			return leaves;
+		}
+
+		for (int i = 0; i < adj.size(); ++i){
+			if (1 == adj[i].size())
+				leaves.push_back(i);
+		}
+
+		while (n > 2){
+			n -= leaves.size();
+
+			vector<int> nextleaves;
+			for (int i = 0; i < leaves.size(); ++i){
+				int nextnode = *(adj[leaves[i]].begin());
+
+				adj[leaves[i]].erase(nextnode);
+				adj[nextnode].erase(leaves[i]);
+
+				if (1 == adj[nextnode].size())
+					nextleaves.push_back(nextnode);
+			}
+
+			leaves = nextleaves;
+		}
+
+		return leaves;
+	}
+
+	static void main(){
+		Solution310* test = new Solution310;
+		vector<int> result;
+
+		int n1 = 4;
+		vector<pair<int, int>> edges1 = { { 1, 0 }, { 1, 2 }, { 1, 3 } };
+		result = test->findMinHeightTrees(n1, edges1);
+
+		int n2 = 6;
+		vector<pair<int, int>> edges2 = { { 0, 3 }, { 1, 3 }, { 2, 3 }, { 4, 3 }, { 5, 4 } };
+
+		result = test->findMinHeightTrees(n2, edges2);
+
+		delete test;
+	}
+};
+/*310. Minimum Height Trees end*/
+
+
+/*133. Clone Graph (medium)*/
+class Solution133 {
+public:
+	struct UndirectedGraphNode {
+		int label;
+		vector<UndirectedGraphNode *> neighbors;
+		UndirectedGraphNode(int x) : label(x) {};
+	};
+
+	unordered_map<UndirectedGraphNode *, UndirectedGraphNode *> hash;
+	UndirectedGraphNode *cloneGraph(UndirectedGraphNode *node) {
+		if (!node)
+			return node;
+
+		if (hash.find(node) == hash.end()){
+			hash[node] = new UndirectedGraphNode(node->label);
+
+			for (auto item : node->neighbors)
+				hash[node]->neighbors.push_back(cloneGraph(item));
+		}
+
+		return hash[node];
+	}
+
+	void delGraph(UndirectedGraphNode* root, unordered_set<UndirectedGraphNode*>& mem){
+		if (root  && mem.find(root) == mem.end()){
+			mem.insert(root);
+			for (auto item : root->neighbors){
+					delGraph(item, mem);
+			}
+
+			delete root;
+			root = NULL;
+		}
+	}
+
+	static void main(){
+		Solution133* test = new Solution133;
+		UndirectedGraphNode* node0 = new UndirectedGraphNode(0);
+		UndirectedGraphNode* node1 = new UndirectedGraphNode(1);
+		UndirectedGraphNode* node2 = new UndirectedGraphNode(2);
+
+		node0->neighbors.push_back(node1);
+		node0->neighbors.push_back(node2);
+
+		node1->neighbors.push_back(node2);
+		node2->neighbors.push_back(node2);
+
+		UndirectedGraphNode* root = test->cloneGraph(node0);
+		unordered_set<UndirectedGraphNode*> mem;
+		test->delGraph(node0, mem);
+
+		mem.clear();
+		test->delGraph(root, mem);
+		delete test;
+	}
+};
+/*133. Clone Graph end*/
+//////////////////////////Tag Graph end//////////////////////////////////////////
+
+
+
 //////////////////////////Tag Design//////////////////////////////////////////
+/*297. Serialize and Deserialize Binary Tree (hard)*/
+class Codec297 {
+public:
+	struct TreeNode {
+		int val;
+		TreeNode *left;
+		TreeNode *right;
+		TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+	};
+
+	void serialize(TreeNode* root, ostringstream& out) {
+		if (root){
+			out << root->val << ' ';
+			serialize(root->left, out);
+			serialize(root->right, out);
+		}
+		else
+			out << "# ";
+	}
+
+	// Encodes a tree to a single string.
+	string serialize(TreeNode* root) {
+		ostringstream out;
+		serialize(root, out);
+
+		return out.str();
+	}
+
+	TreeNode* deserialize(istringstream &in) {
+		string str;
+
+		in >> str;
+		if (str == "#")
+			return NULL;
+
+		TreeNode* node = new TreeNode(stoi(str));
+		node->left = deserialize(in);
+		node->right = deserialize(in);
+		return node;
+	}
+
+	// Decodes your encoded data to tree.
+	TreeNode* deserialize(string data) {
+		istringstream in(data);
+
+		return deserialize(in);
+	}
+
+	void delNode(TreeNode* root){
+		if (NULL == root)
+			return;
+
+		delNode(root->left);
+		delNode(root->right);
+		delete root;
+	}
+
+	static void main(){
+		Codec297* test = new Codec297;
+		TreeNode* node1 = new TreeNode(1);
+		TreeNode* node2 = new TreeNode(2);
+		TreeNode* node3 = new TreeNode(3);
+		node1->left = node2;
+		node2->right = node3;
+
+		string str = test->serialize(node1);
+		test->delNode(node1);
+
+		TreeNode* root = test->deserialize(str);
+		test->delNode(root);
+		delete test;
+	}
+};
+/*297. Serialize and Deserialize Binary Tree end*/
+
+
+/*146. LRU Cache (hard)*/
+class LRUCache146{
+public:
+	LRUCache146(int capacity) {
+		max_num = capacity;
+	}
+
+	int get(int key) {
+		auto it = keys.find(key);
+		if (it == keys.end())
+			return -1;
+
+		used.erase(it->second.second);
+		used.push_front(key);
+		it->second.second = used.begin();
+
+		return keys[key].first;
+	}
+
+	void set(int key, int value) {
+		if (keys.count(key) < 1){
+			if (used.size() >= max_num){
+				keys.erase(used.back());
+				used.pop_back();
+			}
+
+			used.push_front(key);
+			keys[key] = make_pair(value, used.begin());
+		}
+		else{
+			used.erase(keys[key].second);
+			used.push_front(key);
+			keys[key] = make_pair(value, used.begin());
+		}
+	}
+
+	unordered_map<int, pair<int, list<int>::iterator>> keys;
+	list<int> used;
+
+	int max_num;
+
+	static void main(){
+		LRUCache146* test = new LRUCache146(2);
+		int result;
+
+		test->set(1, 11);
+		test->set(2, 22);
+
+		result = test->get(3);
+		result = test->get(1);
+		test->set(3, 33);
+		result = test->get(1); //return 11
+		result = test->get(2); //return -1
+
+		delete test;
+	}
+};
+/*146. LRU Cache end*/
+
+
+/*341. Flatten Nested List Iterator (medium)*/
+#if 0
+class NestedIterator341 {
+public:
+	NestedIterator341(vector<NestedInteger> &nestedList) {
+
+		dfs(nestedList);
+		m_cur = 0;
+	}
+
+	void dfs(vector<NestedInteger> &nestedList)
+	{
+		for (int i = 0; i < nestedList.size(); ++i)
+		{
+			if (nestedList[i].isInteger())
+				m_vec.push_back(nestedList[i].getInteger());
+			else
+			{
+				vector<NestedInteger> tmp = nestedList[i].getList();
+				dfs(tmp);
+			}
+		}
+	}
+
+	int next() {
+		return  m_vec[m_cur++];
+	}
+
+	bool hasNext() {
+		return m_cur < m_vec.size();
+	}
+
+
+	vector<int> m_vec;
+	int m_cur;
+};
+#endif
+/*341. Flatten Nested List Iterator end*/
+
+
 /*295. Find Median from Data Stream (hard)*/
 class MedianFinder295 {
 public:
@@ -1686,6 +2028,10 @@ private:
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	Solution310::main();
+	Solution133::main();
+	Codec297::main();
+	LRUCache146::main();
 	MedianFinder295::main();
 	BSTIterator173::main();
 	Twitter355::main();
