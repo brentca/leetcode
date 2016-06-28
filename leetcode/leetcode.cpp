@@ -33,6 +33,107 @@ namespace BFS{
 		}
 	}
 
+	/*126. Word Ladder II (hard)*/
+	class Solution126 {
+	public:
+		vector<vector<string>> findLadders(string beginWord, string endWord, unordered_set<string> &wordList) {
+			vector<vector<string> > paths;
+			vector<string> path(1, beginWord);
+
+			if (beginWord == endWord) {
+				paths.push_back(path);
+				return paths;
+			}
+
+			unordered_set<string>word1;
+			unordered_set<string>word2;
+			unordered_map<string, vector<string>> nexts;
+			bool bfromword1 = false;
+
+			word1.insert(beginWord);
+			word2.insert(endWord);
+
+			if (findwords(word1, word2, wordList, nexts, bfromword1))
+				getPath(beginWord, endWord, nexts, path, paths);
+
+			return paths;
+		}
+
+		void getPath(string beginWord, string &endWord, unordered_map<string,
+			vector<string> > &nexts, vector<string> &path, vector<vector<string> > &paths){
+			if (beginWord == endWord)
+				paths.push_back(path);
+			else{
+				for (auto it : nexts[beginWord]){
+					path.push_back(it);
+					getPath(it, endWord, nexts, path, paths);
+					path.pop_back();
+				}
+			}
+		}
+
+		bool findwords(unordered_set<string>& word1, unordered_set<string>& word2,
+			unordered_set<string> &dict, unordered_map<string, vector<string>>& nexts, bool fromword1){
+			fromword1 = !fromword1;
+
+			if (word1.empty())
+				return false;
+
+			if (word1.size() > word2.size())
+				return findwords(word2, word1, dict, nexts, fromword1);
+
+			for (auto it : word1)
+				dict.erase(it);
+
+			for (auto it : word2)
+				dict.erase(it);
+
+			unordered_set<string> word3;
+			bool reach = false;
+
+			for (auto it : word1){
+				string word = it;
+
+				for (auto ch = word.begin(); ch != word.end(); ++ch){
+					char tmp = *ch;
+					for (*ch = 'a'; *ch <= 'z'; ++(*ch)){
+						if (*ch != tmp){
+							if (word2.find(word) != word2.end()){
+								reach = true;
+								fromword1 ? nexts[it].push_back(word) : nexts[word].push_back(it);
+							}
+							else if (!reach && dict.find(word) != dict.end()){
+								word3.insert(word);
+								fromword1 ? nexts[it].push_back(word) : nexts[word].push_back(it);
+							}
+						}
+					}
+					*ch = tmp;
+				}
+			}
+
+			return reach || findwords(word2, word3, dict, nexts, fromword1);
+		}
+
+		static void main(){
+			Solution126* test = new Solution126;
+			vector<vector<string>> result;
+			string beginWord1("hit");
+			string endWord1("cog");
+			unordered_set<string> wordList1 = { "hot", "dot", "dog", "lot", "log" };
+
+			result = test->findLadders(beginWord1, endWord1, wordList1);
+
+
+			string beginWord2("hab");
+			string endWord2("haw");
+			unordered_set<string> wordList2 = { "hac", "hcw"};
+			result = test->findLadders(beginWord2, endWord2, wordList2);
+			delete test;
+		}
+	};
+	/*126. Word Ladder II end*/
+
 
 	/*279. Perfect Squares (medium)*/
 	class Solution279 {
@@ -2558,6 +2659,7 @@ private:
 using namespace BFS;
 int _tmain(int argc, _TCHAR* argv[])
 {
+	Solution126::main();
 	Solution199::main();
 	Solution107::main();
 	Solution111::main();
