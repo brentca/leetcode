@@ -16,6 +16,151 @@
 
 using namespace std;
 
+//////////////////////////Tag Depth-first Search//////////////////////////////////////////
+namespace DFS {
+	struct TreeNode {
+		int val;
+		TreeNode *left;
+		TreeNode *right;
+		TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+	};
+
+	void delNode(TreeNode* root) {
+		if (NULL != root) {
+			delNode(root->left);
+			delNode(root->right);
+			delete root;
+		}
+	}
+
+	/*112. Path Sum (easy)*/
+	class Solution112{
+	public:
+		bool hasPathSum(TreeNode *root, int sum) {
+			if (root == NULL) 
+				return false;
+
+			if (root->val == sum && NULL == root->left && NULL == root->right)
+				return true;
+
+			return hasPathSum(root->left, sum - root->val) || hasPathSum(root->right, sum - root->val);
+		}
+	};
+	/*112. Path Sum end*/
+
+	/*257. Binary Tree Paths (easy)*/
+	class Solution257 {
+		public:
+		string generatepath(vector<int> &path){
+			string str;
+			int len = path.size();
+			for (int i = 0; i <len - 1; ++i)
+				str += to_string(path[i]) + "->";
+
+			str += to_string(path[len - 1]);
+			return str;
+		}
+
+		void dfs(TreeNode* node, vector<int>path, vector<string>&result){
+			if (!node)
+				return;
+
+			path.push_back(node->val);
+			if (node->left == NULL && node->right == NULL)
+				result.push_back(generatepath(path));
+			else{
+				if (node->left)
+					dfs(node->left, path, result);
+
+				if (node->right)
+					dfs(node->right, path, result);
+			}
+		}
+
+		vector<string> binaryTreePaths(TreeNode* root) {
+			vector<string> result;
+			vector<int> path;
+
+			dfs(root, path, result);
+			return result;
+		}
+
+		static void main() {
+			Solution257* test = new Solution257;
+			vector<string> result;
+
+			TreeNode* node1 = new TreeNode(1);
+			TreeNode* node2 = new TreeNode(2);
+			TreeNode* node3 = new TreeNode(3);
+			TreeNode* node4 = new TreeNode(4);
+			node1->left = node2;
+			node2->right = node4;
+			node1->right = node3;
+
+			delNode(node1);
+			result = test->binaryTreePaths(node1);
+			delete test;
+		}
+	};
+	/*257. Binary Tree Paths end*/
+
+
+	/*104. Maximum Depth of Binary Tree (easy)*/
+	class Solution104 {
+	public:
+		int maxDepth(TreeNode *root) {
+			return root == NULL ? 0 : max(maxDepth(root->left), maxDepth(root->right)) + 1;
+		}
+
+		int maxDepthBfs(TreeNode *root){
+			if (root == NULL)
+				return 0;
+
+			int res = 0;
+			queue<TreeNode *> q;
+			q.push(root);
+			while (!q.empty()){
+				++res;
+
+				for (int i = 0, n = q.size(); i < n; ++i){
+					TreeNode *p = q.front();
+					q.pop();
+
+					if (NULL != p->left)
+						q.push(p->left);
+					if (NULL != p->right)
+						q.push(p->right);
+				}
+			}
+
+			return res;
+		}
+	};
+	/*104. Maximum Depth of Binary Tree end*/
+
+
+	/*100. Same Tree (easy)*/
+	class Solution100 {
+	public:
+		bool isSameTree(TreeNode *p, TreeNode *q) {
+			if ((p == NULL) && q)
+				return false;
+
+			if ((q == NULL) && p)
+				return false;
+
+			if (q == p)
+				return true;
+
+			return ((p->val == q->val) && isSameTree(p->left, q->left) && isSameTree(p->right, q->right));
+		}
+	};
+	/*100. Same Tree end*/
+}
+//////////////////////////Tag Depth-first Search end//////////////////////////////////////////
+
+
+
 //////////////////////////Tag Breadth-first Search//////////////////////////////////////////
 namespace BFS{
 	struct TreeNode {
@@ -32,6 +177,72 @@ namespace BFS{
 			delete root;
 		}
 	}
+
+	/*301. Remove Invalid Parentheses (hard)*/
+	class Solution301 {
+	public:
+		bool isValid(const string & s){
+			int count = 0;
+			for (int i = 0; i < s.size(); ++i){
+				if ('(' == s[i])
+					++count;
+				else if (')' == s[i] && count-- == 0)
+					return false;
+			}
+
+			return count == 0;
+		}
+
+		vector<string> removeInvalidParentheses(string s) {
+			unordered_set<string> visited;
+			vector<string> result;
+			queue<string> qstr;
+			qstr.push(s);
+
+			bool found = false;
+			while (!qstr.empty()){
+				string tmp = qstr.front();
+				qstr.pop();
+
+				if (isValid(tmp)){
+					result.push_back(tmp);
+					found = true;
+				}
+
+				//find valid in the current level and check other possibilities
+				if (found)
+					continue;
+
+				for (int i = 0; i < tmp.size(); ++i){
+					if ('(' != tmp[i] && ')' != tmp[i])
+						continue;
+
+					string str = tmp.substr(0, i) + tmp.substr(i + 1);
+
+					if (visited.count(str) < 1){
+						visited.insert(str);
+						qstr.push(str);
+					}
+				}
+			}
+
+			return result;
+		}
+
+		static void main() {
+			Solution301* test = new Solution301;
+			vector<string> result;
+
+			string str1("()())()");
+			string str2("(a)())()");
+
+			result = test->removeInvalidParentheses(str1);
+			result = test->removeInvalidParentheses(str2);
+			delete test;
+		}
+	};
+	/*301. Remove Invalid Parentheses end*/
+
 
 	/*126. Word Ladder II (hard)*/
 	class Solution126 {
@@ -476,7 +687,7 @@ namespace BFS{
 	/*101. Symmetric Tree end*/
 	//////////////////////////Tag Breadth-first Search end//////////////////////////////////////////
 }
-
+//////////////////////////Tag Breadth-first Search end//////////////////////////////////////////
 
 //////////////////////////Tag Graph//////////////////////////////////////////
 /*332. Reconstruct Itinerary (medium)*/
@@ -2652,13 +2863,15 @@ private:
 * SnakeGame obj = new SnakeGame(width, height, food);
 * int param_1 = obj.move(direction);
 */
-
 /* LeetCode 353. Design Snake Game end*/
-
 //////////////////////////Tag Queue end//////////////////////////////////////////
+
 using namespace BFS;
+using namespace DFS;
 int _tmain(int argc, _TCHAR* argv[])
 {
+	Solution257::main();
+	Solution301::main();
 	Solution126::main();
 	Solution199::main();
 	Solution107::main();
