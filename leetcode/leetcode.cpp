@@ -25,6 +25,12 @@ namespace DFS {
 		TreeNode(int x) : val(x), left(NULL), right(NULL) {}
 	};
 
+	struct ListNode {
+		int val;
+		ListNode *next;
+		ListNode(int x) : val(x), next(NULL) {}
+	};
+
 	void delNode(TreeNode* root) {
 		if (NULL != root) {
 			delNode(root->left);
@@ -32,6 +38,286 @@ namespace DFS {
 			delete root;
 		}
 	}
+
+	void delList(ListNode* root){
+		if (NULL != root){
+			if (NULL != root->next)
+				delList(root->next);
+
+			delete root;
+		}
+	}
+
+	/*114. Flatten Binary Tree to Linked List (medium)
+	https://leetcode.com/problems/flatten-binary-tree-to-linked-list/
+	*/
+	/*114. Flatten Binary Tree to Linked List end*/
+
+
+	/*113. Path Sum II (medium)
+	https://leetcode.com/problems/path-sum-ii/
+	https://leetcode.com/discuss/16980/dfs-with-one-linkedlist-accepted-java-solution
+	*/
+	class Solution113 {
+	public:
+		vector<vector<int>> m_result;
+
+		void pathSum(TreeNode* root, vector<int> parents, int sum) {
+			if (NULL == root)
+				return;
+
+			parents.push_back(root->val);
+			if (NULL == root->left && NULL == root->right){
+				if (sum == root->val)
+					m_result.push_back(parents);
+
+				parents.pop_back();
+			}
+			else{
+				pathSum(root->left, parents, sum - root->val);
+				pathSum(root->right, parents, sum - root->val);
+			}
+		}
+
+		vector<vector<int>> pathSum(TreeNode* root, int sum) {
+			vector<int> parents;
+			pathSum(root, parents, sum);
+
+			return m_result;
+		}
+	};
+	/*113. Path Sum II end*/
+
+
+	/*106. Construct Binary Tree from Inorder and Postorder Traversal (medium)
+	https://leetcode.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/
+	https://leetcode.com/discuss/10961/my-recursive-java-code-with-o-n-time-and-o-n-space
+	*/
+	class Solution106 {
+	public:
+		int finditem(vector<int>& nodes, int low, int high, int target){
+			for (int i = low; i <= high; ++i){
+				if (nodes[i] == target)
+					return i;
+			}
+		}
+
+		TreeNode* buildTree(vector<int>& inorder, int instart, int inend, vector<int>& postorder, 
+							int poststart, int posend){
+			TreeNode* root = new TreeNode(postorder[posend]);
+
+			int index = finditem(inorder, instart, inend, postorder[posend]);
+			int leftnum = index - instart;
+			int rightnum = inend - index;
+
+			if (posend == poststart)
+				return root;
+
+			if (leftnum > 0)
+				root->left = buildTree(inorder, instart, index - 1, postorder, poststart, poststart + leftnum - 1);
+
+			if (rightnum > 0)
+				root->right = buildTree(inorder, index + 1, inend, postorder, posend - rightnum, posend - 1);
+
+			return root;
+		}
+
+		TreeNode* buildTree1(vector<int>& inorder, vector<int>& postorder) {
+			if (inorder.empty() || postorder.size() != inorder.size())
+				return NULL;
+
+			TreeNode* root = buildTree(inorder, 0, inorder.size() - 1, postorder, 0, postorder.size() - 1);
+			return root;
+		}
+
+		//lastnode is the boundary of left subtree
+		TreeNode* myBuild2(vector<int>& inorder, vector<int>& postorder, TreeNode* lastnode){
+			if (posPost < 0)
+				return NULL;
+
+			TreeNode* node = new TreeNode(postorder[posPost--]);
+
+			if (inorder[posIn] != node->val)
+				node->right = myBuild2(inorder, postorder, node);
+
+			posIn--;
+
+			if ((NULL == lastnode) || (inorder[posIn] != lastnode->val))
+				node->left = myBuild2(inorder, postorder, lastnode);
+
+			return node;
+		}
+
+		int posIn, posPost;
+		TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
+			if (inorder.empty() || postorder.size() != inorder.size())
+				return NULL;
+
+			posIn = inorder.size() - 1;
+			posPost = postorder.size() - 1;
+
+			TreeNode* result = myBuild2(inorder, postorder, NULL);
+			return result;
+
+		}
+
+		static void main(){
+			Solution106* test = new Solution106;
+			TreeNode* result;
+
+			vector<int> inorder1 = {2, 1, 4, 3};
+			vector<int> postorder1 = {2, 4, 3, 1};
+
+			result = test->buildTree(inorder1, postorder1);
+			delNode(result);
+			delete test;
+		}
+	};
+	/*106. Construct Binary Tree from Inorder and Postorder Traversal end*/
+
+
+	/*108. Convert Sorted Array to Binary Search Tree (medium)
+	https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree/
+	https://leetcode.com/discuss/10484/my-accepted-java-solution
+	*/
+	class Solution108 {
+	public:
+		TreeNode *BuildTree(vector<int> &num, int nBegin, int nEnd){
+			if (nBegin > nEnd)
+				return NULL;
+
+			int nIdx = (nEnd + nBegin) / 2;
+			TreeNode* curr = new TreeNode(num[nIdx]);
+
+			curr->left = BuildTree(num, nBegin, nIdx - 1);
+			curr->right = BuildTree(num, nIdx + 1, nEnd);
+
+		}
+
+		TreeNode *sortedArrayToBST(vector<int> &num) {
+			if (num.empty())
+				return NULL;
+
+			return BuildTree(num, 0, num.size() - 1);
+		}
+	};
+	/*108. Convert Sorted Array to Binary Search Tree end*/
+
+
+	/*109. Convert Sorted List to Binary Search Tree (medium)
+	https://leetcode.com/problems/convert-sorted-list-to-binary-search-tree/
+	https://leetcode.com/discuss/10924/share-my-code-with-o-n-time-and-o-1-space
+	 time O(n) and space O(1)*/
+	class Solution109 {
+	public:
+		ListNode* m_list;
+		int listsize(ListNode* head){
+			int size = 0;
+			while (head){
+				++size;
+				head = head->next;
+			}
+
+			return size;
+		}
+
+		TreeNode* genode(int n){
+			if (0 == n)
+				return NULL;
+
+			TreeNode* tmp = new TreeNode(0);
+
+			tmp->left = genode(n / 2);
+			tmp->val = m_list->val;
+			m_list = m_list->next;
+			tmp->right = genode(n - n / 2 - 1);
+
+			return tmp;
+		}
+
+
+		TreeNode* sortedListToBST(ListNode* head) {
+			m_list = head;
+
+			return genode(listsize(head));
+		}
+
+		static void main(){
+			Solution109* test = new Solution109;
+			TreeNode* result;
+
+			ListNode* node1 = new ListNode(1);
+			ListNode* node2 = new ListNode(2);
+			ListNode* node3 = new ListNode(3); 
+			ListNode* node4 = new ListNode(4);
+
+			node1->next = node2;
+			node2->next = node3;
+			node3->next = node4;
+
+			result = test->sortedListToBST(node1);
+			delNode(result);
+
+			delete test;
+		}
+	};
+	/*109. Convert Sorted List to Binary Search Tree end*/
+
+
+	/*98. Validate Binary Search Tree (medium)
+	https://leetcode.com/problems/validate-binary-search-tree/
+	https://leetcode.com/discuss/14886/order-traversal-please-rely-buggy-int_max-int_min-solutions
+	*/
+	class Solution98 {
+	public:
+		bool checkBST(TreeNode* root, int max_val, int min_val){
+			if (NULL == root)
+				return true;
+
+			if (root->val >= min_val && root->val <= max_val){
+				if (NULL != root->left && INT_MIN == root->val)
+					return false;
+
+				if (NULL != root->right && INT_MAX == root->val)
+					return false;
+
+				return checkBST(root->left, root->val - 1, min_val) && checkBST(root->right, max_val, root->val + 1);
+			}
+
+			return false;
+		}
+
+		bool isValidBST(TreeNode* root) {
+			return checkBST(root, INT_MAX, INT_MIN);
+		}
+	};
+	/*98. Validate Binary Search Tree end*/
+
+
+	/*110. Balanced Binary Tree (easy)
+	https://leetcode.com/problems/balanced-binary-tree/
+	https://leetcode.com/discuss/22898/the-bottom-up-o-n-solution-would-be-better*/
+	class Solution110 {
+	public:
+		int currLevel(TreeNode* root){
+			if (NULL == root)
+				return 0;
+
+			int nleft = currLevel(root->left);
+			int nright = currLevel(root->right);
+
+			return (nleft > nright ? nleft + 1 : nright + 1);
+		}
+
+		bool isBalanced(TreeNode* root) {
+			if (NULL == root)
+				return true;
+
+			return isBalanced(root->left) && isBalanced(root->right) && abs(currLevel(root->left) - currLevel(root->right)) <= 1;
+		}
+	};
+	/*110. Balanced Binary Tree end*/
+
 
 	/*112. Path Sum (easy)*/
 	class Solution112{
@@ -2870,6 +3156,8 @@ using namespace BFS;
 using namespace DFS;
 int _tmain(int argc, _TCHAR* argv[])
 {
+	Solution106::main();
+	Solution109::main();
 	Solution257::main();
 	Solution301::main();
 	Solution126::main();
