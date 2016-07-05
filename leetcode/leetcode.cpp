@@ -16,6 +16,506 @@
 
 using namespace std;
 
+//////////////////////////Tag Tree//////////////////////////////////////////
+namespace TREE {
+	struct TreeNode {
+		int val;
+		TreeNode *left;
+		TreeNode *right;
+		TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+	};
+
+	void delNode(TreeNode* root) {
+		if (NULL != root) {
+			delNode(root->left);
+			delNode(root->right);
+			delete root;
+		}
+	}
+
+	/*230. Kth Smallest Element in a BST (medium)
+	*/
+	/*230. Kth Smallest Element in a BST end */
+
+
+	/*145. Binary Tree Postorder Traversal (hard)
+	https://leetcode.com/problems/binary-tree-postorder-traversal/
+	https://discuss.leetcode.com/topic/2919/my-accepted-code-with-explaination-does-anyone-have-a-better-idea
+	*/
+	class Solution {
+	public:
+		vector<int> postorderTraversal(TreeNode* root) {
+			vector<int> result;
+
+			if (NULL == root)
+				return result;
+
+			stack<TreeNode* > nodeStack;
+			TreeNode* curr = root;
+			TreeNode* pre = NULL;
+
+			while (!nodeStack.empty() || curr) {
+				while (curr) {
+					nodeStack.push(curr);
+					curr = curr->left;
+				}
+
+				if (nodeStack.top()->right && (pre != nodeStack.top()->right))
+					curr = nodeStack.top()->right;
+				else {
+					result.push_back(nodeStack.top()->val);
+					pre = nodeStack.top();
+					nodeStack.pop();
+				}
+			}
+
+			return result;
+		}
+	};
+	/*145. Binary Tree Postorder Traversal end */
+
+
+	/*95. Unique Binary Search Trees II (medium)
+	https://leetcode.com/problems/unique-binary-search-trees-ii/
+	https://discuss.leetcode.com/topic/3079/a-simple-recursive-solution
+	*/
+	class Solution95 {
+	public:
+		vector<TreeNode*> genTree(int start, int end) {
+			vector<TreeNode*> result;
+
+			if (start > end) {
+				result.push_back(NULL);
+				return result;
+			}
+
+			if (start == end) {
+				result.push_back(new TreeNode(end));
+				return result;
+			}
+
+			vector<TreeNode*> left;
+			vector<TreeNode*> right;
+
+			for (int i = start; i <= end; ++i) {
+				left = genTree(start, i - 1);
+				right = genTree(i + 1, end);
+
+				for (auto litem : left)
+				for (auto ritem : right) {
+					TreeNode* root = new TreeNode(i);
+					root->left = litem;
+					root->right = ritem;
+					result.push_back(root);
+				}
+			}
+
+			return result;
+		}
+
+		vector<TreeNode*> generateTrees(int n) {
+			vector<TreeNode*> result;
+
+			if (n < 1)
+				return result;
+
+			result = genTree(1, n);
+			return result;
+		}
+	};
+	/*95. Unique Binary Search Trees II end */
+
+
+	/*96. Unique Binary Search Trees (medium)
+	https://leetcode.com/problems/unique-binary-search-trees/
+	https://discuss.leetcode.com/topic/8398/dp-solution-in-6-lines-with-explanation-f-i-n-g-i-1-g-n-i
+	*/
+	class Solution96 {
+	public:
+		int numTrees(int n) {
+			vector<int> a(n + 1, 0);
+
+			a[0] = 1;
+			for (int i = 1; i <= n; ++i)
+			for (int j = 0; j < i; ++j) {
+				a[i] += a[j] * a[i - j - 1];
+			}
+
+			return a[n];
+		}
+	};
+	/*96. Unique Binary Search Trees end */
+
+
+	/*236. Lowest Common Ancestor of a Binary Tree (medium)
+	https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/
+	https://discuss.leetcode.com/topic/18561/4-lines-c-java-python-ruby
+	*/
+	class Solution236 {
+	public:
+		void listparent(vector<TreeNode*>&path) {
+			stack<TreeNode*> result;
+			int num = path.size();
+			TreeNode* node = path[num - 1];
+
+			result.push(node);
+			num--;
+			for (int i = num - 1; i >= 0; --i) {
+				TreeNode* tmp = result.top();
+				if (path[i]->left && path[i]->left == tmp)
+					result.push(path[i]);
+				else if (path[i]->right && path[i]->right == tmp)
+					result.push(path[i]);
+			}
+
+			path.resize(result.size());
+			int i = 0;
+			while (!result.empty()) {
+				path[i++] = result.top();
+				result.pop();
+			}
+		}
+
+		TreeNode* lowestCommonAncestor1(TreeNode* root, TreeNode* p, TreeNode* q) {
+			if (root == NULL || p == root || q == root)
+				return root;
+
+			TreeNode* left = lowestCommonAncestor1(root->left, p, q);
+			TreeNode* right = lowestCommonAncestor1(root->right, p, q);
+
+			return left != NULL ? right ? root : left : right;
+		}
+
+		TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+			if (!root || root == p || root == q)
+				return root;
+
+			vector<TreeNode*>pathp, pathq, pathtmp;
+			stack<TreeNode*> nodes;
+			nodes.push(root);
+
+			while (1) {
+				TreeNode* tmp = nodes.top();
+				nodes.pop();
+				pathtmp.push_back(tmp);
+
+				if (p == tmp)
+					pathp = pathtmp;
+
+				if (q == tmp)
+					pathq = pathtmp;
+
+				if (pathp.size() && pathq.size())
+					break;
+
+				if (tmp->right)
+					nodes.push(tmp->right);
+
+				if (tmp->left)
+					nodes.push(tmp->left);
+			}
+
+			//bottom up the path of node
+			listparent(pathp);
+			listparent(pathq);
+			int n = min(pathp.size(), pathq.size());
+
+			for (int i = 1; i < n; ++i) {
+				if (pathp[i] != pathq[i])
+					return pathp[i - 1];
+			}
+
+			return pathp[n - 1];
+		}
+
+		static void main() {
+			Solution236* test = new Solution236;
+			TreeNode* result;
+
+			TreeNode *node1 = new TreeNode(1);
+			TreeNode *node2 = new TreeNode(2);
+			TreeNode *node3 = new TreeNode(3);
+			TreeNode *node4 = new TreeNode(4);
+			TreeNode *node5 = new TreeNode(5);
+			node1->left = node2;
+			node1->right = node3;
+			node2->right = node4;
+			node3->left = node5;
+
+			result = test->lowestCommonAncestor(node1, node2, node3);
+			delNode(node1);
+			delete test;
+		}
+	};
+	/*236. Lowest Common Ancestor of a Binary Tree end */
+
+
+	/*230. Kth Smallest Element in a BST (medium)
+	https://leetcode.com/problems/kth-smallest-element-in-a-bst/
+	https://discuss.leetcode.com/topic/17810/3-ways-implemented-in-java-binary-search-in-order-iterative-recursive
+	*/
+	class Solution230 {
+	public:
+		int kthSmallest(TreeNode* root, int k) {
+			stack<TreeNode*> order;
+			TreeNode* tmp;
+			order.push(root);
+
+			while (!order.empty()) {
+				tmp = order.top();
+				while (tmp) {
+					order.push(tmp->left);
+					tmp = tmp->left;
+				}
+
+				order.pop();
+				tmp = order.top();
+				order.pop();
+				--k;
+
+				if (0 == k)
+					return tmp->val;
+
+				order.push(tmp->right);
+			}
+
+			return 0;
+		}
+	};
+	/*230. Kth Smallest Element in a BST end */
+
+
+	/*222. Count Complete Tree Nodes (medium)
+	https://leetcode.com/problems/count-complete-tree-nodes/
+	https://discuss.leetcode.com/topic/15533/concise-java-solutions-o-log-n-2
+	*/
+	class Solution222 {
+	public:
+		int countNodes(TreeNode* root) {
+			if (NULL == root)
+				return 0;
+
+			int left = 0, right = 0;
+			TreeNode* lnode = root;
+			TreeNode* rnode = root;
+
+			while (lnode) {
+				++left;
+				lnode = lnode->left;
+			}
+
+			while (rnode) {
+				++right;
+				rnode = rnode->right;
+			}
+
+			if (left == right)
+				return pow(2, left) - 1;
+
+			return 1 + countNodes(root->left) + countNodes(root->right);
+		}
+	};
+	/*222. Count Complete Tree Nodes end */
+
+
+	/*144. Binary Tree Preorder Traversal (medium)
+	https://leetcode.com/problems/binary-tree-preorder-traversal/
+	https://discuss.leetcode.com/topic/6493/accepted-iterative-solution-in-java-using-stack
+	*/
+	class Solution144 {
+	public:
+		vector<int> preorderTraversal(TreeNode *root) {
+			vector<int> result;
+			stack <TreeNode*> pool;
+
+			if (NULL == root)
+				return result;
+
+			pool.push(root);
+			while (!pool.empty()) {
+				TreeNode* tmp = pool.top();
+
+				pool.pop();
+				result.push_back(tmp->val);
+
+				if (tmp->right)
+					pool.push(tmp->right);
+
+				if (tmp->left)
+					pool.push(tmp->left);
+			}
+
+			return result;
+		}
+	};
+	/*144. Binary Tree Preorder Traversal end */
+
+
+	/*103. Binary Tree Zigzag Level Order Traversal (medium)
+	https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/
+	https://discuss.leetcode.com/topic/3413/my-accepted-java-solution
+	*/
+	class Solution103 {
+	public:
+		vector<vector<int>> zigzagLevelOrder(TreeNode* root) {
+			vector<vector<int>> result;
+			if (NULL == root)
+				return result;
+
+			queue<TreeNode*> nodes;
+			nodes.push(root);
+			TreeNode* tmp;
+			bool fromleft = true;
+
+			while (!nodes.empty()) {
+				vector<int> curline(nodes.size());
+				int nums = nodes.size();
+				for (int i = 0; i < nums; ++i) {
+					tmp = nodes.front();
+					nodes.pop();
+
+					int index = fromleft ? i : nums - 1 - i;
+					curline[index] = tmp->val;
+
+					if (tmp->left)
+						nodes.push(tmp->left);
+
+					if (tmp->right)
+						nodes.push(tmp->right);
+				}
+
+				fromleft = !fromleft;
+
+				if (curline.size())
+					result.push_back(curline);
+			}
+
+			return result;
+		}
+	};
+	/*103. Binary Tree Zigzag Level Order Traversal end */
+
+
+	/*94. Binary Tree Inorder Traversal (medium)
+	https://leetcode.com/problems/binary-tree-inorder-traversal/
+	https://discuss.leetcode.com/topic/6478/iterative-solution-in-java-simple-and-readable
+	*/
+	class Solution94 {
+	public:
+		vector<int> inorderTraversal(TreeNode *root) {
+			vector<int> result;
+			stack<TreeNode*> test;
+			TreeNode* tmp;
+
+			if (NULL == root)
+				return result;
+
+			test.push(root);
+			while (!test.empty()) {
+				tmp = test.top();
+				while (NULL != tmp) {
+					test.push(tmp->left);
+					tmp = tmp->left;
+				}
+
+				test.pop();
+				tmp = test.top();
+				test.pop();
+				result.push_back(tmp->val);
+
+				if (NULL != tmp->right)
+					test.push(tmp->right);
+			}
+			/* the following will chang the tree node, will may cause memory leak
+			while (!test.empty()) {
+				tmp = test.top();
+				if (tmp->left) {
+					test.push(tmp->left);
+					tmp->left = NULL;
+				}
+				else {
+					test.pop();
+					result.push_back(tmp->val);
+					if (tmp->right)
+						test.push(tmp->right);
+				}
+			}
+			*/
+			return result;
+		}
+
+		static void main() {
+			Solution94* test = new Solution94;
+			vector<int> result;
+
+			TreeNode *node1 = new TreeNode(1);
+			TreeNode *node2 = new TreeNode(2);
+			TreeNode *node3 = new TreeNode(3);
+			TreeNode *node4 = new TreeNode(4);
+			TreeNode *node5 = new TreeNode(5);
+			node1->left = node2;
+			node1->right = node3;
+			node2->right = node4;
+			node3->left = node5;
+
+			result = test->inorderTraversal(node1);
+			delNode(node1);
+			delete test;
+		}
+	};
+	/*94. Binary Tree Inorder Traversal end */
+
+
+	/*226. Invert Binary Tree (easy)
+	https://leetcode.com/problems/invert-binary-tree/
+	https://discuss.leetcode.com/topic/16039/straightforward-dfs-recursive-iterative-bfs-solutions
+	*/
+	class Solution226 {
+	public:
+		TreeNode* invertTree(TreeNode* root) {
+			if (root == NULL)
+				return NULL;
+
+			TreeNode* pTmpNode = root->left;
+			root->left = root->right;
+			root->right = pTmpNode;
+
+			invertTree(root->left);
+
+			invertTree(root->right);
+
+			return root;
+		}
+	};
+	/*226. Invert Binary Tree end */
+
+
+	/*235. Lowest Common Ancestor of a Binary Search Tree (easy)
+	https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/
+	https://discuss.leetcode.com/topic/18387/3-lines-with-o-1-space-1-liners-alternatives
+	*/
+	class Solution235 {
+	public:
+		TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+			TreeNode* result = root;
+
+			while (result) {
+				if ((result->val > p->val) && (result->val > q->val))
+					result = result->left;
+				else if ((result->val < p->val) && (result->val < q->val))
+					result = result->right;
+				else
+					break;
+			}
+
+			return result;
+		}
+	};
+	/*235. Lowest Common Ancestor of a Binary Search Tree end */
+}
+//////////////////////////Tag Tree end//////////////////////////////////////////
+
+
 //////////////////////////Tag Depth-first Search//////////////////////////////////////////
 namespace DFS {
 	struct TreeNode {
@@ -45,14 +545,92 @@ namespace DFS {
 		}
 	}
 
-	void delList(ListNode* root){
-		if (NULL != root){
+	void delList(ListNode* root) {
+		if (NULL != root) {
 			if (NULL != root->next)
 				delList(root->next);
 
 			delete root;
 		}
 	}
+
+
+	/*124. Binary Tree Maximum Path Sum (hard)
+	https://leetcode.com/problems/binary-tree-maximum-path-sum/
+	https://discuss.leetcode.com/topic/4407/accepted-short-solution-in-java
+	*/
+	class Solution124 {
+	public:
+		int m_maxvalue;
+
+		int pathDown(TreeNode* root){
+			if (NULL == root)
+				return 0;
+
+			int left = max(0, pathDown(root->left));
+			int right = max(0, pathDown(root->right));
+
+			m_maxvalue = max(m_maxvalue, left + right + root->val);
+
+			return max(left, right) + root->val;
+		}
+
+		int maxPathSum(TreeNode* root) {
+			m_maxvalue = INT_MIN;
+			pathDown(root);
+
+			return m_maxvalue;
+		}
+	};
+	/*124. Binary Tree Maximum Path Sum end */
+
+	/*99. Recover Binary Search Tree (hard)
+	https://leetcode.com/problems/recover-binary-search-tree/
+	https://discuss.leetcode.com/topic/3988/no-fancy-algorithm-just-simple-and-powerful-in-order-traversal
+	*/
+	class Solution99 {
+	public:
+		void recoverTree(TreeNode* root) {
+			vector<TreeNode*> nodes;
+			stack<TreeNode*> pre;
+			bool bdone = false;
+			TreeNode* curr = root;
+
+			while (!bdone){
+				if (curr){
+					pre.push(curr);
+					curr = curr->left;
+				}
+				else{
+					if (pre.empty())
+						bdone = true;
+					else{
+						curr = pre.top();
+						pre.pop();
+
+						nodes.push_back(curr);
+						curr = curr->right;
+					}
+				}
+			}
+
+			int i, j;
+			int len = nodes.size();
+			for (i = 0; i < len - 1; ++i)
+			if (nodes[i]->val >= nodes[i + 1]->val)
+				break;
+
+			for (j = len - 1; j > 0; --j)
+			if (nodes[j]->val <= nodes[j - 1]->val)
+				break;
+
+			int val = nodes[i]->val;
+			nodes[i]->val = nodes[j]->val;
+			nodes[j]->val = val;
+		}
+	};
+	/*99. Recover Binary Search Tree end */
+
 
 	/*117. Populating Next Right Pointers in Each Node II (hard)
 	https://leetcode.com/problems/populating-next-right-pointers-in-each-node-ii/
@@ -3429,8 +4007,12 @@ private:
 
 using namespace BFS;
 using namespace DFS;
+using namespace TREE;
+
 int _tmain(int argc, _TCHAR* argv[])
 {
+	Solution236::main();
+	Solution94::main();
 	Solution105::main();
 	Solution114::main();
 	Solution106::main();
