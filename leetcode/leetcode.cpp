@@ -31,6 +31,12 @@ namespace DFS {
 		ListNode(int x) : val(x), next(NULL) {}
 	};
 
+	struct TreeLinkNode {
+		int val;
+		TreeLinkNode *left, *right, *next;
+		TreeLinkNode(int x) : val(x), left(NULL), right(NULL), next(NULL) {}
+	};
+
 	void delNode(TreeNode* root) {
 		if (NULL != root) {
 			delNode(root->left);
@@ -48,9 +54,129 @@ namespace DFS {
 		}
 	}
 
+	/*105. Construct Binary Tree from Preorder and Inorder Traversal (medium)
+	https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/
+	*/
+	/*105. Construct Binary Tree from Preorder and Inorder Traversal end */
+
+
+	/*129. Sum Root to Leaf Numbers end (medium)
+	https://leetcode.com/problems/sum-root-to-leaf-numbers/
+	https://leetcode.com/discuss/20451/short-java-solution-recursion
+	*/
+	class Solution129 {
+	public:
+		int sumNumbers(TreeNode* root) {
+			if (NULL == root)
+				return 0;
+
+			int result = 0;
+			stack<int> nums;
+			stack<TreeNode*> nodes;
+			nodes.push(root);
+			nums.push(root->val);
+			TreeNode* nodetmp = NULL;
+			int valtmp;
+
+			while (!nodes.empty()){
+				nodetmp = nodes.top();
+				nodes.pop();
+
+				valtmp = nums.top();
+				nums.pop();
+
+				if (NULL == nodetmp->left && NULL == nodetmp->right)
+					result += valtmp;
+
+				if (NULL != nodetmp->left){
+					nodes.push(nodetmp->left);
+					nums.push(valtmp * 10 + nodetmp->left->val);
+				}
+
+				if (NULL != nodetmp->right){
+					nodes.push(nodetmp->right);
+					nums.push(valtmp * 10 + nodetmp->right->val);
+				}
+			}
+
+			return result;
+		}
+	};
+	/*129. Sum Root to Leaf Numbers end*/
+
+
+	/*116. Populating Next Right Pointers in Each Node (medium)
+	https://leetcode.com/problems/populating-next-right-pointers-in-each-node/
+	https://leetcode.com/discuss/7327/a-simple-accepted-solution
+	*/
+	class Solution116 {
+	public:
+		void connect(TreeLinkNode *root) {
+			if (NULL == root)
+				return;
+
+			TreeLinkNode *curr = root;
+			TreeLinkNode *levelhead = root->left;
+
+			while (levelhead != NULL){
+				if (curr->left)
+					curr->left->next = curr->right;
+				else if (curr->right)
+					curr->right->next = curr->right;
+
+				if (curr->next){
+					curr->right->next = curr->next->left;
+					curr = curr->next;
+					continue;
+				}
+
+				curr = levelhead;
+				levelhead = levelhead->left;
+			}
+		}
+	};
+	/*116. Populating Next Right Pointers in Each Node end*/
+
+
 	/*114. Flatten Binary Tree to Linked List (medium)
 	https://leetcode.com/problems/flatten-binary-tree-to-linked-list/
+	https://leetcode.com/discuss/30719/my-short-post-order-traversal-java-solution-for-share
 	*/
+	class Solution114 {
+	public:
+		TreeNode* pre = NULL;
+		void flatten(TreeNode* root) {
+			if (root == NULL)
+				return;
+
+			flatten(root->right);
+			flatten(root->left);
+
+			root->right = pre;
+			root->left = NULL;
+			pre = root;
+		}
+
+		static void main() {
+			Solution114* test = new Solution114;
+			TreeNode* node1 = new TreeNode(1);
+			TreeNode* node2 = new TreeNode(2);
+			TreeNode* node3 = new TreeNode(3);
+			TreeNode* node4 = new TreeNode(4);
+			TreeNode* node5 = new TreeNode(5);
+			TreeNode* node6 = new TreeNode(6);
+
+			node1->left = node2;
+			node1->right = node3;
+			node2->left = node4;
+			node2->right = node5;
+			node3->left = node6;
+			test->flatten(node1);
+
+			delNode(node1);
+			delete test;
+		}
+	};
 	/*114. Flatten Binary Tree to Linked List end*/
 
 
@@ -3156,6 +3282,7 @@ using namespace BFS;
 using namespace DFS;
 int _tmain(int argc, _TCHAR* argv[])
 {
+	Solution114::main();
 	Solution106::main();
 	Solution109::main();
 	Solution257::main();
