@@ -16,7 +16,209 @@
 
 using namespace std;
 
-//////////////////////////Tag Tree//////////////////////////////////////////
+
+//////////////////////////Tag Bit Manipulation//////////////////////////////////////////
+namespace BIT {
+	/*230. Kth Smallest Element in a BST (medium)
+	*/
+	/*230. Kth Smallest Element in a BST end */
+
+
+	/*137. Single Number II (medium)
+	https://leetcode.com/problems/single-number-ii/
+	https://discuss.leetcode.com/topic/2031/challenge-me-thx/2
+	*/
+	class Solution137 {
+	public:
+		int singleNumber(vector<int>& A) {
+			int ones = 0, twos = 0;
+
+			for (int i = 0; i < A.size(); ++i){
+				ones = ones ^ A[i] & ~twos;
+				twos = twos ^ A[i] & ~ones;
+			}
+
+			return ones;
+		}
+
+		static void main() {
+			Solution137* test = new Solution137;
+			vector<int> A1 = { 1, 2, 1, 1 };
+
+			test->singleNumber(A1);
+			delete test;
+		}
+		
+	};
+	/*137. Single Number II end */
+
+
+	/*136. Single Number (medium)
+	https://leetcode.com/problems/single-number/
+	https://discuss.leetcode.com/topic/1916/my-o-n-solution-using-xor
+	*/
+	class Solution136 {
+	public:
+		int singleNumber(int A[], int n) {
+			for (int i = 1; i < n; ++i)
+				A[0] ^= A[i];
+
+			return A[0];
+		}
+	};
+	/*136. Single Number end */
+
+
+	/*187. Repeated DNA Sequences (medium)
+	https://leetcode.com/problems/repeated-dna-sequences/
+	https://discuss.leetcode.com/topic/8487/i-did-it-in-10-lines-of-c
+	*/
+	class Solution187 {
+	public:
+		vector<string> findRepeatedDnaSequences(string s) {
+			vector<string> ret;
+			unordered_map<int, int> m;
+
+			for (int i = 0, t = 0; i < s.size(); ++i) {
+				if (m[t = t << 3 & 0x3FFFFFFF | s[i] & 7]++ == 1)
+					ret.push_back(s.substr(i - 9, 10));
+			}
+
+			return ret;
+		}
+
+		static void main() {
+			Solution187* test = new Solution187;
+
+			vector<string> result;
+			string str1("AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT");
+			result = test->findRepeatedDnaSequences(str1);
+			delete test;
+		}
+	};
+	/*187. Repeated DNA Sequences end */
+
+
+	/*190. Reverse Bits (easy)
+	https://leetcode.com/problems/reverse-bits/
+	*/
+	class Solution190 {
+	public:
+		unsigned int reverseBits(unsigned int n) {
+			int len = sizeof(unsigned int)* 8;
+			unsigned int result = 0;
+			for (int i = 0; i < len; ++i) {
+				if ((1 << i) & n)
+					result = result | (1 << (len - i - 1));
+			}
+
+			return result;
+		}
+	};
+	/*190. Reverse Bits end */
+
+
+	/*191. Number of 1 Bits (easy)
+	https://leetcode.com/problems/number-of-1-bits/
+	https://discuss.leetcode.com/topic/9915/short-code-of-c-o-m-by-time-m-is-the-count-of-1-s-and-another-several-method-of-o-1-time
+	*/
+	class Solution191 {
+	public:
+		int hammingWeight(unsigned int n) {
+			int result = 0;
+
+			int base;
+			for (int nIdx = 0; nIdx<32; ++nIdx) {
+				base = 1 << nIdx;
+
+				if (base&n)
+					result++;
+			}
+
+			return result;
+		}
+	};
+	/*191. Number of 1 Bits end */
+
+
+	/*169. Majority Element (easy)
+	https://leetcode.com/problems/majority-element/
+	https://discuss.leetcode.com/topic/17446/6-suggested-solutions-in-c-with-explanations
+	*/
+	class Solution169 {
+	public:
+		int majorityElement(vector<int> &num) {
+			int maj;
+			int count = 0;
+			int n = int(num.size());
+
+			for (int i = 0; i < n; i++) {
+				if (0 == count) {
+					maj = num[i];
+					++count;
+				}
+				else if (maj == num[i]) {
+					++count;
+					if (count > n / 2)
+						return maj;
+				}
+				else
+					--count;
+			}
+
+			return maj;
+		}
+	};
+	/*169. Majority Element end */
+
+
+	/*342. Power of Four (easy)
+	https://leetcode.com/problems/power-of-four/
+	https://discuss.leetcode.com/topic/42914/1-line-c-solution-without-confusing-bit-manipulations/5
+	*/
+	class Solution342 {
+	public:
+		bool isPowerOfFour(int num) {
+			return num > 0 && (num & (num - 1)) == 0 && (num - 1) % 3 == 0;
+		}
+
+		bool isPowerOfFour2(int num) {
+			if (num == 0 || num == INT_MIN)
+				return false;
+
+			if (num < 0);
+			num = -num;
+
+			return((num % 4) == 0);
+		}
+	};
+	/* 342. Power of Four end * /
+
+
+	/*231. Power of Two (easy)
+	https://leetcode.com/problems/power-of-two/
+	https://discuss.leetcode.com/topic/17857/using-n-n-1-trick/3
+	*/
+	class Solution231 {
+	public:
+		bool isPowerOfTwo(int n) {
+			if (n <= 0) 
+				return false;
+
+			return !(n&(n - 1));
+		}
+
+		bool isPowerOfTwo1(int n) {
+			while ((n & 1) == 0 && n > 0)
+				n = n >> 1;
+
+			return n == 1;
+		}
+	};
+	/*231. Power of Two end */
+}
+
+//////////////////////////Tag Bit Manipulation end//////////////////////////////////////////
 namespace TREE {
 	struct TreeNode {
 		int val;
@@ -32,11 +234,6 @@ namespace TREE {
 			delete root;
 		}
 	}
-
-	/*230. Kth Smallest Element in a BST (medium)
-	*/
-	/*230. Kth Smallest Element in a BST end */
-
 
 	/*145. Binary Tree Postorder Traversal (hard)
 	https://leetcode.com/problems/binary-tree-postorder-traversal/
@@ -4008,9 +4205,12 @@ private:
 using namespace BFS;
 using namespace DFS;
 using namespace TREE;
+using namespace BIT;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	Solution137::main();
+	Solution187::main();
 	Solution236::main();
 	Solution94::main();
 	Solution105::main();
