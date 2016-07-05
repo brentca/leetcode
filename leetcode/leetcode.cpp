@@ -54,9 +54,158 @@ namespace DFS {
 		}
 	}
 
+	/*117. Populating Next Right Pointers in Each Node II (hard)
+	https://leetcode.com/problems/populating-next-right-pointers-in-each-node-ii/
+	https://discuss.leetcode.com/topic/1106/o-1-space-o-n-complexity-iterative-solution
+	*/
+	class Solution117 {
+	public:
+		void connect(TreeLinkNode *root) {
+			TreeLinkNode *curr = root;
+
+			if (NULL == curr)
+				return;
+
+			TreeLinkNode *levelhead = root->left != NULL ? root->left : root->right;
+			TreeLinkNode *nextnode = NULL;
+
+			while (levelhead != NULL){
+				nextnode = curr->next;
+				while (nextnode && NULL == nextnode->left && NULL == nextnode->right)
+					nextnode = nextnode->next;
+
+				if (curr->left && curr->right)
+					curr->left->next = curr->right;
+				else if (curr->left){
+					if (nextnode && nextnode->left)
+						curr->left->next = nextnode->left;
+					else if (nextnode && nextnode->right)
+						curr->left->next = nextnode->right;
+				}
+
+				if (curr->right){
+					if (nextnode && nextnode->left)
+						curr->right->next = nextnode->left;
+					else if (nextnode && nextnode->right)
+						curr->right->next = nextnode->right;
+				}
+
+				if (nextnode){
+					curr = nextnode;
+					continue;
+				}
+
+				curr = levelhead;
+
+				while (levelhead && levelhead->left == NULL && levelhead->right == NULL)
+					levelhead = levelhead->next;
+
+				if (levelhead && levelhead->left)
+					levelhead = levelhead->left;
+				else if (levelhead && levelhead->right)
+					levelhead = levelhead->right;
+				else
+					levelhead = NULL;
+			}
+		}
+	};
+	/*117. Populating Next Right Pointers in Each Node II end */
+
+
+	/*337. House Robber III (medium)
+	https://leetcode.com/problems/house-robber-iii/
+	https://discuss.leetcode.com/topic/39834/step-by-step-tackling-of-the-problem
+	*/
+	class Solution337 {
+	public:
+		vector<int> dfs(TreeNode* root){
+			vector<int> ret(2, 0);
+
+			if (root == NULL)
+				return ret;
+
+			vector<int> left = dfs(root->left);
+			vector<int> right = dfs(root->right);
+
+			ret[0] = left[1] + right[1] + root->val;
+			ret[1] = max(left[0], left[1]) + max(right[0], right[1]);
+		}
+
+		int rob(TreeNode* root) {
+			vector<int> ret(2, 0);
+
+			ret = dfs(root);
+
+			return max(ret[0], ret[1]);
+		}
+	};
+	/*337. House Robber III end */
+
+
 	/*105. Construct Binary Tree from Preorder and Inorder Traversal (medium)
 	https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/
+	https://discuss.leetcode.com/topic/3695/my-accepted-java-solution
 	*/
+	class Solution105 {
+	public:
+		TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+			if (preorder.empty() || preorder.size() != inorder.size())
+				return NULL;
+
+			int i = 0, j = 0;
+			TreeNode* root = new TreeNode(0x80000000);
+			stack<TreeNode*> nodes;
+			nodes.push(root);
+			TreeNode *pp = NULL, *ptr = root;
+
+			while (j < inorder.size()){
+				if (nodes.top()->val == inorder[j]){
+					pp = nodes.top();
+					nodes.pop();
+					j++;
+				}
+				else if (pp){
+					ptr = new TreeNode(preorder[i]);
+					pp->right = ptr;
+					pp = NULL;
+					nodes.push(ptr);
+					++i;
+				}
+				else{
+					ptr = new TreeNode(preorder[i]);
+					nodes.top()->left = ptr;
+					nodes.push(ptr);
+					++i;
+				}
+			}
+
+			TreeNode* result = root->left;
+			delete root;
+
+			return result;
+		}
+
+		static void main() {
+			Solution105* test = new Solution105;
+			TreeNode* node1 = new TreeNode(1);
+			TreeNode* node2 = new TreeNode(2);
+			TreeNode* node3 = new TreeNode(3);
+			TreeNode* node4 = new TreeNode(4);
+			TreeNode* node5 = new TreeNode(5);
+			TreeNode* result;
+
+			node1->left = node2;
+			node1->right = node3;
+			node2->right = node4;
+			node3->left = node5;
+
+			vector<int> preorder1 = {1, 2, 4, 3, 5};
+			vector<int> inorder1 = {2, 4, 1, 5, 3};
+			result = test->buildTree(preorder1, inorder1);
+			delNode(result);
+			delete test;
+		}
+	};
 	/*105. Construct Binary Tree from Preorder and Inorder Traversal end */
 
 
@@ -3282,6 +3431,7 @@ using namespace BFS;
 using namespace DFS;
 int _tmain(int argc, _TCHAR* argv[])
 {
+	Solution105::main();
 	Solution114::main();
 	Solution106::main();
 	Solution109::main();
