@@ -13,15 +13,458 @@
 #include <unordered_map>
 #include <stack>
 #include <sstream>
+#include <numeric>
+#include <functional>
 
 using namespace std;
 
 
-//////////////////////////Tag Bit Manipulation//////////////////////////////////////////
-namespace BIT {
+//////////////////////////Tag Sort//////////////////////////////////////////
+namespace SORT {
+	struct ListNode {
+		int val;
+		ListNode *next;
+		ListNode(int x) : val(x), next(NULL) {}
+	};
+
 	/*230. Kth Smallest Element in a BST (medium)
 	*/
 	/*230. Kth Smallest Element in a BST end */
+
+
+	/*324. Wiggle Sort II (medium)
+	https://leetcode.com/problems/wiggle-sort-ii/
+	https://discuss.leetcode.com/topic/32929/o-n-o-1-after-median-virtual-indexing/2
+	https://discuss.leetcode.com/topic/32920/o-n-time-o-1-space-solution-with-detail-explanations
+	*/
+	class Solution324 {
+	public:
+		void wiggleSort(vector<int>& nums) {
+			int len = nums.size();
+			auto midptr = nums.begin() + len / 2;
+
+			nth_element(nums.begin(), midptr, nums.end());
+			int mid = *midptr;
+
+			//(n | 1) calculates the nearest odd that is not less than n
+			#define A(i) nums[(1+2*i) % (len | 1)]
+			int i = 0, j = 0, k = len - 1;
+
+			while (j <= k) {
+				if (A(j) > mid)
+					swap(A(j++), A(i++));
+				else if (A(j) < mid)
+					swap(A(j), A(k--));
+				else
+					++j;
+			}
+		}
+	};
+	/*324. Wiggle Sort II end */
+
+
+	/*148. Sort List (medium)
+	https://leetcode.com/problems/sort-list/
+	https://discuss.leetcode.com/topic/643/i-have-a-pretty-good-mergesort-method-can-anyone-speed-up-the-run-time-or-reduce-the-memory-usage
+	*/
+	class Solution148 {
+	public:
+		ListNode* sortList(ListNode* head) {
+			if (NULL == head || NULL ==  head->next)
+				return head;
+
+			ListNode* slow = head;
+			ListNode* fast = head;
+			ListNode* pre = NULL;
+
+			while (NULL != fast && NULL != fast->next) {
+				pre = slow;
+				slow = slow->next;
+				fast = fast->next->next;
+			}
+
+			pre->next = NULL;
+			ListNode* list1 = sortList(head);
+			ListNode* list2 = sortList(slow);
+
+			return merge(list1, list2);
+		}
+
+
+		ListNode* merge(ListNode* list1, ListNode* list2) {
+			ListNode root(0);
+			ListNode* tmp = &root;
+
+			while (NULL != list1 && NULL != list2) {
+				if (list1->val < list2->val) {
+					tmp->next = list1;
+					list1 = list1->next;
+				}
+				else {
+					tmp->next = list2;
+					list2 = list2->next;
+				}
+
+				tmp = tmp->next;
+			}
+
+			if (NULL != list1)
+				tmp->next = list1;
+
+			if (NULL != list2)
+				tmp->next = list2;
+
+			return root.next;
+		}
+	};
+	/*148. Sort List end */
+
+
+	/*147. Insertion Sort List (medium)
+	https://leetcode.com/problems/insertion-sort-list/
+	https://discuss.leetcode.com/topic/14916/explained-c-solution-24ms
+	*/
+	class Solution147 {
+	public:
+		ListNode* insertionSortList(ListNode* head) {
+			if (NULL == head)
+				return head;
+
+			ListNode tmp(0);
+			ListNode* pre = &tmp;
+			ListNode* cur = head;
+			ListNode* next = NULL;
+
+			while (NULL != cur) {
+				next = cur->next;
+
+				while (NULL !=  pre->next && pre->next->val < cur->val)
+					pre = pre->next;
+
+				cur->next = pre->next;
+				pre->next = cur;
+				cur = next;
+				pre = &tmp;
+			}
+
+			return tmp.next;
+		}
+	};
+	/*147. Insertion Sort List end */
+
+
+	/*75. Sort Colors (medium)
+	https://leetcode.com/problems/sort-colors/
+	https://discuss.leetcode.com/topic/6968/four-different-solutions
+	*/
+	class Solution75 {
+	public:
+		void sortColors(vector<int>& nums) {
+			int red = 0;
+			int white = 0;
+			int blue = nums.size() - 1;
+			int tmp;
+
+			while (white <= blue) {
+				if (0 == nums[white]) {
+					swap(nums[red], nums[white]);
+					++red;
+					++white;
+				}
+				else if (2 == nums[white]) {
+					swap(nums[blue], nums[white]);
+					--blue;
+				}
+				else
+					++white;
+			}
+		}
+	};
+	/*75. Sort Colors end */
+
+
+	/*179. Largest Number (medium)
+	https://leetcode.com/problems/largest-number/
+	https://discuss.leetcode.com/topic/8018/my-java-solution-to-share/2
+	*/
+	class Solution179 {
+	public:
+		string largestNumber(vector<int>& nums) {
+			vector<string> vec;
+
+			for (auto item : nums)
+				vec.push_back(to_string(item));
+
+			sort(vec.begin(), vec.end(), [](string& str1, string& str2){return str1 + str2 > str2 + str1; });
+			string result;
+
+			if (vec[0] == string("0"))
+				return string("0");
+
+			for (auto item : vec)
+				result += item;
+			return result;
+		}
+	};
+	/*179. Largest Number end */
+
+
+	/*350. Intersection of Two Arrays II (easy)
+	https://leetcode.com/problems/intersection-of-two-arrays-ii/
+	https://discuss.leetcode.com/topic/45893/c-hash-table-solution-and-sort-two-pointers-solution-with-time-and-space-complexity
+	*/
+	class Solution350 {
+	public:
+		vector<int> intersect(vector<int>& nums1, vector<int>& nums2) {
+			vector<int> result;
+			unordered_map<int, int> dict;
+
+			for (int i = 0; i < nums1.size(); ++i)
+				dict[nums1[i]] ++;
+
+			for (int i = 0; i < nums2.size(); ++i) {
+				if (dict.find(nums2[i]) != dict.end() && --dict[nums2[i]] >= 0)
+					result.push_back(nums2[i]);
+
+			}
+
+			return result;
+		}
+	};
+	/*350. Intersection of Two Arrays II end */
+
+
+	/*349. Intersection of Two Arrays (easy)
+	https://leetcode.com/problems/intersection-of-two-arrays/
+	https://discuss.leetcode.com/topic/45693/8ms-concise-c-using-unordered_set
+	*/
+	class Solution349 {
+	public:
+		vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+			sort(nums1.begin(), nums1.end());
+			sort(nums2.begin(), nums2.end());
+
+			vector<int> result;
+			int m = 0;
+			int n = 0;
+
+			while (m < nums1.size() && n < nums2.size()) {
+				if (nums1[m] == nums2[n]) {
+					int len = result.size();
+
+					if (len == 0 || result[len - 1] != nums1[m])
+						result.push_back(nums1[m]);
+
+					++m;
+					++n;
+				}
+				else if (nums1[m] > nums2[n])
+					++n;
+				else
+					++m;
+			}
+
+			return result;
+		}
+	};
+	/*349. Intersection of Two Arrays end */
+
+
+	/*242. Valid Anagram (easy)
+	https://leetcode.com/problems/valid-anagram/
+	https://discuss.leetcode.com/topic/20303/2-c-solutions-with-explanations
+	*/
+	class Solution242 {
+	public:
+		bool isAnagram(string s, string t) {
+			std::sort(s.begin(), s.end());
+			std::sort(t.begin(), t.end());
+
+			return s == t;
+		}
+	};
+	/*242. Valid Anagram end */
+}
+//////////////////////////Tag Sort end//////////////////////////////////////////
+
+
+//////////////////////////Tag Bit Manipulation//////////////////////////////////////////
+namespace BIT {	
+	/*201. Bitwise AND of Numbers Range (medium)
+	https://leetcode.com/problems/bitwise-and-of-numbers-range/
+	https://discuss.leetcode.com/topic/12133/bit-operation-solution-java
+	*/
+	class Solution201 {
+	public:
+		int rangeBitwiseAnd(int m, int n) {
+			int result = 1;
+
+			if (m == 0)
+				return 0;
+
+			while (m != n) {
+				m >>= 1;
+				n >>= 1;
+				result <<= 1;
+			}
+
+			return m*result;
+		}
+	};
+	/*201. Bitwise AND of Numbers Range end */
+
+
+	/*78. Subsets (medium)
+	https://leetcode.com/problems/subsets/
+	https://discuss.leetcode.com/topic/19110/c-recursive-iterative-bit-manipulation-solutions-with-explanations
+	*/
+	class Solution78 {
+	public:
+		vector<vector<int>> subsets(vector<int>& nums) {
+			vector<vector<int>> result;
+
+			sort(nums.begin(), nums.end());
+			result.push_back(vector<int>());
+
+			for (int i = 0; i < nums.size(); ++i) {
+				int cursize = result.size();
+
+				for (int j = 0; j < cursize; ++j) {
+					result.push_back(result[j]);
+					result.back().push_back(nums[i]);
+				}
+			}
+			
+			return result;
+		}
+
+		vector<vector<int>> result;
+	};
+	/*78. Subsets end */
+
+
+	/*338. Counting Bits (medium)
+	https://leetcode.com/problems/counting-bits/
+	https://discuss.leetcode.com/topic/40262/four-lines-c-time-o-n-space-o-n
+	*/
+	class Solution338 {
+	public:
+		int countbit(int num) {
+			int ret = 0;
+
+			for (int i = 0; i < 8 * sizeof(int); ++i) {
+				if ((1 << i) & num)
+					++ret;
+			}
+
+			return ret;
+		}
+
+		vector<int> countBits1(int num) {
+			vector<int> ret(num+1, 0);
+
+			for (int i = 1; i <= num; ++i) 
+				ret[i] = ret[i >> 1] + (i & 1);
+
+			return ret;
+		}
+
+		vector<int> countBits(int num) {
+			vector<int> ret;
+
+			for (int i = 0; i <= num; ++i)
+				ret.push_back(countbit(i));
+
+			return ret;
+		}
+	};
+	/*338. Counting Bits end */
+
+
+	/*318. Maximum Product of Word Lengths (medium)
+	https://leetcode.com/problems/maximum-product-of-word-lengths/
+	https://discuss.leetcode.com/topic/31766/bit-shorter-c
+	*/
+	class Solution318 {
+	public:
+		int maxProduct(vector<string>& words) {
+			unordered_map<int, int> maxlen;
+			int result = 0;
+
+			for (string word : words) {
+				int mask = 0;
+
+				for (char c : word)
+					mask |= 1 << (c - 'a');
+
+				maxlen[mask] = max(maxlen[mask], (int)word.size());
+
+				for (auto maskAndlen : maxlen){
+					if (!(mask & maskAndlen.first))
+						result = max(result, (int)word.size()*maskAndlen.second);
+				}
+			}
+
+			return result;
+		}
+
+		static void main() {
+			Solution318* test = new Solution318;
+			int result;
+
+			vector<string> words1 = { "abcw", "baz", "foo", "bar", "xtfn", "abcdef" };
+
+			result = test->maxProduct(words1);
+			delete test;
+		}
+	};
+	/*318. Maximum Product of Word Lengths end */
+
+
+	/*268. Missing Number (medium)
+	https://leetcode.com/problems/missing-number/
+	https://discuss.leetcode.com/topic/22313/c-solution-using-bit-manipulation
+	*/
+	class Solution268 {
+	public:
+		int missingNumber(vector<int>& nums) {
+			int len, result = 0;
+			len = nums.size();
+
+			for (int i = 0; i < len; ++i)
+				result += nums[i] - i;
+
+			result = len - result;
+			return result;
+		}
+	};
+	/*268. Missing Number end */
+
+
+	/*260. Single Number III (medium)
+	https://leetcode.com/problems/single-number-iii/
+	https://discuss.leetcode.com/topic/21605/accepted-c-java-o-n-time-o-1-space-easy-solution-with-detail-explanations
+	*/
+	class Solution260 {
+	public:
+		vector<int> singleNumber(vector<int>& nums) {
+			vector<int> result = { 0, 0 };
+			int diff = 0;
+
+			diff = accumulate(nums.begin(), nums.end(), 0, bit_xor<int>());
+			diff &= -diff;
+
+			for (int i = 0; i < nums.size(); ++i) {
+				if (diff & nums[i])
+					result[0] ^= nums[i];
+				else
+					result[1] ^= nums[i];
+			}
+
+			return result;
+		}
+	};
+	/*260. Single Number III end */
 
 
 	/*137. Single Number II (medium)
@@ -3458,7 +3901,6 @@ public:
 	class TrieNode {
 	public:
 		TrieNode* next[26];
-
 		bool is_word;
 		// Initialize your data structure here.
 		TrieNode(bool b = false) {
@@ -4206,9 +4648,11 @@ using namespace BFS;
 using namespace DFS;
 using namespace TREE;
 using namespace BIT;
+using namespace SORT;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	Solution318::main();
 	Solution137::main();
 	Solution187::main();
 	Solution236::main();
