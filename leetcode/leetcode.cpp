@@ -27,9 +27,240 @@ namespace SORT {
 		ListNode(int x) : val(x), next(NULL) {}
 	};
 
-	/*230. Kth Smallest Element in a BST (medium)
+	/*56. Merge Intervals (hard)
+	https://leetcode.com/problems/merge-intervals/
+	https://discuss.leetcode.com/topic/4319/a-simple-java-solution
+	https://discuss.leetcode.com/topic/20263/c-10-line-solution-easing-understanding
 	*/
-	/*230. Kth Smallest Element in a BST end */
+	class Solution56 {
+	public:
+		struct Interval {
+			int start;
+			int end;
+			Interval() : start(0), end(0) {}
+			Interval(int s, int e) : start(s), end(e) {}
+		};
+
+		vector<Interval> merge(vector<Interval>& intervals) {
+			vector<Interval> ret;
+
+			if (intervals.size() < 1)
+				return ret;
+			sort(intervals.begin(), intervals.end(), [](Interval a, Interval b) {return a.start<b.start; });
+
+			ret.push_back(intervals[0]);
+			for (int i = 1; i < intervals.size(); ++i) {
+				if (intervals[i].start > ret.back().end)
+					ret.push_back(intervals[i]);
+				else
+					ret.back().end = max(ret.back().end, intervals[i].end);
+			}
+
+			return ret;
+		}
+	};
+	/*56. Merge Intervals end */
+
+
+	/*57. Insert Interval (hard)
+	https://leetcode.com/problems/insert-interval/
+	https://discuss.leetcode.com/topic/7808/short-and-straight-forward-java-solution
+	https://discuss.leetcode.com/topic/12899/very-short-and-easy-to-understand-c-solution
+	*/
+	class Solution57 {
+	public:
+		struct Interval {
+			int start;
+			int end;
+			Interval() : start(0), end(0) {}
+			Interval(int s, int e) : start(s), end(e) {}
+		};
+
+		vector<Interval> insert(vector<Interval>& intervals, Interval newInterval) {
+			vector<Interval> ret;
+			int i = 0;
+
+			for (; i < intervals.size() && intervals[i].end < newInterval.start; ++i)
+				ret.push_back(intervals[i]);
+
+			for (; i < intervals.size() && intervals[i].start <= newInterval.end; ++i) {
+				Interval tmp;
+				tmp.start = min(newInterval.start, intervals[i].start);
+				tmp.end = max(newInterval.end, intervals[i].end);
+				newInterval = tmp;
+			}
+
+			ret.push_back(newInterval);
+
+			for (; i < intervals.size(); ++i)
+				ret.push_back(intervals[i]);
+
+			return ret;
+		}
+	};
+	/*57. Insert Interval end */
+
+
+	/*164. Maximum Gap (hard)
+	https://leetcode.com/problems/maximum-gap/
+	https://discuss.leetcode.com/topic/5999/bucket-sort-java-solution-with-explanation-o-n-time-and-space/12
+	https://discuss.leetcode.com/topic/9986/my-c-code-12-ms-bucket-sort-o-n-time-and-space
+	*/
+	class Solution164 {
+	public:
+		int maximumGap(vector<int>& num) {
+			int len = num.size();
+			if (len < 2)
+				return 0;
+
+			int minnum = num[0];
+			int maxnum = num[0];
+
+			for (int item : num) {
+				minnum = min(minnum, item);
+				maxnum = max(maxnum, item);
+			}
+
+			int buck_len = (maxnum - minnum) / len + 1;
+			vector<vector<int>> buckets((maxnum - minnum) / buck_len + 1);
+
+			for (int item : num) {
+				int i = (item - minnum) / buck_len;
+
+				if (buckets[i].empty()) {
+					buckets[i].push_back(item);
+					buckets[i].push_back(item);
+				}
+				else {
+					if (item < buckets[i][0])
+						buckets[i][0] = item;
+
+					if (item > buckets[i][1])
+						buckets[i][1] = item;
+				}
+			}
+
+			int gap = 0;
+			int pre = 0;
+
+			for (int i = 1; i < buckets.size(); ++i) {
+				if (buckets[i].empty())
+					continue;
+
+				gap = max(gap, buckets[i][0] - buckets[pre][1]);
+				pre = i;
+			}
+
+			return gap;
+		}
+
+		static void main() {
+			Solution164* test = new Solution164;
+			vector<int> num1 = { 1, 3, 4, 4};
+			int result;
+
+			result = test->maximumGap(num1);
+			delete test;
+		}
+	};
+	/*164. Maximum Gap end */
+
+
+	/*274. H-Index (medium)
+	https://leetcode.com/problems/h-index/
+	https://discuss.leetcode.com/topic/23307/my-o-n-time-solution-use-java
+	https://discuss.leetcode.com/topic/23310/my-easy-solution
+	*/
+	class Solution274 {
+	public:
+		void quick_sort_recursive(vector<int>& citations, int low, int high) {
+			if (low >= high)
+				return;
+
+			int mid = citations[high];
+			int left = low;
+			int right = high - 1;
+
+			while (left < right) {
+				while (mid > citations[left] && left < right)
+					++left;
+
+				while (mid <= citations[right] && left < right)
+					--right;
+
+				swap(citations[left], citations[right]);
+			}
+
+			if (citations[left] >= citations[high])
+				std::swap(citations[left], citations[high]);
+			else
+				left++;
+
+			quick_sort_recursive(citations, low, left - 1);
+			quick_sort_recursive(citations, left + 1, high);
+		}
+
+		int hIndex2(vector<int>& citations) {
+			if (citations.empty())
+				return 0;
+
+			int len = citations.size();
+			quick_sort_recursive(citations, 0, len - 1);
+
+			int result = 0;
+			for (int i = 0; i < len; ++i) {
+				if (len - i > citations[i])
+					result = max(result, citations[i]);
+				else
+					result = max(result, len - i);
+			}
+
+			return result;
+		}
+
+		int hIndex(vector<int>& citations) {
+			if (citations.empty())
+				return 0;
+
+			int len = citations.size();
+			int *counter = new int[len + 1];
+
+			memset(counter, 0x00, (len + 1) * sizeof(int));
+
+			for (int i = 0; i < len; ++i){
+				if (citations[i] >= len)
+					counter[len] ++;
+				else
+					counter[citations[i]] ++;
+			}
+
+			if (counter[len] >= len)
+				return len;
+
+			for (int i = len - 1; i >= 0; --i){
+				counter[i] = counter[i] + counter[i + 1];
+
+				if (counter[i] >= i)
+					return i;
+			}
+
+			return 0;
+		}
+
+		int hIndex3(vector<int>& citations) {
+			int left = 0, len = citations.size(), right = len - 1, mid;
+
+			while (left <= right){
+				mid = (left + right) >> 1;
+				if (citations[mid] == (len - mid)) return citations[mid];
+				else if (citations[mid] > (len - mid)) right = mid - 1;
+				else left = mid + 1;
+			}
+
+			return len - (right + 1);
+		}
+	};
+	/*274. H-Index end */
 
 
 	/*324. Wiggle Sort II (medium)
@@ -4652,6 +4883,7 @@ using namespace SORT;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	Solution164::main();
 	Solution318::main();
 	Solution137::main();
 	Solution187::main();
