@@ -19,6 +19,165 @@
 using namespace std;
 
 
+//////////////////////////Tag Greedy//////////////////////////////////////////
+namespace GREEDY {
+	/*56. Merge Intervals (medium)
+	*/
+	/*56. Merge Intervals end */
+
+
+	/*44. Wildcard Matching (hard)
+	https://leetcode.com/problems/wildcard-matching/
+	https://discuss.leetcode.com/topic/3040/linear-runtime-and-constant-space-solution
+	https://discuss.leetcode.com/topic/17901/accepted-c-dp-solution-with-a-trick
+	*/
+	class Solution44 {
+	public:
+		bool isMatch1(string s, string p) {
+			int m = s.size();
+			int n = p.size();
+
+			vector<bool> vec(m + 1, false);
+			if (n > 3000) return false;
+			vec[0] = true;
+			bool pre;
+			for (int j = 1; j <= n; ++j) {
+				pre = vec[0];
+				vec[0] = vec[0] && (p[j - 1] == '*');
+
+				for (int i = 1; i <= m; ++i) {
+					int tmp = vec[i];
+					if (p[j - 1] != '*')
+						vec[i] = pre && (s[i - 1] == p[j - 1] || p[j - 1] == '?');
+					else
+						vec[i] = vec[i - 1] || vec[i];
+
+					pre = tmp;
+				}
+			}
+
+			return vec[m];
+		}
+
+		bool isMatch(string& sstr, string &pstr) {
+			const char* s = sstr.data();
+			const char* p = pstr.data();
+			const char* star = NULL;
+			const char* ss = s;
+
+			while (*s){
+				//advancing both pointers when (both characters match) or ('?' found in pattern)
+				//note that *p will not advance beyond its length 
+				if ((*p == '?') || (*p == *s)){ s++; p++; continue; }
+
+				// * found in pattern, track index of *, only advancing pattern pointer 
+				if (*p == '*'){ star = p++; ss = s; continue; }
+
+				//current characters didn't match, last pattern pointer was *, current pattern pointer is not *
+				//only advancing pattern pointer
+				if (star){ p = star + 1; s = ++ss; continue; }
+
+				//current pattern pointer is not star, last patter pointer was not *
+				//characters do not match
+				return false;
+			}
+
+			//check for remaining characters in pattern
+			while (*p == '*'){ p++; }
+
+			return !*p;
+		}
+	};
+	/*44. Wildcard Matching end */
+
+
+	/*134. Gas Station (medium)
+	https://leetcode.com/problems/gas-station/
+	https://discuss.leetcode.com/topic/1344/share-some-of-my-ideas
+	*/
+	class Solution134 {
+	public:
+		int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {
+			int start(0), total(0), tank(0);
+
+			for (int i = 0; i < gas.size(); ++i) {
+				tank += gas[i] - cost[i];
+
+				if (tank < 0) {
+					start = i + 1;
+					total += tank;
+					tank = 0;
+				}
+			}
+
+			return (total + tank < 0 ? -1 : start);
+		}
+	};
+	/*134. Gas Station end */
+
+	/*122. Best Time to Buy and Sell Stock II (medium)
+	https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/
+	https://discuss.leetcode.com/topic/17081/three-lines-in-c-with-explanation
+	*/
+	class Solution122 {
+	public:
+		int maxProfit(vector<int> &prices) {
+			int nlen = prices.size();
+			if (nlen < 2) 
+				return 0;
+
+			int max_pro = 0, ntmp;
+
+			for (int i = nlen - 1; i > 0; --i) {
+				ntmp = prices[i] - prices[i - 1];
+
+				if (ntmp > 0) 
+					max_pro += ntmp;
+			}
+
+			return max_pro;
+		}
+	};
+	/*122. Best Time to Buy and Sell Stock II end */
+
+
+	/*55. Jump Game (medium)
+	https://leetcode.com/problems/jump-game/
+	https://discuss.leetcode.com/topic/4911/linear-and-simple-solution-in-c/2
+	*/
+	class Solution55 {
+	public:
+		bool canJump1(vector<int>& nums) {
+			if (nums.empty())
+				return false;
+
+			int last = nums.size() - 1;
+			for (int i = nums.size() - 2; i >= 0; --i) {
+				if (i + nums[i] >= last)
+					last = i;
+			}
+
+			return last <= 0;
+		}
+
+		bool canJump(vector<int>& nums) {
+			if (nums.empty())
+				return false;
+
+			int i = 0;
+
+			for (int reach = 0; i < nums.size() && i <= reach; ++i)
+				reach = max(i + nums[i], reach);
+
+			return i == nums.size();
+		}
+	};
+	/*55. Jump Game end */
+}
+//////////////////////////Tag Greedy end//////////////////////////////////////////
+
+
+
 //////////////////////////Tag Sort//////////////////////////////////////////
 namespace SORT {
 	struct ListNode {
@@ -4880,6 +5039,7 @@ using namespace DFS;
 using namespace TREE;
 using namespace BIT;
 using namespace SORT;
+using namespace GREEDY;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
