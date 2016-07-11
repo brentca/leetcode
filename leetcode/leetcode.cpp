@@ -15,15 +15,153 @@
 #include <sstream>
 #include <numeric>
 #include <functional>
+#include <map>
 
 using namespace std;
 
 
 //////////////////////////Tag Greedy//////////////////////////////////////////
 namespace GREEDY {
-	/*56. Merge Intervals (medium)
+	/*56. Merge Intervals (hard)
 	*/
 	/*56. Merge Intervals end */
+
+
+	/*316. Remove Duplicate Letters (hard)
+	https://leetcode.com/problems/remove-duplicate-letters/
+	https://discuss.leetcode.com/topic/31413/easy-to-understand-iterative-java-solution/2
+	*/
+	class Solution316 {
+	public:
+		string removeDuplicateLetters(string s) {
+			vector<int> nums(26, 0);
+
+			for (auto item : s)
+				nums[item - 'a'] ++;
+
+			int pos = 0;
+			char c;
+			for (int i = 0; i < s.size(); ++i) {
+				c = s[i];
+
+				if (c < s[pos])
+					pos = i;
+
+				if (--nums[c - 'a'] == 0)
+					break;
+			}
+
+			string tmp;
+			for (int i = pos + 1; i < s.size(); ++i) {
+				if (s[i] != s[pos])
+					tmp.push_back(s[i]);
+			}
+
+			return s.empty() ? "" : s.substr(pos, 1) + removeDuplicateLetters(tmp);
+		}
+
+		string removeDuplicateLetters1(string s) {
+
+			map<char, int> pos;
+			int diffs = 0;
+
+			//find last postion of every char
+			for (int i = s.size() - 1; i >= 0; --i) {
+				if (pos.count(s[i]) < 1) {
+					pos[s[i]] = i;
+					++diffs;
+				}
+
+				if (diffs >= 26)
+					break;
+			}
+
+			string result;
+			result.resize(diffs);
+			int start = 0;
+			int cur = 0;
+
+			for (int i = 0; i < diffs; ++i) {
+				//cout<<item.first<<","<<item.second<<endl;
+				start = findSmallest(s, start, pos);
+				char c = s[start++];
+				result[cur++] = c;
+				pos[c] = -1;
+			}
+
+			return result;
+		}
+
+		int findSmallest(const string& s, int start, map<char, int>& pos) {
+			int end = INT_MAX;
+			for (auto item : pos)
+			if (item.second != -1)
+				end = min(end, item.second);
+
+			int result = end;
+			for (int i = end - 1; i >= start; --i)
+			if ((pos[s[i]] != -1) && (s[i] <= s[result]))
+				result = i;
+
+			return result;
+		}
+	};
+	/*316. Remove Duplicate Letters end */
+
+
+	/*45. Jump Game II (hard)
+	https://leetcode.com/problems/jump-game-ii/
+	https://discuss.leetcode.com/topic/3191/o-n-bfs-solution
+	*/
+	class Solution45 {
+	public:
+		int jump(vector<int>& nums) {
+			if (nums.size() < 2)
+				return 0;
+
+			int i = 0, nextmax = 0, step = 0;
+			int level = 0, curmax = 0;
+
+			while (curmax - i + 1 > 0) {
+				++level;
+
+				for (; i <= curmax; ++i) {
+					nextmax = max(nextmax, nums[i] + i);
+					if (nextmax >= nums.size() - 1)
+						return level;
+				}
+
+				curmax = nextmax;
+			}
+
+			return 0;
+		}
+	};
+	/*45. Jump Game II end */
+
+
+	/*330. Patching Array (hard)
+	https://leetcode.com/problems/patching-array/
+	https://discuss.leetcode.com/topic/35494/solution-explanation
+	*/
+	class Solution330 {
+	public:
+		int minPatches(vector<int>& nums, int n) {
+			long miss = 1, addnum = 0, i = 0;
+
+			while (miss <= n) {
+				if (i < nums.size() && nums[i] <= miss)
+					miss += nums[i++];
+				else {
+					miss += miss;
+					addnum++;
+				}
+			}
+
+			return addnum;
+		}
+	};
+	/*330. Patching Array end */
 
 
 	/*44. Wildcard Matching (hard)
