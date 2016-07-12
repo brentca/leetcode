@@ -20,6 +20,294 @@
 using namespace std;
 
 
+//////////////////////////Tag STACK//////////////////////////////////////////
+namespace STACK {
+	/*23. Merge k Sorted Lists (easy)
+	*/
+	/*23. Merge k Sorted Lists end */
+}
+//////////////////////////Tag STACK end//////////////////////////////////////////
+
+
+//////////////////////////Tag HEAP//////////////////////////////////////////
+namespace HEAP {
+	/*23. Merge k Sorted Lists (hard)
+	https://leetcode.com/problems/merge-k-sorted-lists/
+	https://discuss.leetcode.com/topic/21812/difference-between-priority-queue-and-heap-and-c-implementation
+	http://bangbingsyb.blogspot.ca/2014/11/leetcode-merge-k-sorted-lists.html
+	*/
+	class Solution23 {
+	public:
+		struct ListNode {
+			int val;
+			ListNode *next;
+			ListNode(int x) : val(x), next(NULL) {}
+		};
+
+		ListNode* mergetwo(ListNode* l1, ListNode* l2) {
+			ListNode dummy(-1);
+			ListNode* pre = &dummy;
+
+			while (l1 && l2) {
+				if (l1->val <= l2->val) {
+					pre->next = l1;
+					l1 = l1->next;
+				}
+				else {
+					pre->next = l2;
+					l2 = l2->next;
+				}
+
+				pre = pre->next;
+			}
+
+			pre->next = (l1 != NULL ? l1 : l2);
+
+			return dummy.next;
+		}
+
+		ListNode* mergeKLists(vector<ListNode*>& lists) {
+			ListNode* result = NULL;
+
+			if (lists.empty())
+				return NULL;
+
+			result = lists[0];
+
+			for (int i = 1; i < lists.size(); ++i)
+				result = mergetwo(result, lists[i]);
+
+			return result;
+		}
+	};
+	/*23. Merge k Sorted Lists end */
+
+
+	/*239. Sliding Window Maximum (hard)
+	https://leetcode.com/problems/sliding-window-maximum/
+	https://discuss.leetcode.com/topic/19055/java-o-n-solution-using-deque-with-explanation
+	https://discuss.leetcode.com/topic/19297/this-is-a-typical-monotonic-queue-problem
+	*/
+	class Solution239 {
+	public:
+		vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+			vector<int> result;
+
+			if (nums.size() < 1 || k < 1)
+				return result;
+
+			deque<int> window;
+			for (int i = 0; i < nums.size(); ++i) {
+				if (!window.empty() && window.front() == i - k)
+					window.pop_front();
+
+				while (!window.empty() && nums[window.back()] < nums[i])
+					window.pop_back();
+
+				window.push_back(i);
+
+				if (i >= k - 1)
+					result.push_back(nums[window.front()]);
+			}
+
+			return result;
+		}
+
+		static void main() {
+			Solution239* test = new Solution239;
+			vector<int> result;
+
+			vector<int> nums1 = { 1, 3, -1, -3, 5, 3, 6, 7 };
+			int k1 = 3;
+			//result = test->maxSlidingWindow(nums1, k1);
+
+			vector<int> nums2 = { 6, 5, 4, 3, 2, 1 };
+			int k2 = 3;
+			result = test->maxSlidingWindow(nums2, k2);
+		}
+	};
+	/*239. Sliding Window Maximum end */
+
+
+	/*347. Top K Frequent Elements (meduim)
+	https://leetcode.com/problems/top-k-frequent-elements/
+	https://discuss.leetcode.com/topic/44226/c-o-n-log-n-k-unordered_map-and-priority_queue-maxheap-solution
+	https://discuss.leetcode.com/topic/44237/java-o-n-solution-bucket-sort
+	*/
+	class Solution347 {
+	public:
+		vector<int> topKFrequent(vector<int>& nums, int k) {
+			unordered_map<int, int> map;
+
+			for (int i = 0; i < nums.size(); ++i)
+				map[nums[i]] ++;
+
+
+			vector<int> res;
+			priority_queue<pair<int, int>> pq;
+			for (auto it = map.begin(); it != map.end(); it++) {
+				pq.push(make_pair(it->second, it->first));
+			}
+
+			for (int i = 0; i < k; ++i) {
+				res.push_back(pq.top().second);
+				pq.pop();
+			}
+
+			return res;
+		}
+	};
+	/*347. Top K Frequent Elements end */
+
+
+	/*313. Super Ugly Number (meduim)
+	https://leetcode.com/problems/super-ugly-number/
+	https://discuss.leetcode.com/topic/31012/7-line-consice-o-kn-c-solution
+	*/
+	class Solution313 {
+	public:
+		int nthSuperUglyNumber(int n, vector<int>& primes) {
+			vector<int> uglynumbs(n, INT_MAX);
+			vector<int> index(primes.size(), 0);
+
+			uglynumbs[0] = 1;
+
+			for (int i = 1; i < n; ++i) {
+				for (int j = 0; j < primes.size(); ++j)
+					uglynumbs[i] = min(uglynumbs[i], uglynumbs[index[j]] * primes[j]);
+				for (int j = 0; j < primes.size(); ++j)
+					index[j] += (uglynumbs[i] == uglynumbs[index[j]] * primes[j]);
+			}
+
+			return uglynumbs[n - 1];
+		}
+
+		static void main() {
+			Solution313* test = new Solution313;
+			int result;
+
+			vector<int> primes1 = { 2, 7, 13, 19 };
+			int n1 = 12;
+
+			result = test->nthSuperUglyNumber(n1, primes1);
+		}
+	};
+	/*313. Super Ugly Number end */
+
+
+	/*215. Kth Largest Element in an Array (meduim)
+	https://leetcode.com/problems/kth-largest-element-in-an-array/
+	https://discuss.leetcode.com/topic/14597/solution-explained
+	*/
+	class Solution215 {
+	public:
+		int partition(vector<int>& nums, int low, int high) {
+			int pivot = nums[low];
+			int left = low + 1, right = high;
+
+			while (left <= right) {
+				if (nums[left] < pivot && nums[right] > pivot)
+					swap(nums[left++], nums[right--]);
+
+				if (nums[left] >= pivot)
+					++left;
+
+				if (nums[right] <= pivot)
+					--right;
+			}
+
+			swap(nums[low], nums[right]);
+			return right;
+		}
+
+		void heapadjust(vector<int>& nums, int s, int m) {
+			int ori = nums[s];
+
+			for (int j = 2 * s; j <= m; j *= 2) {
+				if (j < m && nums[j] < nums[j + 1])
+					++j;
+
+				if (ori >= nums[j])
+					break;
+
+				swap(nums[s], nums[j]);
+				s = j;
+			}
+
+			nums[s] = ori;
+		}
+
+		int findKthLargest(vector<int>& nums, int k) {
+			int len = nums.size();
+			for (int i = len / 2; i >= 0; --i)
+				heapadjust(nums, i, len - 1);
+
+			for (int i = 0; i < k; ++i) {
+				swap(nums[0], nums[len - i - 1]);
+				heapadjust(nums, 0, len - i - 2);
+			}
+
+			return nums[len - k];
+		}
+
+		int findKthLargest1(vector<int>& nums, int k) {
+			int low = 0;
+			int high = nums.size() - 1;
+			int pivot;
+
+			while (true) {
+				pivot = partition(nums, low, high);
+
+				if (pivot == k - 1)
+					return nums[pivot];
+
+				if (pivot > k - 1)
+					high = pivot - 1;
+				else
+					low = pivot + 1;
+
+			}
+		}
+	};
+	/*215. Kth Largest Element in an Array end */
+
+
+	/*264. Ugly Number II (meduim)
+	https://leetcode.com/problems/ugly-number-ii/
+	https://discuss.leetcode.com/topic/21882/my-16ms-c-dp-solution-with-short-explanation
+	*/
+	class Solution264 {
+	public:
+
+		int nthUglyNumber(int n) {
+			if (n == 1)
+				return 1;
+
+			int t2(0), t3(0), t5(0);
+			vector<int> nums(n);
+			nums[0] = 1;
+
+			for (int i = 1; i < n; ++i) {
+				nums[i] = min(nums[t2] * 2, min(nums[t3] * 3, nums[t5] * 5));
+
+				if (nums[i] == nums[t2] * 2)
+					++t2;
+				if (nums[i] == nums[t3] * 3)
+					++t3;
+				if (nums[i] == nums[t5] * 5)
+					++t5;
+			}
+
+			return nums[n - 1];
+		}
+	};
+	/*264. Ugly Number II end */
+	
+}
+//////////////////////////Tag HEAP end//////////////////////////////////////////
+
+
+
 //////////////////////////Tag Greedy//////////////////////////////////////////
 namespace GREEDY {
 	/*135. Candy (hard)
@@ -1255,11 +1543,11 @@ namespace BIT {
 		}
 
 		bool isPowerOfFour2(int num) {
-			if (num == 0 || num == INT_MIN)
+			if (0 == num || INT_MIN == num)
 				return false;
 
-			if (num < 0);
-			num = -num;
+			if (num < 0)
+				num = -num;
 
 			return((num % 4) == 0);
 		}
@@ -1311,7 +1599,7 @@ namespace TREE {
 	https://leetcode.com/problems/binary-tree-postorder-traversal/
 	https://discuss.leetcode.com/topic/2919/my-accepted-code-with-explaination-does-anyone-have-a-better-idea
 	*/
-	class Solution {
+	class Solution145 {
 	public:
 		vector<int> postorderTraversal(TreeNode* root) {
 			vector<int> result;
@@ -5279,9 +5567,13 @@ using namespace TREE;
 using namespace BIT;
 using namespace SORT;
 using namespace GREEDY;
+using namespace HEAP;
+using namespace STACK;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	Solution239::main();
+	Solution313::main();
 	Solution321::main();
 	Solution164::main();
 	Solution318::main();
