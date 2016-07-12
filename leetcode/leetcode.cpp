@@ -22,9 +22,128 @@ using namespace std;
 
 //////////////////////////Tag STACK//////////////////////////////////////////
 namespace STACK {
-	/*23. Merge k Sorted Lists (easy)
+	/*23. Merge k Sorted Lists (medium)
 	*/
 	/*23. Merge k Sorted Lists end */
+
+
+	/*71. Simplify Path (medium)
+	https://leetcode.com/problems/simplify-path/
+	https://discuss.leetcode.com/topic/2872/my-o-n-ac-code-just-need-to-handle-two-special-cases
+	https://discuss.leetcode.com/topic/8678/c-10-lines-solution
+	*/
+	class Solution71 {
+	public:
+		string simplifyPath(string path) {
+			vector<string> parents;
+			string result;
+			string node;
+
+			path.push_back('/');
+			for (int i = 0; i < path.size(); ++i) {
+				if (path[i] == '/') {
+					if (node.size() == 0)
+						continue;
+
+					if (node == ".")
+						;
+					else if (node == "..") {
+						if (parents.size() > 0)
+							parents.pop_back();
+					}
+					else
+						parents.push_back(node);
+
+					node.clear();
+				}
+				else
+					node.push_back(path[i]);
+			}
+
+			if (parents.size() == 0)
+				return "/";
+
+			for (int i = 0; i < parents.size(); ++i)
+				result.append("/" + parents[i]);
+
+			return result;
+		}
+	};
+	/*71. Simplify Path end */
+
+
+
+	/*232. Implement Queue using Stacks (easy)
+	https://leetcode.com/problems/implement-queue-using-stacks/
+	*/
+	class Queue232 {
+	public:
+		// Push element x to the back of queue.
+		void push(int x) {
+			stack<int> tmp;
+
+			while (!data.empty()) {
+				tmp.push(data.top());
+				data.pop();
+			}
+
+			data.push(x);
+
+			while (!tmp.empty()) {
+				data.push(tmp.top());
+				tmp.pop();
+			}
+		}
+
+		// Removes the element from in front of queue.
+		void pop(void) {
+			data.pop();
+		}
+
+		// Get the front element.
+		int peek(void) {
+			return data.top();
+		}
+
+		// Return whether the queue is empty.
+		bool empty(void) {
+			return data.empty();
+		}
+
+		stack<int> data;
+	};
+	/*232. Implement Queue using Stacks end */
+
+
+	/*20. Valid Parentheses (easy)
+	https://leetcode.com/problems/valid-parentheses/
+	https://discuss.leetcode.com/topic/7813/my-easy-to-understand-java-solution-with-one-stack
+	*/
+	class Solution20 {
+	public:
+		bool isValid(string s) {
+			stack<char> left;
+
+			for (int i = 0; i < s.size(); ++i) {
+				char tmp = s.at(i);
+
+				if ('(' == tmp || '{' == tmp || '[' == tmp)
+					left.push(tmp);
+				else if (!left.empty() && (')' == tmp) && left.top() == '(')
+					left.pop();
+				else if (!left.empty() && ('}' == tmp) && left.top() == '{')
+					left.pop();
+				else if (!left.empty() && (']' == tmp) && left.top() == '[')
+					left.pop();
+				else
+					return false;
+			}
+
+
+			return left.empty();
+		}
+	};
+	/*20. Valid Parentheses end */
 }
 //////////////////////////Tag STACK end//////////////////////////////////////////
 
