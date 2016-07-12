@@ -22,9 +22,110 @@ using namespace std;
 
 //////////////////////////Tag Greedy//////////////////////////////////////////
 namespace GREEDY {
-	/*56. Merge Intervals (hard)
+	/*135. Candy (hard)
+	https://leetcode.com/problems/candy/
+	https://discuss.leetcode.com/topic/37924/very-simple-java-solution-with-detail-explanation/2
 	*/
-	/*56. Merge Intervals end */
+	class Solution135 {
+	public:
+		int candy(vector<int>& ratings) {
+			int len = ratings.size();
+			vector<int> nums(len, 0);
+
+			nums[0] = 1;
+			for (int i = 1; i < len; ++i) {
+				if (ratings[i] > ratings[i - 1])
+					nums[i] = nums[i - 1] + 1;
+				else
+					nums[i] = 1;
+			}
+
+
+			for (int i = len - 2; i >= 0; --i) {
+				if (ratings[i] > ratings[i + 1] && nums[i] <= nums[i + 1])
+					nums[i] = nums[i + 1] + 1;
+			}
+
+			int result = 0;
+			for (auto item : nums)
+				result += item;
+
+			return result;
+		}
+	};
+	/*135. Candy end */
+
+
+	/*321. Create Maximum Number (hard)
+	https://leetcode.com/problems/create-maximum-number/
+	https://discuss.leetcode.com/topic/32272/share-my-greedy-solution
+	*/
+	class Solution321 {
+	public:
+		vector<int> helper(vector<int>& nums, int k) {
+			int n = nums.size();
+			int j = 0; // the count of the stacked array 
+			vector<int> result(k, 0);
+
+			for (int i = 0; i < n; ++i) {
+				//result[j-1] stores the top of the stack 
+				while (j > 0 && n - i + j > k && nums[i] > result[j - 1])  j--;
+				if (j < k) result[j++] = nums[i];
+			}
+			return result;
+		}
+
+		vector<int> merge(vector<int>& nums1, vector<int>& nums2, int k) {
+			vector<int> result(k, 0);
+			ostringstream num_str1, num_str2;
+			string str1, str2;
+			for (auto num : nums1)  num_str1 << num;
+			for (auto num : nums2)  num_str2 << num;
+			str1 = num_str1.str();
+			str2 = num_str2.str();
+			for (int i = 0, j = 0, r = 0; r < k; ++r)
+				result[r] = str1.substr(i).compare(str2.substr(j)) > 0 ? nums1[i++] : nums2[j++];
+
+			return result;
+		}
+
+	public:
+		vector<int> maxNumber(vector<int>& nums1, vector<int>& nums2, int k) {
+			int n = nums1.size(), m = nums2.size();
+			vector<int> result(k, 0);
+			string result_str;
+			for (int i = max(0, k - m); i <= k && i <= n; i++) {
+				vector<int> sub_1 = helper(nums1, i);
+				vector<int> sub_2 = helper(nums2, k - i);
+				vector<int> candidate = merge(sub_1, sub_2, k);
+				ostringstream str_c;
+				for (auto number : candidate)  str_c << number;
+				if (result_str == "" || str_c.str().compare(result_str) > 0) {
+					result_str = str_c.str();
+					result = candidate;
+				}
+			}
+			return result;
+		}
+
+		static void main() {
+			Solution321* test = new Solution321;
+			vector<int> result;
+
+			vector<int> nums1_1 = { 3, 4, 6, 5 };
+			vector<int> nums1_2 = { 9, 1, 2, 5, 8, 3};
+			int k1 = 5;
+
+			result = test->maxNumber(nums1_1, nums1_2, k1);
+
+			vector<int> nums2_1 = { 3, 4, 6, 5 };
+			vector<int> nums2_2 = { 9, 1, 2, 5, 8, 3 };
+			int k2 = 5;
+
+			result = test->maxNumber(nums2_1, nums2_2, k2);
+		}
+	};
+	/*321. Create Maximum Number end */
 
 
 	/*316. Remove Duplicate Letters (hard)
@@ -5181,6 +5282,7 @@ using namespace GREEDY;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	Solution321::main();
 	Solution164::main();
 	Solution318::main();
 	Solution137::main();
