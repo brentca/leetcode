@@ -27,6 +27,56 @@ namespace STACK {
 	/*23. Merge k Sorted Lists end */
 
 
+	/*331. Verify Preorder Serialization of a Binary Tree (medium)
+	https://leetcode.com/problems/verify-preorder-serialization-of-a-binary-tree/
+	https://discuss.leetcode.com/topic/35976/7-lines-easy-java-solution
+	*/
+	class Solution331 {
+	public:
+		bool isValidSerialization(string preorder) {
+			if (preorder.empty())
+				return false;
+
+			int len = preorder.size();
+			stack<string> buf;
+			string strnum;
+
+			for (int i = 0; i < len; ++i) {
+				if (preorder[i] == '#') {
+					strnum.clear();
+					if (!buf.empty() && buf.top() == "#") {
+						while (!buf.empty() && buf.top() == "#") {
+							buf.pop();
+
+							if (!buf.empty() && buf.top() != "#")
+								buf.pop();
+							else
+								return false;
+						}
+
+						buf.push("#");
+					}
+					else
+						buf.push("#");
+				}
+				else if (preorder[i] != ',') {
+					strnum.push_back(preorder[i]);
+					if (i == len - 1)
+						buf.push(strnum);
+				}
+				else if (!strnum.empty())
+					buf.push(strnum);
+			}
+
+			if (buf.size() == 1 && buf.top() == "#")
+				return true;
+
+			return false;
+		}
+	};
+	/*331. Verify Preorder Serialization of a Binary Tree end */
+
+
 	/*71. Simplify Path (medium)
 	https://leetcode.com/problems/simplify-path/
 	https://discuss.leetcode.com/topic/2872/my-o-n-ac-code-just-need-to-handle-two-special-cases
