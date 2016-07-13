@@ -29,6 +29,7 @@ namespace STACK {
 
 	/*85. Maximal Rectangle (hard)
 	https://leetcode.com/problems/maximal-rectangle/
+	https://discuss.leetcode.com/topic/1634/a-o-n-2-solution-based-on-largest-rectangle-in-histogram
 	https://discuss.leetcode.com/topic/6650/share-my-dp-solution
 	*/
 	class Solution85 {
@@ -57,10 +58,8 @@ namespace STACK {
 				int k = 0;
 
 				while (k < col + 1) {
-					if (s.empty() || height[k] > height[s.top()]) {
-						s.push(k);
-						++k;
-					}
+					if (s.empty() || height[k] > height[s.top()])
+						s.push(k++);
 					else {
 						int t = s.top();
 						s.pop();
@@ -71,6 +70,61 @@ namespace STACK {
 			}
 
 			return result;
+		}
+
+		int maximalRectangle1(vector<vector<char> > &matrix) {
+			if (matrix.empty()) return 0;
+			const int m = matrix.size();
+			const int n = matrix[0].size();
+			vector<int> left(n, 0);
+			vector<int> right(n, n);
+			vector<int> height(n, 0);
+			int maxA = 0;
+
+			for (int i = 0; i < m; ++i) {
+				int cur_left = 0, cur_right = n;
+
+				for (int j = 0; j < n; ++j) { // compute height (can do this from either side)
+					if (matrix[i][j] == '1') 
+						height[j]++;
+					else 
+						height[j] = 0;
+				}
+
+				for (int j = 0; j < n; ++j) { // compute left (from left to right)
+					if (matrix[i][j] == '1') 
+						left[j] = max(left[j], cur_left);
+					else { 
+						left[j] = 0; cur_left = j + 1; 
+					}
+				}
+
+				// compute right (from right to left)
+				for (int j = n - 1; j >= 0; j--) {
+					if (matrix[i][j] == '1') 
+						right[j] = min(right[j], cur_right);
+					else { 
+						right[j] = n; cur_right = j; 
+					}
+				}
+
+				// compute the area of rectangle (can do this from either side)
+				for (int j = 0; j<n; j++)
+					maxA = max(maxA, (right[j] - left[j])*height[j]);
+			}
+
+			return maxA;
+		}
+
+		static void main() {
+			Solution85* test = new Solution85;
+			int result;
+			vector<vector<char>> matrix1 = { { '0', '0', '0', '1', '0', '0', '0' },
+			{ '0', '0', '1', '1', '1', '0', '0' },
+			{ '0', '1', '1', '1', '1', '1', '0' } };
+
+			result = test->maximalRectangle(matrix1);
+			result = test->maximalRectangle1(matrix1);
 		}
 	};
 	/*85. Maximal Rectangle end */
@@ -5841,6 +5895,7 @@ using namespace STACK;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	Solution85::main();
 	Solution239::main();
 	Solution313::main();
 	Solution321::main();
