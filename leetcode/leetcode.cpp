@@ -22,9 +22,109 @@ using namespace std;
 
 //////////////////////////Tag STACK//////////////////////////////////////////
 namespace STACK {
-	/*23. Merge k Sorted Lists (medium)
+	/*23. Merge k Sorted Lists (hard)
 	*/
 	/*23. Merge k Sorted Lists end */
+
+
+	/*85. Maximal Rectangle (hard)
+	https://leetcode.com/problems/maximal-rectangle/
+	https://discuss.leetcode.com/topic/6650/share-my-dp-solution
+	*/
+	class Solution85 {
+	public:
+		int maximalRectangle(vector<vector<char>>& matrix) {
+			if (matrix.empty() || matrix[0].empty())
+				return 0;
+
+			int row = matrix.size();
+			int col = matrix[0].size();
+
+			vector<int> height(col + 1, 0);
+			int result = 0;
+
+			for (int i = 0; i < row; ++i) {
+				for (int j = 0; j < col; ++j) {
+					if (height[j] == 0)
+						height[j] = (matrix[i][j] == '1');
+					else if (matrix[i][j] == '0')
+						height[j] = 0;
+					else
+						height[j] ++;
+				}
+
+				stack<int> s;
+				int k = 0;
+
+				while (k < col + 1) {
+					if (s.empty() || height[k] > height[s.top()]) {
+						s.push(k);
+						++k;
+					}
+					else {
+						int t = s.top();
+						s.pop();
+
+						result = max(result, height[t] * (s.empty() ? k : k - s.top() - 1));
+					}
+				}
+			}
+
+			return result;
+		}
+	};
+	/*85. Maximal Rectangle end */
+
+
+	/*150. Evaluate Reverse Polish Notation (medium)
+	https://leetcode.com/problems/evaluate-reverse-polish-notation/
+	https://discuss.leetcode.com/topic/5780/accepted-c-recursive-solution-56-ms-with-explanation-simplest-possible
+	https://discuss.leetcode.com/topic/1941/java-accepted-code-stack-implementation
+	*/
+	class Solution150 {
+	public:
+		int evalRPN(vector<string>& tokens) {
+			stack<string> tmp;
+			string opr1, opr2;
+			int result;
+
+			for (int i = 0; i < tokens.size(); ++i) {
+				if ((tokens[i].size() == 1) && (tokens[i][0] < '0' || tokens[i][0] > '9')) {
+					opr2 = tmp.top();
+					tmp.pop();
+
+					opr1 = tmp.top();
+					tmp.pop();
+
+					if (tokens[i][0] == '+') {
+						result = atoi(opr1.data()) + atoi(opr2.data());
+						tmp.push(to_string(result));
+					}
+					else if (tokens[i][0] == '-') {
+						result = atoi(opr1.data()) - atoi(opr2.data());
+						tmp.push(to_string(result));
+					}
+					else if (tokens[i][0] == '/') {
+						if (atoi(opr2.data()) == 0)
+							break;
+
+						result = atoi(opr1.data()) / atoi(opr2.data());
+						tmp.push(to_string(result));
+					}
+					else if (tokens[i][0] == '*') {
+						result = atoi(opr1.data()) * atoi(opr2.data());
+						tmp.push(to_string(result));
+					}
+				}
+				else
+					tmp.push(tokens[i]);
+
+			}
+
+			return atoi(tmp.top().data());
+		}
+	};
+	/*150. Evaluate Reverse Polish Notation end */
 
 
 	/*331. Verify Preorder Serialization of a Binary Tree (medium)
