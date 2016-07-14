@@ -20,13 +20,123 @@
 using namespace std;
 
 
-//////////////////////////Tag STACK//////////////////////////////////////////
-namespace STACK {
-	/*23. Merge k Sorted Lists (hard)
+//////////////////////////Tag BACKTRACK//////////////////////////////////////////
+namespace BACKTRACK {
+	/*23. Merge k Sorted Lists (medium)
 	*/
 	/*23. Merge k Sorted Lists end */
 
 
+	/*23. Merge k Sorted Lists (medium)
+	*/
+	/*23. Merge k Sorted Lists end */
+
+
+	/*22. Generate Parentheses (medium)
+	https://leetcode.com/problems/generate-parentheses/
+	https://discuss.leetcode.com/topic/4485/concise-recursive-c-solution
+	*/
+	class Solution22 {
+		vector<string> res;
+	public:
+		vector<string> generateParenthesis(int n) {
+			string str;
+			generate(n, 0, 0, str);
+
+			return res;
+		}
+
+		void generate(int n, int left, int right, string str) {
+			auto compare = [&](int a1, int b1) {return 1; };
+
+			if (left == n && right == n)
+				res.push_back(str);
+
+			if (left < n)
+				generate(n, left + 1, right, str + "(");
+
+			if (right < n && right < left)
+				generate(n, left, right + 1, str + ")");
+		}
+	};
+	/*22. Generate Parentheses end */
+
+	/*17. Letter Combinations of a Phone Number (medium)
+	https://leetcode.com/problems/letter-combinations-of-a-phone-number/
+	https://discuss.leetcode.com/topic/8465/my-java-solution-with-fifo-queue
+	*/
+	class Solution17 {
+	public:
+		vector<string> letterCombinations(string digits) {
+			vector<string> result;
+			if (digits.empty())
+				return result;
+
+			vector<string> strmap = { "", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz" };
+
+			result.push_back("");
+			for (int i = 0; i < digits.size(); ++i) {
+				int num = digits[i] - '0';
+
+				if (num < 0 || num > 9)
+					break;
+
+				string candidate = strmap[num];
+
+				if (candidate.empty()) continue;
+
+				vector<string> tmp;
+
+				for (int j = 0; j < candidate.size(); ++j)
+				for (int k = 0; k < result.size(); ++k)
+					tmp.push_back(result[k] + candidate[j]);
+
+				result.swap(tmp);
+			}
+
+			return result;
+		}
+	};
+	/*17. Letter Combinations of a Phone Number end */
+
+
+	/*89. Gray Code (medium)
+	https://leetcode.com/problems/gray-code/
+	https://discuss.leetcode.com/topic/1011/what-is-the-best-solution-for-gray-code-problem-no-extra-space-used-and-no-recursion
+	https://discuss.leetcode.com/topic/8557/an-accepted-three-line-solution-in-java
+	*/
+	class Solution89 {
+	public:
+		vector<int> grayCode(int n) {
+			vector<int> result;
+
+			if (n == 0) {
+				result.push_back(0);
+				return result;
+			}
+
+			result.push_back(0);
+			result.push_back(1);
+			for (int idx = 1; idx < n; ++idx) {
+
+				int num = result.size();
+
+				int base = 1 << idx;
+				for (int j = num - 1; j >= 0; --j)
+					result.push_back(base + result.at(j));
+			}
+
+			return result;
+		}
+	};
+	/*89. Gray Code end */
+
+}
+//////////////////////////Tag BACKTRACK end//////////////////////////////////////////
+
+
+//////////////////////////Tag STACK//////////////////////////////////////////
+namespace STACK {
 	/*42. Trapping Rain Water (hard)
 	https://leetcode.com/problems/trapping-rain-water/
 	https://discuss.leetcode.com/topic/5125/sharing-my-simple-c-code-o-n-time-o-1-space
@@ -6022,6 +6132,7 @@ using namespace SORT;
 using namespace GREEDY;
 using namespace HEAP;
 using namespace STACK;
+using namespace BACKTRACK;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
