@@ -27,6 +27,130 @@ namespace STACK {
 	/*23. Merge k Sorted Lists end */
 
 
+	/*42. Trapping Rain Water (hard)
+	https://leetcode.com/problems/trapping-rain-water/
+	https://discuss.leetcode.com/topic/5125/sharing-my-simple-c-code-o-n-time-o-1-space
+	https://discuss.leetcode.com/topic/18731/7-lines-c-c
+	*/
+	class Solution {
+	public:
+		int trap(vector<int>& height) {
+			if (height.size() < 2)
+				return 0;
+
+			int result = 0, left = 0, maxleft = 0, maxright = 0;
+			int right = height.size() - 1;
+
+			while (left <= right) {
+				if (height[left] <= height[right]) {
+					if (height[left] >= maxleft)
+						maxleft = height[left];
+					else
+						result += maxleft - height[left];
+
+					++left;
+				}
+				else {
+					if (height[right] >= maxright)
+						maxright = height[right];
+					else
+						result += maxright - height[right];
+
+					--right;
+				}
+			}
+
+			return result;
+		}
+	};
+	/*42. Trapping Rain Water end */
+
+
+	/*224. Basic Calculator (hard)
+	https://leetcode.com/problems/basic-calculator/
+	https://discuss.leetcode.com/topic/15816/iterative-java-solution-with-stack
+	https://discuss.leetcode.com/topic/22359/16-ms-solution-in-c-with-stacks
+	*/
+	class Solution224 {
+	public:
+		int calculate(string s) {
+			int flag = 1;
+			int result = 0, num = 0;
+			stack<int> ops;
+
+			for (int i = 0; i < s.size(); ++i) {
+				if (s[i] >= '0' && s[i] <= '9') {
+					num = (s[i] - '0');
+					while (i + 1 < s.size() && isdigit(s[i + 1])) {
+						num = num * 10 + (s[i + 1] - '0');
+						++i;
+					}
+
+					result += flag*num;
+				}
+				else if (s[i] == '+' || s[i] == '-')
+					flag = (s[i] == '+' ? 1 : -1);
+				else if (s[i] == '(') {
+					ops.push(result);
+					ops.push(flag);
+					result = 0;
+					flag = 1;
+				}
+				else if (s[i] == ')') {
+					int tmp = ops.top();
+					ops.pop();
+					result = result*tmp + ops.top();
+					ops.pop();
+				}
+			}
+
+			return result;
+		}
+	};
+	/*224. Basic Calculator end */
+
+
+	/*84. Largest Rectangle in Histogram (hard)
+	https://leetcode.com/problems/largest-rectangle-in-histogram/
+	https://discuss.leetcode.com/topic/3913/my-concise-c-solution-ac-90-ms
+	http://www.geeksforgeeks.org/largest-rectangle-under-histogram/
+	*/
+	class Solution84 {
+	public:
+		int largestRectangleArea(vector<int>& heights) {
+			stack<int> s;
+			heights.push_back(0);
+			int res = 0;
+
+			int k = 0;
+			while (k < heights.size()) {
+				if (s.empty() || heights[k] > heights[s.top()])
+					s.push(k++);
+				else {
+					int t = s.top();
+
+					s.pop();
+					res = max(res, heights[t] * (s.empty() ? k : (k - s.top() - 1)));
+				}
+			}
+
+			return res;
+		}
+
+		static void main() {
+			Solution84* test = new Solution84;
+			int result;
+
+			vector<int> heights1 = { 4, 5, 6, 2 };
+			result = test->largestRectangleArea(heights1);
+
+			vector<int> heights2 = { 6, 2, 5, 4, 5, 1, 6 };
+			result = test->largestRectangleArea(heights2);
+		}
+	};
+	/*84. Largest Rectangle in Histogram end */
+
+
 	/*85. Maximal Rectangle (hard)
 	https://leetcode.com/problems/maximal-rectangle/
 	https://discuss.leetcode.com/topic/1634/a-o-n-2-solution-based-on-largest-rectangle-in-histogram
@@ -125,6 +249,8 @@ namespace STACK {
 
 			result = test->maximalRectangle(matrix1);
 			result = test->maximalRectangle1(matrix1);
+
+			delete test;
 		}
 	};
 	/*85. Maximal Rectangle end */
@@ -447,6 +573,8 @@ namespace HEAP {
 			vector<int> nums2 = { 6, 5, 4, 3, 2, 1 };
 			int k2 = 3;
 			result = test->maxSlidingWindow(nums2, k2);
+
+			delete test;
 		}
 	};
 	/*239. Sliding Window Maximum end */
@@ -513,6 +641,7 @@ namespace HEAP {
 			int n1 = 12;
 
 			result = test->nthSuperUglyNumber(n1, primes1);
+			delete test;
 		}
 	};
 	/*313. Super Ugly Number end */
@@ -734,6 +863,7 @@ namespace GREEDY {
 			int k2 = 5;
 
 			result = test->maxNumber(nums2_1, nums2_2, k2);
+			delete test;
 		}
 	};
 	/*321. Create Maximum Number end */
@@ -5895,6 +6025,7 @@ using namespace STACK;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	Solution84::main();
 	Solution85::main();
 	Solution239::main();
 	Solution313::main();
