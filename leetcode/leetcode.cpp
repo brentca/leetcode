@@ -58,6 +58,30 @@ namespace BACKTRACK {
 			if (right < n && right < left)
 				generate(n, left, right + 1, str + ")");
 		}
+		
+		/*
+		void generate1(int n) {
+			auto compare = [&](int a1, int b1) {return 1; };
+
+			if (left == n && right == n)
+				res.push_back(str);
+
+			if (left < n)
+				generate(n, left + 1, right, str + "(");
+
+			if (right < n && right < left)
+				generate(n, left, right + 1, str + ")");
+		}
+		*/
+		static void main() {
+			Solution22* test = new Solution22;
+			vector<string> result;
+
+			int num1 = 3;
+			result = test->generateParenthesis(num1);
+
+			delete test;
+		}
 	};
 	/*22. Generate Parentheses end */
 
