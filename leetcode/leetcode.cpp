@@ -27,6 +27,181 @@ namespace BACKTRACK {
 	/*23. Merge k Sorted Lists end */
 
 
+	/*60. Permutation Sequence (medium)
+	https://leetcode.com/problems/permutation-sequence/
+	*/
+	class Solution {
+	public:
+		vector<int> m_vec;
+		vector<int> m_invec;
+		int m_cur;
+		int m_len;
+
+		void getPermute(int start, int k) {
+			if (start >= m_len) {
+				m_cur++;
+				if (k == m_cur)
+					m_vec = m_invec;
+			}
+
+			for (int i = start; i < m_len; ++i) {
+				swap(m_invec[start], m_invec[i]);
+				getPermute(start + 1, k);
+				swap(m_invec[start], m_invec[i]);
+			}
+		}
+
+		string getPermutation1(int n, int k) {
+			if (n < 1)
+				return string("");
+
+			int tmp = k;
+			for (int i = n; i >= 1; --i)
+				tmp /= i;
+
+			if (tmp > 1)
+				return string("");
+
+			m_invec.resize(n);
+			for (int i = 0; i < n; ++i)
+				m_invec[i] = i + 1;
+
+			m_cur = 0;
+			m_len = n;
+			getPermute(0, k);
+
+			string result;
+			result.resize(n);
+			for (int i = 0; i < m_vec.size(); ++i)
+				result[i] = '0' + m_vec[i];
+			return result;
+		}
+
+		string getPermutation(int n, int k) {
+			string ret(n, '0');
+			int i, j, f = 1;
+			for (i = 1; i <= n; ++i) {
+				ret[i - 1] = '0' + i;
+				f *= i;
+			}
+
+			for (i = 0, k--; i < n; ++i) {
+				f /= n - i;
+				j = i + k / f;
+
+				char tmp = ret[j];
+				for (; j > i; --j)
+					ret[j] = ret[j - 1];
+
+				k %= f;
+				ret[i] = tmp;
+			}
+
+			return ret;
+		}
+	};
+	/*60. Permutation Sequence end */
+
+
+	/*47. Permutations II (medium)
+	https://leetcode.com/problems/permutations-ii/
+	https://discuss.leetcode.com/topic/8831/a-simple-c-solution-in-only-20-lines
+	*/
+	class Solution47 {
+	public:
+		void permuteUnique1(vector<int> nums, int low, int high, vector<vector<int>>& ret) {
+			if (low == high - 1) {
+				ret.push_back(nums);
+				return;
+			}
+
+			for (int i = low; i < high; ++i) {
+				if (i != low && nums[i] == nums[low])
+					continue;
+
+				swap(nums[low], nums[i]);
+				permuteUnique1(nums, low + 1, high, ret);
+			}
+		}
+
+		vector<vector<int>> permuteUnique(vector<int>& nums) {
+
+			vector<vector<int>> result;
+			if (nums.empty())
+				return result;
+
+			sort(nums.begin(), nums.end());
+			permuteUnique1(nums, 0, nums.size(), result);
+			return result;
+		}
+
+		void recursion2(vector<int> num, int i, int j, vector<vector<int> > &res) {
+			if (i == j - 1) {
+				res.push_back(num);
+				return;
+			}
+
+			for (int k = i; k < j; k++) {
+				if (i != k && num[i] == num[k]) continue;
+				swap(num[i], num[k]);
+				recursion2(num, i + 1, j, res);
+			}
+		}
+
+		vector<vector<int> > permuteUnique2(vector<int> &num) {
+			sort(num.begin(), num.end());
+			vector<vector<int> >res;
+			recursion2(num, 0, num.size(), res);
+			return res;
+		}
+	};
+	/*47. Permutations II end */
+
+
+	/*46. Permutations (medium)
+	https://leetcode.com/problems/permutations/
+	https://discuss.leetcode.com/topic/5881/my-elegant-recursive-c-solution-with-inline-explanation
+	*/
+	class Solution46 {
+	public:
+		vector<vector<int>> result;
+
+		vector<vector<int>> permute(vector<int>& nums) {
+			int size = nums.size();
+			if (size < 1)
+				return result;
+			result = mypermute(nums, size);
+			return result;
+		}
+
+		vector<vector<int>> mypermute(vector<int>& nums, int size) {
+			if (size == 1)
+			{
+				vector<vector<int>> tmp;
+				tmp.push_back(vector<int>(1, nums[0]));
+				return tmp;
+			}
+
+			vector<vector<int>> cur;
+			for (int i = 0; i < size; ++i)
+			{
+				swap(nums[i], nums[size - 1]);
+				vector<vector<int>> tmp = mypermute(nums, size - 1);
+				for (int j = 0; j < tmp.size(); ++j)
+				{
+					tmp[j].push_back(nums[size - 1]);
+					cur.push_back(tmp[j]);
+				}
+
+				swap(nums[i], nums[size - 1]);
+			}
+
+			return cur;
+		}
+	};
+	/*46. Permutations end */
+
+
 	/*216. Combination Sum III (medium)
 	https://leetcode.com/problems/combination-sum-iii/
 	https://discuss.leetcode.com/topic/14641/my-c-solution-backtracking
