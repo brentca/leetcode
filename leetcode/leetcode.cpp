@@ -27,9 +27,211 @@ namespace BACKTRACK {
 	/*23. Merge k Sorted Lists end */
 
 
-	/*23. Merge k Sorted Lists (medium)
+	/*216. Combination Sum III (medium)
+	https://leetcode.com/problems/combination-sum-iii/
+	https://discuss.leetcode.com/topic/14641/my-c-solution-backtracking
 	*/
-	/*23. Merge k Sorted Lists end */
+	class Solution216 {
+	public:
+		void combinationSum(vector<vector<int>>&result, vector<int> cur, int k, int n) {
+			if (cur.size() == k && n == 0) {
+				result.push_back(cur);
+				return;
+			}
+
+			if (cur.size() < k) {
+				for (int i = (cur.size() > 0 ? cur.back() + 1 : 1); i <= 9; ++i) {
+					if (n - i < 0)
+						break;
+
+					cur.push_back(i);
+					combinationSum(result, cur, k, n - i);
+					cur.pop_back();
+				}
+			}
+		}
+
+		vector<vector<int>> combinationSum3(int k, int n) {
+			vector<int> cur;
+			vector<vector<int>> result;
+
+			combinationSum(result, cur, k, n);
+
+			return result;
+		}
+	};
+	/*216. Combination Sum III end */
+
+
+	/*40. Combination Sum II (medium)
+	https://leetcode.com/problems/combination-sum-ii/
+	https://discuss.leetcode.com/topic/8916/c-backtracking-solution-with-detailed-explanation
+	*/
+	class Solution40 {
+	public:
+		vector<vector<int>> dsf(vector<int>& candidates, int target, int start) {
+			vector<vector<int>> ret;
+
+			if (start >= candidates.size() || candidates[start] > target)
+				return ret;
+
+			if (target == candidates[start]) {
+				ret.push_back(vector<int>(1, target));
+				return ret;
+			}
+
+			vector<vector<int>> withtar = dsf(candidates, target - candidates[start], start + 1);
+			int begin = start + 1;
+
+			while (begin < candidates.size() && candidates[begin] == candidates[start])
+				begin++;
+
+			vector<vector<int>> withouttar = dsf(candidates, target, begin);
+
+			for (auto item : withtar) {
+				item.insert(item.begin(), candidates[start]);
+				ret.push_back(item);
+			}
+
+			for (auto item : withouttar)
+				ret.push_back(item);
+
+			return ret;
+		}
+
+		vector<vector<int>> combinationSum3(vector<int>& candidates, int target) {
+			vector<vector<int>> result;
+
+			sort(candidates.begin(), candidates.end());
+
+			if (candidates.empty() || target < candidates[0])
+				return result;
+
+			result = dsf(candidates, target, 0);
+			return result;
+		}
+
+		void dsf(vector<int>& candidates, int target, int start, vector<vector<int>>& ret, vector<int>& locaret) {
+			if (target == 0) {
+				ret.push_back(locaret);
+				return;
+			}
+
+			for (int i = start; i < candidates.size(); ++i) {
+				if (candidates[i] > target)
+					return;
+
+				if (i && candidates[i - 1] == candidates[i] && i > start)
+					continue;
+
+				locaret.push_back(candidates[i]);
+				dsf(candidates, target - candidates[i], i + 1, ret, locaret);
+				locaret.pop_back();
+			}
+		}
+
+		vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+			vector<vector<int>> result;
+			vector<int> localret;
+
+			sort(candidates.begin(), candidates.end());
+			if (candidates.empty() || target < candidates[0])
+				return result;
+
+			dsf(candidates, target, 0, result, localret);
+			return result;
+		}
+	};
+	/*40. Combination Sum II end */
+
+
+	/*39. Combination Sum (medium)
+	https://leetcode.com/problems/combination-sum/
+	https://discuss.leetcode.com/topic/14654/accepted-16ms-c-solution-use-backtracking-easy-understand/2
+	*/
+	class Solution39 {
+	public:
+		vector<vector<int>> combine(vector<int>& candidates, int nums, int target) {
+			vector<vector<int>> result;
+
+			if (nums == 1) {
+				if (candidates[0] == target)
+					result.push_back(vector<int>(1, target));
+				else {
+					int count = target / candidates[0];
+					if (target % candidates[0] == 0)
+						result.push_back(vector<int>(count, candidates[0]));
+				}
+			}
+			else {
+				vector<vector<int>> tmp;
+				if (candidates[nums - 1] == target) {
+					result.push_back(vector<int>(1, target));
+
+					tmp = combine(candidates, nums - 1, target);
+
+					for (auto item : tmp)
+						result.push_back(item);
+				}
+				else if (candidates[nums - 1] > target) {
+					tmp = combine(candidates, nums - 1, target);
+
+					for (auto item : tmp)
+						result.push_back(item);
+				}
+				else {
+					int count = target / candidates[nums - 1];
+
+					while (count >= 0) {
+						tmp = combine(candidates, nums - 1, target - count*candidates[nums - 1]);
+
+						for (auto item : tmp) {
+							item.insert(item.end(), count, candidates[nums - 1]);
+							result.push_back(item);
+						}
+
+						--count;
+					}
+				}
+			}
+
+			return result;
+		}
+
+		vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+			if (candidates.empty())
+				return vector<vector<int>>();
+
+			sort(candidates.begin(), candidates.end());
+
+			if (target < candidates[0])
+				return vector<vector<int>>();
+
+			return combine(candidates, candidates.size(), target);
+		}
+
+		vector<vector<int> > combinationSum1(vector<int> &candidates, int target) {
+			sort(candidates.begin(), candidates.end());
+			vector<vector<int> > res;
+			vector<int> combination;
+			combinationSum(candidates, target, res, combination, 0);
+			return res;
+		}
+
+		void combinationSum(std::vector<int> &candidates, int target, std::vector<std::vector<int> > &res, std::vector<int> &combination, int begin) {
+			if (0 == target) {
+				res.push_back(combination);
+				return;
+			}
+
+			for (int i = begin; i != candidates.size() && target >= candidates[i]; ++i) {
+				combination.push_back(candidates[i]);
+				combinationSum(candidates, target - candidates[i], res, combination, i);
+				combination.pop_back();
+			}
+		}
+	};
+	/*39. Combination Sum end */
 
 
 	/*22. Generate Parentheses (medium)
