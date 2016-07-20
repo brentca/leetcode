@@ -27,10 +27,165 @@ namespace BACKTRACK {
 	/*23. Merge k Sorted Lists end */
 
 
+	/*90. Subsets II (medium)
+	https://leetcode.com/problems/subsets-ii/
+	https://discuss.leetcode.com/topic/4661/c-solution-and-explanation
+	https://discuss.leetcode.com/topic/13543/accepted-10ms-c-solution-use-backtracking-only-10-lines-easy-understand
+	*/
+	class Solution90 {
+	public:
+		vector<vector<int>> subsets(vector<int>& nums, int len) {
+			vector<vector<int>> result, tmp;
+			if (len == 1)
+				return vector<vector<int>>(1, vector<int>(1, nums[len - 1]));
+
+			if (nums[len - 1] == nums[len - 2]) {
+				tmp = subsets(nums, len - 1);
+				int duptotal = 0;
+
+				for (int i = len - 2; i >= 0; --i) {
+					if (nums[len - 1] == nums[i])
+						++duptotal;
+					else
+						break;
+				}
+
+				for (auto item : tmp) {
+					int dupnum = 0;
+
+					for (int i = item.size() - 1; i >= 0; --i) {
+						if (item[i] == nums[len - 1])
+							dupnum++;
+						else
+							break;
+					}
+
+					result.push_back(item);
+					if (dupnum == duptotal) {
+						item.push_back(nums[len - 1]);
+						result.push_back(item);
+					}
+				}
+			}
+			else {
+				result.push_back(vector<int>(1, nums[len - 1]));
+				tmp = subsets(nums, len - 1);
+
+				for (auto item : tmp) {
+					result.push_back(item);
+					item.push_back(nums[len - 1]);
+					result.push_back(item);
+				}
+			}
+
+			return result;
+		}
+
+		vector<vector<int>> subsetsWithDup(vector<int>& nums) {
+			if (nums.empty())
+				return vector<vector<int>>();
+
+			sort(nums.begin(), nums.end());
+
+			vector<vector<int>> result;
+			//for (int i = 0; i < nums.size(); ++i)
+			{
+				result = subsets(nums, nums.size());
+			}
+
+			result.push_back(vector<int>());
+
+			return result;
+		}
+	};
+	/*90. Subsets II end */
+
+
+	/*79. Word Search (medium)
+	https://leetcode.com/problems/word-search/
+	https://discuss.leetcode.com/topic/9826/my-19ms-accepted-c-code
+	*/
+	class Solution79 {
+	public:
+		int m;
+		int n;
+
+		bool isfound(vector<vector<char>>& board, const char* word, int x, int y) {
+			if (x < 0 || x >= m || y < 0 || y >= n || board[x][y] == '\0' || *word != board[x][y])
+				return false;
+
+			if (*(word + 1) == '\0')
+				return true;
+
+			char tmp = board[x][y];
+
+			board[x][y] = '\0';
+
+			if (isfound(board, word + 1, x - 1, y) || isfound(board, word + 1, x + 1, y) ||
+				isfound(board, word + 1, x, y - 1) || isfound(board, word + 1, x, y + 1))
+				return true;
+
+			board[x][y] = tmp;
+			return false;
+		}
+
+		bool exist(vector<vector<char>>& board, string word) {
+			if (word.empty() || board.empty() || board[0].empty())
+				return false;
+
+			m = board.size();
+			n = board[0].size();
+
+			for (int i = 0; i < m; ++i)
+				for (int j = 0; j < n; ++j) {
+					if (isfound(board, word.c_str(), i, j))
+						return true;
+				}
+
+			return false;
+		}
+	};
+	/*79. Word Search end */
+
+
+	/*77. Combinations (medium)
+	https://leetcode.com/problems/combinations/
+	https://discuss.leetcode.com/topic/3950/my-shortest-c-solution-using-dfs
+	*/
+	class Solution77 {
+	public:
+		void mycombine(vector<vector<int>> &result, vector<int> cur, int n, int k, int start) {
+			if (cur.size() == k) {
+				result.push_back(cur);
+				return;
+			}
+
+			for (int i = start; i <= n; ++i) {
+				cur.push_back(i);
+				mycombine(result, cur, n, k, i + 1);
+				cur.pop_back();
+			}
+		}
+
+		vector<vector<int>> combine(int n, int k) {
+			vector<vector<int>> result;
+			if (k > n)
+				return result;
+
+			vector<int> cur;
+			mycombine(result, cur, n, k, 1);
+			return result;
+		}
+	};
+	/*77. Combinations end */
+
+
 	/*60. Permutation Sequence (medium)
 	https://leetcode.com/problems/permutation-sequence/
+	https://discuss.leetcode.com/topic/3313/most-concise-c-solution-minimal-memory-required
+	https://discuss.leetcode.com/topic/17348/explain-like-i-m-five-java-solution-in-o-n
 	*/
-	class Solution {
+	class Solution60 {
 	public:
 		vector<int> m_vec;
 		vector<int> m_invec;
@@ -78,18 +233,20 @@ namespace BACKTRACK {
 		}
 
 		string getPermutation(int n, int k) {
+			// left part of s is partially formed permutation, right part is the leftover chars.
 			string ret(n, '0');
 			int i, j, f = 1;
 			for (i = 1; i <= n; ++i) {
-				ret[i - 1] = '0' + i;
+				ret[i - 1] = '0' + i; // make ret become 1234...n
 				f *= i;
 			}
 
 			for (i = 0, k--; i < n; ++i) {
 				f /= n - i;
-				j = i + k / f;
+				j = i + k / f; // calculate index of char to put at s[i]
 
 				char tmp = ret[j];
+				// remove c by shifting to cover up (adjust the right part)
 				for (; j > i; --j)
 					ret[j] = ret[j - 1];
 
