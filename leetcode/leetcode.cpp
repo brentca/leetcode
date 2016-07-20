@@ -22,9 +22,124 @@ using namespace std;
 
 //////////////////////////Tag BACKTRACK//////////////////////////////////////////
 namespace BACKTRACK {
-	/*23. Merge k Sorted Lists (medium)
+	/*23. Merge k Sorted Lists (hard)
 	*/
 	/*23. Merge k Sorted Lists end */
+
+
+	/*131. Palindrome Partitioning (medium)
+	https://leetcode.com/problems/palindrome-partitioning/
+	https://discuss.leetcode.com/topic/10955/clean-c-backtracking-solution
+	https://discuss.leetcode.com/topic/6186/java-backtracking-solution
+	*/
+	class Solution131 {
+	public:
+		bool ispalind(const string& s, int low, int high) {
+			while (low <= high) {
+				if (s[low++] != s[high--])
+					return false;
+			}
+
+			return true;
+		}
+
+		void dsf(const string& s, int start, vector<string>& path, vector<vector<string>>& ret) {
+			if (start == s.size()) {
+				ret.push_back(path);
+				return;
+			}
+
+			for (int i = start; i < s.size(); ++i) {
+				if (ispalind(s, start, i)) {
+					path.push_back(s.substr(start, i - start + 1));
+					dsf(s, i + 1, path, ret);
+					path.pop_back();
+				}
+			}
+		}
+
+		vector<vector<string>> partition(string s) {
+			vector<vector<string>> ret;
+			vector<string> path;
+
+			if (s.empty())
+				return ret;
+
+			dsf(s, 0, path, ret);
+			return ret;
+		}
+	};
+	/*131. Palindrome Partitioning end */
+
+
+	/*93. Restore IP Addresses (medium)
+	https://leetcode.com/problems/restore-ip-addresses/
+	https://discuss.leetcode.com/topic/4742/very-simple-dfs-solution
+	https://discuss.leetcode.com/topic/3919/my-code-in-java
+	*/
+	class Solution93 {
+	public:
+		vector<string> m_ret;
+
+		void iptostr(const string& s, string & ret, int layer) {
+			if (layer == 1) {
+				if (s.size() > 1 && s[0] == '0')
+					return;
+
+				if (!s.empty() && s.size() < 4 && stoi(s) >= 0 && stoi(s) <= 255) {
+					ret.append(".");
+					ret.append(s);
+					m_ret.push_back(ret);
+				}
+
+				return;
+			}
+
+			if (layer < 4)
+				ret += ".";
+
+			string str1, str2, str3;
+			if (s.size() > 1) {
+				str1 = ret + s.substr(0, 1);
+				iptostr(s.substr(1), str1, layer - 1);
+			}
+
+			if (s.size() > 2) {
+				str2 = ret + s.substr(0, 2);
+				if (s[0] != '0')
+					iptostr(s.substr(2), str2, layer - 1);
+			}
+
+			if (s.size() > 3) {
+				str3 = s.substr(0, 3);
+				if (stoi(str3) >= 0 && stoi(str3) <= 255 && s[0] != '0') {
+					str3 = ret + str3;
+					iptostr(s.substr(3), str3, layer - 1);
+				}
+			}
+		}
+
+		vector<string> restoreIpAddresses(string s) {
+			if (s.empty())
+				return vector<string>();
+
+			string str("");
+			iptostr(s, str, 4);
+
+			return m_ret;
+		}
+
+		static void main() {
+			Solution93* test = new Solution93;
+			vector<string> result;
+
+			string str1("25525511135");
+			result = test->restoreIpAddresses(str1);
+		
+			delete test;
+		}
+	};
+	/*93. Restore IP Addresses end */
 
 
 	/*90. Subsets II (medium)
@@ -6694,6 +6809,7 @@ using namespace BACKTRACK;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	Solution93::main();
 	Solution84::main();
 	Solution85::main();
 	Solution239::main();
