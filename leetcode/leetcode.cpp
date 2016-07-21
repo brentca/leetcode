@@ -20,11 +20,284 @@
 using namespace std;
 
 
+//////////////////////////Tag Dynamic Programming//////////////////////////////////////////
+namespace DP {
+	/*10. Regular Expression Matching (medium)
+	*/
+	/*10. Regular Expression Matching end */
+
+
+	/*63. Unique Paths II (medium)
+	https://leetcode.com/problems/unique-paths-ii/
+	https://discuss.leetcode.com/topic/4325/my-c-dp-solution-very-simple
+	*/
+	class Solution63 {
+	public:
+		int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
+			if (obstacleGrid.empty() || obstacleGrid[0][0] == 1)
+				return 0;
+
+			int m = obstacleGrid.size();
+			int n = obstacleGrid[0].size();
+			vector<vector<int>> result(m + 1, vector<int>(n + 1, 0));
+
+			result[0][1] = 1;
+			for (int i = 1; i <= m; ++i)
+			for (int j = 1; j <= n; ++j) {
+				if (!obstacleGrid[i - 1][j - 1])
+					result[i][j] = result[i - 1][j] + result[i][j - 1];
+			}
+
+			return result[m][n];
+		}
+	};
+	/*63. Unique Paths II end */
+
+
+	/*62. Unique Paths (medium)
+	https://leetcode.com/problems/unique-paths/
+	https://discuss.leetcode.com/topic/15265/0ms-5-lines-dp-solution-in-c-with-explanations
+	*/
+	class Solution62 {
+	public:
+		int uniquePaths(int m, int n) {
+			vector<vector<int>> array;
+
+			array.resize(m + 1);
+
+			for (int idx = 0; idx<m + 1; ++idx)
+				array[idx].resize(n + 1);
+
+			for (int row = 1; row < m + 1; ++row) {
+				for (int col = 1; col < n + 1; ++col) {
+					if (row == 1 || col == 1)
+						array[row][col] = 1;
+					else
+						array[row][col] = array[row - 1][col] + array[row][col - 1];
+				}
+			}
+
+			return array[m][n];
+		}
+
+		int uniquePaths1(int m, int n) {
+			if (m > n) 
+				return uniquePaths(n, m);
+
+			vector<int> cur(m, 1);
+
+			for (int j = 1; j < n; j++)
+			for (int i = 1; i < m; i++)
+				cur[i] += cur[i - 1];
+
+			return cur[m - 1];
+		}
+	};
+	/*62. Unique Paths end */
+
+
+	/*70. Climbing Stairs (easy)
+	https://leetcode.com/problems/climbing-stairs/
+	https://discuss.leetcode.com/topic/955/easy-solutions-for-suggestions
+	*/
+	class Solution70 {
+	public:
+		int climbStairs(int n) {
+			if (n < 3)
+				return n;
+
+			int a2 = 1;
+			int result = 2;
+			for (int i = 0; i < n - 2; ++i) {
+				int tmp = result;
+				result += a2;
+				a2 = tmp;
+			}
+
+			return result;
+		}
+	};
+	/*70. Climbing Stairs end */
+
+
+	/*121. Best Time to Buy and Sell Stock (easy)
+	https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
+	https://discuss.leetcode.com/category/129/best-time-to-buy-and-sell-stock
+	*/
+	class Solution121 {
+	public:
+		int maxProfit(vector<int>& prices) {
+			int max = 0, profit = 0;
+
+			for (int nIdx = 1; nIdx < prices.size(); ++nIdx) {
+				profit += prices[nIdx] - prices[nIdx - 1];
+
+				if (profit < 0)
+					profit = 0;
+
+				if (profit > max)
+					max = profit;
+			}
+
+			return max;
+		}
+	};
+	/*121. Best Time to Buy and Sell Stock end */
+
+
+	/*303. Range Sum Query - Immutable (easy)
+	https://leetcode.com/problems/range-sum-query-immutable/
+	*/
+	class NumArray303 {
+	public:
+		NumArray303(vector<int> &nums) {
+			int result = 0;
+			numArray.push_back(0);
+			for (int i = 0; i < nums.size(); ++i)
+			{
+				result += nums[i];
+				numArray.push_back(result);
+			}
+		}
+
+		int sumRange(int i, int j) {
+			int result = 0;
+
+			if (i < 0 || j < 0 || i > j || i >= numArray.size() || j >= numArray.size())
+				return result;
+
+
+			result = numArray[j + 1] - numArray[i];
+
+			return result;
+		}
+
+	private:
+		vector<int> numArray;
+	};
+	/*303. Range Sum Query - Immutable end */
+
+
+	/*198. House Robber (easy)
+	https://leetcode.com/problems/house-robber/
+	https://discuss.leetcode.com/topic/11110/c-1ms-o-1-space-very-simple-solution
+	*/
+	class Solution198 {
+	public:
+		int rob(vector<int>& nums) {
+			if (nums.empty())
+				return 0;
+			int len = nums.size();
+			if (len == 1)
+				return nums[0];
+			else if (len == 2)
+				return max(nums[0], nums[1]);
+
+			int a1 = nums[0];
+			int a2 = max(nums[0], nums[1]);
+			int a3;
+
+			for (int i = 3; i <= len; ++i) {
+				a3 = max(a2, nums[i - 1] + a1);
+				a1 = a2;
+				a2 = a3;
+			}
+
+			return a3;
+		}
+	};
+	/*198. House Robber end */
+}
+//////////////////////////Dynamic Programming end//////////////////////////////////////////
+
+
 //////////////////////////Tag BACKTRACK//////////////////////////////////////////
 namespace BACKTRACK {
-	/*23. Merge k Sorted Lists (hard)
+	/*10. Regular Expression Matching (hard)
+	https://leetcode.com/problems/regular-expression-matching/
+	https://discuss.leetcode.com/topic/6183/my-concise-recursive-and-dp-solutions-with-full-explanation-in-c
 	*/
-	/*23. Merge k Sorted Lists end */
+	class Solution10 {
+	public:
+		bool isMatch1(string s, string p) {
+			if (p.empty())
+				return s.empty();
+
+			if (p.size() > 1 && '*' == p[1])
+				return (isMatch1(s, p.substr(2)) || !s.empty() && (s[0] == p[0] || '.' == p[0]) && isMatch1(s.substr(1), p));
+			else
+				return (!s.empty() && (s[0] == p[0] || '.' == p[0]) && isMatch1(s.substr(1), p.substr(1)));
+		}
+
+		bool isMatch(string s, string p) {
+			int m = s.size();
+			int n = p.size();
+
+			vector<vector<bool>> dp(m + 1, vector<bool>(n + 1, false));
+
+			dp[0][0] = true;
+
+			for (int j = 1; j <= n; ++j)
+				dp[0][j] = j > 1 && '*' == p[j - 1] && dp[0][j - 2];
+
+			for (int i = 1; i <= m; ++i) {
+				for (int j = 1; j <= n; ++j) {
+					if (p[j - 1] == '*')
+						dp[i][j] = dp[i][j - 2] || (s[i - 1] == p[j - 2] || '.' == p[j - 2]) && dp[i - 1][j];
+					else
+						dp[i][j] = dp[i - 1][j - 1] && (s[i - 1] == p[j - 1] || '.' == p[j - 1]);
+				}
+			}
+
+			return dp[m][n];
+		}
+	};
+	/*10. Regular Expression Matching end */
+
+
+	/*140. Word Break II (hard)
+	https://leetcode.com/problems/word-break-ii/
+	https://discuss.leetcode.com/topic/12997/11ms-c-solution-concise
+	https://discuss.leetcode.com/topic/27855/my-concise-java-solution-based-on-memorized-dfs
+	*/
+	class Solution140 {
+	public:
+		vector<string> combine(string word, vector<string> prev){
+			for (int i = 0; i<prev.size(); ++i){
+				prev[i] += " " + word;
+			}
+			return prev;
+		}
+
+		vector<string> wordBreak(string s, unordered_set<string>& wordDict) {
+			vector<string> result;
+
+			if (s.empty())
+				return result;
+
+			if (m.count(s))
+				return m[s];
+
+			if (wordDict.count(s))
+				result.push_back(s);
+
+			for (int i = 1; i < s.size(); ++i) {
+				string word = s.substr(i);
+
+				if (wordDict.count(word)) {
+					string rem = s.substr(0, i);
+					vector<string> prev = combine(word, wordBreak(rem, wordDict));
+					result.insert(result.end(), prev.begin(), prev.end());
+				}
+			}
+
+			m[s] = result;
+			return result;
+		}
+
+		unordered_map<string, vector<string>> m;
+	};
+	/*140. Word Break II end */
 
 
 	/*52. N-Queens II (hard)
@@ -6966,6 +7239,7 @@ using namespace GREEDY;
 using namespace HEAP;
 using namespace STACK;
 using namespace BACKTRACK;
+using namespace DP;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
