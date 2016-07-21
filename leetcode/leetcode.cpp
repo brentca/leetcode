@@ -27,6 +27,157 @@ namespace DP {
 	/*10. Regular Expression Matching end */
 
 
+	/*300. Longest Increasing Subsequence (medium)
+	https://leetcode.com/problems/longest-increasing-subsequence/
+	https://discuss.leetcode.com/topic/28719/short-java-solution-using-dp-o-n-log-n
+	*/
+	class Solution {
+	public:
+		int findPos(const vector<int>& table, int value, int length) {
+			int low = 0, high = length - 1;
+			int mid;
+
+			while (low <= high) {
+				mid = low + (high - low) / 2;
+
+				if (table[mid] >= value)
+					high = mid - 1;
+				else
+					low = mid + 1;
+			}
+
+			return low;
+		}
+
+		int lengthOfLIS(vector<int>& nums) {
+			int result = 1;
+			int total = nums.size();
+
+			if (total < 1)
+				return 0;
+
+			vector<int> table(total);
+			table[0] = nums[0];
+			int len = 1;
+			for (int i = 1; i < total; ++i) {
+				if (nums[i] > table[len - 1])
+					table[len++] = nums[i];
+				else {
+					int pos = findPos(table, nums[i], len);
+					table[pos] = nums[i];
+				}
+			}
+
+			return len;
+		}
+
+		int lengthOfLIS1(vector<int>& nums) {
+			int result = 1;
+			int total = nums.size();
+
+			if (total < 1)
+				return 0;
+
+			vector<int> s(total, 1);
+
+			for (int i = 1; i < total; ++i) {
+				for (int j = i - 1; j >= 0; --j) {
+					if (nums[i] > nums[j])
+						s[i] = max(s[i], s[j] + 1);
+				}
+
+				result = max(result, s[i]);
+			}
+
+			return result;
+		}
+	};
+	/*300. Longest Increasing Subsequence end */
+
+
+	/*64. Minimum Path Sum (medium)
+	https://leetcode.com/problems/minimum-path-sum/
+	https://discuss.leetcode.com/topic/15269/10-lines-28ms-o-n-space-dp-solution-in-c-with-explanations
+	*/
+	class Solution64 {
+	public:
+		int minPathSum4(vector<vector<int>>& grid) {
+			int m = grid.size();
+			int n = grid[0].size();
+			vector<int> cur(n, grid[0][0]);
+
+			for (int i = 1; i < n; ++i)
+				cur[i] = cur[i - 1] + grid[0][i];
+
+			for (int i = 1; i < m; ++i) {
+				cur[0] += grid[i][0];
+				for (int j = 1; j < n; ++j) {
+					cur[i] = min(cur[i], cur[i - 1]) + grid[i][j];
+				}
+			}
+
+			return cur[n - 1];
+		}
+
+		int minPathSum(vector<vector<int>>& grid) {
+			int m = grid.size();
+			int n = grid[0].size();
+			vector<int> cur(m, grid[0][0]);
+
+			for (int i = 1; i < m; ++i)
+				cur[i] = cur[i - 1] + grid[i][0];
+
+			for (int j = 1; j < n; ++j) {
+				cur[0] += grid[0][j];
+				for (int i = 1; i < m; ++i)
+					cur[i] = min(cur[i], cur[i - 1]) + grid[i][j];
+			}
+
+			return cur[m - 1];
+		}
+
+		int minPathSum2(vector<vector<int>>& grid) {
+			int m = grid.size();
+			int n = grid[0].size();
+
+			vector<int> pre(m, grid[0][0]);
+			vector<int> cur(m);
+
+			for (int i = 1; i < m; ++i)
+				pre[i] = pre[i - 1] + grid[i][0];
+
+			for (int j = 1; j < n; ++j) {
+				cur[0] = pre[0] + grid[0][j];
+				for (int i = 1; i < m; ++i)
+					cur[i] = min(pre[i], cur[i - 1]) + grid[i][j];
+
+				swap(pre, cur);
+			}
+
+			return pre[m - 1];
+		}
+
+		int minPathSum1(vector<vector<int>>& grid) {
+			int m = grid.size();
+			int n = grid[0].size();
+
+			vector<vector<int>> sum(m, vector<int>(n, grid[0][0]));
+			for (int i = 1; i < m; ++i)
+				sum[i][0] = sum[i - 1][0] + grid[i][0];
+
+			for (int i = 1; i < n; ++i)
+				sum[0][i] = sum[0][i - 1] + grid[0][i];
+
+			for (int i = 1; i < m; ++i)
+			for (int j = 1; j < n; ++j)
+				sum[i][j] = min(sum[i - 1][j], sum[i][j - 1]) + grid[i][j];
+
+			return sum[m - 1][n - 1];
+		}
+	};
+	/*64. Minimum Path Sum end */
+
+
 	/*63. Unique Paths II (medium)
 	https://leetcode.com/problems/unique-paths-ii/
 	https://discuss.leetcode.com/topic/4325/my-c-dp-solution-very-simple
