@@ -27,6 +27,166 @@ namespace BACKTRACK {
 	/*23. Merge k Sorted Lists end */
 
 
+	/*52. N-Queens II (hard)
+	https://leetcode.com/problems/n-queens-ii/
+	https://discuss.leetcode.com/topic/5962/accepted-java-solution
+	https://discuss.leetcode.com/topic/19741/c-solution-dfs-easy-understanding
+	*/
+	class Solution52 {
+	public:
+		bool isValid(vector<int>& columns, int col) {
+			for (int i = 0; i<col; ++i) {
+				if ((columns[i] == columns[col]) ||
+					(col - i == columns[col] - columns[i]) ||
+					(col - i == columns[i] - columns[col]))
+					return false;
+			}
+
+			return true;
+		}
+
+		int totalQuess(vector<int>& columns, int col) {
+			if (col == columns.size())
+				return 1;
+
+			int nTotals = 0;
+			for (int row = 0; row < columns.size(); ++row) {
+				columns[col] = row;
+				if (isValid(columns, col))
+					nTotals += totalQuess(columns, col + 1);
+			}
+
+			return nTotals;
+		}
+
+		int totalNQueens(int n) {
+			vector<int> columns(n, 0);
+
+			int nResult = 0;
+			nResult = totalQuess(columns, 0);
+
+			return nResult;
+		}
+	};
+	/*52. N-Queens II end */
+
+
+	/*51. N-Queens (hard)
+	https://leetcode.com/problems/n-queens/
+	https://discuss.leetcode.com/topic/13617/accepted-4ms-c-solution-use-backtracking-and-bitmask-easy-understand
+	*/
+	class Solution51 {
+	public:
+		void findqueen(int row, vector<string> &matrix, vector<int>& path) {
+			if (row == m_num) {
+				m_result.push_back(matrix);
+				return;
+			}
+
+			bool bvalid = false;
+			for (int i = 0; i < m_num; ++i) {
+				bvalid = true;
+				for (auto item : path) {
+					int tmp_i = item / m_num;
+					int tmp_j = item % m_num;
+
+					if (row == tmp_i || i == tmp_j || abs(row - tmp_i) == abs(i - tmp_j)) {
+						bvalid = false;
+						break;
+					}
+				}
+
+				if (bvalid) {
+					matrix[row][i] = 'Q';
+					path.push_back(row*m_num + i);
+					findqueen(row + 1, matrix, path);
+					path.pop_back();
+					matrix[row][i] = '.';
+				}
+			}
+		}
+
+		vector<vector<string>> solveNQueens(int n) {
+			if (n < 1)
+				return m_result;
+
+			vector<string> matrix(n, string(n, '.'));
+			m_num = n;
+			for (int i = 0; i < n; ++i) {
+				vector<int> path;
+				matrix[0][i] = 'Q';
+				path.push_back(i);
+				findqueen(1, matrix, path);
+				matrix[0][i] = '.';
+			}
+
+			return m_result;
+		}
+
+		int m_num;
+		vector<vector<string>> m_result;
+	};
+	/*51. N-Queens end */
+
+
+	/*37. Sudoku Solver (hard)
+	https://leetcode.com/problems/sudoku-solver/
+	https://discuss.leetcode.com/topic/11327/straight-forward-java-solution-using-backtracking
+	https://discuss.leetcode.com/topic/7195/sharing-my-2ms-c-solution-with-comments-and-explanations
+	*/
+	class Solution37 {
+	public:
+		bool isvalid(vector<vector<char>>& board, int i, int j, char c) {
+			for (int row = 0; row < 9; ++row) {
+				if (board[row][j] == c)
+					return false;
+			}
+
+			for (int col = 0; col < 9; ++col) {
+				if (board[i][col] == c)
+					return false;
+			}
+
+			for (int row = (i / 3) * 3; row < (i / 3) * 3 + 3; ++row)
+				for (int col = (j / 3) * 3; col < (j / 3) * 3 + 3; ++col) {
+					if (board[row][col] == c)
+						return false;
+				}
+
+			return true;
+		}
+
+		bool solve(vector<vector<char>>& board) {
+			for (int i = 0; i < board.size(); ++i)
+				for (int j = 0; j < board[0].size(); ++j) {
+					if (board[i][j] == '.') {
+						for (char c = '1'; c <= '9'; ++c) {
+							if (isvalid(board, i, j, c)) {
+								board[i][j] = c;
+								if (solve(board))
+									return true;
+								else
+									board[i][j] = '.';
+							}
+						}
+
+						return false;
+					}
+				}
+
+			return true;
+		}
+
+		void solveSudoku(vector<vector<char>>& board) {
+			if (board.empty() || board[0].empty())
+				return;
+
+			solve(board);
+		}
+	};
+	/*37. Sudoku Solver end */
+
+
 	/*131. Palindrome Partitioning (medium)
 	https://leetcode.com/problems/palindrome-partitioning/
 	https://discuss.leetcode.com/topic/10955/clean-c-backtracking-solution
