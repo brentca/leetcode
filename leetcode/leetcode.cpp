@@ -27,6 +27,231 @@ namespace DP {
 	/*10. Regular Expression Matching end */
 
 
+	/*343. Integer Break (medium)
+	https://leetcode.com/problems/integer-break/
+	https://discuss.leetcode.com/topic/42978/java-dp-solution
+	*/
+	class Solution343 {
+	public:
+		int integerBreak(int n) {
+			vector<int> vec(n + 1, 0);
+			vec[1] = 1;
+
+			for (int i = 2; i <= n; ++i)
+			for (int j = 1; j < i; ++j)
+				vec[i] = max(vec[i], max(j, vec[j])*max(i - j, vec[i - j]));
+
+			return vec[n];
+		}
+	};
+	/*343. Integer Break end */
+
+
+	/*152. Maximum Product Subarray (medium)
+	https://leetcode.com/problems/maximum-product-subarray/
+	https://discuss.leetcode.com/topic/3607/sharing-my-solution-o-1-space-o-n-running-time
+	*/
+	class Solution152 {
+	public:
+		int maxProduct(vector<int>& nums) {
+			int len = nums.size();
+
+			if (len < 1)
+				return 0;
+
+			int maxpre = nums[0], minpre = nums[0];
+			int ret = nums[0];
+			int maxhere, minhere;
+
+			for (int i = 1; i < len; ++i) {
+				maxhere = max(max(maxpre*nums[i], minpre*nums[i]), nums[i]);
+				minhere = min(min(maxpre*nums[i], minpre*nums[i]), nums[i]);
+
+				ret = max(ret, maxhere);
+				maxpre = maxhere;
+				minpre = minhere;
+			}
+
+			return ret;
+		}
+	};
+	/*152. Maximum Product Subarray end */
+
+
+	/*322. Coin Change (medium)
+	https://leetcode.com/problems/coin-change/
+	https://discuss.leetcode.com/topic/32475/c-o-n-amount-time-o-amount-space-dp-solution
+	*/
+	class Solution322 {
+	public:
+		int mincoins(vector<int>& coins, int end, int amount) {
+			if (end < 0 || coins[0] > amount)
+				return -1;
+
+			int index = end;
+			for (; index >= 0; --index) {
+				if (coins[index] <= amount)
+					break;
+			}
+
+			if (index < 0)
+				return -1;
+
+			int nums = amount / coins[index];
+
+			//with the max
+			int nonums = mincoins(coins, index - 1, amount);
+
+			int withnums = 0;
+
+			if (amount > nums*coins[index])
+				withnums = mincoins(coins, index - 1, amount%coins[index]);
+
+			if (nonums == -1 && withnums == -1)
+				return -1;
+			else if (nonums == -1)
+				return (nums + withnums);
+			else
+				return min(nonums, nums + withnums);
+		}
+
+		int coinChange1(vector<int>& coins, int amount) {
+			if (coins.empty())
+				return -1;
+
+			if (amount == 0)
+				return 0;
+
+			sort(coins.begin(), coins.end());
+
+			return mincoins(coins, coins.size() - 1, amount);
+		}
+
+		int coinChange(vector<int>& coins, int amount) {
+			if (coins.empty())
+				return -1;
+
+			if (amount == 0)
+				return 0;
+
+			vector<int>dp(amount + 1, 0);
+			int sum = 0;
+			
+			sort(coins.begin(), coins.end());			
+			while (++sum <= amount) {
+				int mincoin = -1;
+				for (auto item : coins) {
+					if (sum >= item && dp[sum - item] != -1) {
+						int tmp = dp[sum - item] + 1;
+						mincoin = mincoin < 0 ? tmp : (tmp < mincoin ? tmp : mincoin);
+					}
+				}
+
+				dp[sum] = mincoin;
+			}
+
+			return dp[amount];
+		}
+
+		static void main() {
+			Solution322* test = new Solution322;
+			int result;
+
+			vector<int> coins1 = { 1, 3, 5 };
+			int amount1 = 6;
+			result = test->coinChange(coins1, amount1);
+
+			delete test;
+		}
+	};
+	/*322. Coin Change end */
+
+
+	/*53. Maximum Subarray (medium)
+	https://leetcode.com/problems/maximum-subarray/
+	https://discuss.leetcode.com/topic/5000/accepted-o-n-solution-in-java
+	*/
+	class Solution53 {
+	public:
+		int maxSubArray(int A[], int n) {
+			int nResult = A[0];
+			int nSum = 0, nBegin;
+
+			for (int i = 0; i < n; ++i) {
+				if (nSum > 0)
+					nSum += A[i];
+				else
+					nSum = A[i];
+
+				if (nSum > nResult)
+					nResult = nSum;
+			}
+
+			return nResult;
+		}
+	};
+	/*53. Maximum Subarray end */
+
+
+	/*120. Triangle (medium)
+	https://leetcode.com/problems/triangle/
+	https://discuss.leetcode.com/topic/1669/dp-solution-for-triangle
+	*/
+	class Solution120 {
+	public:
+		int minimumTotal(vector<vector<int>>& triangle) {
+			int n = triangle.size();
+			vector<int> minlen(triangle.back());
+
+			for (int layer = n - 2; layer >= 0; layer--) {// For each layer
+				for (int i = 0; i <= layer; i++) // Check its every 'node'
+					minlen[i] = min(minlen[i], minlen[i + 1]) + triangle[layer][i];
+			}
+			return minlen[0];
+		}
+
+		int minimumTotal1(vector<vector<int>>& triangle) {
+			if (triangle.empty())
+				return 0;
+
+			queue<int> pathsum;
+
+			pathsum.push(0);
+			for (int i = 0; i < triangle.size(); ++i) {
+				int curitems = triangle[i].size();
+				if (i + 1 != curitems)
+					return 0;
+
+				for (int j = 0; j < curitems; ++j) {
+					if (j == 0 || j == curitems - 1) {
+						int cursum = pathsum.front() + triangle[i][j];
+						if (j == curitems - 1)
+							pathsum.pop();
+						pathsum.push(cursum);
+					}
+					else {
+						int lastleft = pathsum.front();
+						pathsum.pop();
+						int cursum = min(lastleft, pathsum.front()) + triangle[i][j];
+						pathsum.push(cursum);
+					}
+				}
+			}
+
+			int minsum = INT_MAX;
+			while (!pathsum.empty()) {
+				if (pathsum.front() < minsum)
+					minsum = pathsum.front();
+
+				pathsum.pop();
+			}
+
+			return minsum;
+		}
+	};
+	/*120. Triangle end */
+
+
 	/*309. Best Time to Buy and Sell Stock with Cooldown (medium)
 	https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/
 	*/
@@ -7534,6 +7759,7 @@ using namespace DP;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	Solution322::main();
 	Solution93::main();
 	Solution84::main();
 	Solution85::main();
