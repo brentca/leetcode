@@ -27,6 +27,146 @@ namespace DP {
 	/*10. Regular Expression Matching end */
 
 
+	/*309. Best Time to Buy and Sell Stock with Cooldown (medium)
+	https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/
+	*/
+	class Solution309 {
+	public:
+		int maxProfit(vector<int>& prices) {
+			int size = prices.size();
+			if (size < 2)
+				return 0;
+
+			int sell_pre = 0;
+			int sell = 0;
+			int buy_pre;// = -prices[0];
+			int buy = -prices[0];// = max(buy_pre, -price[1]);
+
+			for (int i = 0; i < size; ++i) {
+				buy_pre = buy;
+				buy = max(sell_pre - prices[i], buy_pre);
+
+				sell_pre = sell;
+				sell = max(sell_pre, buy_pre + prices[i]);
+			}
+
+			return sell;
+		}
+
+		int maxProfit1(vector<int>& prices) {
+			int size = prices.size();
+			if (size < 2)
+				return 0;
+
+			int* buy = new int[size];
+			int* sell = new int[size];
+
+			buy[0] = -prices[0];
+			sell[0] = 0;
+			sell[1] = max(0, prices[1] - prices[0]);
+			buy[1] = max(buy[0], sell[0] - prices[1]);
+
+			for (int i = 2; i < size; ++i) {
+				buy[i] = max(buy[i - 1], sell[i - 2] - prices[i]);
+				sell[i] = max(sell[i - 1], buy[i - 1] + prices[i]);
+			}
+
+			return sell[size - 1];
+		}
+	};
+	/*309. Best Time to Buy and Sell Stock with Cooldown end */
+
+
+	/*304. Range Sum Query 2D - Immutable (medium)
+	https://leetcode.com/problems/range-sum-query-2d-immutable/
+	https://discuss.leetcode.com/topic/29536/clean-c-solution-and-explaination-o-mn-space-with-o-1-time
+	*/
+	class NumMatrix304 {
+	public:
+		NumMatrix304(vector<vector<int>> &matrix) {
+			if (matrix.empty() || matrix[0].empty())
+				return;
+
+			dp.resize(matrix.size() + 1);
+
+			for (int i = 0; i <= matrix.size(); ++i)
+				dp[i].resize(matrix[0].size() + 1, 0);
+
+			for (int i = 1; i <= matrix.size(); ++i)
+			for (int j = 1; j <= matrix[0].size(); ++j)
+				dp[i][j] = dp[i][j - 1] + dp[i - 1][j] - dp[i - 1][j - 1] + matrix[i - 1][j - 1];
+		}
+
+		int sumRegion(int row1, int col1, int row2, int col2) {
+			int result = dp[row2 + 1][col2 + 1] - dp[row2 + 1][col1] - dp[row1][col2 + 1] + dp[row1][col1];
+			return result;
+		}
+
+		vector<vector<int>> dp;
+	};
+
+	// Your NumMatrix object will be instantiated and called as such:
+	// NumMatrix numMatrix(matrix);
+	// numMatrix.sumRegion(0, 1, 2, 3);
+	// numMatrix.sumRegion(1, 2, 3, 4);
+	/*304. Range Sum Query 2D - Immutable end */
+
+
+	/*91. Decode Ways (medium)
+	https://leetcode.com/problems/decode-ways/
+	https://discuss.leetcode.com/topic/7025/a-concise-dp-solution
+	https://discuss.leetcode.com/topic/2562/dp-solution-java-for-reference
+	*/
+	class Solution91 {
+	public:
+		int numDecodings(string s) {
+			if (s.empty() || s[0] == '0')
+				return 0;
+
+			int num1 = 1, num2 = 1;
+
+			for (int i = 1; i < s.size(); ++i) {
+				if (s[i] == '0')
+					num1 = 0;
+
+				if (s[i - 1] == '1' || s[i - 1] == '2' && s[i] <= '6') {
+					num1 = num2 + num1;
+					num2 = num1 - num2;
+				}
+				else
+					num2 = num1;
+			}
+
+			return num1;
+		}
+	};
+	/*91. Decode Ways end */
+
+
+	/*357. Count Numbers with Unique Digits (medium)
+	https://leetcode.com/problems/count-numbers-with-unique-digits/
+	https://discuss.leetcode.com/topic/47983/java-dp-o-1-solution
+	*/
+	class Solution357 {
+	public:
+		int countNumbersWithUniqueDigits(int n) {
+			if (n == 0)     return 1;
+
+			int res = 10;
+			int uniqueDigits = 9;
+			int availableNumber = 9;
+			while (n-- > 1 && availableNumber > 0) {
+				uniqueDigits = uniqueDigits * availableNumber;
+				res += uniqueDigits;
+				availableNumber--;
+			}
+
+			return res;
+		}
+	};
+	/*357. Count Numbers with Unique Digits end */
+
+
 	/*300. Longest Increasing Subsequence (medium)
 	https://leetcode.com/problems/longest-increasing-subsequence/
 	https://discuss.leetcode.com/topic/28719/short-java-solution-using-dp-o-n-log-n
