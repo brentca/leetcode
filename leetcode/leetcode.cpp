@@ -22,9 +22,295 @@ using namespace std;
 
 //////////////////////////Tag Dynamic Programming//////////////////////////////////////////
 namespace DP {
-	/*10. Regular Expression Matching (medium)
+	/*10. Regular Expression Matching (hard)
 	*/
 	/*10. Regular Expression Matching end */
+
+
+	/*123. Best Time to Buy and Sell Stock III (hard)
+	https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/
+	https://discuss.leetcode.com/topic/5934/is-it-best-solution-with-o-n-o-1
+	*/
+	class Solution123 {
+	public:
+		int maxProfit(vector<int>& prices) {
+			int hold1 = INT_MIN, hold2 = INT_MIN;
+			int release1 = 0, release2 = 0;
+
+			for (auto it : prices) {
+				release2 = max(release2, hold2 + it);
+				hold2 = max(hold2, release1 - it);
+
+				release1 = max(release1, hold1 + it);
+				hold1 = max(hold1, -it);
+			}
+
+			return release2;
+		}
+	};
+	/*123. Best Time to Buy and Sell Stock III end */
+
+
+	/*115. Distinct Subsequences (hard)
+	https://leetcode.com/problems/distinct-subsequences/
+	https://discuss.leetcode.com/topic/9488/easy-to-understand-dp-in-java
+	*/
+	class Solution115 {
+	public:
+		int numDistinct(string s, string t) {
+			vector<vector<int>> dp(t.size() + 1, vector<int>(s.size() + 1, false));
+
+			for (int j = 0; j < s.size() + 1; ++j)
+				dp[0][j] = 1;
+
+			for (int i = 1; i < t.size() + 1; ++i)
+				dp[i][0] = 0;
+
+			for (int i = 1; i <= t.size(); ++i)
+				for (int j = 1; j <= s.size(); ++j) {
+					if (s[j - 1] == t[i - 1])
+						dp[i][j] = dp[i - 1][j - 1] + dp[i][j - 1];
+					else
+						dp[i][j] = dp[i][j - 1];
+				}
+
+			return dp[t.size()][s.size()];
+		}
+	};
+	/*115. Distinct Subsequences end */
+
+
+	/*97. Interleaving String (hard)
+	https://leetcode.com/problems/interleaving-string/
+	https://discuss.leetcode.com/topic/3532/my-dp-solution-in-c
+	*/
+	class Solution97 {
+	public:
+		bool isInterleave(string s1, string s2, string s3) {
+			int len1 = s1.size();
+			int len2 = s2.size();
+			int len3 = s3.size();
+
+			if (len3 != len1 + len2)
+				return false;
+
+			vector<vector<int>> dp(len1 + 1, vector<int>(len2 + 1, false));
+
+			dp[0][0] = true;
+
+			for (int i = 1; i <= len1; ++i) {
+				if (s1[i - 1] == s3[i - 1])
+					dp[i][0] = true;
+				else
+					break;
+			}
+
+			for (int i = 1; i <= len2; ++i) {
+				if (s2[i - 1] == s3[i - 1])
+					dp[0][i] = true;
+				else
+					break;
+			}
+
+			for (int i = 1; i <= len1; ++i) {
+				char c1 = s1[i - 1];
+
+				for (int j = 1; j <= len2; ++j) {
+					int len = i + j;
+					char c2 = s2[j - 1];
+					char c3 = s3[len - 1];
+
+					if (c1 == c3)
+						dp[i][j] = dp[i - 1][j] || dp[i][j];
+
+					if (c2 == c3)
+						dp[i][j] = dp[i][j - 1] || dp[i][j];
+				}
+			}
+
+			return dp[len1][len2];
+		}
+	};
+	/*97. Interleaving String end */
+
+
+	/*87. Scramble String (hard)
+	https://leetcode.com/problems/scramble-string/
+	https://discuss.leetcode.com/topic/14337/share-my-4ms-c-recursive-solution
+	*/
+	class Solution87 {
+	public:
+		bool isScramble(string s1, string s2) {
+			if (s1.size() != s2.size())
+				return false;
+			string tmp1(s1);
+			string tmp2(s2);
+
+			if (s1 == s2)
+				return true;
+
+			sort(tmp1.begin(), tmp1.end());
+			sort(tmp2.begin(), tmp2.end());
+
+			if (tmp1 != tmp2)
+				return false;
+
+			for (int i = 1; i < s1.size(); ++i) {
+				string str11 = s1.substr(0, i);
+				string str12 = s1.substr(i);
+				{
+					string str21 = s2.substr(0, i);
+					string str22 = s2.substr(i);
+
+					if (isScramble(str11, str21) && isScramble(str12, str22))
+						return true;
+				}
+
+				{
+					string str21 = s2.substr(s1.size() - i);
+					string str22 = s2.substr(0, s1.size() - i);
+
+					if (isScramble(str11, str21) && isScramble(str12, str22))
+						return true;
+				}
+			}
+
+			return false;
+		}
+	};
+	/*87. Scramble String end */
+
+
+	/*72. Edit Distance (hard)
+	https://leetcode.com/problems/edit-distance/
+	https://discuss.leetcode.com/topic/17639/20ms-detailed-explained-c-solutions-o-n-space
+	*/
+	class Solution72 {
+	public:
+		int minDistance(string word1, string word2) {
+			int len1 = word1.size();
+			int len2 = word2.size();
+			vector<int> dp(len2 + 1, 0);
+
+			for (int i = 1; i <= len2; ++i)
+				dp[i] = i;
+
+			int pre;
+			for (int i = 1; i <= len1; ++i) {
+				pre = i;
+				for (int j = 1; j <= len2; ++j) {
+					int cur;
+					if (word1[i - 1] == word2[j - 1])
+						cur = dp[j - 1];
+					else
+						cur = min(min(dp[j - 1], pre), dp[j]) + 1;
+
+					dp[j - 1] = pre;
+					pre = cur;
+				}
+
+				dp[len2] = pre;
+			}
+
+			return dp[len2];
+		}
+	};
+	/*72. Edit Distance end */
+
+
+	/*221. Maximal Square (medium)
+	https://leetcode.com/problems/maximal-square/
+	https://discuss.leetcode.com/topic/15328/easy-dp-solution-in-c-with-detailed-explanations-8ms-o-n-2-time-and-o-n-space
+	*/
+	class Solution {
+	public:
+		int maximalSquare(vector<vector<char>>& matrix) {
+			if (matrix.empty())
+				return 0;
+
+			int row = matrix.size();
+			int col = matrix[0].size();
+
+			int pre = 0;
+			vector<int> dp(col + 1, 0);
+			int maxsize = 0;
+
+			for (int i = 1; i <= row; ++i)
+				for (int j = 1; j <= col; ++j) {
+					int tmp = dp[j];
+					if (matrix[i - 1][j - 1] == '0')
+						dp[j] = 0;
+					else {
+						dp[j] = min(dp[j - 1], min(dp[j], pre)) + 1;
+						maxsize = max(maxsize, dp[j]);
+					}
+
+					pre = tmp;
+				}
+
+			return maxsize*maxsize;
+		}
+	};
+	/*221. Maximal Square end */
+
+
+	/*213. House Robber II (medium)
+	https://leetcode.com/problems/house-robber-ii/
+	https://discuss.leetcode.com/topic/14375/simple-ac-solution-in-java-in-o-n-with-explanation
+	*/
+	class Solution {
+	public:
+		int rob(vector<int>& nums, int start, int end) {
+			int withi = 0, withouti = 0;
+
+			for (int k = start; k <= end; ++k) {
+				int i = withi, e = withouti;
+
+				withi = withouti + nums[k];
+				withouti = max(i, e);
+			}
+
+			return max(withi, withouti);
+		}
+
+		int rob(vector<int>& nums) {
+			if (nums.size() == 1)
+				return nums[0];
+
+			return max(rob(nums, 0, nums.size() - 2), rob(nums, 1, nums.size() - 1));
+		}
+	};
+	/*213. House Robber II end */
+
+
+	/*375. Guess Number Higher or Lower II (medium)
+	https://leetcode.com/problems/guess-number-higher-or-lower-ii/
+	https://discuss.leetcode.com/topic/51353/simple-dp-solution-with-explanation
+	*/
+	class Solution375 {
+	public:
+		int getMoneyAmount(int n) {
+			vector<vector<int>>table(n + 1, vector<int>(n + 1, 0));
+			return DP(table, 1, n);
+		}
+
+		int DP(vector<vector<int>>& t, int s, int e) {
+			if (s >= e) 
+				return 0;
+
+			if (t[s][e] != 0) return t[s][e];
+			int res = INT_MAX;
+			for (int x = s; x <= e; x++) {
+				int tmp = x + max(DP(t, s, x - 1), DP(t, x + 1, e));
+				res = min(res, tmp);
+			}
+
+			t[s][e] = res;
+			return res;
+		}
+	}
+		
+	/*375. Guess Number Higher or Lower II end */
 
 
 	/*343. Integer Break (medium)
