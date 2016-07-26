@@ -27,6 +27,134 @@ namespace DP {
 	/*10. Regular Expression Matching end */
 
 
+	/*32. Longest Valid Parentheses (hard)
+	https://leetcode.com/problems/longest-valid-parentheses/
+	https://discuss.leetcode.com/topic/2426/my-dp-o-n-solution-without-using-stack
+	*/
+	class Solution32 {
+	public:
+		int longestValidParentheses(string s) {
+			if (s.size() <= 1)
+				return 0;
+
+			vector<int> dp(s.size(), 0);
+			int curmax = 0;
+
+			for (int i = 1; i < s.size(); ++i)
+			{
+				if (s[i] == ')')
+				{
+					if (s[i - 1] == '(')
+						dp[i] = (i >= 2 ? dp[i - 2] + 2 : 2);
+					else
+					{
+						if (i - dp[i - 1] - 1 >= 0 && s[i - dp[i - 1] - 1] == '(')
+							dp[i] = dp[i - 1] + 2 + (i - dp[i - 1] - 2 >= 0 ? dp[i - dp[i - 1] - 2] : 0);
+					}
+				}
+
+				curmax = max(curmax, dp[i]);
+			}
+
+			return curmax;
+		}
+	};
+	/*32. Longest Valid Parentheses end */
+
+
+	/*188. Best Time to Buy and Sell Stock IV (hard)
+	https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/
+	https://discuss.leetcode.com/topic/8984/a-concise-dp-solution-in-java
+	*/
+	class Solution188 {
+	public:
+		int quickProfit(vector<int>& prices) {
+			int len = prices.size(), profit = 0;
+
+			for (int i = 1; i < len; ++i) {
+				if (prices[i] > prices[i - 1])
+					profit += (prices[i] - prices[i - 1]);
+			}
+
+			return profit;
+		}
+
+		int maxProfit(int k, vector<int>& prices) {
+			int len = prices.size();
+
+			if (k >= len / 2)
+				return quickProfit(prices);
+
+			vector<vector<int>> dp(k + 1, vector<int>(len, 0));
+
+			for (int i = 1; i <= k; ++i) {
+				int tmpmax = -prices[0];
+				for (int j = 1; j < len; ++j) {
+					dp[i][j] = max(dp[i][j - 1], prices[j] + tmpmax);
+					tmpmax = max(tmpmax, dp[i - 1][j - 1] - prices[j]);
+				}
+			}
+
+			return dp[k][len - 1];
+		}
+	};
+	/*188. Best Time to Buy and Sell Stock IV end */
+
+
+	/*363. Max Sum of Rectangle No Larger Than K (hard)
+	https://leetcode.com/problems/max-sum-of-sub-matrix-no-larger-than-k/
+	https://discuss.leetcode.com/topic/48875/accepted-c-codes-with-explanation-and-references
+	*/
+	class Solution363 {
+	public:
+		int maxSumSubmatrix(vector<vector<int>>& matrix, int k) {
+			//2D Kadane's algorithm + 1D maxSum problem with sum limit k
+			//2D subarray sum solution
+
+			//boundary check
+			if (matrix.empty()) return 0;
+
+			int m = matrix.size(), n = matrix[0].size();
+			int result = INT_MIN;
+
+			//outer loop should use smaller axis
+			//now we assume we have more rows than cols, therefore outer loop will be based on cols 
+			for (int left = 0; left < n; left++) {
+				//array that accumulate sums for each row from left to right 
+				//int[] sums = new int[m];
+				vector<int> sums(m, 0);
+
+				for (int right = left; right < n; right++) {
+					//update sums[] to include values in curr right col
+					for (int i = 0; i < m; i++) {
+						sums[i] += matrix[i][right];
+					}
+
+					//we use TreeSet to help us find the rectangle with maxSum <= k with O(logN) time
+					set<int> sets;// = new TreeSet<Integer>();
+								  //add 0 to cover the single row case
+					sets.insert(0);
+					int currSum = 0;
+
+					for (int sum : sums) {
+						currSum += sum;
+						//we use sum subtraction (curSum - sum) to get the subarray with sum <= k
+						//therefore we need to look for the smallest sum >= currSum - k
+						set<int>::iterator ite = sets.lower_bound(currSum - k);//.ceiling(currSum - k);
+						if (ite != sets.end())
+							result = max(result, currSum - *ite);
+
+						sets.insert(currSum);
+					}
+				}
+			}
+
+			return result;
+		}
+	};
+	/*363. Max Sum of Rectangle No Larger Than K end */
+
+
 	/*132. Palindrome Partitioning II (hard)
 	https://leetcode.com/problems/palindrome-partitioning-ii/
 	https://discuss.leetcode.com/topic/2840/my-solution-does-not-need-a-table-for-palindrome-is-it-right-it-uses-only-o-n-space
@@ -248,7 +376,7 @@ namespace DP {
 	https://leetcode.com/problems/maximal-square/
 	https://discuss.leetcode.com/topic/15328/easy-dp-solution-in-c-with-detailed-explanations-8ms-o-n-2-time-and-o-n-space
 	*/
-	class Solution {
+	class Solution221 {
 	public:
 		int maximalSquare(vector<vector<char>>& matrix) {
 			if (matrix.empty())
@@ -284,7 +412,7 @@ namespace DP {
 	https://leetcode.com/problems/house-robber-ii/
 	https://discuss.leetcode.com/topic/14375/simple-ac-solution-in-java-in-o-n-with-explanation
 	*/
-	class Solution {
+	class Solution213 {
 	public:
 		int rob(vector<int>& nums, int start, int end) {
 			int withi = 0, withouti = 0;
@@ -708,7 +836,7 @@ namespace DP {
 	https://leetcode.com/problems/longest-increasing-subsequence/
 	https://discuss.leetcode.com/topic/28719/short-java-solution-using-dp-o-n-log-n
 	*/
-	class Solution {
+	class Solution300 {
 	public:
 		int findPos(const vector<int>& table, int value, int length) {
 			int low = 0, high = length - 1;
