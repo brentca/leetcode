@@ -19,6 +19,216 @@
 
 using namespace std;
 
+//////////////////////////Tag Divide and Conquer//////////////////////////////////////////
+namespace DC {
+	/*174. Dungeon Game (hard)
+	*/
+	/*174. Dungeon Game end */
+
+
+	/*282. Expression Add Operators (hard)
+	https://leetcode.com/problems/expression-add-operators/
+	https://discuss.leetcode.com/topic/24523/java-standard-backtrace-ac-solutoin-short-and-clear
+	*/
+	class Solution282 {
+	public:
+		void dfs(vector<string>& result, const string& num, int target, const string cur, int pos, long cvalue, long pvalue, char opt) {
+			if ((pos == num.size()) && (cvalue == target))
+				result.push_back(cur);
+
+			for (int i = pos + 1; i <= num.size(); ++i) {
+				string tmp = num.substr(pos, i - pos);
+				long t = stol(tmp);
+
+				if (to_string(t).size() != tmp.size())
+					continue;
+
+				dfs(result, num, target, cur + "+" + tmp, i, cvalue + t, t, '+');
+				dfs(result, num, target, cur + "-" + tmp, i, cvalue - t, t, '-');
+				dfs(result, num, target, cur + "*" + tmp, i, (opt == '-' ? cvalue + pvalue - t*pvalue : (opt == '+' ? cvalue - pvalue + t*pvalue : t*pvalue)), t*pvalue, opt);
+			}
+		}
+
+		vector<string> addOperators(string num, int target) {
+			vector<string> result;
+
+			int len = num.size();
+			if (len < 1)
+				return result;
+
+			for (int i = 1; i <= len; ++i) {
+				string tmp = num.substr(0, i);
+				long t = stol(tmp);
+
+				if (to_string(t).size() != tmp.size())
+					continue;
+
+				dfs(result, num, target, tmp, i, t, t, '#');
+			}
+
+			return result;
+		}
+	};
+	/*282. Expression Add Operators end */
+
+
+	/*4. Median of Two Sorted Arrays (medium)
+	https://leetcode.com/problems/median-of-two-sorted-arrays/
+	https://discuss.leetcode.com/topic/4996/share-my-o-log-min-m-n-solution-with-explanation
+	*/
+	class Solution4 {
+	public:
+		int getkth(vector<int>& nums1, int s1, vector<int>& nums2, int s2, int k) {
+			if (s1 > s2)
+				return getkth(nums2, s2, nums1, s1, k);
+
+			if (0 == s1)
+				return nums2[k - 1];
+
+			if (k == 1)
+				return min(nums1[0], nums2[0]);
+
+			int i = min(s1, k / 2);
+			int j = min(s2, k / 2);
+
+			if (nums1[i - 1] > nums2[j - 1]) {
+				vector<int>tmp(nums2.begin() + j, nums2.end());
+				return getkth(nums1, s1, tmp, s2 - j, k - j);
+			}
+			else {
+				vector<int>tmp(nums1.begin() + i, nums1.end());
+				return getkth(tmp, s1 - i, nums2, s2, k - i);
+			}
+
+			return 0;
+
+		}
+
+		double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+			int m = (nums1.size() + nums2.size() + 1) >> 1;
+			int n = (nums1.size() + nums2.size() + 2) >> 1;
+
+			return (getkth(nums1, nums1.size(), nums2, nums2.size(), m) + getkth(nums1, nums1.size(), nums2, nums2.size(), n)) / 2.0;
+		}
+	};
+	/*4. Median of Two Sorted Arrays end */
+
+
+	/*240. Search a 2D Matrix II (medium)
+	https://leetcode.com/problems/search-a-2d-matrix-ii/
+	https://discuss.leetcode.com/topic/20064/my-concise-o-m-n-java-solution
+	*/
+	class Solution240 {
+	public:
+		bool searchMatrix(vector<vector<int>>& matrix, int target) {
+			int m = matrix.size();
+			int j = m ? matrix[0].size() - 1 : 0;
+			int i = 0;
+
+			while (i < m && j >= 0) {
+				if (matrix[i][j] == target)
+					return true;
+				else if (matrix[i][j] > target)
+					--j;
+				else
+					++i;
+			}
+
+			return false;
+		}
+	};
+	/*240. Search a 2D Matrix II end */
+
+
+	/*241. Different Ways to Add Parentheses (easy)
+	https://leetcode.com/problems/different-ways-to-add-parentheses/
+	https://discuss.leetcode.com/topic/19906/c-4ms-recursive-dp-solution-with-brief-explanation
+	*/
+	class Solution241 {
+	public:
+		vector<int> diffWaysToCompute(string input) {
+			vector<int> result;
+			if (input.empty())
+				return result;
+
+			int num;
+			char op = ' ';
+			vector<int> data;
+			vector<char> ops;
+			istringstream ss(input + "+");
+
+			while (ss >> num && ss >> op) {
+				data.push_back(num);
+				ops.push_back(op);
+			}
+
+			const int size_i = data.size();
+			vector<vector<vector<int>>> dp(size_i, vector<vector<int>>(size_i, vector<int>()));
+
+			for (int i = 0; i < size_i; ++i)
+			for (int j = i; j >= 0; --j) {
+				if (j == i) {
+					dp[j][i].push_back(data[i]);
+					continue;
+				}
+
+				for (int k = j; k < i; ++k) {
+					for (auto left : dp[j][k])
+					for (auto right : dp[k + 1][i]) {
+						int val = 0;
+
+						if (ops[k] == '-')
+							val = left - right;
+						else if (ops[k] == '+')
+							val = left + right;
+						else
+							val = left * right;
+
+						dp[j][i].push_back(val);
+					}
+				}
+			}
+
+			return dp[0][size_i - 1];
+		}
+
+		vector<int> diffWaysToCompute1(string input) {
+			vector<int> result;
+
+			int len = input.size();
+
+			for (int i = 0; i < len; ++i) {
+				if (input[i] == '+' || input[i] == '-' || input[i] == '*') {
+					string lval = input.substr(0, i);
+					string rval = input.substr(i + 1, len - i - 1);
+
+					vector<int> leftRes = diffWaysToCompute(lval);
+					vector<int> rightRes = diffWaysToCompute(rval);
+					for (int leftItem : leftRes)
+					for (int rifhtItem : rightRes) {
+						if (input[i] == '+')
+							result.push_back(leftItem + rifhtItem);
+						else if (input[i] == '-')
+							result.push_back(leftItem - rifhtItem);
+						else
+							result.push_back(leftItem * rifhtItem);
+					}
+				}
+			}
+
+
+			if (result.empty())
+				result.push_back(stoi(input));
+
+			return result;
+		}
+	};
+	/*241. Different Ways to Add Parentheses end */
+
+}
+//////////////////////////Tag Divide and Conquer end//////////////////////////////////////////
+
+
 
 //////////////////////////Tag Dynamic Programming//////////////////////////////////////////
 namespace DP {
