@@ -22,9 +22,130 @@ using namespace std;
 
 //////////////////////////Tag Dynamic Programming//////////////////////////////////////////
 namespace DP {
-	/*10. Regular Expression Matching (hard)
+	/*174. Dungeon Game (hard)
+	https://leetcode.com/problems/dungeon-game/
+	https://discuss.leetcode.com/topic/6912/c-dp-solution
 	*/
-	/*10. Regular Expression Matching end */
+	class Solution174 {
+	public:
+		int calculateMinimumHP(vector<vector<int>>& dungeon) {
+			if (dungeon.empty() || dungeon[0].empty())
+				return 0;
+
+			int m = dungeon.size();
+			int n = dungeon[0].size();
+			vector<vector<int>> dp(m + 1, vector<int>(n + 1, INT_MAX));
+
+			dp[m - 1][n] = dp[m][n - 1] = 1;
+			for (int i = m - 1; i >= 0; --i)
+				for (int j = n - 1; j >= 0; --j)
+				{
+					int need = min(dp[i + 1][j], dp[i][j + 1]) - dungeon[i][j];
+
+					dp[i][j] = need <= 0 ? 1 : need;
+				}
+
+			return dp[0][0];
+		}
+	};
+	/*174. Dungeon Game end */
+
+
+	/*354. Russian Doll Envelopes (hard)
+	https://leetcode.com/problems/russian-doll-envelopes/
+	https://discuss.leetcode.com/topic/47469/java-nlogn-solution-with-explanation
+	*/
+	class Solution354 {
+	public:
+		static bool cmp_first(const pair<int, int>& i, const pair<int, int>& j) {
+			if (i.first == j.first)
+				return i.second > j.second;
+
+			return i.first < j.first;
+		}
+		int maxEnvelopes(vector<pair<int, int>>& envelopes) {
+			vector<int> candidates;
+			sort(envelopes.begin(), envelopes.end(), cmp_first);
+			vector<int> dp;
+
+			for (int i = 0; i < envelopes.size(); ++i) {
+				auto itr = lower_bound(dp.begin(), dp.end(), envelopes[i].second);
+
+				if (itr == dp.end())
+					dp.push_back(envelopes[i].second);
+				else
+					*itr = envelopes[i].second;
+			}
+
+			return dp.size();
+		}
+	};
+	/*354. Russian Doll Envelopes end */
+
+
+	/*321. Create Maximum Number (hard)
+	https://leetcode.com/problems/create-maximum-number/
+	https://discuss.leetcode.com/topic/32272/share-my-greedy-solution
+	*/
+	class Solution321 {
+	public:
+		vector<int> helper(vector<int>& nums, int k) {
+			int n = nums.size();
+			int j = 0; // the count of the stacked array 
+			vector<int> result(k, 0);
+
+			for (int i = 0; i < n; ++i) {
+				//result[j-1] stores the top of the stack 
+				while (j > 0 && n - i + j > k && nums[i] > result[j - 1])  
+					j--;
+
+				if (j < k) 
+					result[j++] = nums[i];
+			}
+
+			return result;
+		}
+
+		vector<int> merge(vector<int>& nums1, vector<int>& nums2, int k) {
+			vector<int> result(k, 0);
+			ostringstream num_str1, num_str2;
+			string str1, str2;
+
+			for (auto num : nums1)  num_str1 << num;
+			for (auto num : nums2)  num_str2 << num;
+			str1 = num_str1.str();
+			str2 = num_str2.str();
+			for (int i = 0, j = 0, r = 0; r < k; ++r)
+				result[r] = str1.substr(i).compare(str2.substr(j)) > 0 ? nums1[i++] : nums2[j++];
+
+			return result;
+		}
+
+	public:
+		vector<int> maxNumber(vector<int>& nums1, vector<int>& nums2, int k) {
+			int n = nums1.size(), m = nums2.size();
+			vector<int> result(k, 0);
+			string result_str;
+
+			for (int i = max(0, k - m); i <= k && i <= n; ++i) {
+				vector<int> sub_1 = helper(nums1, i);
+				vector<int> sub_2 = helper(nums2, k - i);
+				vector<int> candidate = merge(sub_1, sub_2, k);
+
+				ostringstream str_c;
+				for (auto number : candidate)  
+					str_c << number;
+
+				if (result_str == "" || str_c.str().compare(result_str) > 0) {
+					result_str = str_c.str();
+					result = candidate;
+				}
+			}
+
+			return result;
+		}
+	};
+	/*321. Create Maximum Number end */
 
 
 	/*32. Longest Valid Parentheses (hard)
