@@ -19,11 +19,245 @@
 
 using namespace std;
 
+
+//////////////////////////Tag Binary Search//////////////////////////////////////////
+namespace BS {
+	/*174. Dungeon Game (medium)
+	*/
+	/*174. Dungeon Game end */
+
+
+	/*74. Search a 2D Matrix (medium)
+	https://leetcode.com/problems/search-a-2d-matrix/
+	https://discuss.leetcode.com/topic/3227/don-t-treat-it-as-a-2d-matrix-just-treat-it-as-a-sorted-list
+	*/
+	class Solution174 {
+	public:
+		bool searchMatrix(vector<vector<int>>& matrix, int target) {
+			if (matrix.empty() || matrix[0].empty())
+				return false;
+
+			int m = matrix.size();
+			int n = matrix[0].size();
+			int high = m * n - 1;
+
+			int low = 0, mid;
+
+			while (low <= high) {
+				mid = low + (high - low) / 2;
+				if (matrix[mid / n][mid%n] == target)
+					return true;
+				else if (target > matrix[mid / n][mid%n])
+					low = mid + 1;
+				else
+					high = mid - 1;
+			}
+
+			return false;
+		}
+
+		bool searchMatrix1(vector<vector<int>>& matrix, int target) {
+			int low = 0;
+			int high = matrix.size() - 1;
+			int mid;
+
+			if (high < 0)
+				return false;
+
+			while (low <= high) {
+				mid = low + (high - low) / 2;
+
+				if (matrix[mid][0] == target)
+					return true;
+				else if (target > matrix[mid][0])
+					low = mid + 1;
+				else
+					high = mid - 1;
+			}
+
+			int cur = min(low, high);
+
+			if (cur >= matrix.size())
+				return false;
+
+			low = 0;
+			high = matrix[cur].size() - 1;
+			while (low <= high) {
+				mid = low + (high - low) / 2;
+
+				if (matrix[cur][mid] == target)
+					return true;
+				else if (target > matrix[cur][mid])
+					low = mid + 1;
+				else
+					high = mid - 1;
+			}
+
+			return false;
+		}
+	};
+	/*74. Search a 2D Matrix end */
+
+
+	/*69. Sqrt(x) (medium)
+	https://leetcode.com/problems/sqrtx/
+	https://discuss.leetcode.com/topic/24532/3-4-short-lines-integer-newton-every-language
+	*/
+	class Solution69 {
+	public:
+		int mySqrt(int x) {
+			if (x <= 1)
+				return x;
+
+			int left = 1, right = x;
+
+			while (left < right) {
+				int mid = left + (right - left) / 2;
+
+				if (mid <= x / mid)
+					left = mid + 1;
+				else
+					right = mid;
+			}
+
+			return left - 1;
+		}
+	};
+	/*69. Sqrt(x) end */
+
+
+	/*50. Pow(x, n) (medium)
+	https://leetcode.com/problems/powx-n/
+	*/
+	class Solution {
+	public:
+		double myPow1(double x, int n) {
+			if (x == 0.0)
+				return 0;
+
+			if (n == 0)
+				return 1;
+
+			if (n < 0) {
+				n = -n;
+				x = 1 / x;
+			}
+
+			return (n % 2 == 0) ? myPow(x*x, n / 2) : x*myPow(x*x, n / 2);
+		}
+
+		double myPow(double x, int n) {
+			if (n == 0)
+				return 1;
+
+			double res = myPow(x, n / 2);
+			return n % 2 == 0 ? res * res : n < 0 ? res * res * (1 / x) : res * res * x;
+		}
+	};
+	/*50. Pow(x, n) end */
+
+
+	/*374. Guess Number Higher or Lower (easy)
+	https://leetcode.com/problems/guess-number-higher-or-lower/
+	https://discuss.leetcode.com/topic/51113/c-binary-search
+	*/
+	int guess(int num) { return 0; }
+
+	class Solution374 {
+	public:
+		int guessNumber(int n) {
+			int low = 1;
+
+			while (low <= n) {
+				int mid = low + (n - low) / 2;
+
+				int result = guess(mid);
+
+				if (0 == result)
+					return mid;
+				else if (result < 0)
+					n = mid - 1;
+				else
+					low = mid + 1;
+			}
+
+			return -1;
+		}
+	};
+	/*374. Guess Number Higher or Lower end */
+}
+//////////////////////////Tag Binary Search end//////////////////////////////////////////
+
+
 //////////////////////////Tag Divide and Conquer//////////////////////////////////////////
 namespace DC {
 	/*174. Dungeon Game (hard)
 	*/
 	/*174. Dungeon Game end */
+
+
+	/*312. Burst Balloons (hard)
+	https://leetcode.com/problems/burst-balloons/
+	https://discuss.leetcode.com/topic/30746/share-some-analysis-and-explanations
+	*/
+	class Solution312 {
+	public:
+		int myCount(vector<vector<int>>& dp, vector<int>& nums, int left, int right) {
+			if (left + 1 == right)
+				return 0;
+
+			if (dp[left][right] > 0)
+				return dp[left][right];
+
+			int ans = 0;
+			for (int i = left + 1; i < right; ++i)
+				ans = max(ans, nums[left] * nums[i] * nums[right] + myCount(dp, nums, left, i) + myCount(dp, nums, i, right));
+
+			dp[left][right] = ans;
+
+			return ans;
+		}
+
+		int maxCoins1(vector<int>& nums) {
+			vector<int> i_nums(nums.size() + 2, 0);
+
+			int n = 1;
+			for (auto it : nums)
+				if (it > 0)
+					i_nums[n++] = it;
+
+			i_nums[0] = i_nums[n++] = 1;
+
+			vector<vector<int>> dp(n, vector<int>(n, 0));
+			return myCount(dp, i_nums, 0, n - 1);
+
+		}
+
+		int maxCoins(vector<int>& nums) {
+			vector<int> i_nums(nums.size() + 2, 0);
+
+			int n = 1;
+			for (auto it : nums)
+				if (it > 0)
+					i_nums[n++] = it;
+
+			i_nums[0] = i_nums[n++] = 1;
+
+			vector<vector<int>> dp(n, vector<int>(n, 0));
+
+			int left, right;
+			for (int k = 2; k < n; ++k) {
+				for (left = 0; left < n - k; ++left) {
+					right = left + k;
+					for (int i = left + 1; i < right; ++i)
+						dp[left][right] = max(dp[left][right], i_nums[left] * i_nums[i] * i_nums[right] + dp[left][i] + dp[i][right]);
+				}
+			}
+
+			return dp[0][n - 1];
+		}
+	};
+	/*312. Burst Balloons end */
 
 
 	/*282. Expression Add Operators (hard)
