@@ -29,6 +29,8 @@ namespace STRING {
 
 	/*28. Implement strStr() (easy)
 	https://leetcode.com/problems/implement-strstr/
+	https://discuss.leetcode.com/topic/15569/explained-4ms-easy-c-solution
+	https://discuss.leetcode.com/topic/18839/elegant-java-solution
 	*/
 	class Solution28 {
 	public:
