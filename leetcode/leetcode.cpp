@@ -20,18 +20,676 @@
 using namespace std;
 
 
-//////////////////////////Tag Binary Search//////////////////////////////////////////
-namespace BS {
-	/*174. Dungeon Game (medium)
+//////////////////////////Tag String//////////////////////////////////////////
+namespace STRING {
+	/*174. Dungeon Game (easy)
 	*/
 	/*174. Dungeon Game end */
+
+
+	/*28. Implement strStr() (easy)
+	https://leetcode.com/problems/implement-strstr/
+	*/
+	class Solution28 {
+	public:
+		static void main() {
+			Solution28* test = new Solution28;
+			int result;
+
+			string haystack1("abcbcbad");
+			string needle1("cbcba");
+
+			result = test->strStr(haystack1, needle1);
+			delete test;
+		}
+
+		int strStr(string haystack, string needle) {
+			int m = haystack.size();
+			int n = needle.size();
+			if (n == 0)
+				return 0;
+
+			vector<int> next(n);
+			int k = -1;
+			int i = 0, j = 0;
+			next[0] = -1;
+
+			while (j < n - 1) {
+				if (k == -1 || needle[j] == needle[k]) {
+					++k;
+					++j;
+					next[j] = k;
+				}
+				else
+					k = next[k];
+			}
+
+			i = 0;
+			j = 0;
+			while (i < m && j < n) {
+				if (j == -1 || haystack[i] == needle[j]) {
+					++j;
+					++i;
+				}
+				else
+					j = next[j];
+			}
+
+			return j >= n ? (i - j) : -1;
+		}
+
+		int strStr3(string haystack, string needle) {
+			int m = haystack.size();
+			int n = needle.size();
+			if (n == 0)
+				return 0;
+
+			vector<int> table(n, 0);
+
+			for (int i = 1, j = 0; i <= n - 1;) {
+				if (needle[i] != needle[j]) {
+					if (j > 0)
+						j = table[j - 1];
+					else
+						i++;
+				}
+				else {
+					table[i] = j + 1;
+					++i;
+					++j;
+				}
+			}
+
+			for (int i = 0, match_pos = 0; i < m;) {
+				if (haystack[i] == needle[match_pos]) {
+					if (match_pos == n - 1) {
+						return i - (n - 1);
+					}
+					else {
+						++i;
+						++match_pos;
+					}
+				}
+				else {
+					if (match_pos == 0)
+						++i;
+					else
+						match_pos = table[match_pos - 1];
+				}
+			}
+
+			return -1;
+		}
+
+		int strStr1(string haystack, string needle) {
+			int m = haystack.size();
+			int n = needle.size();
+			if (n == 0)
+				return 0;
+
+			int i, j;
+			for (i = 0; i < m - n + 1; ++i) {
+				for (j = 0; j < n; ++j) {
+					if (haystack[i + j] != needle[j])
+						break;
+				}
+
+				if (j == n)
+					return i;
+			}
+
+			return -1;
+		}
+	};
+	/*28. Implement strStr() end */
+
+
+	/*8. String to Integer (atoi) (easy)
+	https://leetcode.com/problems/string-to-integer-atoi/
+	https://discuss.leetcode.com/topic/2666/my-simple-solution
+	*/
+	class Solution8 {
+	public:
+		int myAtoi(string str) {
+			int begin = 0;
+			int flag = 1;
+			long int res = 0;
+
+			begin = str.find_first_not_of(' ');
+			if (str[begin] == '-') {
+				begin++;
+				flag = -1;
+			}
+			else if (str[begin] == '+')
+				begin++;
+
+			for (; isdigit(str[begin]) && res <= INT_MAX && begin < str.size(); ++begin)
+				res = res * 10 + (str[begin] - '0');
+
+			if (res*flag > INT_MAX)
+				return INT_MAX;
+
+			if (res*flag < INT_MIN)
+				return INT_MIN;
+
+			return res*flag;
+		}
+	};
+	/*8. String to Integer (atoi) end */
+
+
+	/*67. Add Binary (easy)
+	https://leetcode.com/problems/add-binary/
+	https://discuss.leetcode.com/topic/8981/short-code-by-c
+	*/
+	class Solution67 {
+	public:
+		string addBinary(string a, string b) {
+			string result;
+
+			int idxa = a.size() - 1;
+			int idxb = b.size() - 1;
+
+			int c = 0;
+			while (idxa >= 0 || idxb >= 0 || c == 1) {
+				c += (idxa >= 0) ? (a[idxa] - '0') : 0;
+				c += (idxb >= 0) ? (b[idxb] - '0') : 0;
+
+				result = to_string(c % 2) + result;
+
+				--idxa;
+				--idxb;
+				c /= 2;
+			}
+
+			return result;
+		}
+
+
+		string addBinary1(string a, string b) {
+			string result;
+
+			int last = 0;
+			int idxa = a.size() - 1;
+			int idxb = b.size() - 1;
+
+			while (idxa >= 0 && idxb >= 0) {
+				last = (a[idxa] - '0') + (b[idxb] - '0') + last;
+
+				if (last > 1) {
+					result = to_string(last - 2) + result;
+					last = 1;
+				}
+				else {
+					result = to_string(last) + result;
+					last = 0;
+				}
+
+				--idxa;
+				--idxb;
+			}
+
+			while (idxa >= 0) {
+				last = (a[idxa] - '0') + last;
+
+				if (last > 1) {
+					result = to_string(last - 2) + result;
+					last = 1;
+				}
+				else {
+					result = to_string(last) + result;
+					last = 0;
+				}
+
+				--idxa;
+			}
+
+			while (idxb >= 0) {
+				last = (b[idxb] - '0') + last;
+
+				if (last > 1) {
+					result = to_string(last - 2) + result;
+					last = 1;
+				}
+				else {
+					result = to_string(last) + result;
+					last = 0;
+				}
+
+				--idxb;
+			}
+
+			if (last)
+				result = to_string(last) + result;
+
+			return result;
+		}
+
+	};
+	/*67. Add Binary end */
+
+
+	/*125. Valid Palindrome (easy)
+	https://leetcode.com/problems/valid-palindrome/
+	https://discuss.leetcode.com/topic/5581/here-s-a-clean-c-solution
+	*/
+	class Solution125 {
+	public:
+		bool isPalindrome(string s) {
+			if (s.empty())
+				return true;
+
+			bool bResult = true;
+			int left = 0;
+			int right = s.size() - 1;
+			while (left < right) {
+				while ((left < right) && !(isalpha(s[left]) || isdigit(s[left])))
+					left++;
+
+				while ((left < right) && !(isalpha(s[right]) || isdigit(s[right])))
+					right--;
+
+				if (left >= right)
+					break;
+
+				if (!((s[left] == s[right]) || (32 == abs(s[left] - s[right]))))
+				{
+					bResult = false;
+					break;
+				}
+
+				left++;
+				right--;
+			}
+
+			return bResult;
+		}
+	};
+	/*125. Valid Palindrome end */
+
+
+	/*38. Count and Say (easy)
+	https://leetcode.com/problems/count-and-say/
+	*/
+	class Solution38 {
+	public:
+		string countAndSay(int n) {
+			if (0 == n)
+				return "";
+
+			string result("1");
+			string cur;
+			int count;
+
+			while (--n > 0) {
+				cur = "";
+
+				for (int i = 0; i < result.size(); ++i) {
+					count = 1;
+
+					while (i + 1 < result.size() && result[i] == result[i + 1]) {
+						count++;
+						i++;
+					}
+
+					cur += to_string(count) + result[i];
+				}
+
+				result = cur;
+			}
+
+			return result;
+		}
+	};
+	/*38. Count and Say end */
+
+
+	/*6. ZigZag Conversion (easy)
+	https://leetcode.com/problems/zigzag-conversion/
+	https://discuss.leetcode.com/topic/3162/easy-to-understand-java-solution
+	*/
+	class Solution6 {
+	public:
+		string convert(string s, int numRows) {
+			if (numRows <= 1)
+				return s;
+
+			int len = s.size();
+			string* strRow = new string[numRows];
+			int step = 0, cur = 0;
+
+			for (int i = 0; i < len; ++i) {
+				strRow[cur].push_back(s[i]);
+
+				if (cur == 0)
+					step = 1;
+				else if (cur == numRows - 1)
+					step = -1;
+
+				cur += step;
+			}
+
+			string result;
+
+			for (int i = 0; i < numRows; ++i)
+				result += strRow[i];
+
+			delete[]strRow;
+
+			return result;
+		}
+	};
+	/*6. ZigZag Conversion end */
+
+
+	/*165. Compare Version Numbers (easy)
+	https://leetcode.com/problems/compare-version-numbers/
+	https://discuss.leetcode.com/topic/11410/my-2ms-easy-solution-with-c-c
+	*/
+	class Solution165 {
+	public:
+		int compareVersion(string version1, string version2) {
+			vector<int> ver1 = getversion(version1);
+			vector<int> ver2 = getversion(version2);
+			int idx;
+
+			for (idx = 0; idx < ver1.size() && idx < ver2.size(); ++idx) {
+				if (ver1[idx] > ver2[idx])
+					return 1;
+
+				if (ver1[idx] < ver2[idx])
+					return -1;
+			}
+
+			if (idx < ver1.size()) {
+				while (idx < ver1.size()) {
+					if (ver1[idx] > 0)
+						return 1;
+					++idx;
+				}
+			}
+
+			if (idx < ver2.size()) {
+				while (idx < ver2.size()) {
+					if (ver2[idx] > 0)
+						return -1;
+
+					++idx;
+				}
+			}
+
+			return 0;
+		}
+
+		vector<int> getversion(string& version) {
+			vector<int> result;
+			int num = 0;
+
+			for (int idx = 0; idx < version.size(); ++idx) {
+				if (version[idx] == '.') {
+					result.push_back(num);
+					num = 0;
+				}
+				else
+					num = num * 10 + (version[idx] - '0');
+			}
+
+			result.push_back(num);
+
+			return result;
+		}
+	};
+	/*165. Compare Version Numbers end */
+
+}
+//////////////////////////Tag String end//////////////////////////////////////////
+
+
+
+//////////////////////////Tag Binary Search//////////////////////////////////////////
+namespace BS {
+	/*33. Search in Rotated Sorted Array (medium)
+	https://leetcode.com/problems/search-in-rotated-sorted-array/
+	https://discuss.leetcode.com/topic/3538/concise-o-log-n-binary-search-solution
+	*/
+	class Solution {
+	public:
+		int search(vector<int>& nums, int target) {
+			int low = 0;
+			int high = nums.size() - 1;
+
+			int mid;
+			while (low < high) {
+				mid = low + (high - low) / 2;
+
+				if (target == nums[mid])
+					return mid;
+
+				if (nums[high] > nums[mid]) {
+					if (target > nums[mid] && target <= nums[high])
+						low = mid + 1;
+					else
+						high = mid;
+				}
+				else {
+					if (target <= nums[high] || target > nums[mid])
+						low = mid + 1;
+					else
+						high = mid;
+				}
+
+			}
+
+			if (low == high && target != nums[low]) return -1;
+			return low;
+		}
+	};
+	/*33. Search in Rotated Sorted Array end */
+
+
+	/*35. Search Insert Position (medium)
+	https://leetcode.com/problems/search-insert-position/
+	https://discuss.leetcode.com/topic/15955/c-o-logn-binary-search-that-handles-duplicate
+	*/
+	class Solution35 {
+	public:
+		int searchInsert(vector<int>& nums, int target) {
+			int low = 0, high = nums.size() - 1;
+
+			// Invariant: the desired index is between [low, high+1]
+			while (low <= high) {
+				int mid = low + (high - low) / 2;
+
+				if (nums[mid] < target)
+					low = mid + 1;
+				else
+					high = mid - 1;
+			}
+
+			// (1) At this point, low > high. That is, low >= high+1
+			// (2) From the invariant, we know that the index is between [low, high+1], so low <= high+1. Follwing from (1), now we know low == high+1.
+			// (3) Following from (2), the index is between [low, high+1] = [low, low], which means that low is the desired index
+			//     Therefore, we return low as the answer. You can also return high+1 as the result, since low == high+1
+			return low;
+		}
+
+		int searchInsert1(int A[], int n, int target) {
+			int nResult = 0;
+			int i;
+			for (i = 0; i < n; ++i) {
+				if ((target == A[i]) || (target < A[i])) {
+					nResult = i;
+					break;
+				}
+			}
+
+			if (i >= n)
+				nResult = n;
+
+			return nResult;
+		}
+	};
+	/*35. Search Insert Position end */
+
+
+	/*367. Valid Perfect Square (medium)
+	https://leetcode.com/problems/valid-perfect-square/
+	https://discuss.leetcode.com/topic/49325/a-square-number-is-1-3-5-7-java-code
+	*/
+	class Solution367 {
+	public:
+		bool isPerfectSquare(int num) {
+			int i = 1;
+			while (num > 0) {
+				num -= i;
+				i += 2;
+			}
+			return num == 0;
+		}
+	};
+	/*367. Valid Perfect Square end */
+
+
+	/*29. Divide Two Integers (medium)
+	https://leetcode.com/problems/divide-two-integers/
+	*/
+	class Solution29 {
+	public:
+		int divide(int dividend, int divisor) {
+			if (divisor == 0 || (dividend == INT_MIN && divisor == -1))
+				return INT_MAX;
+
+			int bits = 0;
+			int sign = (dividend < 0) ^ (divisor < 0) ? -1 : 1;
+			long long dvd = labs(dividend);
+			long long dvs = labs(divisor);
+			int result = 0;
+
+			while (dvd >= dvs) {
+				long long tmp = dvs, bits = 1;
+				while (dvd >= (tmp << 1)) {
+					tmp <<= 1;
+					bits <<= 1;
+				}
+
+				dvd -= tmp;
+				result += bits;
+			}
+
+			return sign == -1 ? -result : result;
+		}
+
+		static void main() {
+			Solution29* test = new Solution29;
+			int k = sizeof(int);
+			test->divide(7, 3);
+			delete test;
+		}
+	};
+	/*29. Divide Two Integers end */
+
+
+	/*162. Find Peak Element (medium)
+	https://leetcode.com/problems/find-peak-element/
+	https://discuss.leetcode.com/topic/5724/find-the-maximum-by-binary-search-recursion-and-iteration
+	*/
+	class Solution162 {
+	public:
+		int findPeakElement(vector<int>& nums) {
+			int len = nums.size();
+
+			if (0 == len)
+				return -INT_MAX;
+			else if (1 == len)
+				return 0;
+			else if (nums[0] > nums[1])
+				return 0;
+
+			for (int i = 1; i < len; ++i) {
+				if (nums[i] > nums[i - 1]) {
+					if (len - 1 == i)
+						return i;
+
+					if (nums[i] > nums[i + 1])
+						return i;
+				}
+			}
+
+			return -INT_MAX;
+		}
+	};
+	/*162. Find Peak Element end */
+
+
+	/*153. Find Minimum in Rotated Sorted Array (medium)
+	https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/
+	https://discuss.leetcode.com/topic/4100/compact-and-clean-c-solution
+	*/
+	class Solution153 {
+	public:
+		int findMin(vector<int>& nums) {
+			int low = 0, high = nums.size() - 1;
+			int middle;
+
+			while (low < high) {
+				middle = (low + high) / 2;
+
+				if (nums[middle] > nums[high])
+					low = middle + 1;
+				else if (nums[middle] < nums[high])
+					high = middle;
+			}
+
+			return nums[low];
+		}
+	};
+	/*153. Find Minimum in Rotated Sorted Array end */
+
+
+	/*81. Search in Rotated Sorted Array II (medium)
+	https://leetcode.com/problems/search-in-rotated-sorted-array-ii/
+	https://discuss.leetcode.com/topic/8087/c-concise-log-n-solution
+	*/
+	class Solution81 {
+	public:
+		bool search(vector<int>& nums, int target) {
+			int low = 0;
+			int high = nums.size() - 1;
+			int mid;
+
+			while (low <= high) {
+				mid = low + (high - low) / 2;
+
+				if (nums[mid] == target)
+					return true;
+
+				if (nums[mid] > nums[low]) {
+					if (target >= nums[low] && target < nums[mid])
+						high = mid - 1;
+					else
+						low = mid + 1;
+				}
+				else if (nums[mid] < nums[low]) {
+					if (target <= nums[high] && target > nums[mid])
+						low = mid + 1;
+					else
+						high = mid - 1;
+				}
+				else
+					++low;
+			}
+
+			return false;
+		}
+	};
+	/*81. Search in Rotated Sorted Array II end */
 
 
 	/*74. Search a 2D Matrix (medium)
 	https://leetcode.com/problems/search-a-2d-matrix/
 	https://discuss.leetcode.com/topic/3227/don-t-treat-it-as-a-2d-matrix-just-treat-it-as-a-sorted-list
 	*/
-	class Solution174 {
+	class Solution74 {
 	public:
 		bool searchMatrix(vector<vector<int>>& matrix, int target) {
 			if (matrix.empty() || matrix[0].empty())
@@ -129,7 +787,7 @@ namespace BS {
 	/*50. Pow(x, n) (medium)
 	https://leetcode.com/problems/powx-n/
 	*/
-	class Solution {
+	class Solution50 {
 	public:
 		double myPow1(double x, int n) {
 			if (x == 0.0)
@@ -8696,9 +9354,14 @@ using namespace HEAP;
 using namespace STACK;
 using namespace BACKTRACK;
 using namespace DP;
+using namespace BS;
+using namespace STRING;
+
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	Solution28::main();
+	Solution29::main();
 	Solution322::main();
 	Solution93::main();
 	Solution84::main();
