@@ -22,9 +22,533 @@ using namespace std;
 
 //////////////////////////Tag String//////////////////////////////////////////
 namespace STRING {
-	/*174. Dungeon Game (easy)
+	/*174. Dungeon Game (medium)
 	*/
 	/*174. Dungeon Game end */
+
+
+	/*151. Reverse Words in a String (medium)
+	https://leetcode.com/problems/reverse-words-in-a-string/
+	https://discuss.leetcode.com/topic/5319/c-solution-in-place-runtime-o-n-memory-o-1
+	*/
+	class Solution151 {
+	public:
+		void reverseWords(string &s) {
+			int idx = 0;
+			int i = 0, j = 0, k;
+			int words = 0;
+			int len = s.size();
+
+			while (true) {
+				while (i < len && s[i] == ' ')
+					++i;
+
+				if (i == len)
+					break;
+
+				if (words > 0)
+					s[j++] = ' ';
+
+				int k = j;
+
+				while (i < len && s[i] != ' ')
+					s[j++] = s[i++];
+
+				reverse(s.begin() + k, s.begin() + j);
+				words++;
+			}
+
+			s.resize(j);
+			reverse(s.begin(), s.end());
+		}
+	};
+	/*151. Reverse Words in a String end */
+
+
+	/*12. Integer to Roman (medium)
+	https://discuss.leetcode.com/topic/12384/simple-solution
+	*/
+	class Solution12 {
+	public:
+		string intToRoman(int num) {
+			map<char, int> value;
+			char symbols[7] = { 'I','V','X','L','C','D','M' };
+			string roman;
+
+			int scale = 1000;
+			int digit;
+			for (int i = 6; i >= 0; i -= 2) {
+				digit = num / scale;
+
+				if (digit > 0) {
+					if (digit <= 3)
+						roman.append(digit, symbols[i]);
+					else if (digit == 4) {
+						roman.append(1, symbols[i]);
+						roman.append(1, symbols[i + 1]);
+					}
+					else if (digit == 5)
+						roman.append(1, symbols[i + 1]);
+					else if (digit <= 8) {
+						roman.append(1, symbols[i + 1]);
+						roman.append(digit - 5, symbols[i]);
+					}
+					else if (digit == 9) {
+						roman.append(1, symbols[i]);
+						roman.append(1, symbols[i + 2]);
+					}
+				}
+
+				num = num % scale;
+				scale /= 10;
+			}
+
+			return roman;
+		}
+	};
+	/*12. Integer to Roman end */
+
+
+	/*43. Multiply Strings (medium)
+	https://leetcode.com/problems/multiply-strings/
+	https://discuss.leetcode.com/topic/30508/easiest-java-solution-with-graph-explanation
+	*/
+	class Solution43 {
+	public:
+		string multiply(string num1, string num2) {
+			int tmp;
+			int len1 = num1.size();
+			int len2 = num2.size();
+			int flag;
+			string result(len1 + len2, '0');
+
+			for (int i = len1 - 1; i >= 0; --i) {
+				flag = 0;
+				for (int j = len2 - 1; j >= 0; --j) {
+					tmp = result[i + j + 1] - '0' + (num1[i] - '0') * (num2[j] - '0') + flag;
+					result[i + j + 1] = (tmp % 10) + '0';
+					flag = tmp / 10;
+				}
+
+				result[i] += flag;
+			}
+
+			int idx = 0;
+			while (idx < len1 + len2  && result[idx++] == '0')
+				;
+
+			if (idx >= len1 + len2 && result[len1 + len2 - 1] == '0')
+				result = "0";
+			else
+				result = result.substr(idx - 1);
+
+			return result;
+		}
+	};
+	/*43. Multiply Strings end */
+
+
+	/*3. Longest Substring Without Repeating Characters (medium)
+	https://leetcode.com/problems/longest-substring-without-repeating-characters/
+	https://discuss.leetcode.com/topic/24739/c-code-in-9-lines
+	*/
+	class Solution3 {
+	public:
+		int lengthOfLongestSubstring(string s) {
+			vector<int> charIndex(256, -1);
+			int longest = 0, m = 0;
+
+			for (int i = 0; i < s.length(); i++) {
+				m = max(charIndex[s[i]] + 1, m);    // automatically takes care of -1 case
+				charIndex[s[i]] = i;
+				longest = max(longest, i - m + 1);
+			}
+
+			return longest;
+		}
+	};
+	/*3. Longest Substring Without Repeating Characters end */
+
+
+	/*49. Group Anagrams (medium)
+	https://leetcode.com/problems/anagrams/
+	https://discuss.leetcode.com/topic/21038/10-lines-76ms-easy-c-solution-updated-function-signature
+	*/
+	class Solution49 {
+	public:
+		static bool mycmp(string str1, string str2) {
+			int k = 0;
+
+			while (k < str1.size() && k < str2.size()) {
+				if (str1[k] == str2[k]) {
+					k++;
+					continue;
+				}
+
+				return (str1[k] < str2[k]);
+			}
+
+			return k >= str1.size();
+		}
+
+		vector<vector<string>> groupAnagrams(vector<string>& strs) {
+			unordered_map<string, int> keys;
+			vector<vector<string>> ret;
+			vector<vector<string>> result;
+
+			for (auto item : strs) {
+				string tmp(item);
+				sort(tmp.begin(), tmp.end());
+
+				if (keys.count(tmp))
+					ret[keys[tmp]].push_back(item);
+				else {
+					keys[tmp] = ret.size();
+					ret.push_back(vector<string>(1, item));
+				}
+			}
+
+			for (auto item : ret) {
+				sort(item.begin(), item.end());
+				result.push_back(item);
+			}
+
+			return result;
+		}
+	};
+	/*49. Group Anagrams end */
+
+
+	/*227. Basic Calculator II (medium)
+	https://leetcode.com/problems/basic-calculator-ii/
+	https://discuss.leetcode.com/topic/16935/share-my-java-solution
+	*/
+	class Solution227 {
+	public:
+		int calculate1(string s) {
+			deque<int> nums;
+			deque<char> oper;
+
+			int cur = 0;
+			int ret = 0;
+
+			for (int i = 0; i < s.size(); ++i) {
+				if (s[i] == ' ' || (i == 0 && s[i] == '+'))
+					continue;
+
+				if (s[i] >= '0' && s[i] <= '9') {
+					cur *= 10;
+					cur += (s[i] - '0');
+
+					if (i == s.size() - 1 || s[i + 1] < '0' || s[i + 1] > '9') {
+						ret = cur;
+						if (!oper.empty()) {
+							int num1 = nums.back();
+
+							if (oper.back() == '/') {
+								nums.pop_back();
+								oper.pop_back();
+								ret = num1 / cur;
+							}
+							else if (oper.back() == '*') {
+								nums.pop_back();
+								oper.pop_back();
+								ret = num1*cur;
+							}
+						}
+
+						nums.push_back(ret);
+						cur = 0;
+					}
+				}
+				else {
+					cur = 0;
+					oper.push_back(s[i]);
+				}
+			}
+
+			while (!oper.empty()) {
+				int num1 = nums.front();
+				nums.pop_front();
+				int num2 = nums.front();
+				nums.pop_front();
+
+				if (oper.front() == '+')
+					nums.push_front(num1 + num2);
+				else
+					nums.push_front(num1 - num2);
+
+				oper.pop_front();
+			}
+
+			return nums.front();
+		}
+
+		int calculate(string s) {
+			if (s.empty())
+				return 0;
+
+			stack<int> nums;
+			char cursign = '+';
+			int cur = 0;
+
+			for (int i = 0; i < s.size(); ++i) {
+				if (isdigit(s[i]))
+					cur = cur * 10 + (s[i] - '0');
+
+				if ((!isdigit(s[i]) && (s[i] != ' ')) || i == s.size() - 1) {
+					if (cursign == '+')
+						nums.push(cur);
+					else if (cursign == '-')
+						nums.push(-cur);
+					else if (cursign == '*') {
+						int tmp = nums.top();
+						nums.pop();
+						nums.push(tmp*cur);
+					}
+					else if (cursign == '/') {
+						int tmp = nums.top();
+						nums.pop();
+						nums.push(tmp / cur);
+					}
+
+					cur = 0;
+					cursign = s[i];
+				}
+			}
+
+			int ret = 0;
+			while (!nums.empty()) {
+				ret += nums.top();
+				nums.pop();
+			}
+
+			return ret;
+		}
+	};
+	/*227. Basic Calculator II end */
+
+
+	/*5. Longest Palindromic Substring (medium)
+	https://leetcode.com/problems/longest-palindromic-substring/
+	https://discuss.leetcode.com/topic/12187/simple-c-solution-8ms-13-lines
+	*/
+	class Solution5 {
+	public:
+		string prestring(string s) {
+			string ret;
+
+			if (s.empty()) {
+				ret = "^$";
+				return ret;
+			}
+
+			ret = "^";
+			for (int i = 0; i < s.size(); ++i)
+				ret += "#" + s.substr(i, 1);
+
+			ret += "#$";
+			return ret;
+		}
+
+		string longestPalindrome(string s) {
+			string strT = prestring(s);
+			int nlen = strT.size();
+
+			vector<int> p(nlen);
+			int c = 0, r = 0;
+
+			for (int i = 1; i < nlen - 1; ++i) {
+				int i_mirror = 2 * c - i;
+				p[i] = r > i ? min(r - i, p[i_mirror]) : 0;
+
+				while (strT[i - 1 - p[i]] == strT[i + 1 + p[i]])
+					p[i] ++;
+
+				if (p[i] + i > r) {
+					c = i;
+					r = p[i] + i;
+				}
+			}
+
+			int max_len = 0;
+			int index = 0;
+
+			for (int i = 1; i < nlen - 1; ++i) {
+				if (p[i] > max_len) {
+					max_len = p[i];
+					index = i;
+				}
+			}
+
+			return s.substr((index - max_len - 1) / 2, max_len);
+		}
+
+		string longestPalindrome1(string s) {
+			if (s.size() < 2)
+				return s;
+
+			int min_start = 0, max_len = 1;
+
+			for (int i = 0; i < s.size();) {
+				if (s.size() - i <= max_len / 2)
+					break;
+
+				int j = i, k = i;
+
+				while (k < s.size() - 1 && s[k + 1] == s[k])
+					++k;
+
+				i = k + 1;
+
+				while (k < s.size() - 1 && j > 0 && s[k + 1] == s[j - 1]) {
+					++k;
+					--j;
+				}
+
+				int new_len = k - j + 1;
+
+				if (new_len > max_len) {
+					max_len = new_len;
+					min_start = j;
+				}
+			}
+
+			return s.substr(min_start, max_len);
+		}
+	};
+	/*5. Longest Palindromic Substring end */
+
+
+	/*58. Length of Last Word (easy)
+	https://leetcode.com/problems/length-of-last-word/
+	https://discuss.leetcode.com/topic/2743/my-simple-solution-in-c
+	*/
+	class Solution58 {
+	public:
+		int lengthOfLastWord(string s) {
+			if (s.empty())
+				return 0;
+			int nEnd = -1;
+			int nBegin = -1;
+
+			for (int nIdx = s.size() - 1; nIdx >= 0; --nIdx) {
+				if (s[nIdx] != ' ') {
+					if (nEnd == -1)
+						nEnd = nIdx;
+				}
+				else {
+					if (nEnd != -1) {
+						nBegin = nIdx;
+						break;
+					}
+				}
+			}
+
+			return nEnd - nBegin;
+		}
+	};
+	/*58. Length of Last Word end */
+
+
+	/*14. Longest Common Prefix (easy)
+	https://leetcode.com/problems/longest-common-prefix/
+	https://discuss.leetcode.com/topic/20991/accepted-c-6-lines-4ms
+	*/
+	class Solution14 {
+	public:
+		string longestCommonPrefix(vector<string>& strs) {
+			if (strs.empty())
+				return "";
+
+			int size = strs[0].size();
+
+			for (int i = 1; i < strs.size(); ++i) {
+				int j = 0;
+
+				for (; j < size && j < strs[i].size() && (strs[0][j] == strs[i][j]); ++j);
+
+				size = j;
+			}
+
+			return strs[0].substr(0, size);
+		}
+	};
+	/*14. Longest Common Prefix end */
+
+
+	/*345. Reverse Vowels of a String (easy)
+	https://leetcode.com/problems/reverse-vowels-of-a-string/
+	https://discuss.leetcode.com/topic/43412/java-standard-two-pointer-solution
+	*/
+	class Solution345 {
+	public:
+		bool isVowel(char c) {
+			if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' ||
+				c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U')
+				return true;
+
+			return false;
+		}
+
+		string reverseVowels(string s) {
+			string str(s);
+
+			int low = 0;
+			int high = s.size() - 1;
+
+			while (low < high) {
+				while (low < high && !isVowel(s[low]))
+					++low;				
+
+				while (low < high && !isVowel(s[high]))
+					--high;
+
+				if (low >= high)
+					break;
+
+				str[high] = s[low];
+				str[low] = s[high];
+				++low;
+				--high;
+			}
+
+			return str;
+		}
+	};
+	/*345. Reverse Vowels of a String end */
+
+
+	/*13. Roman to Integer (easy)
+	https://leetcode.com/problems/roman-to-integer/
+	https://discuss.leetcode.com/topic/7784/clean-o-n-c-solution
+	*/
+	class Solution13 {
+	public:
+		int romanToInt(string s) {
+			map<char, int> value;
+
+			int nIdx, result = 0;
+			value['I'] = 1;
+			value['V'] = 5;
+			value['X'] = 10;
+			value['L'] = 50;
+			value['C'] = 100;
+			value['D'] = 500;
+			value['M'] = 1000;
+
+			for (nIdx = 0; nIdx < s.size() - 1; ++nIdx) {
+				if (value[s[nIdx]] >= value[s[nIdx + 1]])
+					result += value[s[nIdx]];
+				else
+					result -= value[s[nIdx]];
+			}
+
+			result += value[s[nIdx]];
+			return result;
+		}
+	};
+	/*13. Roman to Integer end */
 
 
 	/*28. Implement strStr() (easy)
@@ -454,7 +978,7 @@ namespace BS {
 	https://leetcode.com/problems/search-in-rotated-sorted-array/
 	https://discuss.leetcode.com/topic/3538/concise-o-log-n-binary-search-solution
 	*/
-	class Solution {
+	class Solution33 {
 	public:
 		int search(vector<int>& nums, int target) {
 			int low = 0;
@@ -3364,7 +3888,7 @@ namespace STACK {
 	https://discuss.leetcode.com/topic/5125/sharing-my-simple-c-code-o-n-time-o-1-space
 	https://discuss.leetcode.com/topic/18731/7-lines-c-c
 	*/
-	class Solution {
+	class Solution42 {
 	public:
 		int trap(vector<int>& height) {
 			if (height.size() < 2)
