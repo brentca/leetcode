@@ -22,9 +22,233 @@ using namespace std;
 
 //////////////////////////Tag String//////////////////////////////////////////
 namespace STRING {
-	/*174. Dungeon Game (medium)
+	/*76. Minimum Window Substring (hard)
+	https://leetcode.com/problems/minimum-window-substring/
+	https://discuss.leetcode.com/topic/30941/here-is-a-10-line-template-that-can-solve-most-substring-problems
 	*/
-	/*174. Dungeon Game end */
+	class Solution76 {
+	public:
+		string minWindow(string s, string t) {
+			vector<int> map(128, 0);
+			int begin = 0, end = 0, head = 0;
+			int counter = t.size();
+			int d = INT_MAX;
+
+			for (auto c : t)
+				map[c] ++;
+
+			while (end < s.size()) {
+				if (map[s[end++]]-- > 0)
+					--counter;
+
+				while (counter == 0) {
+					if (end - begin < d)
+						d = end - (head = begin);
+
+					if (map[s[begin++]]++ == 0)
+						counter++;
+				}
+			}
+
+			return d == INT_MAX ? "" : s.substr(head, d);
+		}
+
+		static void main() {
+			Solution76* test = new Solution76;
+			string result;
+
+			string s1("adobcna");
+			string t1("abc");
+
+			result = test->minWindow(s1, t1);
+
+			string s2("daonbc"); //s2("daonbcna");
+			string t2("abc");
+			result = test->minWindow(s2, t2);
+		}
+	};
+	/*76. Minimum Window Substring end */
+
+
+	/*214. Shortest Palindrome (hard)
+	https://leetcode.com/problems/shortest-palindrome/
+	https://discuss.leetcode.com/topic/14526/c-8-ms-kmp-based-o-n-time-o-n-memory-solution
+	*/
+	class Solution214 {
+	public:
+		string shortestPalindrome(string s) {
+			string rev_s(s);
+
+			reverse(rev_s.begin(), rev_s.end());
+
+			string tmp = s + "#" + rev_s;
+			vector<int> p(tmp.size(), 0);
+
+			for (int i = 1; i < tmp.size(); ++i) {
+				int j = p[i - 1];
+
+				while (j > 0 && tmp[i] != tmp[j])
+					j = p[j - 1];
+
+				p[i] = (j += tmp[i] == tmp[j]);
+			}
+
+			return rev_s.substr(0, s.size() - p[tmp.size() - 1]) + s;
+		}
+	};
+	/*214. Shortest Palindrome end */
+
+
+	/*68. Text Justification (hard)
+	https://leetcode.com/problems/text-justification/
+	https://discuss.leetcode.com/topic/4189/share-my-concise-c-solution-less-than-20-lines
+	*/
+	class Solution68 {
+	public:
+		vector<string> fullJustify(vector<string>& words, int maxWidth) {
+			vector<string> res;
+
+			if (words.empty() || maxWidth == 0) {
+				res.push_back("");
+				return res;
+			}
+
+			int k = 0, len;
+			for (int i = 0; i < words.size(); i += k) {
+				len = 0;
+				for (k = 0; i + k < words.size() && len + words[i + k].size() <= maxWidth - k; ++k)
+					len += words[i + k].size();
+
+				string tmp(words[i]);
+
+				for (int j = 0; j < k - 1; ++j) {
+					if (i + k >= words.size())
+						tmp += " ";
+					else
+						tmp += string((maxWidth - len) / (k - 1) + (j < (maxWidth - len) % (k - 1)), ' ');
+
+					tmp += words[i + j + 1];
+				}
+
+				tmp += string(maxWidth - tmp.size(), ' ');
+				res.push_back(tmp);
+			}
+
+			return res;
+		}
+	};
+	/*68. Text Justification end */
+
+
+	/*273. Integer to English Words (hard)
+	https://leetcode.com/problems/integer-to-english-words/
+	https://discuss.leetcode.com/topic/24112/fairly-clear-4ms-c-solution
+	*/
+	class Solution273 {
+	public:
+		string digits[20] = { "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen" };
+		string tens[10] = { "Zero", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety" };
+
+		string int2string(int n) {
+			if (n >= 1000000000) {
+				return int2string(n / 1000000000) + " Billion" + int2string(n % 1000000000);
+			}
+			else if (n >= 1000000) {
+				return int2string(n / 1000000) + " Million" + int2string(n % 1000000);
+			}
+			else if (n >= 1000) {
+				return int2string(n / 1000) + " Thousand" + int2string(n % 1000);
+			}
+			else if (n >= 100) {
+				return int2string(n / 100) + " Hundred" + int2string(n % 100);
+			}
+			else if (n >= 20) {
+				return  " " + tens[n / 10] + int2string(n % 10);
+			}
+			else if (n >= 1) {
+				return " " + digits[n];
+			}
+			else {
+				return "";
+			}
+		}
+
+		string numberToWords(int num) {
+			if (num == 0) {
+				return "Zero";
+			}
+			else {
+				string ret = int2string(num);
+				return ret.substr(1, ret.length() - 1);
+			}
+		}
+	};
+	/*273. Integer to English Words end */
+
+
+	/*30. Substring with Concatenation of All Words (hard)
+	https://leetcode.com/problems/substring-with-concatenation-of-all-words/
+	https://discuss.leetcode.com/topic/6617/an-o-n-solution-with-detailed-explanation
+	*/
+	class Solution30 {
+	public:
+		vector<int> findSubstring(string s, vector<string>& words) {
+			vector<int> result;
+			int len = s.size();
+
+			if (len < 1 || words.size() < 1)
+				return result;
+
+			int wlen = words[0].size();
+			unordered_map<string, int> dict;
+
+			for (auto it : words)
+				dict[it] ++;
+
+			int left, count = 0;
+			for (int i = 0; i < wlen; ++i) {
+				count = 0;
+				unordered_map<string, int> tmpdict;
+				left = i;
+
+				for (int j = i; j <= len - wlen; j += wlen) {
+					string str = s.substr(j, wlen);
+
+					if (dict.count(str)) {
+						tmpdict[str]++;
+						if (tmpdict[str] <= dict[str])
+							++count;
+						else {
+							while (tmpdict[str] > dict[str]) {
+								string str1 = s.substr(left, wlen);
+								tmpdict[str1] --;
+
+								if (tmpdict[str1] < dict[str1])
+									--count;
+
+								left += wlen;
+							}
+						}
+
+						if (count == words.size()) {
+							result.push_back(left);
+							tmpdict[s.substr(left, wlen)]--;
+							--count;
+							left += wlen;
+						}
+					}
+					else {
+						tmpdict.clear();
+						count = 0;
+						left = j + wlen;
+					}
+				}
+			}
+
+			return result;
+		}
+	};
+	/*30. Substring with Concatenation of All Words end */
 
 
 	/*151. Reverse Words in a String (medium)
@@ -9886,6 +10110,7 @@ using namespace STRING;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	Solution76::main();
 	Solution28::main();
 	Solution29::main();
 	Solution322::main();
