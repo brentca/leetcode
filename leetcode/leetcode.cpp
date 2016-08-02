@@ -9884,8 +9884,17 @@ using namespace BS;
 using namespace STRING;
 
 
+struct NonCopyable {
+	NonCopyable() = default;
+	NonCopyable(const NonCopyable&) = delete;
+	NonCopyable& operator=(const NonCopyable&) = delete;
+};
+
 int _tmain(int argc, _TCHAR* argv[])
 {
+	NonCopyable aa;
+	//NonCopyable bb(aa);
+
 	Solution28::main();
 	Solution29::main();
 	Solution322::main();
