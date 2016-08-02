@@ -20,11 +20,928 @@
 using namespace std;
 
 
+//////////////////////////Tag Math//////////////////////////////////////////
+namespace MATH {
+	/*287. Find the Duplicate Number(easy)
+	*/
+	/*287. Find the Duplicate Number end */
+
+
+	/*9. Palindrome Number(easy)
+	https://leetcode.com/problems/palindrome-number/
+	https://discuss.leetcode.com/topic/12820/an-easy-c-8-lines-code-only-reversing-till-half-and-then-compare
+	*/
+	class Solution9 {
+	public:
+		bool isPalindrome(int x) {
+			if (x < 0)
+				return false;
+
+			int div1 = x;
+			int div2 = 0;
+			while (x > 0) {
+				div2 = div2 * 10 + (x % 10);
+				x /= 10;
+			}
+
+			while (div1 > 0) {
+				if ((div1 % 10) != (div2 % 10))
+					return false;
+
+				div1 /= 10;
+				div2 /= 10;
+			}
+
+			return true;
+		}
+	};
+	/*9. Palindrome Number end */
+
+
+	/*66. Plus One(easy)
+	https://leetcode.com/problems/plus-one/
+	https://discuss.leetcode.com/topic/24288/my-simple-java-solution
+	*/
+	class Solution66 {
+	public:
+		vector<int> plusOne(vector<int>& digits) {
+			vector<int> result;
+			int tmp = 1, current;
+			for (int i = 0; i < digits.size(); ++i) {
+				if (digits[digits.size() - 1 - i] + tmp > 9) {
+					current = 0;
+					tmp = 1;
+				}
+				else {
+					current = digits[digits.size() - 1 - i] + tmp;
+					tmp = 0;
+				}
+
+				result.insert(result.begin(), current);
+			}
+
+			if (tmp == 1)
+				result.insert(result.begin(), 1);
+
+			return result;
+		}
+	};
+	/*66. Plus One end */
+
+
+	/*263. Ugly Number(easy)
+	https://leetcode.com/problems/ugly-number/
+	https://discuss.leetcode.com/topic/21785/2-4-lines-every-language
+	*/
+	class Solution263 {
+	public:
+		bool isUgly(int num) {
+			if (num == 1)
+				return true;
+
+			if (num < 1)
+				return false;
+
+			while ((num % 2) == 0)
+				num /= 2;
+
+			while ((num % 3) == 0)
+				num /= 3;
+
+			while ((num % 5) == 0)
+				num /= 5;
+
+			return num == 1;
+		}
+	};
+	/*263. Ugly Number end */
+}
+//////////////////////////Tag Math end//////////////////////////////////////////
+
+
+
+//////////////////////////Tag Two Pointers//////////////////////////////////////////
+namespace TWOP {
+
+	struct ListNode {
+		int val;
+		ListNode *next;
+		ListNode(int x) : val(x), next(NULL) {}
+	};
+
+
+	/*287. Find the Duplicate Number(medium)
+	https://leetcode.com/problems/find-the-duplicate-number/
+	https://discuss.leetcode.com/topic/25913/my-easy-understood-solution-with-o-n-time-and-o-1-space-without-modifying-the-array-with-clear-explanation
+	*/
+	class Solution287 {
+	public:
+		int findDuplicate(vector<int>& nums) {
+			if (nums.size() > 0) {
+				int slow = nums[0];
+				int fast = nums[nums[0]];
+
+				while (fast != slow) {
+					slow = nums[slow];
+					fast = nums[nums[fast]];
+				}
+
+				fast = 0;
+				while (fast != slow) {
+					fast = nums[fast];
+					slow = nums[slow];
+				}
+
+				return slow;
+			}
+
+			return -1;
+		}
+	};
+	/*287. Find the Duplicate Number end */
+
+	/*11. Container With Most Water (medium)
+	https://leetcode.com/problems/container-with-most-water/
+	https://discuss.leetcode.com/topic/503/anyone-who-has-a-o-n-algorithm/2
+	https://discuss.leetcode.com/topic/3462/yet-another-way-to-see-what-happens-in-the-o-n-algorithm
+	*/
+	class Solution11 {
+	public:
+		int maxArea(vector<int>& height) {
+			int water = 0;
+			int i = 0, j = height.size() - 1;
+			int h;
+
+			while (i < j) {
+				h = min(height[i], height[j]);
+
+				water = max(water, (j - i)*h);
+
+				while (height[i] <= h && i < j)
+					++i;
+
+				while (height[j] <= h && i < j)
+					--j;
+			}
+
+			return water;
+		}
+	};
+	/*11. Container With Most Water end */
+
+
+	/*209. Minimum Size Subarray Sum (medium)
+	https://leetcode.com/problems/minimum-size-subarray-sum/
+	https://discuss.leetcode.com/topic/17063/4ms-o-n-8ms-o-nlogn-c
+	*/
+	class Solution209 {
+	public:
+		int minSubArrayLen(int s, vector<int>& nums) {
+			if (nums.empty())
+				return 0;
+
+			int ret = INT_MAX, total = 0, start = 0, end = 0, len;
+
+			while (end < nums.size()) {
+				while (end < nums.size() && total < s)
+					total += nums[end++];
+
+				if (total < s)
+					break;
+
+				while (start < end && total >= s)
+					total -= nums[start++];
+
+				if (end - start + 1 < ret)
+					ret = end - start + 1;
+			}
+
+			return ret == INT_MAX ? 0 : ret;
+		}
+	};
+	/*209. Minimum Size Subarray Sum end */
+
+
+	/*86. Partition List (medium)
+	https://leetcode.com/problems/partition-list/
+	https://discuss.leetcode.com/topic/7005/very-concise-one-pass-solution
+	*/
+	class Solution86 {
+	public:
+		ListNode* partition(ListNode* head, int x) {
+			ListNode node1(0), node2(0);
+			ListNode* p1 = &node1;
+			ListNode* p2 = &node2;
+
+			while (head) {
+				if (head->val < x) {
+					p1->next = head;
+					p1 = p1->next;
+				}
+				else {
+					p2->next = head;
+					p2 = p2->next;
+				}
+
+				head = head->next;
+			}
+
+			p2->next = NULL;
+			p1->next = node2.next;
+			return node1.next;
+		}
+	};
+	/*86. Partition List end */
+
+
+	/* 80. Remove Duplicates from Sorted Array II(medium)
+	https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii/
+	https://discuss.leetcode.com/topic/17180/3-6-easy-lines-c-java-python-ruby
+	*/
+	class Solution80 {
+	public:
+		int removeDuplicates(vector<int>& nums) {
+			int idx = 0;
+			int len = nums.size();
+			int count = 0;
+
+			if (0 == len)
+				return 0;
+
+			for (int i = 1; i < len; ++i) {
+				count = 0;
+
+				while (i < len && nums[idx] == nums[i]) {
+					++i;
+					++count;
+				}
+
+				if (count > 0) {
+					nums[idx + 1] = nums[idx];
+					++idx;
+				}
+
+				if (i < len)
+					nums[++idx] = nums[i];
+			}
+
+			return idx + 1;
+		}
+	};
+	/*80. Remove Duplicates from Sorted Array II end */
+
+
+	/*61. Rotate List (medium)
+	https://leetcode.com/problems/rotate-list/
+	https://discuss.leetcode.com/topic/14470/my-clean-c-code-quite-standard-find-tail-and-reconnect-the-list
+	*/
+	class Solution61 {
+	public:
+		ListNode* rotateRight(ListNode* head, int k) {
+			ListNode* result = head;
+
+			if (head == NULL || head->next == NULL || k == 0)
+				return result;
+
+			ListNode* p1 = head;
+			ListNode* end = head;
+			int count = 0;
+			while (p1) {
+				end = p1;
+				p1 = p1->next;
+				++count;
+			}
+
+			k = k % count;
+			if (k == 0)
+				return head;
+
+			p1 = head;
+			ListNode* pre = head;
+			for (int i = 0; i < count - k; ++i) {
+				pre = p1;
+				p1 = p1->next;
+			}
+
+			result = p1;
+			pre->next = NULL;
+			end->next = head;
+			return result;
+		}
+	};
+	/*61. Rotate List end */
+
+
+	/*142. Linked List Cycle II (medium)
+	https://leetcode.com/problems/linked-list-cycle-ii/
+	https://discuss.leetcode.com/topic/2975/o-n-solution-by-using-two-pointers-without-change-anything
+	*/
+	class Solution142 {
+	public:
+		ListNode *detectCycle(ListNode *head) {
+			if (head == NULL)
+				return NULL;
+
+			ListNode* slow = head;
+			ListNode* fast = head;
+			bool bcycle = false;
+			while (fast->next && fast->next->next) {
+				slow = slow->next;
+				fast = fast->next->next;
+
+				if (slow == fast) {
+					bcycle = true;
+					break;
+				}
+			}
+
+			if (!bcycle)
+				return NULL;
+
+			fast = head;
+			while (fast != slow) {
+				fast = fast->next;
+				slow = slow->next;
+			}
+
+			return fast;
+		}
+	};
+	/*142. Linked List Cycle II end */
+
+
+	/*18. 4Sum (medium)
+	https://leetcode.com/problems/4sum/
+	https://discuss.leetcode.com/topic/28641/my-16ms-c-code
+	*/
+	class Solution18 {
+	public:
+		vector<vector<int>> m_ret;
+
+		vector<vector<int>> fourSum1(vector<int>& nums, int target) {
+			if (nums.empty() || nums.size() < 4)
+				return m_ret;
+
+			int n = nums.size();
+			sort(nums.begin(), nums.end());
+
+			for (int i = 0; i < n - 3; ++i) {
+				if (i > 0 && nums[i] == nums[i - 1])
+					continue;
+
+				if (nums[i] + nums[i + 1] + nums[i + 2] + nums[i + 3] > target)
+					break;
+
+				if (nums[i] + nums[n - 3] + nums[n - 2] + nums[n - 1] < target)
+					continue;
+
+				for (int j = i + 1; j < n - 2; ++j) {
+					if (j > i + 1 && nums[j] == nums[j - 1])
+						continue;
+
+					if (nums[i] + nums[j] + nums[j + 1] + nums[j + 2] > target)
+						break;
+
+					if (nums[i] + nums[j] + nums[n - 2] + nums[n - 1] < target)
+						continue;
+
+					int left = j + 1, right = n - 1;
+
+					while (left < right) {
+						int sum = nums[i] + nums[j] + nums[left] + nums[right];
+
+						if (sum < target)
+							left++;
+						else if (sum > target)
+							right--;
+						else {
+							m_ret.push_back(vector<int>{nums[i], nums[j], nums[left], nums[right]});
+							do { --left; } while (nums[left] == nums[left - 1] && left < right);
+
+							do { --right; } while (nums[right] == nums[right + 1] && left < right);
+						}
+					}
+				}
+			}
+
+			return m_ret;
+		}
+
+		vector<vector<int>> fourSum(vector<int>& nums, int target) {
+			if (nums.empty() || nums.size() < 4)
+				return m_ret;
+
+			int n = nums.size();
+			sort(nums.begin(), nums.end());
+			int i, j;
+			for (i = 0; i < n; ++i)
+			{
+				int target_3 = target - nums[i];
+
+				for (j = i + 1; j < n; ++j) {
+					int target_2 = target_3 - nums[j];
+
+					int front = j + 1;
+					int back = n - 1;
+
+					while (front < back) {
+						int two_sum = nums[front] + nums[back];
+
+						if (two_sum < target_2)
+							++front;
+						else if (two_sum > target_2)
+							--back;
+						else {
+							vector<int> tmp{ nums[i],nums[j],nums[front],nums[back] };
+							m_ret.push_back(tmp);
+
+							while (front < back && nums[front] == tmp[2])
+								++front;
+
+							while (front < back && nums[back] == tmp[3])
+								--back;
+						}
+					}
+
+					while (j + 1 < n && nums[j + 1] == nums[j])
+						++j;
+				}
+
+				while (i + 1 < n && nums[i + 1] == nums[i])
+					++i;
+			}
+
+			return m_ret;
+		}
+	};
+	/*18. 4Sum end */
+
+
+	/*16. 3Sum Closest (medium)
+	https://leetcode.com/problems/3sum-closest/
+	https://discuss.leetcode.com/topic/1978/a-n-2-solution-can-we-do-better
+	*/
+	class Solution16 {
+	public:
+		int threeSumClosest(vector<int>& nums, int target) {
+			if (nums.size() <= 3) {
+				int result = 0;
+				for (auto item : nums)
+					result += item;
+				return result;
+			}
+
+			sort(nums.begin(), nums.end());
+
+			int lastsum = nums[0] + nums[1] + nums[2];
+			int j, k, cur;
+			int nitem = nums.size();
+			for (int i = 0; i < nitem - 2; ++i) {
+				j = i + 1;
+				k = nitem - 1;
+
+				while (j < k) {
+					cur = nums[i] + nums[j] + nums[k];
+
+					if (abs(target - lastsum) > abs(target - cur)) {
+						lastsum = cur;
+						if (lastsum == target)
+							return target;
+					}
+
+					cur > target ? k-- : j++;
+				}
+			}
+
+			return lastsum;
+		}
+	};
+	/*16. 3Sum Closest end */
+
+
+	/*15. 3Sum (medium)
+	https://leetcode.com/problems/3sum/
+	https://discuss.leetcode.com/topic/8107/share-my-ac-c-solution-around-50ms-o-n-n-with-explanation-and-comments
+	*/
+	class Solution15 {
+	public:
+		vector<vector<int>> threeSum(vector<int>& nums) {
+			vector<vector<int>> ret;
+
+			int len = nums.size();
+			if (len < 3)
+				return ret;
+
+			sort(nums.begin(), nums.end());
+			for (int i = 0; i < len; ++i) {
+				int target = -nums[i];
+
+				int low = i + 1;
+				int high = len - 1;
+
+				while (low < high) {
+					int tmp = nums[low] + nums[high];
+					if (target > tmp)
+						++low;
+					else if (tmp > target)
+						--high;
+					else {
+						vector<int> vec = { nums[i], nums[low], nums[high] };
+
+						ret.push_back(vec);
+
+						while (low < high && nums[low] == vec[1])
+							++low;
+
+						while (low < high && nums[high] == vec[2])
+							--high;
+					}
+				}
+
+				while (i + 1 < len && nums[i + 1] == nums[i])
+					++i;
+			}
+
+			return ret;
+		}
+	};
+	/*15. 3Sum end */
+
+
+	/*234. Palindrome Linked List (easy)
+	https://leetcode.com/problems/palindrome-linked-list/
+	https://discuss.leetcode.com/topic/18304/share-my-c-solution-o-n-time-and-o-1-memory
+	*/
+	class Solution234 {
+	public:
+		bool isPalindrome(ListNode* head) {
+			ListNode* pre = NULL;
+			ListNode* slow = head;
+			ListNode* fast = head;
+
+			while (fast && fast->next) {
+				ListNode* tmp = slow->next;
+				fast = fast->next->next;
+
+				slow->next = pre;
+				pre = slow;
+				slow = tmp;
+			}
+
+			//odd case
+			if (fast)
+				slow = slow->next;
+
+			while (pre) {
+				if (pre->val != slow->val)
+					return false;
+
+				pre = pre->next;
+				slow = slow->next;
+			}
+
+			return true;
+		}
+	};
+	/*234. Palindrome Linked List end */
+
+
+	/*88. Merge Sorted Array (easy)
+	https://leetcode.com/problems/merge-sorted-array/
+	*/
+	class Solution88 {
+	public:
+		void merge(vector<int>& nums1, int m, vector<int>& nums2, int n) {
+			int tar = m + n - 1, idx1 = m - 1, idx2 = n - 1;
+
+			while (idx2 >= 0) {
+				if (idx1 >= 0) {
+					if (nums1[idx1] > nums2[idx2])
+						nums1[tar--] = nums1[idx1--];
+					else
+						nums1[tar--] = nums2[idx2--];
+				}
+				else
+					nums1[tar--] = nums2[idx2--];
+			}
+		}
+	};
+	/*88. Merge Sorted Array end */
+
+
+	/*19. Remove Nth Node From End of List (easy)
+	https://leetcode.com/problems/remove-nth-node-from-end-of-list/
+	https://discuss.leetcode.com/topic/5397/my-short-c-solution
+	http://blogread.cn/it/article/6243?f=wb
+	*/
+	class Solution19 {
+	public:
+		ListNode* removeNthFromEnd(ListNode* head, int n) {
+			int idx = 1;
+			ListNode**t1 = &head;
+			ListNode*t2 = head;
+
+			for (int i = 1; i < n; ++i)
+				t2 = t2->next;
+
+			while (t2->next) {
+				t1 = &((*t1)->next);
+				t2 = t2->next;
+			}
+
+			*t1 = (*t1)->next;
+			return head;
+		}
+
+		ListNode* removeNthFromEnd1(ListNode* head, int n) {
+			if (head == NULL || n < 1)
+				return NULL;
+
+			int pos = 1;
+			ListNode* pre = NULL;
+			ListNode* start = head;
+			ListNode* curr = head;
+
+			while (curr && pos < n) {
+				curr = curr->next;
+				pos++;
+			}
+
+			if (curr == NULL)
+				return NULL;
+
+			while (curr->next) {
+				pre = start;
+				start = start->next;
+				curr = curr->next;
+			}
+
+			if (pre == NULL)
+				head = head->next;
+			else
+				pre->next = start->next;
+
+			return head;
+		}
+	};
+	/*19. Remove Nth Node From End of List end */
+
+
+	/*283. Move Zeroes (easy)
+	https://leetcode.com/problems/move-zeroes/
+	https://discuss.leetcode.com/topic/24716/simple-o-n-java-solution-using-insert-index
+	*/
+	class Solution283 {
+	public:
+		void moveZeroes(vector<int>& nums) {
+			if (nums.empty())
+				return;
+
+			int idx = 0;
+			for (int i = 0; i < nums.size(); ++i) {
+				if (nums[i] != 0)
+					nums[idx++] = nums[i];
+			}
+
+			while (idx < nums.size())
+				nums[idx++] = 0;
+		}
+	};
+	/*283. Move Zeroes end */
+}
+//////////////////////////Tag Two Pointers end//////////////////////////////////////////
+
+
+
 //////////////////////////Tag String//////////////////////////////////////////
 namespace STRING {
-	/*174. Dungeon Game (medium)
+	/*76. Minimum Window Substring (hard)
+	https://leetcode.com/problems/minimum-window-substring/
+	https://discuss.leetcode.com/topic/30941/here-is-a-10-line-template-that-can-solve-most-substring-problems
 	*/
-	/*174. Dungeon Game end */
+	class Solution76 {
+	public:
+		string minWindow(string s, string t) {
+			vector<int> map(128, 0);
+			int begin = 0, end = 0, head = 0;
+			int counter = t.size();
+			int d = INT_MAX;
+
+			for (auto c : t)
+				map[c] ++;
+
+			while (end < s.size()) {
+				if (map[s[end++]]-- > 0)
+					--counter;
+
+				while (counter == 0) {
+					if (end - begin < d)
+						d = end - (head = begin);
+
+					if (map[s[begin++]]++ == 0)
+						counter++;
+				}
+			}
+
+			return d == INT_MAX ? "" : s.substr(head, d);
+		}
+
+		static void main() {
+			Solution76* test = new Solution76;
+			string result;
+
+			string s1("adobcna");
+			string t1("abc");
+
+			result = test->minWindow(s1, t1);
+
+			string s2("daonbc"); //s2("daonbcna");
+			string t2("abc");
+			result = test->minWindow(s2, t2);
+		}
+	};
+	/*76. Minimum Window Substring end */
+
+
+	/*214. Shortest Palindrome (hard)
+	https://leetcode.com/problems/shortest-palindrome/
+	https://discuss.leetcode.com/topic/14526/c-8-ms-kmp-based-o-n-time-o-n-memory-solution
+	*/
+	class Solution214 {
+	public:
+		string shortestPalindrome(string s) {
+			string rev_s(s);
+
+			reverse(rev_s.begin(), rev_s.end());
+
+			string tmp = s + "#" + rev_s;
+			vector<int> p(tmp.size(), 0);
+
+			for (int i = 1; i < tmp.size(); ++i) {
+				int j = p[i - 1];
+
+				while (j > 0 && tmp[i] != tmp[j])
+					j = p[j - 1];
+
+				p[i] = (j += tmp[i] == tmp[j]);
+			}
+
+			return rev_s.substr(0, s.size() - p[tmp.size() - 1]) + s;
+		}
+	};
+	/*214. Shortest Palindrome end */
+
+
+	/*68. Text Justification (hard)
+	https://leetcode.com/problems/text-justification/
+	https://discuss.leetcode.com/topic/4189/share-my-concise-c-solution-less-than-20-lines
+	*/
+	class Solution68 {
+	public:
+		vector<string> fullJustify(vector<string>& words, int maxWidth) {
+			vector<string> res;
+
+			if (words.empty() || maxWidth == 0) {
+				res.push_back("");
+				return res;
+			}
+
+			int k = 0, len;
+			for (int i = 0; i < words.size(); i += k) {
+				len = 0;
+				for (k = 0; i + k < words.size() && len + words[i + k].size() <= maxWidth - k; ++k)
+					len += words[i + k].size();
+
+				string tmp(words[i]);
+
+				for (int j = 0; j < k - 1; ++j) {
+					if (i + k >= words.size())
+						tmp += " ";
+					else
+						tmp += string((maxWidth - len) / (k - 1) + (j < (maxWidth - len) % (k - 1)), ' ');
+
+					tmp += words[i + j + 1];
+				}
+
+				tmp += string(maxWidth - tmp.size(), ' ');
+				res.push_back(tmp);
+			}
+
+			return res;
+		}
+	};
+	/*68. Text Justification end */
+
+
+	/*273. Integer to English Words (hard)
+	https://leetcode.com/problems/integer-to-english-words/
+	https://discuss.leetcode.com/topic/24112/fairly-clear-4ms-c-solution
+	*/
+	class Solution273 {
+	public:
+		string digits[20] = { "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen" };
+		string tens[10] = { "Zero", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety" };
+
+		string int2string(int n) {
+			if (n >= 1000000000) {
+				return int2string(n / 1000000000) + " Billion" + int2string(n % 1000000000);
+			}
+			else if (n >= 1000000) {
+				return int2string(n / 1000000) + " Million" + int2string(n % 1000000);
+			}
+			else if (n >= 1000) {
+				return int2string(n / 1000) + " Thousand" + int2string(n % 1000);
+			}
+			else if (n >= 100) {
+				return int2string(n / 100) + " Hundred" + int2string(n % 100);
+			}
+			else if (n >= 20) {
+				return  " " + tens[n / 10] + int2string(n % 10);
+			}
+			else if (n >= 1) {
+				return " " + digits[n];
+			}
+			else {
+				return "";
+			}
+		}
+
+		string numberToWords(int num) {
+			if (num == 0) {
+				return "Zero";
+			}
+			else {
+				string ret = int2string(num);
+				return ret.substr(1, ret.length() - 1);
+			}
+		}
+	};
+	/*273. Integer to English Words end */
+
+
+	/*30. Substring with Concatenation of All Words (hard)
+	https://leetcode.com/problems/substring-with-concatenation-of-all-words/
+	https://discuss.leetcode.com/topic/6617/an-o-n-solution-with-detailed-explanation
+	*/
+	class Solution30 {
+	public:
+		vector<int> findSubstring(string s, vector<string>& words) {
+			vector<int> result;
+			int len = s.size();
+
+			if (len < 1 || words.size() < 1)
+				return result;
+
+			int wlen = words[0].size();
+			unordered_map<string, int> dict;
+
+			for (auto it : words)
+				dict[it] ++;
+
+			int left, count = 0;
+			for (int i = 0; i < wlen; ++i) {
+				count = 0;
+				unordered_map<string, int> tmpdict;
+				left = i;
+
+				for (int j = i; j <= len - wlen; j += wlen) {
+					string str = s.substr(j, wlen);
+
+					if (dict.count(str)) {
+						tmpdict[str]++;
+						if (tmpdict[str] <= dict[str])
+							++count;
+						else {
+							while (tmpdict[str] > dict[str]) {
+								string str1 = s.substr(left, wlen);
+								tmpdict[str1] --;
+
+								if (tmpdict[str1] < dict[str1])
+									--count;
+
+								left += wlen;
+							}
+						}
+
+						if (count == words.size()) {
+							result.push_back(left);
+							tmpdict[s.substr(left, wlen)]--;
+							--count;
+							left += wlen;
+						}
+					}
+					else {
+						tmpdict.clear();
+						count = 0;
+						left = j + wlen;
+					}
+				}
+			}
+
+			return result;
+		}
+	};
+	/*30. Substring with Concatenation of All Words end */
 
 
 	/*151. Reverse Words in a String (medium)
@@ -9884,17 +10801,9 @@ using namespace BS;
 using namespace STRING;
 
 
-struct NonCopyable {
-	NonCopyable() = default;
-	NonCopyable(const NonCopyable&) = delete;
-	NonCopyable& operator=(const NonCopyable&) = delete;
-};
-
 int _tmain(int argc, _TCHAR* argv[])
 {
-	NonCopyable aa;
-	//NonCopyable bb(aa);
-
+	Solution76::main();
 	Solution28::main();
 	Solution29::main();
 	Solution322::main();
