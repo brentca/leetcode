@@ -20,6 +20,106 @@
 using namespace std;
 
 
+//////////////////////////Tag Math//////////////////////////////////////////
+namespace MATH {
+	/*287. Find the Duplicate Number(easy)
+	*/
+	/*287. Find the Duplicate Number end */
+
+
+	/*9. Palindrome Number(easy)
+	https://leetcode.com/problems/palindrome-number/
+	https://discuss.leetcode.com/topic/12820/an-easy-c-8-lines-code-only-reversing-till-half-and-then-compare
+	*/
+	class Solution9 {
+	public:
+		bool isPalindrome(int x) {
+			if (x < 0)
+				return false;
+
+			int div1 = x;
+			int div2 = 0;
+			while (x > 0) {
+				div2 = div2 * 10 + (x % 10);
+				x /= 10;
+			}
+
+			while (div1 > 0) {
+				if ((div1 % 10) != (div2 % 10))
+					return false;
+
+				div1 /= 10;
+				div2 /= 10;
+			}
+
+			return true;
+		}
+	};
+	/*9. Palindrome Number end */
+
+
+	/*66. Plus One(easy)
+	https://leetcode.com/problems/plus-one/
+	https://discuss.leetcode.com/topic/24288/my-simple-java-solution
+	*/
+	class Solution66 {
+	public:
+		vector<int> plusOne(vector<int>& digits) {
+			vector<int> result;
+			int tmp = 1, current;
+			for (int i = 0; i < digits.size(); ++i) {
+				if (digits[digits.size() - 1 - i] + tmp > 9) {
+					current = 0;
+					tmp = 1;
+				}
+				else {
+					current = digits[digits.size() - 1 - i] + tmp;
+					tmp = 0;
+				}
+
+				result.insert(result.begin(), current);
+			}
+
+			if (tmp == 1)
+				result.insert(result.begin(), 1);
+
+			return result;
+		}
+	};
+	/*66. Plus One end */
+
+
+	/*263. Ugly Number(easy)
+	https://leetcode.com/problems/ugly-number/
+	https://discuss.leetcode.com/topic/21785/2-4-lines-every-language
+	*/
+	class Solution263 {
+	public:
+		bool isUgly(int num) {
+			if (num == 1)
+				return true;
+
+			if (num < 1)
+				return false;
+
+			while ((num % 2) == 0)
+				num /= 2;
+
+			while ((num % 3) == 0)
+				num /= 3;
+
+			while ((num % 5) == 0)
+				num /= 5;
+
+			return num == 1;
+		}
+	};
+	/*263. Ugly Number end */
+}
+//////////////////////////Tag Math end//////////////////////////////////////////
+
+
+
 //////////////////////////Tag Two Pointers//////////////////////////////////////////
 namespace TWOP {
 
