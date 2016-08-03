@@ -22,9 +22,162 @@ using namespace std;
 
 //////////////////////////Tag Math//////////////////////////////////////////
 namespace MATH {
-	/*287. Find the Duplicate Number (easy)
+	/*287. Find the Duplicate Number (medium)
 	*/
 	/*287. Find the Duplicate Number end */
+
+
+	/*365. Water and Jug Problem (medium)
+	https://leetcode.com/problems/water-and-jug-problem/
+	https://discuss.leetcode.com/topic/49238/math-solution-java-solution
+	https://discuss.leetcode.com/topic/49238/math-solution-java-solution
+	*/
+	class Solution365 {
+	public:
+		int GCD(int a, int b){
+			while (b != 0){
+				int temp = b;
+				b = a % b;
+				a = temp;
+			}
+			return a;
+		}
+
+		bool canMeasureWater(int x, int y, int z) {
+			return z == 0 || z <= (long long)x + y && z % GCD(x, y) == 0;
+		}
+	};
+	/*365. Water and Jug Problem end */
+
+
+	/*166. Fraction to Recurring Decimal (medium)
+	https://leetcode.com/problems/fraction-to-recurring-decimal/
+	https://discuss.leetcode.com/topic/6079/accepted-cpp-solution-with-explainations
+	*/
+	class Solution166 {
+	public:
+		string fractionToDecimal(long numerator, long denominator) {
+			string ret;
+
+			if (numerator == 0)
+				return "0";
+
+			if (numerator < 0 ^ denominator < 0)
+				ret += "-";
+
+			numerator = abs(numerator);
+			denominator = abs(denominator);
+
+			ret += to_string(numerator / denominator);
+
+			if (numerator % denominator == 0)
+				return ret;
+
+			ret += ".";
+
+			unordered_map<int, int> data;
+			for (long r = numerator % denominator; r; r %= denominator) {
+				if (data.count(r) > 0) {
+					ret.insert(data[r], 1, '(');
+					ret += ")";
+					break;
+				}
+
+				data[r] = ret.size();
+				r *= 10;
+				ret += to_string(r / denominator);
+			}
+
+			return ret;
+		}
+
+		static void main() {
+			Solution166* test = new Solution166;
+			string result;
+			long numerator1 = 1;
+			long denominator1 = 30;
+
+			result = test->fractionToDecimal(numerator1, denominator1);
+			delete test;
+		}
+	};
+	/*166. Fraction to Recurring Decimal end */
+
+
+	/*372. Super Pow (medium)
+	https://leetcode.com/problems/super-pow/
+	https://discuss.leetcode.com/topic/50489/c-clean-and-short-solution
+	*/
+	class Solution372 {
+		const int base = 1337;
+		int powmod(int a, int k) //a^k mod 1337 where 0 <= k <= 10
+		{
+			a %= base;
+			int result = 1;
+			for (int i = 0; i < k; ++i)
+				result = (result * a) % base;
+			return result;
+		}
+
+	public:
+		int superPow(int a, vector<int>& b) {
+			if (b.empty()) 
+				return 1;
+
+			int last_digit = b.back();
+			b.pop_back();
+			return powmod(superPow(a, b), 10) * powmod(a, last_digit) % base;
+		}
+	};
+	/*372. Super Pow end */
+
+
+	/*319. Bulb Switcher (medium)
+	https://leetcode.com/problems/bulb-switcher/
+	https://discuss.leetcode.com/topic/31929/math-solution
+	*/
+	class Solution319 {
+	public:
+		int bulbSwitch(int n) {
+			int count = 0;
+
+			for (int i = 1; i * i <= n; ++i)
+				count++;
+
+			return count;
+		}
+	};
+	/*319. Bulb Switcher end */
+
+
+	/*7. Reverse Integer (easy)
+	https://leetcode.com/problems/reverse-integer/
+	https://discuss.leetcode.com/topic/6104/my-accepted-15-lines-of-code-for-java
+	*/
+	class Solution7 {
+	public:
+		int reverse(int x) {
+			if (INT_MIN == x)
+				return 0;
+
+			int num = (x > 0 ? x : -x);
+			int tmp = 0;
+
+			while (num > 0) {
+				int a = num % 10;
+				num /= 10;
+
+				if ((INT_MAX - a) / 10 < tmp)
+					return 0;
+
+				tmp = tmp * 10 + a;
+			}
+
+			num = (x > 0 ? tmp : -tmp);
+			return num;
+		}
+	};
+	/*7. Reverse Integer end */
 
 
 	/*326. Power of Three (easy)
@@ -10997,10 +11150,11 @@ using namespace BACKTRACK;
 using namespace DP;
 using namespace BS;
 using namespace STRING;
-
+using namespace MATH;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	Solution166::main();
 	Solution76::main();
 	Solution28::main();
 	Solution29::main();
