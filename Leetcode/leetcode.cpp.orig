@@ -839,10 +839,10 @@ namespace STRING {
 	*/
 	class Solution273 {
 	public:
-		string int2string(int n) {
-			string digits[20] = { "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen" };
-			string tens[10] = { "Zero", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety" };
+		string digits[20] = { "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen" };
+		string tens[10] = { "Zero", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety" };
 
+		string int2string(int n) {
 			if (n >= 1000000000) {
 				return int2string(n / 1000000000) + " Billion" + int2string(n % 1000000000);
 			}
@@ -10801,9 +10801,21 @@ using namespace BS;
 using namespace STRING;
 
 
+struct NonCopyable {
+	NonCopyable() = default;
+	NonCopyable(const NonCopyable&) = delete;
+	NonCopyable& operator=(const NonCopyable&) = delete;
+};
+
 int _tmain(int argc, _TCHAR* argv[])
 {
+<<<<<<< HEAD
+	NonCopyable aa;
+	//NonCopyable bb(aa);
+
+=======
 	Solution76::main();
+>>>>>>> 01b3417ea3a0acd703f3de68cfbf5e92ae471f98
 	Solution28::main();
 	Solution29::main();
 	Solution322::main();
