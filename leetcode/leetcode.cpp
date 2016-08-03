@@ -22,12 +22,210 @@ using namespace std;
 
 //////////////////////////Tag Math//////////////////////////////////////////
 namespace MATH {
-	/*287. Find the Duplicate Number(easy)
+	/*287. Find the Duplicate Number (easy)
 	*/
 	/*287. Find the Duplicate Number end */
 
 
-	/*9. Palindrome Number(easy)
+	/*326. Power of Three (easy)
+	https://leetcode.com/problems/power-of-three/
+	https://discuss.leetcode.com/topic/33536/a-summary-of-all-solutions-new-method-included-at-15-30pm-jan-8th
+	*/
+	class Solution326 {
+	public:
+		bool isPowerOfThree(int n) {
+			if (n > 1) {
+				while (n % 3 == 0) 
+					n = n / 3;
+			}
+
+			return n == 1;
+		}
+	};
+	/*326. Power of Three end */
+
+
+	/*168. Excel Sheet Column Title (easy)
+	https://leetcode.com/problems/excel-sheet-column-title/
+	https://discuss.leetcode.com/topic/6214/my-1-lines-code-in-java-c-and-python
+	*/
+	class Solution168 {
+	public:
+		string convertToTitle(int n) {
+			string result;
+
+			while (n) {
+				char tmp = 'A' + (n - 1) % 26;
+
+				result.insert(0, string(1, tmp));
+				n = (n - 1) / 26;
+			}
+
+			return result;
+		}
+	};
+	/*168. Excel Sheet Column Title end */
+
+
+	/*204. Count Primes (easy)
+	https://leetcode.com/problems/count-primes/
+	*/
+	class Solution204 {
+	public:
+		/*
+		bool isPrime(int n) {
+			for (int i = 3; i * i <= n / 2; i=+2) {
+				if ((n % i) == 0)
+					return false;
+			}
+
+			return true;
+		}
+
+		int countPrimes(int n) {
+			if (n <= 2)
+				return 0;
+
+			int count = 1;
+
+			for (int i=0; i <= n; ++i) {
+				if (isPrime(i))
+					count ++;
+			}
+
+			return count;
+		}
+		*/
+
+		int countPrimes(int n) {
+			vector<bool> prime(n, true);
+			prime[0] = false, prime[1] = false;
+
+			for (int i = 0; i < sqrt(n); ++i) {
+				if (prime[i]) {
+					for (int j = i*i; j < n; j += i)
+						prime[j] = false;
+				}
+			}
+
+			return count(prime.begin(), prime.end(), true);
+		}
+	};
+	/*204. Count Primes end */
+
+
+	/*172. Factorial Trailing Zeroes (easy)
+	https://leetcode.com/problems/factorial-trailing-zeroes/
+	https://discuss.leetcode.com/topic/6516/my-one-line-solutions-in-3-languages
+	*/
+	class Solution172 {
+	public:
+		int trailingZeroes(int n) {
+			int num = 0;
+
+			while (n) {
+				n /= 5;
+				num += n;
+			}
+
+			return num;
+		}
+	};
+	/*172. Factorial Trailing Zeroes end */
+
+
+	/*171. Excel Sheet Column Number (easy)
+	https://leetcode.com/problems/excel-sheet-column-number/
+	https://discuss.leetcode.com/topic/6458/my-solutions-in-3-languages-does-any-one-have-one-line-solution-in-java-or-c
+	*/
+	class Solution171 {
+	public:
+		int titleToNumber(string s) {
+			int nResult = 0;
+			int nLen = s.size();
+
+			for (int i = 0; i < nLen; ++i)
+				nResult = nResult * 26 + (s[i] - 'A' + 1);
+
+			return nResult;
+		}
+	};
+	/*171. Excel Sheet Column Number end */
+
+
+	/*223. Rectangle Area (easy)
+	https://leetcode.com/problems/rectangle-area/
+	https://discuss.leetcode.com/topic/17705/just-another-short-way
+	*/
+	class Solution223 {
+	public:
+		int computeArea(int A, int B, int C, int D, int E, int F, int G, int H) {
+			//B>=H or E>=C or F>=D or A>=G
+			if (E >= C || A >= G || B >= H || F >= D)
+				return (C - A)*(D - B) + (G - E) * (H - F);
+			else
+				return (C - A) * (D - B) + (G - E) * (H - F) - (min(C, G) - max(A, E)) * (min(D, H) - max(B, F));
+		}
+	};
+	/*223. Rectangle Area end */
+
+
+	/*202. Happy Number (easy)
+	https://leetcode.com/submissions/detail/26100759/
+	https://discuss.leetcode.com/topic/12587/my-solution-in-c-o-1-space-and-no-magic-math-property-involved
+	*/
+	class Solution202 {
+	public:
+		bool isHappy(int n) {
+			unordered_set<int> result;
+			int tmp;
+			while (true) {
+				if (n == 1)
+					return true;
+
+				if (result.count(n) == 1)
+					return false;
+
+				result.insert(n);
+				tmp = 0;
+				while (n > 0) {
+					tmp += (n % 10) * (n % 10);
+					n /= 10;
+				}
+
+				n = tmp;
+			}
+		}
+	};
+	/*202. Happy Number end */
+
+
+	/*258. Add Digits (easy)
+	https://leetcode.com/problems/add-digits/
+	https://discuss.leetcode.com/topic/21498/accepted-c-o-1-time-o-1-space-1-line-solution-with-detail-explanations
+	*/
+	class Solution258 {
+	public:
+		int addDigits(int num) {
+			int result = num;
+
+			while (num > 9) {
+				result = 0;
+				while (num > 0) {
+					result += (num % 10);
+					num /= 10;
+				}
+
+				num = result;
+			}
+
+			return result;
+		}
+	};
+	/*258. Add Digits end */
+
+
+	/*9. Palindrome Number (easy)
 	https://leetcode.com/problems/palindrome-number/
 	https://discuss.leetcode.com/topic/12820/an-easy-c-8-lines-code-only-reversing-till-half-and-then-compare
 	*/
@@ -58,7 +256,7 @@ namespace MATH {
 	/*9. Palindrome Number end */
 
 
-	/*66. Plus One(easy)
+	/*66. Plus One (easy)
 	https://leetcode.com/problems/plus-one/
 	https://discuss.leetcode.com/topic/24288/my-simple-java-solution
 	*/
@@ -89,7 +287,7 @@ namespace MATH {
 	/*66. Plus One end */
 
 
-	/*263. Ugly Number(easy)
+	/*263. Ugly Number (easy)
 	https://leetcode.com/problems/ugly-number/
 	https://discuss.leetcode.com/topic/21785/2-4-lines-every-language
 	*/
@@ -130,7 +328,7 @@ namespace TWOP {
 	};
 
 
-	/*287. Find the Duplicate Number(medium)
+	/*287. Find the Duplicate Number (medium)
 	https://leetcode.com/problems/find-the-duplicate-number/
 	https://discuss.leetcode.com/topic/25913/my-easy-understood-solution-with-o-n-time-and-o-1-space-without-modifying-the-array-with-clear-explanation
 	*/
