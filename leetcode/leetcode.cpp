@@ -22,9 +22,265 @@ using namespace std;
 
 //////////////////////////Tag Math//////////////////////////////////////////
 namespace MATH {
-	/*287. Find the Duplicate Number (medium)
+	struct ListNode {
+		int val;
+		ListNode *next;
+		ListNode(int x) : val(x), next(NULL) {}
+	};
+
+	/*287. Find the Duplicate Number (hard)
 	*/
 	/*287. Find the Duplicate Number end */
+
+
+	/*287. Find the Duplicate Number (hard)
+	*/
+	struct Point {
+		int x;
+		int y;
+		Point() : x(0), y(0) {}
+		Point(int a, int b) : x(a), y(b) {}
+	};
+
+	class Solution287 {
+	public:
+		int maxPoints(vector<Point>& points) {
+			if (points.size() < 2)
+				return points.size();
+
+			int result = 0;
+			for (int i = 0; i < points.size(); ++i) {
+				map<pair<int, int>, int> dict;
+				int localmax = 0, vertical = 0, overlap = 0;
+				for (int j = i + 1; j < points.size(); ++j) {
+					if (points[i].x == points[j].x && points[i].y == points[j].y) {
+						++overlap;
+						continue;
+					}
+					else if (points[i].x == points[j].x)
+						++vertical;
+					else {
+						int a = points[j].x - points[i].x;
+						int b = points[j].y - points[i].y;
+						int gcd = GCD(a, b);
+
+						a = a / gcd;
+						b = b / gcd;
+
+						dict[make_pair(a, b)] ++;
+						localmax = max(localmax, dict[make_pair(a, b)]);
+					}
+
+					localmax = max(localmax, vertical);
+				}
+
+				result = max(result, localmax + overlap + 1);
+			}
+
+			return result;
+		}
+
+		int GCD(int a, int b) {
+			if (b == 0) return a;
+			else return GCD(b, a%b);
+		}
+	};
+	/*287. Find the Duplicate Number end */
+
+
+	/*65. Valid Number (hard)
+	https://leetcode.com/problems/valid-number/
+	https://discuss.leetcode.com/topic/51867/solution-using-a-state-machine
+	*/
+	class Solution65 {
+	public:
+		bool isNumber(string s) {
+			int state = 0, flag = 0;
+
+			while (s[0] == ' ')
+				s.erase(0, 1);
+
+			while (s[s.size() - 1] == ' ')
+				s.erase(s.size() - 1, 1);
+
+			for (int i = 0; i < s.size(); ++i) {
+				if (isdigit(s[i])) {
+					flag = 1;
+
+					if (state <= 2)
+						state = 2;
+					else
+						state = (state <= 5) ? 5 : 7;
+				}
+				else if (s[i] == '+' || s[i] == '-') {
+					if (state == 0 || state == 3)
+						state++;
+					else
+						return false;
+				}
+				else if (s[i] == '.') {
+					if (state <= 2)
+						state = 6;
+					else
+						return false;
+				}
+				else if (s[i] == 'e') {
+					if (flag && (state == 2 || state == 6 || state == 7))
+						state = 3;
+					else
+						return false;
+				}
+				else
+					return false;
+			}
+
+			return (state == 2 || state == 5 || (flag&&state == 6) || state == 7);
+		}
+	};
+	/*65. Valid Number end */
+
+
+	/*335. Self Crossing (hard)
+	https://leetcode.com/problems/self-crossing/
+	https://discuss.leetcode.com/topic/50325/more-intuitive-explanation-added-here
+	*/
+	class Solution335 {
+	public:
+		bool isSelfCrossing(vector<int>& x) {
+			for (int i = 3; i < x.size(); ++i) {
+				if (x[i] >= x[i - 2] && x[i - 1] <= x[i - 3])
+					return true;
+				else if (i > 3 && x[i - 4] + x[i] == x[i - 2] && x[i - 1] == x[i - 3])
+					return true;
+				else if (i > 4 && x[i - 2] >= x[i - 4] && x[i] + x[i - 4] >= x[i - 2]
+					&& x[i - 3] >= x[i - 1] && x[i - 1] + x[i - 5] >= x[i - 3])
+					return true;
+			}
+
+			return false;
+		}
+	};
+	/*335. Self Crossing end */
+
+
+	/*233. Number of Digit One (hard)
+	https://leetcode.com/problems/number-of-digit-one/
+	https://discuss.leetcode.com/topic/18054/4-lines-o-log-n-c-java-python
+	*/
+	class Solution233 {
+	public:
+		int countDigitOne(int n) {
+			int ones = 0;
+
+			for (long long m = 1; m <= n; m *= 10) {
+				int a = n / m, b = n % m;
+				ones += (a + 8) / 10 * m + (a % 10 == 1) * (b + 1);
+			}
+
+			return ones;
+		}
+	};
+	/*233. Number of Digit One end */
+
+
+	/*2. Add Two Numbers (medium)
+	https://leetcode.com/problems/add-two-numbers/
+	https://discuss.leetcode.com/topic/5905/c-sharing-my-11-line-c-solution-can-someone-make-it-even-more-concise
+	*/
+	class Solution2 {
+	public:
+		ListNode *addTwoNumbers(ListNode *l1, ListNode *l2) {
+			ListNode preHead(0), *p = &preHead;
+			int extra = 0;
+
+			while (l1 || l2 || extra) {
+				int sum = (l1 ? l1->val : 0) + (l2 ? l2->val : 0) + extra;
+				extra = sum / 10;
+				p->next = new ListNode(sum % 10);
+				p = p->next;
+				l1 = l1 ? l1->next : l1;
+				l2 = l2 ? l2->next : l2;
+			}
+
+			return preHead.next;
+		}
+
+		ListNode* addTwoNumbers1(ListNode* l1, ListNode* l2) {
+			int carry = 0;
+
+			ListNode* sb = new ListNode(0);
+			ListNode* result = sb;
+			int val_1, val_2, val;
+
+			while (l1 || l2) {
+				val_1 = l1 ? l1->val : 0;
+				val_2 = l2 ? l2->val : 0;
+
+				if (val_1 + val_2 + carry >= 10) {
+					val = val_1 + val_2 + carry - 10;
+					carry = 1;
+				}
+				else {
+					val = val_1 + val_2 + carry;
+					carry = 0;
+				}
+
+				result->next = new ListNode(val);
+				result = result->next;
+				if (l1)
+					l1 = l1->next;
+
+				if (l2)
+					l2 = l2->next;
+			}
+
+			if (carry)
+				result->next = new ListNode(1);
+
+			return sb->next;
+		}
+	};
+	/*2. Add Two Numbers end */
+
+
+	/*368. Largest Divisible Subset (medium)
+	https://leetcode.com/problems/largest-divisible-subset/
+	https://discuss.leetcode.com/topic/49456/c-solution-with-explanations
+	*/
+	class Solution368 {
+	public:
+		vector<int> largestDivisibleSubset(vector<int>& nums) {
+			int nsize = nums.size();
+			vector<int> dp(nsize, 0);
+			vector<int> parent(nsize, 0);
+			sort(nums.begin(), nums.end());
+
+			int m = 0;
+			int mi = 0;
+			for (int i = nsize - 1; i >= 0; --i) {
+				for (int j = i; j < nsize; ++j) {
+					if (0 == nums[j] % nums[i] && dp[i] < dp[j] + 1) {
+						dp[i] = dp[j] + 1;
+						parent[i] = j;
+
+						if (dp[i] > m) {
+							m = dp[i];
+							mi = i;
+						}
+					}
+				}
+			}
+
+			vector<int> result;
+			for (int i = 0; i < m; ++i) {
+				result.push_back(nums[mi]);
+				mi = parent[mi];
+			}
+
+			return result;
+		}
+	};
+	/*368. Largest Divisible Subset end */
 
 
 	/*365. Water and Jug Problem (medium)
