@@ -20,6 +20,392 @@
 using namespace std;
 
 
+//////////////////////////Tag Linked List//////////////////////////////////////////
+namespace LLIST {
+	struct ListNode {
+		int val;
+		ListNode *next;
+		ListNode(int x) : val(x), next(NULL) {}
+	};
+
+
+	/*149. Max Points on a Line (medium)
+	*/
+	/*149. Max Points on a Line end */
+
+
+	/*328. Odd Even Linked List (medium)
+	https://leetcode.com/problems/odd-even-linked-list/
+	https://discuss.leetcode.com/topic/50295/sharing-my-16-ms-cpp-solution-beats-99-54
+	*/
+	class Solution328 {
+	public:
+		ListNode* oddEvenList(ListNode* head) {
+			if (head == NULL)
+				return NULL;
+
+			ListNode* oddnode = head;
+			ListNode* evennode = head->next;
+			ListNode* evenhead = evennode;
+
+			while (evennode != NULL && evennode->next != NULL) {
+				oddnode->next = oddnode->next->next;
+				evennode->next = evennode->next->next;
+				evennode = evennode->next;
+				oddnode = oddnode->next;
+			}
+
+			oddnode->next = evenhead;
+			return head;
+		}
+	};
+	/*328. Odd Even Linked List end */
+
+
+	/*143. Reorder List (medium)
+	https://leetcode.com/problems/reorder-list/
+	https://discuss.leetcode.com/topic/53032/accept-answer-in-c-using-stack
+	*/
+	class Solution143 {
+	public:
+		void reorderList(ListNode* head) {
+			if (NULL == head)
+				return;
+
+			stack<ListNode*> nodes;
+			ListNode* tmp = head;
+			int count = 0;
+
+			while (tmp) {
+				nodes.push(tmp);
+				tmp = tmp->next;
+				++count;
+			}
+
+			tmp = head;
+			for (int i = 0; i < count / 2; ++i) {
+				ListNode* end = nodes.top();
+				nodes.pop();
+				ListNode* next = tmp->next;
+
+				tmp->next = end;
+				end->next = next;
+				tmp = next;
+			}
+
+			tmp->next = NULL;
+		}
+	};
+	/*143. Reorder List end */
+
+
+	/*83. Remove Duplicates from Sorted List (easy)
+	https://leetcode.com/problems/remove-duplicates-from-sorted-list/
+	https://discuss.leetcode.com/topic/8345/my-pretty-solution-java
+	*/
+	class Solution83 {
+	public:
+		ListNode *deleteDuplicates(ListNode *head) {
+			if (head == NULL) 
+				return head;
+
+			ListNode* cur = head;
+			while (cur->next != NULL) {
+				if (cur->val == cur->next->val) {
+					ListNode* tmp = cur->next;
+					cur->next = tmp->next;
+					delete tmp;
+				}
+				else cur = cur->next;
+			}
+
+			return head;
+		}
+	};
+	/*83. Remove Duplicates from Sorted List end */
+
+
+	/*203. Remove Linked List Elements (easy)
+	https://leetcode.com/problems/remove-linked-list-elements/
+	https://discuss.leetcode.com/topic/52063/easy-c-solution
+	*/
+	class Solution203 {
+	public:
+		ListNode* removeElements(ListNode* head, int val) {
+			ListNode node(0);
+			node.next = head;
+			ListNode* cur = &node;
+
+			while (cur->next) {
+				ListNode* entry = cur->next;
+
+				if (entry->val == val) {
+					cur->next = entry->next;
+					delete entry;
+				}
+				else
+					cur = cur->next;
+			}
+
+			return node.next;
+		}
+
+		ListNode* removeElements1(ListNode* head, int val) {
+			ListNode* root = head;
+			ListNode* result = head;
+			ListNode* pre = head;
+			while (root) {
+				if (root->val == val) {
+					if (result == root) {
+						result = root->next;
+						pre = result;
+					}
+					else
+						pre->next = root->next;
+				}
+				else
+					pre = root;
+
+				root = root->next;
+			}
+
+			return result;
+		}
+	};
+	/*203. Remove Linked List Elements end */
+
+
+	/*206. Reverse Linked List (easy)
+	https://leetcode.com/problems/reverse-linked-list/
+	https://discuss.leetcode.com/topic/52949/simple-5-liner-in-java
+	*/
+	class Solution206 {
+	public:
+		ListNode* reverseList(ListNode* head) {
+			ListNode* root = head;
+			ListNode* pre = NULL;
+
+			while (root) {
+				ListNode* tmp = root->next;
+				root->next = pre;
+
+				pre = root;
+				root = tmp;
+			}
+
+			return pre;
+		}
+	};
+	/*206. Reverse Linked List end */
+
+
+	/*160. Intersection of Two Linked Lists (easy)
+	https://leetcode.com/problems/intersection-of-two-linked-lists/
+	https://discuss.leetcode.com/topic/50006/simple-yet-best-solution-in-c/2
+	*/
+	class Solution160 {
+	public:
+		ListNode *getIntersectionNode(ListNode *headA, ListNode *headB)
+		{
+			ListNode *pA = headA, *pB = headB;
+			int lenA = 0, lenB = 0;
+			while (pA) 
+				pA = pA->next, lenA++;
+
+			while (pB) 
+				pB = pB->next, lenB++;
+
+			pA = headA, pB = headB;
+			if (lenA > lenB) 
+				for (int i = 0; i < lenA - lenB; ++i) 
+					pA = pA->next;
+			else 
+				for (int i = 0; i < lenB - lenA; ++i) 
+					pB = pB->next;
+
+			while (pA)
+			{
+				if (pA == pB) return pA;
+				pA = pA->next;
+				pB = pB->next;
+			}
+
+			return NULL;
+		}
+
+		ListNode *getIntersectionNode1(ListNode *headA, ListNode *headB) {
+			if (headA == NULL || headB == NULL)
+				return NULL;
+
+			ListNode *headAEnd = NULL;
+			ListNode *headAStart = headA;
+			while (headAStart) {
+				headAEnd = headAStart;
+				headAStart = headAStart->next;
+			}
+
+			headAEnd->next = headB;
+			ListNode * fast = headA->next;
+			ListNode * slow = headA;
+
+			while (1) {
+				if (fast == slow)
+					break;
+
+				if (fast == NULL || slow == NULL || fast->next == NULL) {
+					headAEnd->next = NULL;
+					return NULL;
+				}
+
+				fast = fast->next->next;
+				slow = slow->next;
+			}
+
+			int loopsize = 1;
+			fast = fast->next;
+
+			while (fast != slow) {
+				fast = fast->next;
+				loopsize++;
+			}
+
+			fast = headA;
+			slow = headA;
+			for (int i = 0; i < loopsize; ++i)
+				fast = fast->next;
+
+			while (fast != slow) {
+				fast = fast->next;
+				slow = slow->next;
+			}
+
+			headAEnd->next = NULL;
+			return fast;
+		}
+	};
+	/*160. Intersection of Two Linked Lists end */
+
+
+	/*21. Merge Two Sorted Lists (easy)
+	https://leetcode.com/problems/merge-two-sorted-lists/
+	https://discuss.leetcode.com/topic/39228/1ms-java-clean-code
+	*/
+	class Solution21 {
+	public:
+		ListNode *mergeTwoLists(ListNode *l1, ListNode *l2) {
+			if ((NULL == l1) || (NULL == l2))
+				return (NULL == l1) ? l2 : l1;
+
+			ListNode head = ListNode(0);
+			ListNode* curr = &head;
+
+			while (l1 && l2) {
+				if (l1->val < l2->val) {
+					curr->next = l1;
+					l1 = l1->next;
+				}
+				else {
+					curr->next = l2;
+					l2 = l2->next;
+				}
+
+				curr = curr->next;
+			}
+
+			if (l1 == NULL)
+				curr->next = l2;
+
+			if (l2 == NULL)
+				curr->next = l1;
+
+			return head.next;
+		}
+	};
+	/*21. Merge Two Sorted Lists end */
+
+
+	/*237. Delete Node in a Linked List (easy)
+	https://leetcode.com/problems/delete-node-in-a-linked-list/
+	https://discuss.leetcode.com/topic/51739/2-solutions
+	*/
+	class Solution237 {
+	public:
+		void deleteNode(ListNode* node) {
+			ListNode* temp = node->next;
+			*node = *temp;
+			delete temp;
+		}
+	};
+	/*237. Delete Node in a Linked List end */
+
+
+	/*24. Swap Nodes in Pairs (easy)
+	https://leetcode.com/problems/swap-nodes-in-pairs/
+	https://discuss.leetcode.com/topic/53021/maybe-the-most-easy-to-understand-one
+	*/
+	class Solution24 {
+	public:
+		ListNode* swapPairs(ListNode* head) {
+			ListNode node(0);
+			node.next = head;
+
+			ListNode* cur = &node;
+			while (cur->next && cur->next->next) {
+				ListNode* node1 = cur->next;
+				ListNode* node2 = node1->next;
+				ListNode* node3 = node2->next;
+
+				node2->next = node1;
+				node1->next = node3;
+				cur->next = node2;
+				cur = node1;
+			}
+
+			return node.next;
+		}
+
+		ListNode* swapPairs1(ListNode* head) {
+			if ((head == NULL) || (head->next == NULL))
+				return head;
+
+			ListNode* pNewHead = head->next;
+			ListNode* pPair1 = head;
+			ListNode* pPair2 = head->next;
+
+			while (pPair1 && pPair2) {
+				head->next = pPair2;
+				ListNode* pTmp = pPair2->next;
+				pPair2->next = pPair1;
+
+				pPair1->next = pTmp;
+				head = pPair1;
+				pPair1 = pTmp;
+				pPair2 = pPair1 ? pPair1->next : NULL;
+			}
+
+			return pNewHead;
+		}
+
+		static void main() {
+			Solution24* test = new Solution24;
+			ListNode* result;
+			ListNode node1(1);
+			ListNode node2(2);
+			ListNode node3(3);
+
+			node1.next = &node2;
+			node2.next = &node3;
+
+			result = test->swapPairs(&node1);
+			delete test;
+		}
+	};
+	/*24. Swap Nodes in Pairs end */
+}
+//////////////////////////Tag Linked List end//////////////////////////////////////////
+
+
+
 //////////////////////////Tag Math//////////////////////////////////////////
 namespace MATH {
 	struct ListNode {
@@ -28,12 +414,10 @@ namespace MATH {
 		ListNode(int x) : val(x), next(NULL) {}
 	};
 
-	/*287. Find the Duplicate Number (hard)
-	*/
-	/*287. Find the Duplicate Number end */
 
-
-	/*287. Find the Duplicate Number (hard)
+	/*149. Max Points on a Line (hard)
+	https://leetcode.com/problems/max-points-on-a-line/
+	https://discuss.leetcode.com/topic/52957/really-think-hash-map-with-floating-point-is-awkward-as-the-input-data-is-integer-only-my-solution-is-o-n-3-with-pruning-12ms-and-beat-94
 	*/
 	struct Point {
 		int x;
@@ -42,7 +426,7 @@ namespace MATH {
 		Point(int a, int b) : x(a), y(b) {}
 	};
 
-	class Solution287 {
+	class Solution149 {
 	public:
 		int maxPoints(vector<Point>& points) {
 			if (points.size() < 2)
@@ -52,6 +436,7 @@ namespace MATH {
 			for (int i = 0; i < points.size(); ++i) {
 				map<pair<int, int>, int> dict;
 				int localmax = 0, vertical = 0, overlap = 0;
+
 				for (int j = i + 1; j < points.size(); ++j) {
 					if (points[i].x == points[j].x && points[i].y == points[j].y) {
 						++overlap;
@@ -84,8 +469,17 @@ namespace MATH {
 			if (b == 0) return a;
 			else return GCD(b, a%b);
 		}
+
+		static void main() {
+			Solution149* test = new Solution149;
+			int result;
+			vector<Point> points1 = { Point(4, 4), Point(2, 2), Point(8, 8) };
+
+			result = test->maxPoints(points1);
+			delete test;
+		}
 	};
-	/*287. Find the Duplicate Number end */
+	/*149. Max Points on a Line end */
 
 
 	/*65. Valid Number (hard)
@@ -11407,9 +11801,12 @@ using namespace DP;
 using namespace BS;
 using namespace STRING;
 using namespace MATH;
+using namespace LLIST;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	Solution24::main();
+	Solution149::main();
 	Solution166::main();
 	Solution76::main();
 	Solution28::main();
