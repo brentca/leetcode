@@ -29,9 +29,286 @@ namespace LLIST {
 	};
 
 
-	/*149. Max Points on a Line (medium)
+	/*25. Reverse Nodes in k-Group (hard)
+	https://leetcode.com/problems/reverse-nodes-in-k-group/
+	https://discuss.leetcode.com/topic/7126/short-but-recursive-java-code-with-comments
 	*/
-	/*149. Max Points on a Line end */
+	class Solution25 {
+	public:
+		ListNode* reverseKGroup(ListNode* head, int k) {
+			if (head == NULL || head->next == NULL || k < 2)
+				return head;
+
+			ListNode dummy(-1);
+			dummy.next = head;
+			ListNode* pre = &dummy;
+			ListNode* tmp = NULL;
+			ListNode* next = NULL;
+			ListNode* curr = head;
+			int count = 0;
+
+			while (curr) {
+				++count;
+				curr = curr->next;
+			}
+
+			while (count >= k) {
+				curr = pre->next;
+				next = curr->next;
+
+				for (int i = 1; i < k; ++i) {
+					tmp = next->next;
+					next->next = pre->next;
+					pre->next = next;
+					curr->next = tmp;
+					next = tmp;
+				}
+
+				pre = curr;
+				count -= k;
+			}
+
+			return dummy.next;
+		}
+	};
+	/*25. Reverse Nodes in k-Group end */
+
+
+	/*23. Merge k Sorted Lists (hard)
+	https://leetcode.com/problems/merge-k-sorted-lists/
+	https://discuss.leetcode.com/topic/6882/sharing-my-straightforward-c-solution-without-data-structure-other-than-vector
+	*/
+	class Solution23 {
+	public:
+		ListNode *mergeTwoLists(ListNode* l1, ListNode* l2) {
+			if (NULL == l1) 
+				return l2;
+
+			else if (NULL == l2) 
+				return l1;
+
+			if (l1->val <= l2->val) {
+				l1->next = mergeTwoLists(l1->next, l2);
+				return l1;
+			}
+			else {
+				l2->next = mergeTwoLists(l1, l2->next);
+				return l2;
+			}
+		}
+
+		ListNode *mergeKLists(vector<ListNode *> &lists) {
+			if (lists.empty()) 
+				return NULL;
+
+			int len = lists.size();
+			while (len > 1) {
+				for (int i = 0; i < len / 2; ++i)
+					lists[i] = mergeTwoLists(lists[i], lists[len - 1 - i]);
+
+				len = (len + 1) / 2;
+			}
+
+			return lists.front();
+		}
+
+		ListNode* mergetwo(ListNode* l1, ListNode* l2) {
+			ListNode dummy(-1);
+			ListNode* pre = &dummy;
+
+			while (l1 && l2) {
+				if (l1->val <= l2->val) {
+					pre->next = l1;
+					l1 = l1->next;
+				}
+				else {
+					pre->next = l2;
+					l2 = l2->next;
+				}
+
+				pre = pre->next;
+			}
+
+			pre->next = (l1 != NULL ? l1 : l2);
+
+			return dummy.next;
+		}
+
+		ListNode* mergeKLists1(vector<ListNode*>& lists) {
+			ListNode* result = NULL;
+
+			if (lists.empty())
+				return NULL;
+
+			result = lists[0];
+
+			for (int i = 1; i < lists.size(); ++i)
+				result = mergetwo(result, lists[i]);
+
+			return result;
+		}
+	};
+	/*23. Merge k Sorted Lists end */
+
+
+	/*138. Copy List with Random Pointer (hard)
+	https://leetcode.com/problems/copy-list-with-random-pointer/
+	https://discuss.leetcode.com/topic/53289/c-o-n-time-complexity-o-1-space
+	*/
+	struct RandomListNode {
+		int label;
+		RandomListNode *next, *random;
+		RandomListNode(int x) : label(x), next(NULL), random(NULL) {}
+	};
+
+	class Solution132 {
+	public:
+		RandomListNode *copyRandomList(RandomListNode *head) {
+			if (head == NULL)
+				return NULL;
+
+			unordered_map<RandomListNode *, int> map;
+			unordered_map<int, RandomListNode *> destmap;
+			RandomListNode *phead = NULL;
+			RandomListNode *p1;
+			RandomListNode *p2;
+			RandomListNode dummy(0);
+
+			p2 = &dummy;
+			int count = 0;
+			for (p1 = head; p1 != NULL; p1 = p1->next) {
+				RandomListNode *tmp = new RandomListNode(p1->label);
+
+				destmap[count] = tmp;
+				map[p1] = count++;
+				p2->next = tmp;
+				p2 = p2->next;
+			}
+
+			count = 0;
+			phead = dummy.next;
+			p2 = phead;
+			for (p1 = head; p1 != NULL; p1 = p1->next) {
+				if (p1->random != NULL) {
+					int tmp = map[p1->random];
+					p2->random = destmap[tmp];
+				}
+
+				p2 = p2->next;
+			}
+
+			return phead;
+		}
+	};
+	/*138. Copy List with Random Pointer end */
+
+
+	/*82. Remove Duplicates from Sorted List II (medium)
+	https://leetcode.com/problems/remove-duplicates-from-sorted-list-ii/
+	https://discuss.leetcode.com/topic/51656/short-c-iterative-solution-using-dummy
+	*/
+	class Solution82 {
+	public:
+		ListNode* deleteDuplicates(ListNode* head) {
+			ListNode dummy(0);
+			ListNode* ptmp = &dummy;
+			bool duplicate;
+
+			while (head) {
+				duplicate = false;
+				while (head->next && head->next->val == head->val) {
+					head = head->next;
+					duplicate = true;
+				}
+
+				if (!duplicate) {
+					ptmp->next = head;
+					ptmp = ptmp->next;
+				}
+
+				head = head->next;
+			}
+
+			ptmp->next = NULL;
+			return dummy.next;
+		}
+	};
+	/*82. Remove Duplicates from Sorted List II end */
+
+
+	/*92. Reverse Linked List II (medium)
+	https://leetcode.com/problems/reverse-linked-list-ii/
+	https://discuss.leetcode.com/topic/53273/clean-yet-efficient-solution-in-c
+	*/
+	class Solution92 {
+	public:
+		ListNode* reverseBetween1(ListNode* head, int m, int n) {
+			if (m == n)
+				return head;
+
+			ListNode root(0);
+			ListNode* pre = &root;
+			ListNode* cur = head;
+			ListNode* next = NULL;
+
+			root.next = head;
+			int pos = 1;
+
+			while (pos < n) {
+				if (pos < m) {
+					pre = cur;
+					cur = cur->next;
+				}
+				else {
+					next = cur->next;
+					cur->next = cur->next->next;
+					next->next = pre->next;
+					pre->next = next;
+				}
+
+				++pos;
+			}
+
+			return root.next;
+		}
+
+
+		ListNode* reverseBetween(ListNode* head, int m, int n) {
+			stack<ListNode*> nodes;
+			ListNode root(0);
+			ListNode* father = &root;
+
+			int count = 1;
+			ListNode* reverfather = NULL;
+			while (head && count <= n) {
+				if (count >= m) {
+					nodes.push(head);
+					if (count == m)
+						reverfather = father;
+				}
+
+				father->next = head;
+				father = head;
+				head = head->next;
+				count++;
+			}
+
+			if (nodes.size() > 1) {
+				ListNode* tmp = nodes.top()->next;
+
+				while (!nodes.empty()) {
+					reverfather->next = nodes.top();
+					nodes.pop();
+					reverfather = reverfather->next;
+				}
+
+				reverfather->next = tmp;
+			}
+
+			return root.next;
+		}
+	};
+	/*92. Reverse Linked List II end */
 
 
 	/*328. Odd Even Linked List (medium)
@@ -11787,6 +12064,55 @@ private:
 */
 /* LeetCode 353. Design Snake Game end*/
 //////////////////////////Tag Queue end//////////////////////////////////////////
+namespace MYTEST {
+	class MyClass
+	{
+	public:
+		MyClass() {}
+		~MyClass() {}
+		
+		int maxSubstr(const string input) {
+			int n = input.size();
+			vector<int> t(n, 1);
+			int result = 0;
+
+			for (int i = 0; i < n; ++i) {
+				for (int j = i - 1; j >= 0; --j)
+					if (input[i] > input[j]) {
+						t[i] = t[j] + 1;
+						break;
+					}
+
+				result = max(result, t[i]);
+			}
+
+			return result;
+		}
+
+		static void main() {
+				MyClass* test = new MyClass;
+
+				string input1("12345");
+				string input2("54321");
+				string input3("23145");
+				string input4("24135");
+				string input5("25341");
+				string input6("11111");
+
+				cout << "case 1:" << test->maxSubstr(input1) << ",5" << endl;
+				cout << "case 2:" << test->maxSubstr(input2) << ",1" << endl;
+				cout << "case 3:" << test->maxSubstr(input3) << ",3" << endl;
+				cout << "case 4:" << test->maxSubstr(input4) << ",3" << endl;
+				cout << "case 5:" << test->maxSubstr(input5) << ",3" << endl;
+				cout << "case 6:" << test->maxSubstr(input6) << ",1" << endl;
+				delete test;
+			}
+		};
+
+	
+
+	
+}
 
 using namespace BFS;
 using namespace DFS;
@@ -11802,9 +12128,12 @@ using namespace BS;
 using namespace STRING;
 using namespace MATH;
 using namespace LLIST;
+using namespace MYTEST;
+
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	MyClass::main();
 	Solution24::main();
 	Solution149::main();
 	Solution166::main();
