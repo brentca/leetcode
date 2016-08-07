@@ -19,6 +19,264 @@
 
 using namespace std;
 
+//////////////////////////Tag Hash Table//////////////////////////////////////////
+namespace ARRAY {
+	/*25. Reverse Nodes in k-Group (medium)
+	*/
+	/*25. Reverse Nodes in k-Group end */
+
+}
+
+//////////////////////////Tag Hash Table//////////////////////////////////////////
+namespace HASHT {
+	/*380. Insert Delete GetRandom O(1) (medium)
+	https://leetcode.com/problems/insert-delete-getrandom-o1/
+	https://discuss.leetcode.com/topic/53216/java-solution-using-a-hashmap-and-a-arraylist-131-ms
+	*/
+	class RandomizedSet380 {
+	public:
+		/** Initialize your data structure here. */
+		RandomizedSet380() {
+
+		}
+
+		/** Inserts a value to the set. Returns true if the set did not already contain the specified element. */
+		bool insert(int val) {
+			if (m.find(val) != m.end()) return false;
+			nums.emplace_back(val);
+			m[val] = nums.size() - 1;
+			return true;
+		}
+
+		/** Removes a value from the set. Returns true if the set contained the specified element. */
+		bool remove(int val) {
+			if (m.find(val) == m.end()) 
+				return false;
+
+			int last = nums.back();
+			m[last] = m[val];
+			nums[m[val]] = last;
+			nums.pop_back();
+			m.erase(val);
+			return true;
+		}
+
+		/** Get a random element from the set. */
+		int getRandom() {
+			int n = nums.size();
+
+			return  0 == n ? -1 : nums[rand() % n];
+		}
+
+	private:
+		vector<int> nums;
+		unordered_map<int, int> m;
+	};
+	/*380. Insert Delete GetRandom O(1) end */
+
+
+	/*219. Contains Duplicate II (easy)
+	https://leetcode.com/problems/contains-duplicate-ii/
+	https://discuss.leetcode.com/topic/15045/c-solution-with-unordered_set
+	*/
+	class Solution219 {
+	public:
+		bool containsNearbyDuplicate(vector<int>& nums, int k) {
+			set<int> cand;
+
+			for (int nIdx = 0; nIdx < nums.size(); ++nIdx) {
+				if (nIdx > k)
+					cand.erase(nums[nIdx - k - 1]);
+
+				if (!cand.insert(nums[nIdx]).second)
+					return true;
+			}
+
+			return false;
+		}
+	};
+	/*219. Contains Duplicate II end */
+
+
+	/*36. Valid Sudoku (easy)
+	https://leetcode.com/problems/valid-sudoku/
+	https://discuss.leetcode.com/topic/8241/my-short-solution-by-c-o-n2
+	*/
+	class Solution36 {
+	public:
+		bool isValidSudoku(vector<vector<char>>& board) {
+			int use1[9][9] = { 0 };
+			int use2[9][9] = { 0 };
+			int use3[9][9] = { 0 };
+			int k, num;
+
+			for (int i = 0; i < 9; ++i)
+				for (int j = 0; j < board[i].size(); ++j) {
+					if (board[i][j] != '.') {
+						num = board[i][j] - '1';
+						k = i / 3 * 3 + j / 3;
+
+						if (use1[i][num] || use2[j][num] || use3[k][num])
+							return false;
+
+						use1[i][num] = 1;
+						use2[j][num] = 1;
+						use3[k][num] = 1;
+					}
+				}
+
+			return true;
+		}
+	};
+	/*36. Valid Sudoku end */
+
+
+	/*290. Word Pattern (easy)
+	https://leetcode.com/problems/word-pattern/
+	https://leetcode.com/problems/word-pattern/
+	https://discuss.leetcode.com/topic/26376/short-c-read-words-on-the-fly
+	*/
+	class Solution290 {
+	public:
+		bool wordPattern(string pattern, string str) {
+			map<char, int> patoi;
+			map<string, int> strtoi;
+
+			istringstream in(str);
+			int i = 0;
+			int n = pattern.size();
+			for (string word; in >> word; ++i) {
+				if (i == n || patoi[pattern[i]] != strtoi[word])
+					return false;
+
+				patoi[pattern[i]] = strtoi[word] = i + 1;
+			}
+
+			return i == n;
+		}
+	};
+	/*290. Word Pattern end */
+
+
+	/*1. Two Sum (easy)
+	https://leetcode.com/problems/two-sum/
+	https://discuss.leetcode.com/topic/3294/accepted-c-o-n-solution
+	*/
+	class Solution1 {
+	public:
+		vector<int> twoSum(vector<int>& nums, int target) {
+			unordered_map<int, int> value_index;
+			vector<int> result;
+
+			for (int i = 0; i < nums.size(); ++i) {
+				if (value_index.count(target - nums[i])) {
+					result.push_back(value_index[target - nums[i]]);
+					result.push_back(i + 1);
+					break;
+				}
+
+				value_index[nums[i]] = i + 1;
+			}
+
+			return result;
+		}
+	};
+	/*1. Two Sum end */
+
+
+	/*217. Contains Duplicate (easy)
+	https://leetcode.com/problems/contains-duplicate/
+	https://discuss.leetcode.com/topic/14944/single-line-c-solution-60ms
+	*/
+	class Solution217 {
+	public:
+		bool containsDuplicate(vector<int>& nums) {
+			if ((nums.size() == 0) || (nums.size() == 1)) return false;
+
+			std::sort(nums.begin(), nums.end());
+
+			for (int nIdx = 0; nIdx<nums.size() - 1; ++nIdx)
+				if (nums[nIdx] == nums[nIdx + 1])
+					return true;
+
+			return false;
+		}
+	};
+	/*217. Contains Duplicate end */
+
+
+	/*205. Isomorphic Strings (easy)
+	https://leetcode.com/problems/isomorphic-strings/
+	https://discuss.leetcode.com/topic/12981/my-6-lines-solution
+	*/
+	class Solution205 {
+	public:
+		bool isIsomorphic(string a, string b) {
+			if (a.size() != b.size()) 
+				return false;
+
+			vector<char> aTob(128, NULL);
+			vector<char> bToa(128, NULL);
+
+			for (int i = 0; i < a.size(); ++i) {
+				if (!aTob[a[i]] && !bToa[b[i]]) {
+					aTob[a[i]] = b[i];
+					bToa[b[i]] = a[i];
+				}
+				else if (aTob[a[i]] != b[i] || bToa[b[i]] != a[i])
+					return false;
+			}
+
+			return true;
+		}
+	};
+	/*205. Isomorphic Strings end */
+
+
+	/*299. Bulls and Cows (easy)
+	https://leetcode.com/problems/bulls-and-cows/
+	https://discuss.leetcode.com/topic/28463/one-pass-java-solution
+	*/
+	class Solution29 {
+	public:
+		string getHint(string secret, string guess) {
+			string result;
+			vector<int> gcount(10, 0);
+			vector<int> scount(10, 0);
+			int bull = 0, cows = 0;
+
+			if (secret.empty() || guess.empty())
+				return string("0A0B");
+
+			for (int i = 0; i < secret.size(); ++i) {
+				if (secret[i] == guess[i])
+					bull++;
+				else {
+					scount[secret[i] - '0'] ++;
+					gcount[guess[i] - '0'] ++;
+				}
+			}
+
+			for (int i = 0; i < 10; ++i)
+				cows += (scount[i] > gcount[i] ? gcount[i] : scount[i]);
+
+			char tmp[100];
+
+			memset(tmp, 0x00, sizeof(tmp));
+			sprintf(tmp, "%dA%dB", bull, cows);
+			result = string(tmp);
+
+			return result;
+		}
+	};
+	/*299. Bulls and Cows end */
+
+}
+
+//////////////////////////Tag Hash Table end//////////////////////////////////////////
+
+
+
 
 //////////////////////////Tag Linked List//////////////////////////////////////////
 namespace LLIST {
@@ -161,7 +419,7 @@ namespace LLIST {
 		RandomListNode(int x) : label(x), next(NULL), random(NULL) {}
 	};
 
-	class Solution132 {
+	class Solution138 {
 	public:
 		RandomListNode *copyRandomList(RandomListNode *head) {
 			if (head == NULL)
