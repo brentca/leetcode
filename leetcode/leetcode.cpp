@@ -19,13 +19,795 @@
 
 using namespace std;
 
-//////////////////////////Tag Hash Table//////////////////////////////////////////
+//////////////////////////Tag Array//////////////////////////////////////////
 namespace ARRAY {
+	struct TreeNode {
+		int val;
+		TreeNode *left;
+		TreeNode *right;
+		TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+	};
+
 	/*25. Reverse Nodes in k-Group (medium)
 	*/
 	/*25. Reverse Nodes in k-Group end */
 
+
+	/*31. Next Permutation (medium)
+	https://leetcode.com/problems/next-permutation/
+	https://discuss.leetcode.com/topic/2542/share-my-o-n-time-solution
+	*/
+	class Solution31 {
+	public:
+		void nextPermutation1(vector<int>& nums) {
+			if (nums.size() <= 1)
+				return;
+
+			int len = nums.size() - 1, start;
+			int swap1 = -1, swap2;
+			while (len >= 0) {
+				for (start = len - 1; start >= 0; --start) {
+					if (nums[len] > nums[start])
+						break;
+				}
+
+				if (start >= 0 && start > swap1) {
+					swap1 = start;
+					swap2 = len;
+				}
+
+				--len;
+			}
+
+			if (swap1 < 0)
+				sort(nums.begin(), nums.end());
+			else {
+				int tmp = nums[swap2];
+				nums[swap2] = nums[swap1];
+				nums[swap1] = tmp;
+
+				sort(nums.begin() + swap1 + 1, nums.end());
+			}
+		}
+
+
+		void nextPermutation(vector<int>& nums) {
+			if (nums.size() <= 1)
+				return;
+
+			int index = nums.size() - 1;
+
+			while (index > 0) {
+				if (nums[index - 1] < nums[index])
+					break;
+
+				--index;
+			}
+
+			if (index == 0)
+				reversesort(nums, 0, nums.size() - 1);
+			else {
+				int val = nums[index - 1];
+				int j = nums.size() - 1;
+
+				while (j >= index) {
+					if (nums[j] > val)
+						break;
+
+					--j;
+				}
+
+				nums[index - 1] = nums[j];
+				nums[j] = val;
+
+				reversesort(nums, index, nums.size() - 1);
+			}
+		}
+
+		void reversesort(vector<int>& nums, int start, int end)
+		{
+			if (start >= end)
+				return;
+
+			for (int i = start; i <= (start + (end - start) / 2); ++i) {
+				int tmp = nums[i];
+				nums[i] = nums[end + start - i];
+				nums[end + start - i] = tmp;
+			}
+		}
+	};
+	/*31. Next Permutation end */
+
+
+	/*34. Search for a Range (medium)
+	https://leetcode.com/problems/search-for-a-range/
+	https://discuss.leetcode.com/topic/5891/clean-iterative-solution-with-two-binary-searches-with-explanation
+	*/
+	class Solution34 {
+	public:
+		int findvec(vector<int>& nums, int target) {
+			int low = 0, high = nums.size() - 1;
+			int mid;
+
+			while (low <= high) {
+				mid = low + ((high - low) >> 2);
+				if (nums[mid] == target)
+					return mid;
+
+				if (target > nums[mid])
+					low = mid + 1;
+				else
+					high = mid - 1;
+			}
+
+			return -1;
+		}
+
+		vector<int> searchRange(vector<int>& nums, int target) {
+			if (nums.empty())
+				return vector<int>(2, -1);
+
+			int found = findvec(nums, target);
+
+			if (found == -1)
+				return vector<int>(2, -1);
+
+			vector<int> result(2, 0);
+
+			int left = found;
+			int right = found;
+			//while (left >= 0 && nums[left--] == target);
+			for (int i = found - 1; i >= 0; --i) {
+				if (nums[i] == target)
+					left = i;
+				else
+					break;
+			}
+
+			for (int i = found + 1; i < nums.size(); ++i) {
+				if (nums[i] == target)
+					right = i;
+				else
+					break;
+			}
+
+			result[0] = left;
+			result[1] = right;
+
+			return result;
+		}
+	};
+	/*34. Search for a Range end */
+
+
+	/*73. Set Matrix Zeroes (medium)
+	https://leetcode.com/problems/set-matrix-zeroes/
+	https://discuss.leetcode.com/topic/5056/any-shortest-o-1-space-solution
+	*/
+	class Solution73 {
+	public:
+		void setZeroes(vector<vector<int>>& matrix) {
+			if (matrix.empty() || matrix[0].empty())
+				return;
+
+			int m = matrix.size();
+			int n = matrix[0].size();
+
+			unordered_map<int, int> indexR;
+			unordered_map<int, int> indexC;
+
+			for (int i = 0; i < m; ++i) {
+				for (int j = 0; j < n; ++j) {
+					if (matrix[i][j] == 0) {
+						indexR[i] = 1;
+						indexC[j] = 1;
+					}
+				}
+			}
+
+			for (int i = 0; i < m; ++i) {
+				for (int j = 0; j < n; ++j) {
+					if (indexR[i] == 1 || indexC[j] == 1)
+						matrix[i][j] = 0;
+				}
+			}
+		}
+	};
+	/*73. Set Matrix Zeroes end */
+
+
+	/*289. Game of Life (medium)
+	https://leetcode.com/problems/game-of-life/
+	https://discuss.leetcode.com/topic/29054/easiest-java-solution-with-explanation
+	*/
+	class Solution289 {
+	public:
+		void gameOfLife(vector<vector<int>>& board) {
+			int m = board.size();
+			int n = m ? board[0].size() : 0;
+			int count;
+
+			for (int i = 0; i < m; ++i)
+				for (int j = 0; j < n; ++j) {
+					count = 0;
+					for (int row = max(i - 1, 0); row < min(i + 2, m); ++row)
+						for (int col = max(j - 1, 0); col < min(j + 2, n); ++col)
+							count += board[row][col] & 1;
+
+					if (count == 3 || count - board[i][j] == 3)
+						board[i][j] |= 2;
+				}
+
+			for (int i = 0; i < m; ++i)
+				for (int j = 0; j < n; ++j)
+					board[i][j] >>= 1;
+		}
+	};
+	/*289. Game of Life end */
+
+
+	/*105. Construct Binary Tree from Preorder and Inorder Traversal (medium)
+	https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/
+	https://discuss.leetcode.com/topic/3695/my-accepted-java-solution
+	*/
+	class Solution105 {
+	public:
+		int finditem(vector<int> invec, int low, int high, int target) {
+			for (int i = low; i <= high; ++i) {
+				if (invec[i] == target)
+					return i;
+			}
+		}
+
+		TreeNode* buildTree(vector<int>& preorder, int prelow, int prehigh, vector<int>& inorder, int inlow, int inhigh) {
+			TreeNode* root = new TreeNode(preorder[prelow]);
+			if (prelow == prehigh)
+				return root;
+
+			int index = finditem(inorder, inlow, inhigh, preorder[prelow]);
+			int leftnum = index - inlow;
+			int rightnum = inhigh - index;
+
+
+			if (leftnum > 0)
+				root->left = buildTree(preorder, prelow + 1, prelow + leftnum, inorder, inlow, index - 1);
+
+			if (rightnum > 0)
+				root->right = buildTree(preorder, prelow + leftnum + 1, prehigh, inorder, index + 1, inhigh);
+
+			return root;
+		}
+
+		TreeNode* buildTree1(vector<int>& preorder, vector<int>& inorder) {
+			if (preorder.empty() || preorder.size() != inorder.size())
+				return NULL;
+
+			return buildTree(preorder, 0, preorder.size() - 1, inorder, 0, inorder.size() - 1);
+		}
+
+		TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+			if (preorder.empty() || preorder.size() != inorder.size())
+				return NULL;
+
+			int i = 0, j = 0;
+			TreeNode root(0x80000000);
+			stack<TreeNode*> nodes;
+			nodes.push(&root);
+			TreeNode *pp = NULL, *ptr = &root;
+
+			while (j < inorder.size()) {
+				if (nodes.top()->val == inorder[j]) {
+					pp = nodes.top();
+					nodes.pop();
+					j++;
+				}
+				else if (pp) {
+					ptr = new TreeNode(preorder[i]);
+					pp->right = ptr;
+					pp = NULL;
+					nodes.push(ptr);
+					++i;
+				}
+				else {
+					ptr = new TreeNode(preorder[i]);
+					nodes.top()->left = ptr;
+					nodes.push(ptr);
+					++i;
+				}
+			}
+
+			TreeNode* result = root.left;
+			return result;
+		}
+	};
+	/*105. Construct Binary Tree from Preorder and Inorder Traversal end */
+
+
+	/*81. Search in Rotated Sorted Array II (medium)
+	https://leetcode.com/problems/search-in-rotated-sorted-array-ii/
+	https://discuss.leetcode.com/topic/8087/c-concise-log-n-solution
+	*/
+	class Solution81 {
+	public:
+		bool search(vector<int>& nums, int target) {
+			int low = 0;
+			int high = nums.size() - 1;
+			int mid;
+
+			while (low <= high) {
+				mid = low + (high - low) / 2;
+
+				if (nums[mid] == target)
+					return true;
+
+				if (nums[mid] > nums[low]) {
+					if (target >= nums[low] && target < nums[mid])
+						high = mid - 1;
+					else
+						low = mid + 1;
+				}
+				else if (nums[mid] < nums[low]) {
+					if (target <= nums[high] && target > nums[mid])
+						low = mid + 1;
+					else
+						high = mid - 1;
+				}
+				else
+					++low;
+			}
+
+			return false;
+		}
+	};
+	/*81. Search in Rotated Sorted Array II end */
+
+
+	/*216. Combination Sum III (medium)
+	https://leetcode.com/problems/combination-sum-iii/
+	https://discuss.leetcode.com/topic/14641/my-c-solution-backtracking
+	*/
+	class Solution216 {
+	public:
+		void combinationSum(vector<vector<int>>&result, vector<int> cur, int k, int n) {
+			if (cur.size() == k && n == 0) {
+				result.push_back(cur);
+				return;
+			}
+
+			if (cur.size() < k) {
+				for (int i = (cur.size() > 0 ? cur.back() + 1 : 1); i <= 9; ++i) {
+					if (n - i < 0)
+						break;
+					cur.push_back(i);
+					combinationSum(result, cur, k, n - i);
+					cur.pop_back();
+				}
+			}
+		}
+
+		vector<vector<int>> combinationSum3(int k, int n) {
+			vector<int> cur;
+			vector<vector<int>> result;
+
+			combinationSum(result, cur, k, n);
+
+			return result;
+		}
+	};
+	/*216. Combination Sum III end */
+
+
+	/*229. Majority Element II (medium)
+	https://leetcode.com/problems/majority-element-ii/
+	https://discuss.leetcode.com/topic/17564/boyer-moore-majority-vote-algorithm-and-my-elaboration
+	*/
+	class Solution229 {
+	public:
+		vector<int> majorityElement(vector<int>& nums) {
+			int num1 = 0, num2 = 0, a1 = 0, a2 = 1;
+
+			for (auto item : nums) {
+				if (item == a1)
+					num1++;
+				else if (item == a2)
+					num2++;
+				else if (num1 == 0) {
+					a1 = item;
+					num1 = 1;
+				}
+				else if (num2 == 0) {
+					a2 = item;
+					num2 = 1;
+				}
+				else {
+					--num1;
+					--num2;
+				}
+			}
+
+			num1 = 0;
+			num2 = 0;
+
+			for (auto item : nums) {
+				if (item == a1)
+					++num1;
+				else if (item == a2)
+					++num2;
+			}
+
+			vector<int> ret;
+
+			if (num1 > (nums.size() / 3))
+				ret.push_back(a1);
+
+			if (num2 > (nums.size() / 3))
+				ret.push_back(a2);
+
+			return ret;
+		}
+	};
+	/*229. Majority Element II end */
+
+
+	/*59. Spiral Matrix II (medium)
+	https://leetcode.com/problems/spiral-matrix-ii/
+	https://discuss.leetcode.com/topic/7282/simple-c-solution-with-explaination
+	*/
+	class Solution59 {
+	public:
+		vector<vector<int>> generateMatrix(int n) {
+			vector<vector<int>> result(n, vector<int>(n));
+			int k = 1;
+			int total = n * n;
+			int i = 0, j;
+
+			while (k <= total) {
+				j = i;
+				while (j < n - i) {
+					result[i][j] = k++;
+					j++;
+				}
+
+				j = i + 1;
+				while (j < n - i)
+					result[j++][n - i - 1] = k++;
+
+				j = n - i - 2;
+				while (j > i)
+					result[n - i - 1][j--] = k++;
+
+				j = n - i - 1;
+				while (j > i)
+					result[j--][i] = k++;
+
+				++i;
+			}
+
+			return result;
+		}
+	};
+	/*59. Spiral Matrix II end */
+
+
+	/*40. Combination Sum II (medium)
+	https://leetcode.com/problems/combination-sum-ii/
+	https://discuss.leetcode.com/topic/19845/java-solution-using-dfs-easy-understand
+	*/
+	class Solution40 {
+	public:
+		vector<vector<int> > combinationSum2(vector<int> &candidates, int target) {
+			sort(candidates.begin(), candidates.end());
+			vector<vector<int> > res;
+			vector<int> combination;
+			combinationSum(candidates, target, res, combination, 0);
+			return res;
+		}
+
+		void combinationSum(std::vector<int> &candidates, int target, std::vector<std::vector<int> > &res, std::vector<int> &combination, int begin) {
+			if (0 == target) {
+				res.push_back(combination);
+				return;
+			}
+
+			for (int i = begin; i != candidates.size() && target >= candidates[i]; ++i) {
+				if (i && candidates[i - 1] == candidates[i] && i > begin)
+					continue;
+
+				combination.push_back(candidates[i]);
+				combinationSum(candidates, target - candidates[i], res, combination, i + 1);
+				combination.pop_back();
+			}
+		}
+
+		void dsf(vector<int>& candidates, int target, int start, vector<vector<int>>& ret, vector<int>& locaret) {
+			if (target == 0) {
+				ret.push_back(locaret);
+				return;
+			}
+
+			for (int i = start; i < candidates.size(); ++i) {
+				if (candidates[i] > target)
+					return;
+
+				if (i && candidates[i - 1] == candidates[i] && i > start)
+					continue;
+
+				locaret.push_back(candidates[i]);
+				dsf(candidates, target - candidates[i], i + 1, ret, locaret);
+				locaret.pop_back();
+			}
+		}
+
+		vector<vector<int>> combinationSum2_1(vector<int>& candidates, int target) {
+			vector<vector<int>> result;
+			vector<int> localret;
+
+			sort(candidates.begin(), candidates.end());
+			if (candidates.empty() || target < candidates[0])
+				return result;
+
+			dsf(candidates, target, 0, result, localret);
+			return result;
+		}
+	};
+	/*40. Combination Sum II end */
+
+
+	/*153. Find Minimum in Rotated Sorted Array (medium)
+	https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/
+	https://discuss.leetcode.com/topic/4100/compact-and-clean-c-solution
+	*/
+	class Solution153 {
+	public:
+		int findMin(vector<int>& nums) {
+			int low = 0, high = nums.size() - 1;
+			int middle;
+
+			while (low < high) {
+				middle = (low + high) / 2;
+
+				if (nums[middle] > nums[high])
+					low = middle + 1;
+				else if (nums[middle] < nums[high])
+					high = middle;
+			}
+
+			return nums[low];
+		}
+	};
+	/*153. Find Minimum in Rotated Sorted Array end */
+
+
+	/*106. Construct Binary Tree from Inorder and Postorder Traversal (medium)
+	https://leetcode.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/
+	*/
+	class Solution106 {
+	public:
+		int finditem(vector<int>& nodes, int low, int high, int target) {
+			for (int i = low; i <= high; ++i) {
+				if (nodes[i] == target)
+					return i;
+			}
+		}
+
+		TreeNode* buildTree(vector<int>& inorder, int instart, int inend, vector<int>& postorder, int poststart, int posend) {
+			TreeNode* root = new TreeNode(postorder[posend]);
+
+			int index = finditem(inorder, instart, inend, postorder[posend]);
+			int leftnum = index - instart;
+			int rightnum = inend - index;
+
+			if (posend == poststart)
+				return root;
+
+			if (leftnum > 0)
+				root->left = buildTree(inorder, instart, index - 1, postorder, poststart, poststart + leftnum - 1);
+
+			if (rightnum > 0)
+				root->right = buildTree(inorder, index + 1, inend, postorder, posend - rightnum, posend - 1);
+
+			return root;
+		}
+
+		TreeNode* buildTree1(vector<int>& inorder, vector<int>& postorder) {
+			if (inorder.empty() || postorder.size() != inorder.size())
+				return NULL;
+
+			TreeNode* root = buildTree(inorder, 0, inorder.size() - 1, postorder, 0, postorder.size() - 1);
+			return root;
+		}
+
+		TreeNode* myBuild2(vector<int>& inorder, vector<int>& postorder, TreeNode* lastnode) {
+			if (posPost < 0)
+				return NULL;
+
+			TreeNode* node = new TreeNode(postorder[posPost--]);
+
+			if (inorder[posIn] != node->val)
+				node->right = myBuild2(inorder, postorder, node);
+
+			posIn--;
+
+			if ((lastnode == NULL) || (inorder[posIn] != lastnode->val))
+				node->left = myBuild2(inorder, postorder, lastnode);
+
+			return node;
+		}
+
+		int posIn, posPost;
+		TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
+			if (inorder.empty() || postorder.size() != inorder.size())
+				return NULL;
+
+			posIn = inorder.size() - 1;
+			posPost = postorder.size() - 1;
+
+			TreeNode* result = myBuild2(inorder, postorder, NULL);
+			return result;
+
+		}
+	};
+	/*106. Construct Binary Tree from Inorder and Postorder Traversal end */
+
+
+	/*209. Minimum Size Subarray Sum (medium)
+	https://leetcode.com/problems/minimum-size-subarray-sum/
+	https://discuss.leetcode.com/topic/13749/two-ac-solutions-in-java-with-time-complexity-of-n-and-nlogn-with-explanation
+	*/
+	class Solution209 {
+	public:
+		int minSubArrayLen1(int s, vector<int>& nums) {
+			if (nums.empty())
+				return 0;
+
+			int ret = 0, total, j, len;
+
+			for (int i = 0; i < nums.size(); ++i) {
+				total = 0;
+				for (j = i; j < nums.size(); ++j) {
+					if (total + nums[j] < s)
+						total += nums[j];
+					else
+						break;
+				}
+
+				len = j - i + 1;
+				if (j < nums.size() && total + nums[j] >= s)
+					ret = min(ret == 0 ? len : ret, len);
+			}
+
+			return ret;
+		}
+
+		int minSubArrayLen(int s, vector<int>& nums) {
+			if (nums.empty())
+				return 0;
+			int ret = INT_MAX, total = 0, start = 0, end = 0, len;
+
+			while (end < nums.size()) {
+				while (end < nums.size() && total < s)
+					total += nums[end++];
+
+				if (total < s)
+					break;
+
+				while (start < end && total >= s)
+					total -= nums[start++];
+
+				if (end - start + 1 < ret)
+					ret = end - start + 1;
+			}
+
+			return ret == INT_MAX ? 0 : ret;
+		}
+	};
+	/*209. Minimum Size Subarray Sum end */
+
+
+	/*27. Remove Element (easy)
+	https://leetcode.com/problems/remove-element/
+	https://discuss.leetcode.com/topic/1228/my-solution-for-your-reference
+	*/
+	class Solution27 {
+	public:
+		int removeElement(int A[], int n, int elem) {
+			int count = 0;
+			for (int i = 0; i<n; ++i) {
+				if (A[i] != elem)
+					A[count++] = A[i];
+			}
+
+			return count;
+		}
+	};
+	/*27. Remove Element end */
+
+
+	/*119. Pascal's Triangle II (easy)
+	https://leetcode.com/problems/pascals-triangle-ii/
+	https://discuss.leetcode.com/topic/2510/here-is-my-brief-o-k-solution
+	*/
+	class Solution119 {
+	public:
+		vector<int> getRow(int rowIndex) {
+			vector<int> result;
+			result.resize(rowIndex + 1);
+			result[0] = result[rowIndex] = 1;
+
+			for (int i = 1; i <= rowIndex / 2; ++i)
+				result[i] = result[rowIndex - i] = (unsigned long)result[i - 1] * (unsigned long)(rowIndex + 1 - i) / i;
+
+			return result;
+		}
+	};
+	/*119. Pascal's Triangle II end */
+
+
+	/*118. Pascal's Triangle (easy)
+	https://leetcode.com/problems/pascals-triangle/
+	https://discuss.leetcode.com/topic/4303/maybe-shortest-c-solution
+	*/
+	class Solution118 {
+	public:
+		vector<vector<int>> generate(int numRows) {
+			vector<vector<int>> result(numRows);
+
+			for (int i = 0; i < numRows; ++i) {
+				result[i].resize(i + 1);
+
+				result[i][0] = result[i][i] = 1;
+				for (int j = 1; j < i; ++j)
+					result[i][j] = result[i - 1][j - 1] + result[i - 1][j];
+			}
+
+			return result;
+		}
+	};
+	/*118. Pascal's Triangle end */
+
+
+	/*189. Rotate Array (easy)
+	https://leetcode.com/problems/rotate-array/
+	https://discuss.leetcode.com/topic/9801/summary-of-c-solutions
+	*/
+	class Solution189 {
+	public:
+		void rotate(vector<int>& nums, int k) {
+			int offset = nums.size() - (k % nums.size());
+			
+			vector<int> t(nums.begin() + offset, nums.end());
+			nums.resize(offset);
+			nums.insert(nums.begin(), t.begin(), t.end());
+		}
+	};
+	/*189. Rotate Array end */
+
+
+	/*26. Remove Duplicates from Sorted Array (easy)
+	https://leetcode.com/problems/remove-duplicates-from-sorted-array/
+	*/
+	class Solution26 {
+	public:
+		int removeDuplicates(vector<int>& nums) {
+			int len = nums.size();
+
+			if (len < 2)
+				return len;
+
+			int count = 0;
+			for (int i = 0; i < len; ++i) {
+				if (nums[i] != nums[count])
+					nums[++count] = nums[i];
+			}
+
+			return count + 1;
+		}
+	};
+	/*26. Remove Duplicates from Sorted Array end */
 }
+//////////////////////////Tag Array end//////////////////////////////////////////
+
+
 
 //////////////////////////Tag Hash Table//////////////////////////////////////////
 namespace HASHT {
