@@ -19,8 +19,8 @@
 
 using namespace std;
 
-//////////////////////////Tag Array//////////////////////////////////////////
-namespace ARRAY {
+//////////////////////////Tag GG//////////////////////////////////////////
+namespace GG {
 	struct TreeNode {
 		int val;
 		TreeNode *left;
@@ -31,6 +31,201 @@ namespace ARRAY {
 	/*25. Reverse Nodes in k-Group (medium)
 	*/
 	/*25. Reverse Nodes in k-Group end */
+
+}
+//////////////////////////Tag GG//////////////////////////////////////////
+
+
+//////////////////////////Tag Array//////////////////////////////////////////
+namespace ARRAY {
+	struct TreeNode {
+		int val;
+		TreeNode *left;
+		TreeNode *right;
+		TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+	};
+
+	/*41. First Missing Positive (medium)
+	https://leetcode.com/problems/first-missing-positive/
+	https://discuss.leetcode.com/topic/8293/my-short-c-solution-o-1-space-and-o-n-time
+	*/
+	class Solution41 {
+	public:
+		int firstMissingPositive(vector<int>& nums) {
+			if (nums.size() < 1)
+				return 1;
+
+			int result = 0;
+			int n = nums.size();
+
+			for (int i = 0; i < n; ++i) {
+				while (nums[i] > 0 && nums[i] <= n && nums[nums[i] - 1] != nums[i])
+					swap(nums[i], nums[nums[i] - 1]);
+			}
+
+			for (int i = 0; i < n; ++i) {
+				if (nums[i] != i + 1)
+					return i + 1;
+			}
+
+			return n + 1;
+		}
+	};
+	/*41. First Missing Positive end */
+
+
+	/*154. Find Minimum in Rotated Sorted Array II (hard)
+	https://leetcode.com/problems/find-minimum-in-rotated-sorted-array-ii/
+	https://discuss.leetcode.com/topic/6468/my-pretty-simple-code-to-solve-it
+	*/
+	class Solution154 {
+	public:
+		int findMin(vector<int>& nums) {
+			int low = 0;
+			int high = nums.size() - 1;
+			int mid;
+
+			while (low < high) {
+				mid = low + (high - low) / 2;
+				if (nums[mid] > nums[high])
+					low = mid + 1;
+				else if (nums[mid] < nums[high])
+					high = mid;
+				else
+					--high;
+			}
+
+			return nums[low];
+		}
+	};
+	/*154. Find Minimum in Rotated Sorted Array II end */
+
+
+	/*54. Spiral Matrix (medium)
+	https://leetcode.com/problems/spiral-matrix/
+	https://discuss.leetcode.com/topic/15558/a-concise-c-implementation-based-on-directions
+	*/
+	class Solution54 {
+	public:
+		vector<int> spiralOrder(vector<vector<int>>& matrix) {
+			vector<int> ret;
+			if (matrix.empty() || matrix[0].empty())
+				return ret;
+
+			int m = matrix.size();
+			int n = matrix[0].size();
+
+			vector<int> nstep = { n, m - 1 };
+			vector<pair<int, int>> dirs = { { 0, 1 },{ 1, 0 },{ 0, -1 },{ -1, 0 } };
+
+			int cur = 0;
+			int ir = 0, ic = -1;
+
+			while (nstep[cur % 2]) {
+				for (int i = 0; i < nstep[cur % 2]; ++i) {
+					ir += dirs[cur].first;
+					ic += dirs[cur].second;
+
+					ret.push_back(matrix[ir][ic]);
+				}
+
+				--nstep[cur % 2];
+				cur = (cur + 1) % 4;
+			}
+
+			return ret;
+		}
+	};
+	/*54. Spiral Matrix end */
+
+
+	/*228. Summary Ranges (medium)
+	https://leetcode.com/problems/summary-ranges/
+	https://discuss.leetcode.com/topic/17151/accepted-java-solution-easy-to-understand
+	*/
+	class Solution228 {
+	public:
+		vector<string> summaryRanges(vector<int>& nums) {
+			vector<string> result;
+			string tmp;
+			int nLen = nums.size();
+			char temp[32];
+
+			if (nLen == 1) {
+				sprintf(temp, "%d", nums[0]);
+				tmp.append(temp);
+				result.push_back(tmp);
+			}
+
+			if (nLen <= 1)
+				return result;
+
+			int step;
+			for (int nIdx = 0; nIdx < nLen; nIdx += step) {
+				memset(temp, 0x00, sizeof(temp));
+				sprintf(temp, "%d", nums[nIdx]);
+				tmp = temp;
+
+				step = 1;
+				while (nIdx + step < nLen && nums[nIdx + step - 1] + 1 == nums[nIdx + step])
+					step++;
+
+				if (step > 1) {
+					memset(temp, 0x00, sizeof(temp));
+					sprintf(temp, "%d", nums[nIdx + step - 1]);
+					tmp.append(string("->") + temp);
+				}
+
+				result.push_back(tmp);
+			}
+
+			return result;
+		}
+	};
+	/*228. Summary Ranges end */
+
+
+	/*238. Product of Array Except Self (medium)
+	https://leetcode.com/problems/product-of-array-except-self/
+	https://discuss.leetcode.com/topic/18864/simple-java-solution-in-o-n-without-extra-space
+	*/
+	class Solution238 {
+	public:
+		vector<int> productExceptSelf(vector<int>& nums) {
+			vector<int> result(nums.size(), 1);
+			int tmp;
+
+			for (int nIdx = 0, tmp = 1; nIdx < nums.size(); ++nIdx) {
+				result[nIdx] = tmp;
+				tmp *= nums[nIdx];
+			}
+
+			for (int nIdx = nums.size() - 1, tmp = 1; nIdx >= 0; --nIdx) {
+				result[nIdx] *= tmp;
+				tmp *= nums[nIdx];
+			}
+
+			return result;
+		}
+	};
+	/*238. Product of Array Except Self end */
+
+
+	/*48. Rotate Image (medium)
+	https://leetcode.com/problems/rotate-image/
+	https://discuss.leetcode.com/topic/6796/a-common-method-to-rotate-the-image
+	*/
+	class Solution48 {
+	public:
+		void rotate(vector<vector<int>>& matrix) {
+			reverse(matrix.begin(), matrix.end());
+
+			for (int i = 0; i < matrix.size(); ++i)
+				for (int j = i; j < matrix.size(); ++j)
+					swap(matrix[i][j], matrix[j][i]);
+		}
+	};
+	/*48. Rotate Image end */
 
 
 	/*31. Next Permutation (medium)
@@ -13169,7 +13364,7 @@ using namespace STRING;
 using namespace MATH;
 using namespace LLIST;
 using namespace MYTEST;
-
+using namespace GG;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
