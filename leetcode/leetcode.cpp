@@ -28,10 +28,142 @@ namespace GG {
 		TreeNode(int x) : val(x), left(NULL), right(NULL) {}
 	};
 
-	/*25. Reverse Nodes in k-Group (medium)
-	*/
-	/*25. Reverse Nodes in k-Group end */
 
+	/*66. Plus One (easy)
+	*/
+	/*66. Plus One end */
+
+
+	/*20. Valid Parentheses (easy)
+	https://leetcode.com/problems/valid-parentheses/
+	https://discuss.leetcode.com/topic/13231/2ms-c-sloution
+	*/
+	class Solution20 {
+	public:
+		bool isValid(string s) {
+			stack<char> parents;
+
+			for (int i = 0; i < s.size(); ++i) {
+				char tmp = s[i];
+				if ('(' == tmp || '[' == tmp || '{' == tmp)
+					parents.push(tmp);
+				else if ((')' == tmp) && !parents.empty() && ('(' == parents.top()))
+					parents.pop();
+				else if ((']' == tmp) && !parents.empty() && ('[' == parents.top()))
+					parents.pop();
+				else if (('}' == tmp) && !parents.empty() && ('{' == parents.top()))
+					parents.pop();
+				else
+					return false;
+			}
+
+			return parents.empty();
+		}
+	};
+	/*20. Valid Parentheses end */
+
+
+	/*288. Unique Word Abbreviation (easy)
+	https://leetcode.com/problems/unique-word-abbreviation/
+	https://discuss.leetcode.com/topic/25929/8-lines-in-c
+	*/
+	class ValidWordAbbr288 {
+	public:
+		ValidWordAbbr288(vector<string> &dictionary) {
+			for (auto item : dictionary) {
+				string key;
+				int len = item.size();
+
+				key = item[0] + to_string(len) + item[len - 1];
+				map[key].insert(item);
+			}
+		}
+
+		bool isUnique(string word) {
+			if (word.empty() || map.empty())
+				return true;
+			
+			string key;
+			int len = word.size();
+
+			key = word[0] + to_string(len) + word[len - 1];
+
+			return map.count(key) && (map[key].count(word) == map[key].size());
+		}
+
+		static void main() {
+			vector<string> dic1;
+			vector<string> dic2 = {"a", "a"};
+			ValidWordAbbr288* test1 = new ValidWordAbbr288(dic1);
+			ValidWordAbbr288* test2 = new ValidWordAbbr288(dic2);
+			bool result;
+
+			string word1_1("");
+			string word1_2("a");
+
+			result = test1->isUnique(word1_1);
+			result = test1->isUnique(word1_2);
+
+			string word2_1("a");
+			string word2_2("aa");
+
+			result = test2->isUnique(word2_1);
+			result = test2->isUnique(word2_2);
+			delete test1;
+			delete test2;
+		}
+
+		unordered_map<string, unordered_set<string>> map;
+	};
+	/*288. Unique Word Abbreviation end */
+
+
+	/*66. Plus One (easy)
+	https://leetcode.com/problems/plus-one/
+	https://discuss.leetcode.com/topic/4556/is-it-a-simple-code-c
+	*/
+	class Solution66 {
+	public:
+		vector<int> plusOne(vector<int>& digits) {
+			vector<int> result(digits);
+			int n = result.size();
+
+			for (int i = n - 1; i >= 0; --i) {
+				if (result[i] < 9) {
+					++result[i];
+					return result;
+				}
+				else
+					result[i] = 0;
+			}
+
+			result[0] = 0;
+			result.insert(result.begin(), 1);
+			return result;
+		}		
+
+		static void main() {
+			Solution66* test = new Solution66;
+			vector<int> result;
+
+			vector<int> digits1 = { 0 };
+			result = test->plusOne(digits1);
+
+			vector<int> digits2 = { 9, 9 };
+			result = test->plusOne(digits2);
+
+			vector<int> digits3 = { 9, 8, 9 };
+			result = test->plusOne(digits3);
+			delete test;
+		}
+	};
+	/*66. Plus One end */
+
+	static void main() {
+		ValidWordAbbr288::main();
+		Solution66::main();
+		
+	}
 }
 //////////////////////////Tag GG//////////////////////////////////////////
 
@@ -13368,6 +13500,7 @@ using namespace GG;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	GG::main();
 	MyClass::main();
 	Solution24::main();
 	Solution149::main();
