@@ -34,6 +34,361 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*276. Paint Fence (easy)
+	https://leetcode.com/problems/paint-fence/
+	https://discuss.leetcode.com/topic/23463/lucas-formula-maybe-o-1-and-3-4-liners
+	*/
+	class Solution276 {
+	public:
+		int numWays(int n, int k) {
+			vector<int> dp(n + 1, 0);
+
+			if (1 == n)
+				return k;
+			else if (2 == n)
+				return k * k;
+
+			dp[1] = k;
+			dp[2] = k * k;
+
+			for (int i = 3; i <= n; ++i)
+				dp[i] = (dp[i - 1] + dp[i - 2]) * (k - 1);
+
+			return dp[n];
+		}
+
+		static void main() {
+			Solution276* test = new Solution276;
+			int result;
+			int n1 = 4, k1 = 2;
+			result = test->numWays(n1, k1);
+
+			delete test;
+		}
+	};
+	/*276. Paint Fence end */
+
+
+	/*374. Guess Number Higher or Lower (easy)
+	https://leetcode.com/problems/guess-number-higher-or-lower/
+	https://discuss.leetcode.com/topic/51184/0ms-c-binary-search
+	*/
+	class Solution374 {
+	public:
+		int guessNumber(int n) {
+			int low = 1, high = n;
+
+			while (1) {
+				int mid = low + (high - low) / 2;
+
+				int res = 0;// guess(mid);
+				if (0 == res)
+					return mid;
+				else if (1 == res)
+					low = mid + 1;
+				else
+					high = mid - 1;
+			}
+
+			return 0;
+		}
+	};
+	/*374. Guess Number Higher or Lower end */
+
+
+	/*346. Moving Average from Data Stream (easy)
+	https://leetcode.com/problems/moving-average-from-data-stream/
+	https://discuss.leetcode.com/topic/44113/java-o-1-using-deque
+	*/
+	class MovingAverage346 {
+	public:
+		/** Initialize your data structure here. */
+		int m_total;
+		int m_size;
+		queue<int> nums;
+
+		MovingAverage346(int size) {
+			m_total = 0;
+			m_size = size;
+		}
+
+		double next(int val) {
+			if (nums.size() >= m_size) {
+				m_total -= nums.front();
+				nums.pop();
+			}
+
+			m_total += val;
+			nums.push(val);
+
+			return (double)m_total / nums.size();
+		}
+
+		static void main() {
+			MovingAverage346* test = new MovingAverage346(3);
+			double result;
+
+			result = test->next(1);		//output 1
+			result = test->next(10);	//output (1 + 10) / 2
+			result = test->next(3);		//output (1 + 10 + 3) / 3
+			result = test->next(5);		//output (10 + 3 + 5) / 3
+			delete test;
+		}
+	};
+	/*346. Moving Average from Data Stream end */
+
+
+	/*246. Strobogrammatic Number (easy)
+	https://leetcode.com/problems/strobogrammatic-number/
+	*/
+	class Solution246 {
+	public:
+		bool isStrobogrammatic1(string num) {
+			int low = 0, high = num.size() - 1;
+			unordered_map<char, char> map;
+
+			map['0'] = '0';
+			map['8'] = '8';
+			map['1'] = '1';
+			map['6'] = '9';
+			map['9'] = '6';
+
+			while (low < high) {
+				char a = num[low];
+				char b = num[high];
+
+				if (!map.count(a) || map[a] != b)
+					return false;
+
+				++low;
+				--high;
+			}
+
+			return high < low || '0' == num[low] || '1' == num[low] || '8' == num[low];
+		}
+
+		bool isStrobogrammatic(string num) {
+			int low = 0, high = num.size() - 1;
+
+			if (low == high)
+				return '0' == num[0] || '1' == num[0] || '8' == num[0];
+
+			while (low <= high) {
+				switch (num[low])
+				{
+				case '0':
+				case '1':
+				case '8':
+					if (num[high] != num[low])
+						return false;
+					break;
+
+				case '6':
+					if ('9' != num[high])
+						return false;
+					break;
+
+				case '9':
+					if ('6' != num[high])
+						return false;
+					break;
+
+				default:
+					return false;
+				}
+
+				++low;
+				--high;
+			}
+
+			return true;
+		}
+	};
+	/*246. Strobogrammatic Number end */
+
+
+	/*231. Power of Two (easy)
+	https://leetcode.com/problems/power-of-two/
+	https://discuss.leetcode.com/topic/17857/using-n-n-1-trick
+	*/
+	class Solution231 {
+	public:
+		bool isPowerOfTwo(int n) {
+			int count = 0;
+
+			if (n <= 0)
+				return false;
+
+			for (int i = 0; i < 8 * sizeof(int); ++i) {
+				if (n & (1 << i))
+					++count;
+
+				if (count > 1)
+					return false;
+			}
+
+			return true;
+		}
+
+		static void main() {
+			Solution231* test = new Solution231;
+			bool result;
+			int n1 = 1;
+			int n2 = 3;
+			int n3 = 16;
+
+			result = test->isPowerOfTwo(n1);
+			result = test->isPowerOfTwo(n2);
+			result = test->isPowerOfTwo(n3);
+			delete test;
+		}
+	};
+	/*231. Power of Two end */
+
+
+	/*345. Reverse Vowels of a String (easy)
+	https://leetcode.com/problems/reverse-vowels-of-a-string/
+	https://discuss.leetcode.com/topic/53760/compare-three-java-solutions
+	*/
+	class Solution345 {
+	public:
+		bool isvowel(char c) {
+			if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' ||
+				c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U')
+				return true;
+
+			return false;
+		}
+
+		string reverseVowels(string s) {
+			string result(s);
+
+			int low = 0, high = s.size() - 1;
+
+			while (low < high) {
+				while (low < high && !isvowel(result[low]))
+					++low;
+
+				while (low < high && !isvowel(result[high]))
+					--high;
+
+				if (high <= low)
+					break;
+
+				swap(result[low], result[high]);
+				++low;
+				--high;
+			}
+
+			return result;
+		}
+	};
+	/*345. Reverse Vowels of a String end */
+
+
+	/*155. Min Stack (easy)
+	https://leetcode.com/problems/min-stack/
+	https://discuss.leetcode.com/topic/36246/c-concise-solution-with-explanation
+	https://discuss.leetcode.com/topic/52709/c-6-lines-solution-beat-all
+	*/
+	class MinStack155_1 {
+	public:
+		stack<pair<int, int>> stk;
+		int  minval;
+		MinStack155_1() {
+
+		}
+
+		void push(int x) {
+			if (stk.empty()) stk.push(make_pair(x, x));
+			else stk.push(make_pair(x, min(x, stk.top().second)));
+		}
+
+		void pop() {
+			stk.pop();
+		}
+
+		int top() {
+			return stk.top().first;
+		}
+
+		int getMin() {
+			return stk.top().second;
+		}
+
+		static void main() {
+			MinStack155_1* test = new MinStack155_1;
+
+			test->push(2);
+			test->push(0);
+			test->push(3);
+
+			cout << "MinStack155:" << test->top() << "," << test->getMin() << endl;
+			test->pop();
+
+			cout << "MinStack155:" << test->top() << "," << test->getMin() << endl;
+			test->pop();
+
+			cout << "MinStack155:" << test->top() << "," << test->getMin() << endl;
+			test->pop();
+			//cout << "MinStack155:" << test->top() << "," << test->getMin() << endl;
+			delete test;
+		}
+	};
+
+
+	class MinStack155 {
+	public:
+		stack<int> nums;
+		stack<int> minstack;
+		MinStack155() {
+
+		}
+
+		void push(int x) {
+			nums.push(x);
+
+			if (minstack.empty() || minstack.top() >= x)
+				minstack.push(x);
+		}
+
+		void pop() {
+			if (nums.top() == minstack.top())
+				minstack.pop();
+			
+			nums.pop();
+		}
+
+		int top() {
+			return nums.top();
+		}
+
+		int getMin() {
+			return minstack.top();
+		}
+
+		static void main() {
+			MinStack155* test = new MinStack155;
+
+			test->push(2);
+			test->push(0);
+			test->push(3);
+
+			cout << "MinStack155:" << test->top() << "," << test->getMin() << endl;
+			test->pop();
+
+			cout << "MinStack155:" << test->top() << "," << test->getMin() << endl;
+			test->pop();
+
+			cout << "MinStack155:" << test->top() << "," << test->getMin() << endl;
+			test->pop();
+			//cout << "MinStack155:" << test->top() << "," << test->getMin() << endl;
+			delete test;
+		}
+	};
+	/*155. Min Stack end */
+
+
 	/*20. Valid Parentheses (easy)
 	https://leetcode.com/problems/valid-parentheses/
 	https://discuss.leetcode.com/topic/13231/2ms-c-sloution
@@ -160,6 +515,11 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+		Solution276::main();
+		MovingAverage346::main();
+		Solution231::main();
+		MinStack155_1::main();
+		MinStack155::main();
 		ValidWordAbbr288::main();
 		Solution66::main();
 		
@@ -13547,7 +13907,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//PeekingIterator284::main();
 	Stack225::main();
 	MinStack155_2::main();
-	MinStack155::main();
+	//MinStack155::main();
 	Solution329::main();
 	Solution210::main();
 	Solution207::main();
