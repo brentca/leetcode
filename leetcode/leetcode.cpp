@@ -29,9 +29,301 @@ namespace GG {
 	};
 
 
-	/*66. Plus One (easy)
+	/*66. Plus One (medium)
 	*/
 	/*66. Plus One end */
+
+
+	/*353. Design Snake Game (medium)
+	https://leetcode.com/problems/design-snake-game/
+	*/
+	class SnakeGame353 {
+	public:
+		/** Initialize your data structure here.
+		@param width - screen width
+		@param height - screen height
+		@param food - A list of food positions
+		E.g food = [[1,1], [1,0]] means the first food is positioned at [1,1], the second is at [1,0]. */
+		SnakeGame353(int width, int height, vector<pair<int, int>> food) {
+			m_width = width;
+			m_height = height;
+
+			m_body.push_back(make_pair(0, 0));
+			for (auto item : food)
+				m_food.push(item);
+
+			m_score = 0;
+		}
+
+		/** Moves the snake.
+		@param direction - 'U' = Up, 'L' = Left, 'R' = Right, 'D' = Down
+		@return The game's score after the move. Return -1 if game over.
+		Game over when snake crosses the screen boundary or bites its body. */
+		int move(string direction) {
+			int result;
+			pair<int, int> newpos(m_body.front());
+
+			switch (direction[0])
+			{
+			case 'U':
+				--newpos.second;
+				break;
+
+			case 'D':
+				++newpos.second;
+				break;
+
+			case 'L':
+				--newpos.first;
+				break;
+
+			case 'R':
+				++newpos.first;
+				break;
+
+			default:
+				return -1;
+			}
+
+			//check pos
+			if (newpos.first < 0 || newpos.first >= m_width ||
+				newpos.second < 0 || newpos.second >= m_height)
+				return -1;
+
+			//check body
+			for (auto item : m_body) {
+				if (item.first == newpos.first && item.second == newpos.second)
+					return -1;
+			}
+
+			m_body.push_front(newpos);
+			if (!m_food.empty() && m_food.front().first == newpos.first && m_food.front().second == newpos.second) {
+				m_food.pop();
+				++m_score;
+			}
+			else
+				m_body.pop_back();
+
+			return m_score;
+		}
+
+		static void main() {
+			int width = 3, height = 2;
+			vector<pair<int, int>> food = { { 3, 2 }, { 0, 1 } };
+			int result;
+
+			SnakeGame353* test = new SnakeGame353(width, height, food);
+			//["R"],["D"],["R"],["U"],["L"],["U"]
+			result = test->move("R");
+			result = test->move("D");
+			result = test->move("R");
+			result = test->move("U");
+			result = test->move("L");
+			result = test->move("U");
+
+			delete test;
+		}
+
+		int m_width;
+		int m_height;
+		deque<pair<int, int>> m_body;
+		int m_score;
+		queue<pair<int, int>> m_food;
+	};
+
+	/**
+	* Your SnakeGame object will be instantiated and called as such:
+	* SnakeGame obj = new SnakeGame(width, height, food);
+	* int param_1 = obj.move(direction);
+	*/
+	/*353. Design Snake Game end */
+
+
+	/*313. Super Ugly Number (medium)
+	https://leetcode.com/problems/super-ugly-number/
+	https://discuss.leetcode.com/topic/31012/7-line-consice-o-kn-c-solution
+	https://discuss.leetcode.com/topic/52791/fastest-nth-ugly-number-ugly-number-ii-and-super-ugly-number-similar-solutions-java-dynamic-programming
+	https://discuss.leetcode.com/topic/24306/elegant-c-solution-o-n-space-time-with-detailed-explanation/2
+	*/
+	class Solution313 {
+	public:
+		int nthSuperUglyNumber(int n, vector<int>& primes) {
+			int len = primes.size();
+			vector<int> index(len, 0);
+			vector<int> result(n, INT_MAX);
+
+			//current prime generate by former multiply one of primes
+			//index[j] always point to the first unused index 
+			//in result for primes[j]
+			result[0] = 1;
+			for (int i = 1; i < n; ++i) {
+				for (int j = 0; j < len; ++j)
+					result[i] = min(result[i], result[index[j]] * primes[j]);
+
+				for (int j = 0; j < len; ++j)
+					index[j] += (result[i] == result[index[j]] * primes[j]);
+			}
+
+
+			return result[n - 1];
+		}
+
+		static void main() {
+			Solution313* test = new Solution313;
+			int result;
+			vector<int> primes = { 2, 7, 13, 19 };
+
+			result = test->nthSuperUglyNumber(10, primes);
+			delete test;
+		}
+	};
+	/*313. Super Ugly Number end */
+
+
+	/*270. Closest Binary Search Tree Value (easy)
+	https://leetcode.com/problems/closest-binary-search-tree-value/
+	*/
+	class Solution270 {
+	public:
+		int closestValue(TreeNode* root, double target) {
+			stack<TreeNode*> nodes;
+			double diff = std::numeric_limits<double>::max();
+
+			nodes.push(root);
+			int result = root->val;
+			while (!nodes.empty()) {
+				TreeNode* cur = nodes.top();
+				nodes.pop();
+				double tmp = abs(double(cur->val) - target);
+				if (tmp <= diff) {
+					diff = tmp;
+					result = cur->val;
+				}
+
+				if (target < cur->val) {
+					if (cur->left)
+						nodes.push(cur->left);
+				}
+				else {
+					if (cur->right)
+						nodes.push(cur->right);
+				}
+			}
+
+			return result;
+		}
+
+		int closestValue1(TreeNode* root, double target) {
+			int closest = root->val;
+			double diff = std::numeric_limits<double>::max();
+
+			while (root) {
+				double tmp = abs(double(root->val) - target);
+				if (diff >= tmp) {
+					closest = root->val;
+					diff = tmp;
+				}
+
+				root = target < root->val ? root->left : root->right;
+			}
+			return closest;
+		}
+
+		int closestValue3(TreeNode* root, double target) {
+			int a = root->val;
+			auto kid = target < root->val ? root->left : root->right;
+
+			if (!kid)
+				return a;
+
+			int b = closestValue(kid, target);
+			return abs(double(a) - target) > abs(double(b) - target) ? b : a;
+		}
+
+		static void main() {
+			Solution270* test = new Solution270;
+			int result;
+			TreeNode node1(1);
+			TreeNode node2(2);
+
+			node1.right = &node2;
+			result = test->closestValue(&node1, 3.415f);
+			delete test;
+		}
+	};
+	/*270. Closest Binary Search Tree Value end */
+
+
+	/*266. Palindrome Permutation (easy)
+	https://leetcode.com/problems/palindrome-permutation/
+	https://discuss.leetcode.com/topic/21999/1-4-lines-python-ruby-c-c-java
+	*/
+	class Solution266 {
+	public:
+		bool canPermutePalindrome(string s) {
+			unordered_map<char, int> map;
+
+			for (auto it : s)
+				++map[it];
+
+			int odds = 0;
+			for (auto it : map)
+				odds += (it.second % 2);
+
+			return odds < 2;
+		}
+	};
+	/*266. Palindrome Permutation end */
+
+
+	/*359. Logger Rate Limiter (easy)
+	https://leetcode.com/problems/logger-rate-limiter/
+	https://discuss.leetcode.com/topic/48359/short-c-java-python-bit-different
+	*/
+	class Logger {
+	public:
+		/** Initialize your data structure here. */
+		Logger() {
+		}
+
+		/** Returns true if the message should be printed in the given timestamp, otherwise returns false.
+		If this method returns false, the message will not be printed.
+		The timestamp is in seconds granularity. */
+		bool shouldPrintMessage(int timestamp, string message) {
+			if (map.count(message)) {
+				if (timestamp - map[message] >= 10) {
+					map[message] = timestamp;
+					return true;
+				}
+
+				return false;
+			}
+			else
+				map[message] = timestamp;
+
+			return true;
+		}
+
+		unordered_map<string, int> map;
+	};
+	/*359. Logger Rate Limiter end */
+
+
+	/*326. Power of Three (easy)
+	https://leetcode.com/problems/power-of-three/
+	https://discuss.leetcode.com/topic/43385/c-solution-no-loop-recursion
+	*/
+	class Solution326 {
+	public:
+		bool isPowerOfThree(int n) {
+			if (n < 1)
+				return false;
+
+			int t = pow(3, (int)(log(INT_MAX) / log(3)));
+			return (t%n == 0);
+		}
+	};
+	/*326. Power of Three end */
 
 
 	/*257. Binary Tree Paths (easy)
@@ -657,6 +949,9 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+		SnakeGame353::main();
+		Solution313::main();
+		Solution270::main();
 		Solution249::main();
 		Solution276::main();
 		MovingAverage346::main();
@@ -14016,7 +14311,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	Solution84::main();
 	Solution85::main();
 	Solution239::main();
-	Solution313::main();
+	GG::Solution313::main();
 	Solution321::main();
 	Solution164::main();
 	Solution318::main();
