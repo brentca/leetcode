@@ -34,6 +34,148 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*257. Binary Tree Paths (easy)
+	https://leetcode.com/problems/binary-tree-paths/
+	https://discuss.leetcode.com/topic/21559/python-solutions-dfs-stack-bfs-queue-dfs-recursively
+	*/
+	class Solution257 {
+	public:
+		void dfs(TreeNode* root, string path, vector<string>& result) {
+			if (nullptr == root)
+				return;
+
+			path += to_string(root->val);
+
+			if (nullptr == root->left && nullptr == root->right)
+				result.push_back(path);
+			else {
+				dfs(root->left, path + "->", result);
+				dfs(root->right, path + "->", result);
+			}
+		}
+
+		vector<string> binaryTreePaths(TreeNode* root) {
+			vector<string> result;
+
+			dfs(root, "", result);
+
+			return result;
+		}
+	};
+	/*257. Binary Tree Paths end */
+
+
+	/*293. Flip Game (easy)
+	https://leetcode.com/problems/flip-game/
+	https://discuss.leetcode.com/topic/27190/8-lines-c-7-lines-python
+	*/
+	class Solution293 {
+	public:
+		vector<string> generatePossibleNextMoves(string s) {
+			vector<string> result;
+
+			if (s.empty())
+				return result;
+
+			for (int i = 0; i < s.size() - 1; ++i) {
+				if ('+' == s[i] && '+' == s[i + 1]) {
+					s[i] = s[i + 1] = '-';
+					result.push_back(s);
+					s[i] = s[i + 1] = '+';
+				}
+			}
+
+			return result;
+		}
+	};
+	/*293. Flip Game end */
+
+
+
+	/*249. Group Shifted Strings (easy)
+	https://leetcode.com/problems/group-shifted-strings/
+	https://discuss.leetcode.com/topic/20823/4ms-easy-c-solution-with-explanations
+	*/
+	class Solution249 {
+	public:
+		bool check(const string& str1, const string& str2) {
+			if (str1.size() != str2.size())
+				return false;
+
+			int dif1, dif2;
+			for (int i = 1; i < str1.size(); ++i) {
+				dif1 = (str1[i] + 26 - str1[i - 1]) % 26;
+				dif2 = (str2[i] + 26 - str2[i - 1]) % 26;
+
+				if (dif1 != dif2)
+					return false;
+			}
+
+			return true;
+		}
+
+		vector<vector<string>> groupStrings(vector<string>& strings) {
+			vector<vector<string>> result;
+			unordered_map<string, vector<string>> map;
+
+			for (auto item : strings) {
+				if (map.empty())
+					map[item].push_back(item);
+				else {
+					bool found = false;
+					for (auto it = map.begin(); it != map.end(); ++it) {
+						if (check(it->first, item)) {
+							map[it->first].push_back(item);
+							found = true;
+							break;
+						}
+					}
+
+					if (!found)
+						map[item].push_back(item);
+				}
+			}
+
+			for (auto it : map)
+				result.push_back(it.second);
+
+			return result;
+		}
+
+		vector<vector<string>> groupStrings1(vector<string>& strings) {
+			unordered_map<string, vector<string>> map;
+			vector<vector<string>> result;
+
+			for (auto item : strings)
+				map[shift(item)].push_back(item);
+
+			for (auto item : map)
+				result.push_back(item.second);
+
+
+			return result;
+		}
+
+		string shift(const string& str) {
+			string result;
+
+			for (int i = 1; i < str.size(); ++i)
+				result += 'a' + ((str[i] + 26 - str[i - 1]) % 26);
+
+			return result;
+		}
+		static void main() {
+			Solution249* test = new Solution249;
+			vector<vector<string>> result;
+
+			vector<string> strings1 = { "abc", "bcd", "acef", "xyz", "az", "ba", "a", "z" };
+			result = test->groupStrings(strings1);
+			delete test;
+		}
+	};
+	/*249. Group Shifted Strings end */
+
+
 	/*276. Paint Fence (easy)
 	https://leetcode.com/problems/paint-fence/
 	https://discuss.leetcode.com/topic/23463/lucas-formula-maybe-o-1-and-3-4-liners
@@ -515,6 +657,7 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+		Solution249::main();
 		Solution276::main();
 		MovingAverage346::main();
 		Solution231::main();
@@ -13885,7 +14028,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	Solution114::main();
 	Solution106::main();
 	Solution109::main();
-	Solution257::main();
+	DFS::Solution257::main();
 	Solution301::main();
 	Solution126::main();
 	Solution199::main();
@@ -13907,7 +14050,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//PeekingIterator284::main();
 	Stack225::main();
 	MinStack155_2::main();
-	//MinStack155::main();
+	GG::MinStack155::main();
 	Solution329::main();
 	Solution210::main();
 	Solution207::main();
