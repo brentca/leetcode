@@ -34,8 +34,61 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*286. Walls and Gates (medium)
+	https://leetcode.com/problems/walls-and-gates/
+	https://discuss.leetcode.com/topic/25265/java-bfs-solution-o-mn-time
+	https://discuss.leetcode.com/topic/33459/my-short-java-solution-very-easy-to-understand
+	*/
+	class Solution286 {
+	public:
+		void dsf(int i, int j, int dis, vector<vector<int>>& rooms) {
+			vector<pair<int, int>> offset = { { 1, 0 },{ -1, 0 },{ 0, 1 },{ 0, -1 } };
+
+			for (auto item : offset) {
+				int row = i + item.first;
+				int col = j + item.second;
+
+				if (row < 0 || row >= rooms.size() ||
+					col < 0 || col >= rooms[0].size() || rooms[row][col] < dis)
+					continue;
+
+				rooms[row][col] = min(rooms[row][col], dis);
+				dsf(row, col, dis + 1, rooms);
+			}
+		}
+
+		void wallsAndGates(vector<vector<int>>& rooms) {
+			if (rooms.empty() || rooms[0].empty())
+				return;
+
+			int row = rooms.size();
+			int col = rooms[0].size();
+			vector<pair<int, int>> gates;
+
+			for (int i = 0; i < row; ++i)
+				for (int j = 0; j < col; ++j) {
+					if (0 == rooms[i][j])
+						dsf(i, j, 1, rooms);
+				}
+		}
+
+		static void main() {
+			Solution286* test = new Solution286;
+			vector<vector<int>> rooms = { {2147483647,-1,0,2147483647},
+										  {2147483647,2147483647,2147483647,-1},
+										  {2147483647,-1,2147483647,-1},
+										  {0,-1,2147483647,2147483647} };
+
+			test->wallsAndGates(rooms);
+			delete test;
+		}
+	};
+	/*286. Walls and Gates end */
+
+
 	/*353. Design Snake Game (medium)
 	https://leetcode.com/problems/design-snake-game/
+	https://discuss.leetcode.com/topic/47385/c-straightforward-solution
 	*/
 	class SnakeGame353 {
 	public:
@@ -51,8 +104,6 @@ namespace GG {
 			m_body.push_back(make_pair(0, 0));
 			for (auto item : food)
 				m_food.push(item);
-
-			m_score = 0;
 		}
 
 		/** Moves the snake.
@@ -60,25 +111,24 @@ namespace GG {
 		@return The game's score after the move. Return -1 if game over.
 		Game over when snake crosses the screen boundary or bites its body. */
 		int move(string direction) {
-			int result;
 			pair<int, int> newpos(m_body.front());
 
 			switch (direction[0])
 			{
 			case 'U':
-				--newpos.second;
-				break;
-
-			case 'D':
-				++newpos.second;
-				break;
-
-			case 'L':
 				--newpos.first;
 				break;
 
-			case 'R':
+			case 'D':
 				++newpos.first;
+				break;
+
+			case 'L':
+				--newpos.second;
+				break;
+
+			case 'R':
+				++newpos.second;
 				break;
 
 			default:
@@ -86,25 +136,23 @@ namespace GG {
 			}
 
 			//check pos
-			if (newpos.first < 0 || newpos.first >= m_width ||
-				newpos.second < 0 || newpos.second >= m_height)
+			if (newpos.first < 0 || newpos.first >= m_height ||
+				newpos.second < 0 || newpos.second >= m_width)
 				return -1;
 
 			//check body
-			for (auto item : m_body) {
-				if (item.first == newpos.first && item.second == newpos.second)
+			for (int i = 0; i < m_body.size() - 1; ++i) {
+				if (m_body.at(i).first == newpos.first && m_body.at(i).second == newpos.second)
 					return -1;
 			}
 
 			m_body.push_front(newpos);
-			if (!m_food.empty() && m_food.front().first == newpos.first && m_food.front().second == newpos.second) {
+			if (!m_food.empty() && m_food.front().first == newpos.first && m_food.front().second == newpos.second)
 				m_food.pop();
-				++m_score;
-			}
 			else
 				m_body.pop_back();
 
-			return m_score;
+			return m_body.size() - 1;
 		}
 
 		static void main() {
@@ -127,7 +175,6 @@ namespace GG {
 		int m_width;
 		int m_height;
 		deque<pair<int, int>> m_body;
-		int m_score;
 		queue<pair<int, int>> m_food;
 	};
 
@@ -949,6 +996,7 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+		Solution286::main();
 		SnakeGame353::main();
 		Solution313::main();
 		Solution270::main();
