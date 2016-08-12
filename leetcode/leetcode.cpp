@@ -34,6 +34,202 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*377. Combination Sum IV (medium)
+	https://leetcode.com/problems/combination-sum-iv/
+	https://discuss.leetcode.com/topic/52302/1ms-java-dp-solution-with-detailed-explanation
+	https://discuss.leetcode.com/topic/52186/my-3ms-java-dp-solution
+	*/
+	class Solution377 {
+	public:
+		int combination(vector<int>& nums, int target, int val) {
+			if (target == val)
+				return 1;
+
+			int count = 0;
+			for (auto item : nums) {
+				if (val + item > target)
+					break;
+
+				count += combination(nums, target, val + item);
+			}
+
+			return count;
+		}
+
+		int combinationSum4(vector<int>& nums, int target) {
+			if (nums.empty() || nums[0] > target)
+				return 0;
+
+			sort(nums.begin(), nums.end());
+			return combination(nums, target, 0);
+		}
+
+		static void main() {
+			Solution377* test = new Solution377;
+			int result;
+			vector<int> nums1 = { 1, 2, 4 };
+			int target1 = 32;
+
+			result = test->combinationSum4(nums1, target1);
+			delete test;
+		}
+	};
+	/*377. Combination Sum IV end */
+
+
+	/*323. Number of Connected Components in an Undirected Graph (medium)
+	https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/
+	https://www.youtube.com/watch?v=9pIvy6fksHs&index=4&list=PLUX6FBiUa2g4YWs6HkkCpXL6ru02i7y3Q
+	https://discuss.leetcode.com/topic/32752/easiest-2ms-java-solution
+	*/
+	class Solution323 {
+	public:
+		int countComponents(int n, vector<pair<int, int>>& edges) {
+			vector<int> root(n);
+
+			for (int i = 0; i < n; ++i)
+				root[i] = i;
+
+			for (auto item : edges) {
+				int p = item.first;
+				int q = item.second;
+
+				int rootp = findroot(root, p);
+				int rootq = findroot(root, q);
+
+				if (rootp != rootq) {
+					--n;
+					root[rootp] = rootq;
+				}
+			}
+
+			return n;
+		}
+
+		int findroot(vector<int>&root, int id) {
+			while (id != root[id])
+				id = root[id];
+
+			return id;
+		}
+
+
+		int countComponents1(int n, vector<pair<int, int>>& edges) {
+			vector<bool> flag(n, false);
+			queue<int> nodes;
+			int result = 0;
+			unordered_map<int, unordered_set<int>> maps;
+
+			for (auto item : edges) {
+				maps[item.first].insert(item.second);
+				maps[item.second].insert(item.first);
+			}
+
+			for (auto item : maps) {
+				if (flag[item.first])
+					continue;
+
+				++result;
+				nodes.push(item.first);
+				while (!nodes.empty()) {
+					int cur = nodes.front();
+					flag[cur] = true;
+					nodes.pop();
+
+					for (auto next : maps[cur]) {
+						if (!flag[next])
+							nodes.push(next);
+					}
+				}
+			}
+
+			for (auto item : flag) {
+				if (!item)
+					++result;
+			}
+
+			return result;
+		}
+	};
+	/*323. Number of Connected Components in an Undirected Graph end */
+
+
+	/*163. Missing Ranges (medium)
+	https://leetcode.com/problems/missing-ranges/
+	https://discuss.leetcode.com/topic/18612/accepted-java-solution-with-explanation
+	*/
+	class Solution163 {
+	public:
+		//[0, 1, 3, 50, 75], lower = 0 and upper = 99, return ["2", "4->49", "51->74", "76->99"].
+		vector<string> findMissingRanges(vector<int>& nums, int lower, int upper) {
+			vector<string> result;
+			int next = lower;
+
+			for (int i = 0; i < nums.size(); ++i) {
+				if (nums[i] < lower)
+					continue;
+
+				if (nums[i] == next) {
+					++next;
+					continue;
+				}
+
+				next == nums[i] - 1 ? result.push_back(to_string(next)):
+									  result.push_back(to_string(next) + "->" + to_string(nums[i] - 1));
+
+				next = nums[i] + 1;
+			}
+
+			if (next <= upper)
+				next == upper ? result.push_back(to_string(next)) :
+				result.push_back(to_string(next) + "->" + to_string(upper));
+
+			return result;
+		}
+
+		vector<string> findMissingRanges1(vector<int>& nums, int lower, int upper) {
+			vector<string> result;
+
+			if (nums.empty()) {
+
+				if (lower == upper)
+					result.push_back(to_string(lower));
+				else
+					result.push_back(to_string(lower) + "->" + to_string(upper));
+				return result;
+			}
+
+			if (nums[0] > lower + 1)
+				result.push_back(to_string(lower) + "->" + to_string(nums[0] - 1));
+			else if (nums[0] > lower)
+				result.push_back(to_string(lower));
+
+			int lastpos = nums[0];
+			int len = nums.size();
+
+			for (int i = 0; i < len; ++i) {
+				if (nums[i] > lastpos + 2)
+					result.push_back(to_string(lastpos + 1) + "->" + to_string(nums[i] - 1));
+				else if (nums[i] > lastpos + 1)
+					result.push_back(to_string(lastpos + 1));
+
+				while (i < len - 1 && nums[i + 1] == nums[i] + 1)
+					++i;
+
+				lastpos = nums[i];
+			}
+
+			if (upper > nums[len - 1] + 1)
+				result.push_back(to_string(nums[len - 1] + 1) + "->" + to_string(upper));
+			else if (upper > nums[len - 1])
+				result.push_back(to_string(nums[len - 1] + 1));
+
+			return result;
+		}
+	};
+	/*163. Missing Ranges end */
+
+
 	/*286. Walls and Gates (medium)
 	https://leetcode.com/problems/walls-and-gates/
 	https://discuss.leetcode.com/topic/25265/java-bfs-solution-o-mn-time
@@ -57,7 +253,7 @@ namespace GG {
 			}
 		}
 
-		void wallsAndGates(vector<vector<int>>& rooms) {
+		void wallsAndGates1(vector<vector<int>>& rooms) {
 			if (rooms.empty() || rooms[0].empty())
 				return;
 
@@ -72,14 +268,62 @@ namespace GG {
 				}
 		}
 
+		void wallsAndGates(vector<vector<int>>& rooms) {
+			if (rooms.empty() || rooms[0].empty())
+				return;
+
+			int row = rooms.size();
+			int col = rooms[0].size();
+			queue<pair<int, int>> nodes;
+
+			for (int i = 0; i < row; ++i) {
+				for (int j = 0; j < col; ++j) {
+					if (rooms[i][j] == 0) 
+						nodes.push(make_pair(i, j));
+				}
+			}
+
+			//the queue starts from gates
+			//the next nearest level always in the top of queue
+			//so next possible position will be always nearest 
+			while (!nodes.empty()) {
+				int i = nodes.front().first;
+				int j = nodes.front().second;
+				nodes.pop();
+
+				if (i > 0 && INT_MAX == rooms[i - 1][j]) {
+					rooms[i - 1][j] = rooms[i][j] + 1;
+					nodes.push(make_pair(i, j));
+				}
+
+				if (i < row - 1 && INT_MAX == rooms[i + 1][j]) {
+					rooms[i + 1][j] = rooms[i][j] + 1;
+					nodes.push(make_pair(i + 1, j));
+				}
+
+				if (j > 0 && INT_MAX == rooms[i][j - 1]) {
+					rooms[i][j - 1] = rooms[i][j] + 1;
+					nodes.push(make_pair(i, j - 1));
+				}
+
+				if (j < col - 1 && INT_MAX == rooms[i][j + 1]) {
+					rooms[i][j + 1] = rooms[i][j] + 1;
+					nodes.push(make_pair(i, j + 1));
+				}
+			}
+		}
+
 		static void main() {
 			Solution286* test = new Solution286;
-			vector<vector<int>> rooms = { {2147483647,-1,0,2147483647},
-										  {2147483647,2147483647,2147483647,-1},
-										  {2147483647,-1,2147483647,-1},
-										  {0,-1,2147483647,2147483647} };
+			vector<vector<int>> rooms1 = { { INT_MAX, -1, 0, INT_MAX },
+											{ INT_MAX, INT_MAX, INT_MAX, -1 },
+											{ INT_MAX, -1, INT_MAX, -1 },
+											{ 0, -1, INT_MAX, INT_MAX } };
 
-			test->wallsAndGates(rooms);
+			vector<vector<int>> rooms2 = { { -1, INT_MAX, 0},
+											{ INT_MAX, -1, INT_MAX},
+											{ INT_MAX, 0, INT_MAX}};
+			test->wallsAndGates(rooms2);
 			delete test;
 		}
 	};
@@ -996,6 +1240,7 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+		Solution377::main();
 		Solution286::main();
 		SnakeGame353::main();
 		Solution313::main();
