@@ -28,10 +28,76 @@ namespace GG {
 		TreeNode(int x) : val(x), left(NULL), right(NULL) {}
 	};
 
+	struct ListNode {
+		int val;
+		ListNode* next;
+		ListNode(int x) : val(x), next(NULL) {}
+	};
 
 	/*66. Plus One (medium)
 	*/
 	/*66. Plus One end */
+
+
+	/*382. Linked List Random Node (medium)
+	https://leetcode.com/problems/linked-list-random-node/
+	https://discuss.leetcode.com/topic/53753/brief-explanation-for-reservoir-sampling
+	https://en.wikipedia.org/wiki/Reservoir_sampling
+	*/
+	class Solution382 {
+	public:
+		/** @param head The linked list's head.
+		Note that the head is guaranteed to be not null, so it contains at least one node. */
+		Solution382(ListNode* head) {
+			nodes = head;
+		}
+
+		/** Returns a random node's value. */
+		int getRandom() {
+			int val = nodes->val;
+			int i = 2;
+			ListNode* cur = nodes->next;
+
+			while (cur) {
+				int j = rand() % i;
+
+				if (0 == j)
+					val = cur->val;
+
+				++i;
+				cur = cur->next;
+			}
+
+			return val;
+		}
+
+		ListNode* nodes;
+	};
+	/*382. Linked List Random Node end */
+
+
+	/*274. H-Index (medium)
+	https://leetcode.com/problems/h-index/
+	https://discuss.leetcode.com/topic/23307/my-o-n-time-solution-use-java
+	*/
+	class Solution274 {
+	public:
+		int hIndex(vector<int>& citations) {
+			int result = 0;
+
+			int len = citations.size();
+			sort(citations.begin(), citations.end());
+			for (int i = 0; i < len; ++i) {
+				if (len - i > citations[i])
+					result = max(result, citations[i]);
+				else
+					result = max(result, len - i);
+			}
+
+			return result;
+		}
+	};
+	/*274. H-Index end */
 
 
 	/*377. Combination Sum IV (medium)
@@ -41,27 +107,47 @@ namespace GG {
 	*/
 	class Solution377 {
 	public:
-		int combination(vector<int>& nums, int target, int val) {
-			if (target == val)
+		int combination(vector<int>& nums, int target) {
+			if (0 == target)
 				return 1;
 
 			int count = 0;
 			for (auto item : nums) {
-				if (val + item > target)
+				if (item > target)
 					break;
 
-				count += combination(nums, target, val + item);
+				count += combination(nums, target - item);
 			}
 
 			return count;
 		}
 
-		int combinationSum4(vector<int>& nums, int target) {
-			if (nums.empty() || nums[0] > target)
+		int combinationSum41(vector<int>& nums, int target) {
+			if (nums.empty())
 				return 0;
 
 			sort(nums.begin(), nums.end());
-			return combination(nums, target, 0);
+			return combination(nums, target);
+		}
+
+		int combinationSum4(vector<int>& nums, int target) {
+			if (nums.empty())
+				return 0;
+
+			vector<int> dp(target + 1, 0);
+
+			//target 0 has only 1 empty combination
+			dp[0] = 1;
+			for (int i = 1; i < dp.size(); ++i) {
+				for (auto it : nums) {
+					if (i >= it)
+					{
+						dp[i] += dp[i - it];
+					}
+				}
+			}
+
+			return dp[target];
 		}
 
 		static void main() {
