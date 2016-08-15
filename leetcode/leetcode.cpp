@@ -34,9 +34,66 @@ namespace GG {
 		ListNode(int x) : val(x), next(NULL) {}
 	};
 
+	struct UndirectedGraphNode {
+		int label;
+		vector<UndirectedGraphNode *> neighbors;
+		UndirectedGraphNode(int x) : label(x) {};
+	};
+
 	/*66. Plus One (medium)
 	*/
 	/*66. Plus One end */
+
+
+	/*133. Clone Graph (medium)
+	https://leetcode.com/problems/clone-graph/
+	*/
+	class Solution133 {
+	public:
+		UndirectedGraphNode *copyNode(UndirectedGraphNode *node, unordered_map<int, UndirectedGraphNode *>& visit) {
+			UndirectedGraphNode* cur = new UndirectedGraphNode(node->label);
+			visit[node->label] = cur;
+
+			for (auto it : node->neighbors) {
+				if (visit.count(it->label) < 1)
+					cur->neighbors.push_back(copyNode(it, visit));
+				else
+					cur->neighbors.push_back(visit[it->label]);
+			}
+
+			return cur;
+		}
+
+		UndirectedGraphNode *cloneGraph(UndirectedGraphNode *node) {
+			if (nullptr == node)
+				return nullptr;
+
+			unordered_map<int, UndirectedGraphNode *> visit;
+
+			return copyNode(node, visit);
+		}
+	};
+	/*133. Clone Graph end */
+
+
+	/*50. Pow(x, n) (medium)
+	https://leetcode.com/problems/powx-n/
+	https://discuss.leetcode.com/topic/5425/short-and-easy-to-understand-solution/25
+	*/
+	class Solution50 {
+	public:
+		double myPow(double x, int n) {
+			if (0 == n)
+				return 1;
+
+			if (n < 0) {
+				return 1 / x * myPow(1 / x, -(++n));
+			}
+
+			return (0 == n % 2) ? myPow(x*x, n / 2) : x * myPow(x*x, n / 2);
+		}
+	};
+	/*50. Pow(x, n) */
 
 
 	/*31. Next Permutation (medium)
@@ -14974,7 +15031,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	Solution102::main();
 	Solution101::main();
 	Solution310::main();
-	Solution133::main();
+	//Solution133::main();
 	Codec297::main();
 	LRUCache146::main();
 	Solution128::main();
