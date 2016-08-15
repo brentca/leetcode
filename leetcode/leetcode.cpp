@@ -39,6 +39,269 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*31. Next Permutation (medium)
+	https://leetcode.com/problems/next-permutation/
+	https://discuss.leetcode.com/topic/2542/share-my-o-n-time-solution
+	https://discuss.leetcode.com/topic/15216/a-simple-algorithm-from-wikipedia-with-c-implementation-can-be-used-in-permutations-and-permutations-ii
+	*/
+	class Solution31 {
+	public:
+		void nextPermutation1(vector<int>& nums) {
+			if (nums.size() <= 1)
+				return;
+
+			int len = nums.size() - 1, start;
+			int swap1 = -1, swap2;
+			while (len >= 0) {
+				for (start = len - 1; start >= 0; --start) {
+					if (nums[len] > nums[start])
+						break;
+				}
+
+				if (start >= 0 && start > swap1) {
+					swap1 = start;
+					swap2 = len;
+				}
+
+				--len;
+			}
+
+			if (swap1 < 0)
+				sort(nums.begin(), nums.end());
+			else {
+				int tmp = nums[swap2];
+				nums[swap2] = nums[swap1];
+				nums[swap1] = tmp;
+
+				sort(nums.begin() + swap1 + 1, nums.end());
+			}
+		}
+
+		void nextPermutation(vector<int>& nums) {
+			if (nums.size() <= 1)
+				return;
+
+			int index = nums.size() - 1;
+
+			while (index > 0) {
+				if (nums[index - 1] < nums[index])
+					break;
+
+				--index;
+			}
+
+			if (index == 0)
+				reversesort(nums, 0, nums.size() - 1);
+			else {
+				int val = nums[index - 1];
+				int j = nums.size() - 1;
+
+				while (j >= index) {
+					if (nums[j] > val)
+						break;
+
+					--j;
+				}
+
+				nums[index - 1] = nums[j];
+				nums[j] = val;
+				reversesort(nums, index, nums.size() - 1);
+			}
+		}
+
+		void reversesort(vector<int>& nums, int start, int end) {
+			if (start >= end)
+				return;
+
+			for (int i = start; i <= (start + (end - start) / 2); ++i) {
+				int tmp = nums[i];
+				nums[i] = nums[end + start - i];
+				nums[end + start - i] = tmp;
+			}
+		}
+	};
+	/*31. Next Permutation end */
+
+
+	/*22. Generate Parentheses (medium)
+	https://leetcode.com/problems/generate-parentheses/
+	https://discuss.leetcode.com/topic/4485/concise-recursive-c-solution/2
+	https://discuss.leetcode.com/topic/3474/an-iterative-method
+	*/
+	class Solution22 {
+	public:
+		vector<string> res;
+
+		vector<string> generateParenthesis(int n) {
+			string str;
+			generate(n, 0, 0, str);
+
+			return res;
+		}
+
+		void generate(int n, int left, int right, string str) {
+			if (left == n && right == n)
+				res.push_back(str);
+
+			if (left < n)
+				generate(n, left + 1, right, str + "(");
+
+			if (right < n && right < left)
+				generate(n, left, right + 1, str + ")");
+		}
+
+		vector<string> generateParenthesis1(int n) {
+			vector<string> result;
+
+			if (n < 1)
+				return result;
+
+			vector<vector<string>> f(n + 1);
+
+			f[0].push_back("");
+
+			for (int i = 1; i < n + 1; ++i) {
+				for (int j = 0; j < i; ++j)
+					for (auto item1 : f[j])
+						for (auto item2 : f[i - j - 1])
+							f[i].push_back("(" + item1 + ")" + item2);
+			}
+
+			return f[n];
+		}
+	};
+	/*22. Generate Parentheses end */
+
+
+	/*17. Letter Combinations of a Phone Number (medium)
+	https://leetcode.com/problems/letter-combinations-of-a-phone-number/
+	https://discuss.leetcode.com/topic/8465/my-java-solution-with-fifo-queue
+	*/
+	class Solution17 {
+	public:
+		vector<string> letterCombinations(string digits) {
+			vector<string> result;
+
+			if (digits.empty())
+				return result;
+
+			result.push_back("");
+			vector<string> strmap = { "", "","abc","def","ghi","jkl","mno","pqrs","tuv","wxyz" };
+
+			for (auto item : digits) {
+				if (item < '2' || item > '9')
+					continue;
+
+				string candidate = strmap[item - '0'];
+				vector<string> tmp;
+
+				for (auto front : result) {
+					for (auto after : candidate)
+						tmp.push_back(front + after);
+				}
+
+				result.swap(tmp);
+			}
+
+			return result;
+		}
+	};
+	/*17. Letter Combinations of a Phone Number end */
+
+
+	/*309. Best Time to Buy and Sell Stock with Cooldown (medium)
+	https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/
+	https://discuss.leetcode.com/topic/30421/share-my-thinking-process
+	*/
+	class Solution309 {
+	public:
+		int maxProfit(vector<int>& prices) {
+			int size = prices.size();
+			if (size < 2)
+				return 0;
+
+			int sell_pre = 0;
+			int sell = 0;
+			int buy_pre;// = -prices[0];
+			int buy = -prices[0];// = max(buy_pre, -price[1]);
+
+			for (int i = 0; i < size; ++i) {
+				buy_pre = buy;
+				buy = max(sell_pre - prices[i], buy_pre);
+
+				sell_pre = sell;
+				sell = max(sell_pre, buy_pre + prices[i]);
+			}
+
+			return sell;
+		}
+	};
+	/*309. Best Time to Buy and Sell Stock with Cooldown end */
+
+
+	/*357. Count Numbers with Unique Digits (medium)
+	https://leetcode.com/problems/count-numbers-with-unique-digits/
+	https://discuss.leetcode.com/topic/47983/java-dp-o-1-solution/2
+	https://discuss.leetcode.com/topic/48332/java-o-1-with-explanation
+	*/
+	class Solution357 {
+	public:
+		int countNumbersWithUniqueDigits(int n) {
+			if (0 == n)     
+				return 1;
+
+			int res = 10;
+			int uniqueDigits = 9;
+			int availableNumber = 9;
+			while (n-- > 1 && availableNumber > 0) {
+				uniqueDigits = uniqueDigits * availableNumber;
+				res += uniqueDigits;
+				availableNumber--;
+			}
+
+			return res;
+		}
+	};
+	/*357. Count Numbers with Unique Digits end */
+
+
+	/*54. Spiral Matrix (medium)
+	https://leetcode.com/problems/spiral-matrix/
+	https://discuss.leetcode.com/topic/15558/a-concise-c-implementation-based-on-directions
+	https://discuss.leetcode.com/topic/3713/super-simple-and-easy-to-understand-solution
+	*/
+	class Solution54 {
+	public:
+		vector<int> spiralOrder(vector<vector<int>>& matrix) {
+			vector<int> ret;
+
+			if (matrix.empty() || matrix[0].empty())
+				return ret;			
+
+			int row = matrix.size();
+			int col = matrix[0].size();
+
+			vector<int> nstep = { col, row - 1 };
+			vector<pair<int, int>> direct = { {0, 1}, {1, 0}, {0, -1}, {-1, 0} };
+
+			int cur = 0;
+			int irow = 0, icol = -1;
+
+			while (nstep[cur % 2]) {
+				for (int i = 0; i < nstep[cur % 2]; ++i) {
+					irow += direct[cur].first;
+					icol += direct[cur].second;
+				}
+
+				--nstep[cur % 2];
+				cur = (cur + 1) % 4;
+			}
+		}
+	};
+
+	/*54. Spiral Matrix end */
+
+
 	/*382. Linked List Random Node (medium)
 	https://leetcode.com/problems/linked-list-random-node/
 	https://discuss.leetcode.com/topic/53753/brief-explanation-for-reservoir-sampling
