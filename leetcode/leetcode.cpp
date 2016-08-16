@@ -45,8 +45,297 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*200. Number of Islands (medium)
+	https://leetcode.com/problems/number-of-islands/
+	https://discuss.leetcode.com/topic/11589/dfs-and-bfs-in-c
+	*/
+	class Solution200 {
+	public:
+		void expandIsland(vector<vector<char>>& grid, int i, int j) {
+			int row = grid.size();
+			int col = grid[0].size();
+
+			if (i < 0 || j < 0 || i >= row || j >= col || '1' != grid[i][j])
+				return;
+
+			grid[i][j] = '3';
+			expandIsland(grid, i + 1, j);
+			expandIsland(grid, i - 1, j);
+			expandIsland(grid, i, j + 1);
+			expandIsland(grid, i, j - 1);
+		}
+
+		int numIslands1(vector<vector<char>>& grid) {
+			if (grid.empty() || grid[0].empty())
+				return 0;
+
+			int result = 0;
+			int row = grid.size();
+			int col = grid[0].size();
+
+			for (int i = 0; i < row; ++i)
+			for (int j = 0; j < col; ++j) {
+				if ('1' == grid[i][j]) {
+					++result;
+					expandIsland(grid, i, j);
+				}
+			}
+
+			return result;
+		}
+
+		int numIslands2(vector<vector<char>>& grid) {
+			if (grid.empty() || grid[0].empty())
+				return 0;
+
+			int result = 0;
+			int row = grid.size();
+			int col = grid[0].size();
+
+			queue<pair<int, int>> points;
+
+			int step = 0, total = row * col;
+			while (step < total) {
+				if ('1' == grid[step / col][step % col]) {
+					++result;
+					points.push(make_pair(step / col, step % col));
+					grid[step / col][step % col] = '0';
+
+					while (!points.empty()) {
+						int i = points.front().first;
+						int j = points.front().second;
+
+						points.pop();
+						if (i > 0 && '1' == grid[i - 1][j]) {
+							points.push(make_pair(i - 1, j));
+							grid[i - 1][j] = '0';
+						}
+
+						if (j > 0 && '1' == grid[i][j - 1]) {
+							points.push(make_pair(i, j - 1));
+							grid[i][j - 1] = '0';
+						}
+
+						if (i < row - 1 && '1' == grid[i + 1][j]) {
+							points.push(make_pair(i + 1, j));
+							grid[i + 1][j] = '0';
+						}
+
+						if (j < col - 1 && '1' == grid[i][j + 1]) {
+							points.push(make_pair(i, j + 1));
+							grid[i][j + 1] = '0';
+						}
+					}
+				}
+
+				++step;
+			}
+
+			return result;
+		}
+
+
+		int findIsland(vector<int>& roots, int id) {
+			while (id != roots[id]) id = roots[id];
+			return id;
+		}
+
+
+		int numIslands(vector<vector<char>>& grid) {
+			if (grid.empty() || grid[0].empty())
+				return 0;
+
+			int result;
+			int row = grid.size();
+			int col = grid[0].size();
+			vector<int> root(row*col, -1);
+			vector<pair<int, int>> direct = { { 0, 1 }, { 1, 0 }, { -1, 0 }, { 0, -1 } };
+
+			for (int i = 0; i < row; ++i)
+			for (int j = 0; j < col; ++j){
+				int pos = i * row + j;
+
+				if ('0' == grid[i][j])
+					continue;
+
+				++result;
+				for (auto item : direct) {
+					int cur_i = i + item.first;
+					int cur_j = j + item.second;
+
+					if (cur_i < 0 || cur_j < 0 || cur_i >= row || cur_j >= col ||
+						'0' == grid[i][j])
+						continue;
+
+					if (-1 == root[cur_i * row + col]) {
+
+				}
+			}
+				//aux[i * row + j] = i * row + j;
+
+		}
+		static void main() {
+			Solution200* test = new Solution200;
+			int result;
+
+			vector<vector<char>> grid1 = { { '1', '1', '1', '1', '0' }, 
+			{ '1', '1', '0', '1', '0' }, { '1', '1', '0', '0', '0' },
+			{ '0', '0', '0', '0', '0' } };
+
+			vector<vector<char>> grid2 = { { '1', '0', '1', '1', '0', '1', '1' } };
+				result = test->numIslands(grid2);
+			delete test;
+		}
+	};
+	/*200. Number of Islands end */
+
+
+	/*173. Binary Search Tree Iterator (medium)
+	https://leetcode.com/problems/binary-search-tree-iterator/
+	https://discuss.leetcode.com/topic/6575/my-solutions-in-3-languages-with-stack
+	*/
+	class BSTIterator173 {
+	public:
+		BSTIterator173(TreeNode *root) {
+			pushall(root);
+		}
+
+		/** @return whether we have a next smallest number */
+		bool hasNext() {
+			return !nodes.empty();
+		}
+
+		/** @return the next smallest number */
+		int next() {
+			TreeNode *cur = nodes.top();
+			nodes.pop();
+			pushall(cur->right);
+			return cur->val;
+		}
+
+	private:
+		void pushall(TreeNode *cur) {
+			for (; nullptr != cur; nodes.push(cur), cur = cur->left)
+				;
+		}
+		stack<TreeNode*> nodes;
+	};
+	/*173. Binary Search Tree Iterator end */
+
+
+	/*162. Find Peak Element (medium)
+	https://leetcode.com/problems/find-peak-element/
+	https://discuss.leetcode.com/topic/5724/find-the-maximum-by-binary-search-recursion-and-iteration
+	https://discuss.leetcode.com/topic/5848/o-logn-solution-javacode
+	*/
+	class Solution162 {
+	public:
+		int findPeak(vector<int>& nums, int low, int high) {
+			if (low == high)
+				return low;
+			else if (low + 1 == high)
+				return nums[high] > nums[low] ? high : low;
+			else {
+				int mid = low + (high - low) / 2;
+
+				if (nums[mid] > nums[mid + 1] && nums[mid] > nums[mid - 1])
+					return mid;
+				else if (nums[mid] < nums[mid + 1] && nums[mid] > nums[mid - 1])
+					return findPeak(nums, mid + 1, high);
+				else
+					return findPeak(nums, low, mid - 1);
+			}
+		}
+
+		int findPeakElement(vector<int>& nums) {
+			return findPeak(nums, 0, nums.size() - 1);
+		}
+	};
+	/*162. Find Peak Element end */
+
+	/*139. Word Break (medium)
+	https://leetcode.com/problems/word-break/
+	https://discuss.leetcode.com/topic/6156/java-implementation-using-dp-in-two-ways
+	*/
+	class Solution139 {
+	public:
+		bool wordBreak(string s, unordered_set<string>& wordDict) {
+			if (wordDict.empty())
+				return false;
+
+			vector<bool> dp(s.size() + 1, false);
+
+			dp[0] = true;
+			for (int i = 1; i <= s.size(); ++i) {
+				for (int j = i - 1; j >= 0; --j) {
+					if (dp[j]) {
+						if (wordDict.count(s.substr(j, i - j)) > 0) {
+							dp[i] = true;
+							break;
+						}
+					}
+				}
+			}
+
+			return dp[s.size()];
+		}
+
+		bool wordBreak1(string s, unordered_set<string>& wordDict) {
+			if (s.empty() || wordDict.empty())
+				return true;
+
+			std::size_t found;
+			for (auto item : wordDict)
+			{
+				found = s.find(item);
+				if (found != std::string::npos)
+				{
+					bool bleft = true;
+					bool bright = true;
+					if (found != 0)
+					{
+						string strleft = s.substr(0, found);
+						bleft = wordBreak(strleft, wordDict);
+					}
+
+					if (found + item.size() < s.size())
+					{
+						string strleft = s.substr(found + item.size(), s.size() - found - item.size());
+						bright = wordBreak(strleft, wordDict);
+					}
+
+					if (bleft && bright)
+						return true;
+				}
+			}
+
+			return false;
+		}
+
+		/*this will time out*/
+		bool wordBreak2(string s, unordered_set<string>& wordDict) {
+			if (s.empty())
+				return true;
+
+			for (auto item : wordDict) {
+				int len = s.size();
+				bool found = false;
+				if (len >= item.size() && s.substr(0, item.size()) == item)
+					found = wordBreak1(s.substr(item.size()), wordDict);
+
+				if (found)
+					return true;
+			}
+
+			return false;
+		}
+	};
+	/*139. Word Break end */
+
+
 	/*133. Clone Graph (medium)
 	https://leetcode.com/problems/clone-graph/
+	https://discuss.leetcode.com/topic/4690/simple-java-iterative-bfs-solution-with-hashmap-and-queue/2
 	*/
 	class Solution133 {
 	public:
@@ -64,13 +353,42 @@ namespace GG {
 			return cur;
 		}
 
-		UndirectedGraphNode *cloneGraph(UndirectedGraphNode *node) {
+		UndirectedGraphNode *cloneGraph1(UndirectedGraphNode *node) {
 			if (nullptr == node)
 				return nullptr;
 
 			unordered_map<int, UndirectedGraphNode *> visit;
 
 			return copyNode(node, visit);
+		}
+
+		UndirectedGraphNode *cloneGraph(UndirectedGraphNode *node) {
+			if (nullptr == node)
+				return nullptr;
+
+			unordered_map<int, UndirectedGraphNode *> visit;
+
+			queue<UndirectedGraphNode *> qnode;
+			qnode.push(node);
+			UndirectedGraphNode* clonenode = new UndirectedGraphNode(node->label);
+			visit[node->label] = clonenode;
+
+			while (!qnode.empty()) {
+				UndirectedGraphNode * cur = qnode.front();
+				qnode.pop();
+
+				for (auto item : cur->neighbors) {
+					if (visit.count(item->label) < 1) {
+						UndirectedGraphNode* tmp = new UndirectedGraphNode(item->label);
+						visit[item->label] = tmp;
+						qnode.push(item);
+					}
+
+					visit[cur->label]->neighbors.push_back(visit[item->label]);
+				}
+			}
+
+			return clonenode;
 		}
 	};
 	/*133. Clone Graph end */
@@ -1646,6 +1964,7 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+		Solution200::main();
 		Solution377::main();
 		Solution286::main();
 		SnakeGame353::main();
@@ -15035,11 +15354,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	Codec297::main();
 	LRUCache146::main();
 	Solution128::main();
-	Solution200::main();
-	Solution200::main();
+	//Solution200::main();
+	//Solution200::main();
 	Solution130::main();
 	MedianFinder295::main();
-	BSTIterator173::main();
+	//BSTIterator173::main();
 	Twitter355::main();
 	//PeekingIterator284::main();
 	Stack225::main();
