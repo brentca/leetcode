@@ -167,7 +167,7 @@ namespace GG {
 						'0' == grid[i][j])
 						continue;
 
-					if (-1 == root[cur_i * row + col]) {
+					//if (-1 == root[cur_i * row + col]) {
 
 				}
 			}
