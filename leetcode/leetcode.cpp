@@ -36,13 +36,224 @@ namespace GG {
 
 	struct UndirectedGraphNode {
 		int label;
-		vector<UndirectedGraphNode *> neighbors;
 		UndirectedGraphNode(int x) : label(x) {};
+		vector<UndirectedGraphNode *> neighbors;
 	};
 
 	/*66. Plus One (medium)
 	*/
 	/*66. Plus One end */
+
+
+	/*270. Closest Binary Search Tree Value (medium)
+	https://leetcode.com/problems/closest-binary-search-tree-value/
+	https://discuss.leetcode.com/topic/22590/4-7-lines-recursive-iterative-ruby-c-java-python/2
+	*/
+	class Solution270 {
+	public:
+		int closestValue1(TreeNode* root, double target) {
+			int closest = root->val;
+			double diff = std::numeric_limits<double>::max();
+
+			while (root) {
+				double tmp = abs(double(root->val) - target);
+				if (diff >= tmp) {
+					closest = root->val;
+					diff = tmp;
+				}
+				root = target < root->val ? root->left : root->right;
+			}
+
+			return closest;
+		}
+
+		int closestValue(TreeNode* root, double target) {
+			int a = root->val;
+			auto kid = target < root->val ? root->left : root->right;
+
+			if (!kid)
+				return a;
+
+			int b = closestValue(kid, target);
+			return abs(double(a) - target) > abs(double(b) - target) ? b : a;
+		}
+	};
+	/*270. Closest Binary Search Tree Value end */
+
+
+	/*261. Graph Valid Tree (medium)
+	https://leetcode.com/problems/graph-valid-tree/
+	https://discuss.leetcode.com/topic/21712/ac-java-union-find-solution/6
+	http://www.geeksforgeeks.org/union-find/
+	*/
+	class Solution261 {
+	public:
+		bool validTree(int n, vector<pair<int, int>>& edges) {
+			vector<int> roots(n, -1);
+
+			for (auto item : edges) {
+				int x = findroot(roots, item.first);
+				int y = findroot(roots, item.second);
+
+				if (x == y)
+					return false;
+
+				roots[x] = y;
+			}
+
+			//if less than n - 1, there must be multi tree
+			return n - 1 == edges.size();
+		}
+
+		int findroot(vector<int>&roots, int id) {
+			if (-1 == roots[id])
+				return id;
+
+			return findroot(roots, roots[id]);
+		}
+	};
+	/*261. Graph Valid Tree end */
+
+
+	/*259. 3Sum Smaller (medium)
+	https://leetcode.com/problems/3sum-smaller/
+	https://discuss.leetcode.com/topic/23421/simple-and-easy-understanding-o-n-2-java-solution
+	*/
+	class Solution259 {
+	public:
+		int threeSumSmaller(vector<int>& nums, int target) {
+			int result = 0;
+			sort(nums.begin(), nums.end());
+
+			int len = nums.size();
+			for (int i = 0; i < len - 2; ++i) {
+				int j = i + 1, k = len - 1;
+
+				while (j < k) {
+					if (nums[i] + nums[j] + nums[k] < target) {
+						result += k - j;
+						++j;
+					}
+					else
+						--k;
+				}
+			}
+
+			return result;
+		}
+	};
+	/*259. 3Sum Smaller end */
+
+
+
+	/*253. Meeting Rooms II (medium)
+	https://leetcode.com/problems/meeting-rooms-ii/
+	https://discuss.leetcode.com/topic/20958/ac-java-solution-using-min-heap/6
+	*/
+	struct Interval {
+		int start;
+		int end;
+		Interval() : start(0), end(0) {}
+		Interval(int s, int e) : start(s), end(e) {}
+	};
+
+	class Solution253 {
+	public:
+		int minMeetingRooms(vector<Interval>& intervals) {
+			if (intervals.empty())
+				return 0;
+
+			sort(intervals.begin(), intervals.end(), [](Interval& a, Interval& b) { return a.start < b.start; });
+
+			//auto comp = [](Interval a, Interval b) { return a.end < b.end; };
+			//priority_queue<Interval, decltype(comp)> heap(intervals.begin(), intervals.end());
+			priority_queue<int> heap;
+			int result = 1;
+
+			for (auto item : intervals) {
+				while (!heap.empty() && item.start >= -heap.top())
+					heap.pop();
+
+				heap.push(-item.end);
+			}
+
+			return heap.size();
+		}
+
+		static void main() {
+			Solution253* test = new Solution253;
+			int result;
+
+			vector<Interval> intervals1 = { { 0, 30 }, { 15, 20 }, { 5, 10 } };
+			vector<Interval> intervals2 = { { 0, 15 }, { 5, 20 }, { 6, 10 } };
+			vector<Interval> intervals3 = { { 2, 6 }, { 12, 18 }, { 9, 18 }, { 15, 20 } };
+			//result = test->minMeetingRooms(intervals1);
+			//result = test->minMeetingRooms(intervals2);
+			result = test->minMeetingRooms(intervals3);
+			delete test;
+		}
+	};
+	/*253. Meeting Rooms II end */
+
+
+	/*251. Flatten 2D Vector (medium)
+	https://leetcode.com/problems/flatten-2d-vector/
+	https://discuss.leetcode.com/topic/20697/7-9-lines-added-java-and-c-o-1-space
+	*/
+	class Vector2D251 {
+	public:
+		Vector2D251(vector<vector<int>>& vec2d) {
+			it = vec2d.begin();
+			iend = vec2d.end();
+			j = 0;
+		}
+
+		int next() {
+			hasNext();
+
+			return (*it)[j++];
+		}
+
+		bool hasNext() {
+			while (it != iend && j == it->size())
+				it++, j = 0;
+
+			return it != iend;
+		}
+
+		int j;
+		vector<vector<int>>::iterator it;
+		vector<vector<int>>::iterator iend;
+	};
+
+	class Vector2D251_1 {
+	public:
+		Vector2D251_1(vector<vector<int>>& vec2d) {
+			if (!vec2d.empty()) {
+				for (int i = 0; i < vec2d.size(); ++i) {
+					if (vec2d[i].empty())
+						continue;
+
+					for (int j = 0; j < vec2d[i].size(); ++j)
+						data.push_back(vec2d[i][j]);
+				}
+			}
+
+			cur = 0;
+		}
+
+		int next() {
+			return data[cur++];
+		}
+
+		bool hasNext() {
+			return cur < data.size();
+		}
+
+		int cur;
+		vector<int> data;
+	};
+	/*251. Flatten 2D Vector end */
 
 
 	/*247. Strobogrammatic Number II (medium)
@@ -550,10 +761,10 @@ namespace GG {
 					if (visit.count(item->label) < 1) {
 						UndirectedGraphNode* tmp = new UndirectedGraphNode(item->label);
 						visit[item->label] = tmp;
-						qnode.push(item);
+						qnode.push((UndirectedGraphNode*)item);
 					}
 
-					visit[cur->label]->neighbors.push_back(visit[item->label]);
+					visit[cur->label]->neighbors.push_back((UndirectedGraphNode*)visit[item->label]);
 				}
 			}
 
@@ -2133,6 +2344,7 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+		Solution253::main();
 		Solution200::main();
 		Solution377::main();
 		Solution286::main();
