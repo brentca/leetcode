@@ -45,6 +45,210 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*247. Strobogrammatic Number II (medium)
+	https://leetcode.com/problems/strobogrammatic-number-ii/
+	https://discuss.leetcode.com/topic/20753/ac-clean-java-solution
+	*/
+	class Solution247 {
+	public:
+		vector<string> findStrobogrammatic(int n) {
+			return findStrobogrammatic(n, n);
+		}
+
+		vector<string> findStrobogrammatic(int n, int m) {
+			vector<string> result;
+			if (n == 0) {
+				result.push_back("");
+				return result;
+			}
+
+			if (1 == n) {
+				result.push_back("0");
+				result.push_back("1");
+				result.push_back("8");
+				return result;
+			}
+
+			vector<string> tmp = findStrobogrammatic(n - 2, m);
+
+
+			for (auto item : tmp) {
+				if (n != m)
+					result.push_back("0" + item + "0");
+				result.push_back("6" + item + "9");
+				result.push_back("9" + item + "6");
+				result.push_back("8" + item + "8");
+				result.push_back("1" + item + "1");
+			}
+
+			return result;
+		}
+	};
+	/*247. Strobogrammatic Number II end */
+
+
+	/*240. Search a 2D Matrix II (medium)
+	https://leetcode.com/problems/search-a-2d-matrix-ii/
+	https://discuss.leetcode.com/topic/20064/my-concise-o-m-n-java-solution/2
+	*/
+	class Solution240 {
+	public:
+		bool searchMatrix(vector<vector<int>>& matrix, int target) {
+			if (matrix.empty() || matrix[0].empty())
+				return false;
+			int row = matrix.size();
+			int col = matrix[0].size();
+
+			int j = col - 1, i = 0;
+
+			while (j >= 0 && i < row) {
+				if (matrix[i][j] == target)
+					return true;
+
+				if (matrix[i][j] > target)
+					--j;
+				else
+					++i;
+			}
+
+
+
+			return false;
+		}
+	};
+	/*240. Search a 2D Matrix II end */
+
+
+	/*230. Kth Smallest Element in a BST (medium)
+	https://leetcode.com/problems/kth-smallest-element-in-a-bst/
+	https://discuss.leetcode.com/topic/17810/3-ways-implemented-in-java-binary-search-in-order-iterative-recursive/1
+	https://discuss.leetcode.com/topic/17573/4-lines-in-c
+	*/
+	class Solution230 {
+	public:
+		int kthSmallest(TreeNode* root, int k) {
+			stack<TreeNode*> nodes;
+			nodes.push(root);
+
+			while (!nodes.empty()) {
+				TreeNode* tmp = nodes.top();
+
+				while (tmp) {
+					nodes.push(tmp->left);
+					tmp = tmp->left;
+				}
+
+				nodes.pop();
+				tmp = nodes.top();
+				nodes.pop();
+				--k;
+				if (0 == k)
+					return tmp->val;
+
+				nodes.push(tmp->right);
+			}
+
+		}
+	};
+	/*230. Kth Smallest Element in a BST end */
+
+
+	/*228. Summary Ranges (medium)
+	https://leetcode.com/problems/summary-ranges/
+	https://discuss.leetcode.com/topic/17151/accepted-java-solution-easy-to-understand
+	*/
+	class Solution228 {
+	public:
+		//0,1,2,4,5,7
+		vector<string> summaryRanges(vector<int>& nums) {
+			vector<string> result;
+
+			for (int i = 0; i < nums.size(); ++i) {
+				int j = i;
+				while (j + 1 < nums.size() && nums[j + 1] == nums[j] + 1)
+					++j;
+
+				if (j == i)
+					result.push_back(to_string(nums[i]));
+				else
+					result.push_back(to_string(nums[i]) + "->" + to_string(nums[j]));
+
+				i = j;
+			}
+
+			return result;
+		}
+	};
+	/*228. Summary Ranges end */
+
+
+	/*208. Implement Trie (Prefix Tree) (medium)
+	https://leetcode.com/problems/implement-trie-prefix-tree/
+	https://discuss.leetcode.com/topic/13463/maybe-the-code-is-not-too-much-by-using-next-26-c
+	*/
+	class TrieNode {
+	public:
+		// Initialize your data structure here.
+		TrieNode(bool bword=false) {
+			isword = bword;
+			for (int i = 0; i < 26; ++i)
+				next[i] = nullptr;
+		}
+
+		bool isword;
+		TrieNode* next[26];
+	};
+
+	class Trie208 {
+	public:
+		Trie208() {
+			root = new TrieNode();
+		}
+
+		// Inserts a word into the trie.
+		void insert(string word) {
+			TrieNode* node = root;
+			for (auto item : word) {
+				if (nullptr == node->next[item - 'a'])
+					node->next[item - 'a'] = new TrieNode();
+
+				node = node->next[item - 'a'];
+			}
+
+			node->isword = true;
+		}
+
+		// Returns if the word is in the trie.
+		bool search(string word) {
+			TrieNode* node = root;
+			for (auto item : word) {
+				if (nullptr == node->next[item - 'a'])
+					return false;
+				node = node->next[item - 'a'];
+			}
+
+			return node->isword;
+		}
+
+		// Returns if there is any word in the trie
+		// that starts with the given prefix.
+		bool startsWith(string prefix) {
+			TrieNode* node = root;
+			for (auto item : prefix) {
+				if (nullptr == node->next[item - 'a'])
+					return false;
+				node = node->next[item - 'a'];
+			}
+
+			return true;
+		}
+
+	private:
+		TrieNode* root;
+	};
+	/*208. Implement Trie (Prefix Tree) end */
+
+
 	/*200. Number of Islands (medium)
 	https://leetcode.com/problems/number-of-islands/
 	https://discuss.leetcode.com/topic/11589/dfs-and-bfs-in-c
@@ -84,7 +288,7 @@ namespace GG {
 			return result;
 		}
 
-		int numIslands2(vector<vector<char>>& grid) {
+		int numIslands(vector<vector<char>>& grid) {
 			if (grid.empty() || grid[0].empty())
 				return 0;
 
@@ -134,46 +338,11 @@ namespace GG {
 			return result;
 		}
 
-
 		int findIsland(vector<int>& roots, int id) {
 			while (id != roots[id]) id = roots[id];
 			return id;
 		}
 
-
-		int numIslands(vector<vector<char>>& grid) {
-			if (grid.empty() || grid[0].empty())
-				return 0;
-
-			int result;
-			int row = grid.size();
-			int col = grid[0].size();
-			vector<int> root(row*col, -1);
-			vector<pair<int, int>> direct = { { 0, 1 }, { 1, 0 }, { -1, 0 }, { 0, -1 } };
-
-			for (int i = 0; i < row; ++i)
-			for (int j = 0; j < col; ++j){
-				int pos = i * row + j;
-
-				if ('0' == grid[i][j])
-					continue;
-
-				++result;
-				for (auto item : direct) {
-					int cur_i = i + item.first;
-					int cur_j = j + item.second;
-
-					if (cur_i < 0 || cur_j < 0 || cur_i >= row || cur_j >= col ||
-						'0' == grid[i][j])
-						continue;
-
-					//if (-1 == root[cur_i * row + col]) {
-
-				}
-			}
-				//aux[i * row + j] = i * row + j;
-
-		}
 		static void main() {
 			Solution200* test = new Solution200;
 			int result;
@@ -15370,7 +15539,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	Solution336::main();
 	Solution212::main();
 	WordDictionary211::main();
-	Trie208::main();
+	//Trie208::main();
 	Solution218::main();
 	Solution327::main();
 	Solution315::main();
