@@ -45,40 +45,118 @@ namespace GG {
 	/*66. Plus One end */
 
 
-	/*270. Closest Binary Search Tree Value (medium)
-	https://leetcode.com/problems/closest-binary-search-tree-value/
-	https://discuss.leetcode.com/topic/22590/4-7-lines-recursive-iterative-ruby-c-java-python/2
+	/*280. Wiggle Sort (medium)
+	https://leetcode.com/problems/wiggle-sort/
 	*/
-	class Solution270 {
-	public:
-		int closestValue1(TreeNode* root, double target) {
-			int closest = root->val;
-			double diff = std::numeric_limits<double>::max();
+	/*280. Wiggle Sort end */
 
-			while (root) {
-				double tmp = abs(double(root->val) - target);
-				if (diff >= tmp) {
-					closest = root->val;
-					diff = tmp;
+
+	/*279. Perfect Squares (medium)
+	https://leetcode.com/problems/perfect-squares/
+	https://discuss.leetcode.com/topic/24255/summary-of-4-different-solutions-bfs-dp-static-dp-and-mathematics
+	*/
+	class Solution279 {
+	public:
+		int numSquares(int n) {
+			vector<int> dp(n + 1);
+
+			for (int i = 1; i <= n; ++i)
+				dp[i] = i;
+
+			for (int i = 1; i <= n; ++i) {
+				for (int j = 1; j*j <= i; ++j) {
+					if (j * j == i) {
+						dp[i] = 1;
+						break;
+					}
+
+					dp[i] = min(dp[i], 1 + dp[i - j * j]);
 				}
-				root = target < root->val ? root->left : root->right;
 			}
 
-			return closest;
-		}
-
-		int closestValue(TreeNode* root, double target) {
-			int a = root->val;
-			auto kid = target < root->val ? root->left : root->right;
-
-			if (!kid)
-				return a;
-
-			int b = closestValue(kid, target);
-			return abs(double(a) - target) > abs(double(b) - target) ? b : a;
+			return dp[n];
 		}
 	};
-	/*270. Closest Binary Search Tree Value end */
+	/*279. Perfect Squares end */
+
+
+	/*274. H-Index (medium)
+	https://leetcode.com/problems/h-index/
+	https://discuss.leetcode.com/topic/23307/my-o-n-time-solution-use-java
+	*/
+	class Solution274 {
+	public:
+		int hIndex(vector<int>& citations) {
+			if (citations.empty())
+				return 0;
+
+			int len = citations.size();
+			vector<int> data(len + 1, 0);
+
+			for (auto item : citations) {
+				if (item >= len)
+					++data[len];
+				else
+					++data[item];
+			}
+
+			int total = 0;
+			for (int i = len; i >= 0; --i) {
+				total += data[i];
+				if (total >= i)
+					return i;
+			}
+
+			return 0;
+		}
+	};
+	/*274. H-Index end */
+
+
+	/*271. Encode and Decode Strings (medium)
+	https://leetcode.com/problems/encode-and-decode-strings/
+	https://discuss.leetcode.com/topic/22798/accepted-simple-c-solution
+	*/
+	class Codec271 {
+	public:
+		// Encodes a list of strings to a single string.
+		string encode(vector<string>& strs) {
+			string result;
+
+			for (auto item : strs) {
+				if (item.empty())
+					result += string("").append(8, '0');
+				else {
+					char tmp[9] = { 0 };
+					sprintf(tmp, "%08x", item.size());
+					result += string(tmp) + item;
+				}
+			}
+
+			return result;
+		}
+
+		// Decodes a single string to a list of strings.
+		vector<string> decode(string s) {
+			vector<string> result;
+
+			int i = 0;
+			while (i < s.size()) {
+				int len = stoi(s.substr(i, 8), nullptr, 16);
+				i += 8;
+				if (len)
+					result.push_back(s.substr(i, len));
+				else
+					result.push_back(string(""));
+
+				i += len;
+			}
+
+			return result;
+		}
+	};
+
+	/*271. Encode and Decode Strings end */
 
 
 	/*261. Graph Valid Tree (medium)
