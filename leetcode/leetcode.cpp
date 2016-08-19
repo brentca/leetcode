@@ -1176,7 +1176,7 @@ namespace GG {
 	https://leetcode.com/problems/h-index/
 	https://discuss.leetcode.com/topic/23307/my-o-n-time-solution-use-java
 	*/
-	class Solution274 {
+	class Solution274_2 {
 	public:
 		int hIndex(vector<int>& citations) {
 			int result = 0;
