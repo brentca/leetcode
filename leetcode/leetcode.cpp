@@ -45,9 +45,205 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*286. Walls and Gates (medium)
+	https://leetcode.com/problems/walls-and-gates/
+	https://discuss.leetcode.com/topic/35242/benchmarks-of-dfs-and-bfs
+	*/
+	class Solution286_1 {
+	public:
+		void bsf(int i, int j, int dis, vector<vector<int>>& rooms) {
+			vector<pair<int, int>> offset = { { 1, 0 },{ -1, 0 },{ 0, 1 },{ 0, -1 } };
+
+			for (auto item : offset) {
+				int row = i + item.first;
+				int col = j + item.second;
+
+				if (row < 0 || row >= rooms.size() ||
+					col < 0 || col >= rooms[0].size() || rooms[row][col] < dis)
+					continue;
+
+				rooms[row][col] = min(rooms[row][col], dis);
+				bsf(row, col, dis + 1, rooms);
+			}
+		}
+
+		void wallsAndGates(vector<vector<int>>& rooms) {
+			if (rooms.empty() || rooms[0].empty())
+				return;
+
+			int row = rooms.size();
+			int col = rooms[0].size();
+			queue<pair<int, int>> points;
+
+			for (int i = 0; i < row; ++i)
+				for (int j = 0; j < col; ++j) {
+					if (0 == rooms[i][j])
+						points.push({ i, j });
+				}
+
+			while (!points.empty()) {
+				pair<int, int> cur = points.front();
+				points.pop();
+
+				if (cur.first > 0 && numeric_limits<int>::max() == rooms[cur.first - 1][cur.second]) {
+					rooms[cur.first - 1][cur.second] = rooms[cur.first][cur.second] + 1;
+					points.push({ cur.first - 1 , cur.second });
+				}
+
+				if (cur.second > 0 && numeric_limits<int>::max() == rooms[cur.first][cur.second - 1]) {
+					rooms[cur.first][cur.second - 1] = rooms[cur.first][cur.second] + 1;
+					points.push({ cur.first , cur.second - 1 });
+				}
+
+				if (cur.first < row - 1 && numeric_limits<int>::max() == rooms[cur.first + 1][cur.second]) {
+					rooms[cur.first + 1][cur.second] = rooms[cur.first][cur.second] + 1;
+					points.push({ cur.first + 1 , cur.second });
+				}
+
+				if (cur.second < col - 1 && numeric_limits<int>::max() == rooms[cur.first][cur.second + 1]) {
+					rooms[cur.first][cur.second + 1] = rooms[cur.first][cur.second] + 1;
+					points.push({ cur.first , cur.second + 1 });
+				}
+			}
+		}
+
+		void wallsAndGates1(vector<vector<int>>& rooms) {
+			if (rooms.empty() || rooms[0].empty())
+				return;
+
+			int row = rooms.size();
+			int col = rooms[0].size();
+			vector<pair<int, int>> gates;
+
+			for (int i = 0; i < row; ++i)
+				for (int j = 0; j < col; ++j) {
+					if (0 == rooms[i][j])
+						bsf(i, j, 1, rooms);
+				}
+		}
+	};
+	/*286. Walls and Gates end */
+
+
+	/*284. Peeking Iterator (medium)
+	https://leetcode.com/problems/peeking-iterator/
+	https://discuss.leetcode.com/topic/24883/concise-java-solution
+	*/
+	/*284. Peeking Iterator end */
+
+
+	/*281. Zigzag Iterator (medium)
+	https://leetcode.com/problems/zigzag-iterator/
+	https://discuss.leetcode.com/topic/24548/c-with-queue-compatible-with-k-vectors
+	https://discuss.leetcode.com/topic/24231/short-java-o-1-space
+	*/
+	class ZigzagIterator281 {
+	public:
+		ZigzagIterator281(vector<int>& v1, vector<int>& v2) {
+			if (v1.size() != 0)
+				Q.push(make_pair(v1.begin(), v1.end()));
+			if (v2.size() != 0)
+				Q.push(make_pair(v2.begin(), v2.end()));
+		}
+
+		int next() {
+			vector<int>::iterator it = Q.front().first;
+			vector<int>::iterator endIt = Q.front().second;
+			Q.pop();
+			if (it + 1 != endIt)
+				Q.push(make_pair(it + 1, endIt));
+			return *it;
+		}
+
+		bool hasNext() {
+			return !Q.empty();
+		}
+	private:
+		queue<pair<vector<int>::iterator, vector<int>::iterator>> Q;
+	};
+
+	class ZigzagIterator281_2 {
+	public:
+		ZigzagIterator281_2(vector<int>& v1, vector<int>& v2) {
+			ites.push_back({ v1.begin(), v1.end() });
+			ites.push_back({ v2.begin(), v2.end() });
+
+			idx = 0;
+			begin = v1.begin();
+		}
+
+		int next() {
+			hasNext();
+			
+			int result = *(ites[idx].first);
+			ites[idx].first ++;
+			
+			idx = (idx + 1) % ites.size();
+			begin = ites[idx].first;
+			return result;
+		}
+
+		bool hasNext() {
+			int total = ites.size() + idx;
+			int next = idx;
+
+			while (next < total && begin == ites[next % ites.size()].second) {
+				++next;
+				begin = ites[next % ites.size()].first;
+			}
+
+			idx = next % ites.size();
+			return begin != ites[idx].second;
+		}
+
+		static void main() {
+			vector<int> v1 = { 1, 2 };
+			vector<int> v2 = { 3, 4, 5, 6 };
+			ZigzagIterator281* test = new ZigzagIterator281(v1, v2);
+
+			while (test->hasNext()) 
+				cout << test->next();
+			delete test;
+		}
+
+		vector<pair<vector<int>::iterator, vector<int>::iterator>> ites;
+		int idx;
+		vector<int>::iterator begin;
+	};
+	/*281. Zigzag Iterator end */
+
+
 	/*280. Wiggle Sort (medium)
 	https://leetcode.com/problems/wiggle-sort/
+	https://discuss.leetcode.com/topic/42605/my-explanations-of-the-best-voted-algo/2
 	*/
+	class Solution280 {
+	public:
+		void wiggleSort(vector<int>& nums) {
+			for (int i = 1; i < nums.size(); ++i) {
+				if (((i & 1) && nums[i] < nums[i - 1]) ||
+					(!(i & 1) && nums[i] > nums[i - 1]))
+					swap(nums[i - 1], nums[i]);
+			}
+		}
+
+		void wiggleSort1(vector<int>& nums) {
+			if (nums.empty() || 1 == nums.size())
+				return;
+
+			vector<int> tmp(nums);
+			sort(tmp.begin(), tmp.end());
+
+			int low = 0, high = nums.size() - 1;
+
+			for (int i = 0; i < nums.size(); ++i) {
+				if (i & 1)
+					nums[i] = tmp[high--];
+				else
+					nums[i] = tmp[low++];					
+			}
+		}
+	};
 	/*280. Wiggle Sort end */
 
 
@@ -1176,7 +1372,7 @@ namespace GG {
 	https://leetcode.com/problems/h-index/
 	https://discuss.leetcode.com/topic/23307/my-o-n-time-solution-use-java
 	*/
-	class Solution274 {
+	class Solution274_2 {
 	public:
 		int hIndex(vector<int>& citations) {
 			int result = 0;
@@ -2422,6 +2618,7 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+		ZigzagIterator281_2::main();
 		Solution253::main();
 		Solution200::main();
 		Solution377::main();
