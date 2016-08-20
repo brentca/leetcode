@@ -45,6 +45,119 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*298. Binary Tree Longest Consecutive Sequence (medium)
+	https://leetcode.com/problems/binary-tree-longest-consecutive-sequence/
+	*/
+	class Solution298 {
+	public:
+		int result;
+		void nextNode(TreeNode* root, int cur, int target) {
+			if (nullptr == root)
+				return;
+
+			if (target == root->val)
+				++cur;
+			else
+				cur = 1;
+
+			result = max(result, cur);
+			nextNode(root->left, cur, root->val + 1);
+			nextNode(root->right, cur, root->val + 1);
+		}
+
+		int longestConsecutive(TreeNode* root) {
+			if (nullptr == root)
+				return 0;
+
+			nextNode(root, 0, root->val);
+			return result;
+		}
+	};
+	/*298. Binary Tree Longest Consecutive Sequence end */
+
+
+	/*294. Flip Game II (medium)
+	https://leetcode.com/problems/flip-game-ii/
+	https://discuss.leetcode.com/topic/27282/theory-matters-from-backtracking-128ms-to-dp-0ms
+	*/
+	class Solution294 {
+	public:
+		string str;
+		int len;
+		bool nextStep() {
+			for (int i = 0; i < len - 1; ++i) {
+				if ('+' == str[i] && '+' == str[i + 1]) {
+					str[i] = str[i + 1] = '-';
+					bool flag = !nextStep();
+					str[i] = str[i + 1] = '+';
+
+					if (flag)
+						return true;
+				}
+			}
+
+			return false;
+		}
+
+		bool canWin(string s) {
+			str = s;
+			len = s.size();
+			return nextStep();
+		}
+
+		static void main() {
+			Solution294* test = new Solution294;
+			bool result;
+			string s1("");
+			string s2("+");
+			string s3("++");
+			string s4("+++");
+			string s5("++++");
+			string s6("+++++");
+
+			/*result = test->canWin(s1);
+			result = test->canWin(s2);
+			result = test->canWin(s3);
+			result = test->canWin(s4);
+			result = test->canWin(s5);*/
+			result = test->canWin(s6);
+			delete test;
+		}
+	};
+	/*294. Flip Game II end */
+
+
+	/*289. Game of Life (medium)
+	https://leetcode.com/problems/game-of-life/
+	https://discuss.leetcode.com/topic/26112/c-o-1-space-o-mn-time
+	*/
+	class Solution289 {
+	public:
+		void gameOfLife(vector<vector<int>>& board) {
+			int m = board.size();
+			int n = m ? board[0].size() : 0;
+			int count;
+
+			for (int i = 0; i < m; ++i)
+				for (int j = 0; j < n; ++j) {
+					count = 0;
+					for (int row = max(i - 1, 0); row < min(i + 2, m); ++row)
+						for (int col = max(j - 1, 0); col < min(j + 2, n); ++col)
+							count += board[row][col] & 1;
+
+					if (count == 3 || count - board[i][j] == 3)
+						board[i][j] |= 2;
+
+				}
+
+			for (int i = 0; i < m; ++i)
+				for (int j = 0; j < n; ++j)
+					board[i][j] >>= 1;
+		}
+	};
+	/*289. Game of Life end */
+
+
 	/*286. Walls and Gates (medium)
 	https://leetcode.com/problems/walls-and-gates/
 	https://discuss.leetcode.com/topic/35242/benchmarks-of-dfs-and-bfs
@@ -2618,6 +2731,7 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+		Solution294::main();
 		ZigzagIterator281_2::main();
 		Solution253::main();
 		Solution200::main();
