@@ -45,6 +45,149 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*320. Generalized Abbreviation (medium)
+	https://leetcode.com/problems/generalized-abbreviation/
+	https://discuss.leetcode.com/topic/32163/meet-in-google-interview-solution-with-concise-explanation
+	https://discuss.leetcode.com/topic/32270/java-backtracking-solution/2
+	*/
+	class Solution320 {
+	public:
+		void dfs(vector<string>& result, string word, int pos, int count, string cur) {
+			if (pos == word.size()) {
+				if (count > 0)
+					cur += to_string(count);
+
+				result.push_back(cur);
+				return;
+			}
+
+			if (count > 0)
+				dfs(result, word, pos + 1, 0, cur + to_string(count) + word[pos]);
+			else
+				dfs(result, word, pos + 1, 0, cur + word[pos]);
+
+			dfs(result, word, pos + 1, count + 1, cur);
+		}
+
+		vector<string> generateAbbreviations(string word) {
+			vector<string> result;
+
+			dfs(result, word, 0, 0, "");
+
+			return result;
+		}
+	};
+	/*320. Generalized Abbreviation end */
+
+
+	/*318. Maximum Product of Word Lengths (medium)
+	https://leetcode.com/problems/maximum-product-of-word-lengths/
+	https://discuss.leetcode.com/topic/35539/java-easy-version-to-understand
+	*/
+	class Solution318 {
+	public:
+		int maxProduct(vector<string>& words) {
+			unordered_map<int, int> maxlen;
+			int result = 0;
+			for (auto item : words) {
+				int mask = 0;
+				for (char c : item)
+					mask |= 1 << (c - 'a');
+
+				maxlen[mask] = max(maxlen[mask], (int)item.size());
+
+				for (auto lenitem : maxlen) {
+					if (!(mask & lenitem.first))
+						result = max(result, int(item.size() * lenitem.second));
+				}
+			}
+
+			return result;
+		}
+	};
+	/*318. Maximum Product of Word Lengths end */
+
+
+	/*314. Binary Tree Vertical Order Traversal (medium)
+	https://leetcode.com/problems/binary-tree-vertical-order-traversal/
+	https://discuss.leetcode.com/topic/31954/5ms-java-clean-solution
+	*/
+	class Solution314 {
+	public:
+		vector<vector<int>> verticalOrder(TreeNode* root) {
+			vector<vector<int>> result;
+
+			if (nullptr == root)
+				return result;
+
+			queue<pair<TreeNode*, int>> que;
+			map<int, vector<int>> data;
+
+			que.push({ root , 0 });
+			while (!que.empty()) {
+				TreeNode* cur = que.front().first;
+				int val = que.front().second;
+
+				que.pop();
+				data[val].push_back(root->val);
+				if (nullptr != cur->left)
+					que.push({ cur->left , val - 1 });
+
+				if (nullptr != cur->right)
+					que.push({ cur->right , val + 1 });
+			}
+
+			for (auto item : data)
+				result.push_back(item.second);
+
+			return result;
+		}
+	};
+	/*314. Binary Tree Vertical Order Traversal end */
+
+
+	/*310. Minimum Height Trees (medium)
+	https://leetcode.com/problems/minimum-height-trees/
+	https://discuss.leetcode.com/topic/30572/share-some-thoughts
+	*/
+	class Solution310 {
+	public:
+		vector<int> findMinHeightTrees(int n, vector<pair<int, int>>& edges) {
+			if (1 == n)
+				return vector<int>(1, 0);
+
+			vector<int> cur;
+			vector<unordered_set<int>> adj(n);
+			for (auto item : edges) {
+				adj[item.first].insert(item.second);
+				adj[item.second].insert(item.first);
+			}
+
+			for (int i = 0; i < n; ++i)
+				if (1 == adj[i].size())
+					cur.push_back(i);
+
+			while (true) {
+				vector<int> next;
+
+				for (auto item : cur) {
+					for (auto neighbor : adj[item]) {
+						adj[neighbor].erase(item);
+						if (1 == adj[neighbor].size())
+							next.push_back(neighbor);
+					}
+				}
+
+				if (next.empty())
+					return cur;
+
+				cur = next;
+			}
+		}
+	};
+	/*310. Minimum Height Trees end */
+
+
 	/*298. Binary Tree Longest Consecutive Sequence (medium)
 	https://leetcode.com/problems/binary-tree-longest-consecutive-sequence/
 	*/
@@ -16102,7 +16245,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	GG::Solution313::main();
 	Solution321::main();
 	Solution164::main();
-	Solution318::main();
+	//Solution318::main();
 	Solution137::main();
 	Solution187::main();
 	Solution236::main();
@@ -16119,13 +16262,13 @@ int _tmain(int argc, _TCHAR* argv[])
 	Solution111::main();
 	Solution102::main();
 	Solution101::main();
-	Solution310::main();
-	//Solution133::main();
+	//GG::Solution310::main();
+	//GG::Solution133::main();
 	Codec297::main();
 	LRUCache146::main();
 	Solution128::main();
-	//Solution200::main();
-	//Solution200::main();
+	GG::Solution200::main();
+	GG::Solution200::main();
 	Solution130::main();
 	MedianFinder295::main();
 	//BSTIterator173::main();
