@@ -45,6 +45,104 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*331. Verify Preorder Serialization of a Binary Tree (medium)
+	https://leetcode.com/problems/verify-preorder-serialization-of-a-binary-tree/
+	*/
+	class Solution {
+	public:
+		bool valid(stack<char>& data) {
+			while (!data.empty() && '#' == data.top()) {
+				data.pop();
+
+				if (data.empty() || '#' == data.top())
+					return false;
+			}
+
+
+			return true;
+		}
+
+		bool isValidSerialization(string preorder) {
+			if (preorder.empty())
+				return false;
+
+			stack<char> buf;
+			for (int i = 0; i < preorder.size(); ++i) {
+				if ('#' == preorder[i]) {
+					if (!buf.empty() && '#' == buf.top())
+						if (!valid(buf))
+							return false;
+				}
+				else if (',' != preorder[i]) {
+					buf.push(preorder[i]);
+					if (!valid(buf))
+						return false;
+				}
+			}
+
+			if (1 == buf.size() && '#' == buf.top())
+				return true;
+			return false;
+		}
+	};
+	/*331. Verify Preorder Serialization of a Binary Tree end */
+
+
+	/*324. Wiggle Sort II (medium)
+	https://leetcode.com/problems/wiggle-sort-ii/
+	https://discuss.leetcode.com/topic/32929/o-n-o-1-after-median-virtual-indexing/21
+	https://discuss.leetcode.com/topic/41464/step-by-step-explanation-of-index-mapping-in-java
+	*/
+	class Solution324 {
+	public:
+		void wiggleSort(vector<int>& nums) {
+			if (nums.size() < 2)
+				return;
+
+			int n = nums.size();
+			int i = 0, j = n - 1, median = 0;
+			int mid = (n - 1) / 2;
+			while (i <= j) {
+				int p = i, a = i + 1, b = j;
+				while (a <= b) {
+					if (nums[a] <= nums[p])
+						swap(nums[a], nums[b--]);
+					else
+						++a;
+				}
+
+				swap(nums[p], nums[b]);
+
+				if (b == mid) {
+					median = nums[b];
+					break;
+				}
+				else if (b > mid)
+					i = mid + 1;
+				else
+					j = mid - 1;
+			}
+
+			int left = 0, right = n - 1;
+			i = 0;
+
+			while (i <= right) {
+				if (nums[newindex(i, n)] > median)
+					swap(nums[newindex(left++, n)], nums[newindex(i++, n)]);
+				else if (nums[newindex(i, n)] < median)
+					swap(nums[newindex(right--, n)], nums[newindex(i, n)]);
+				else
+					++i;
+			}
+		}
+
+		int newindex(int index, int n) {
+			return (1 + 2 * index) % (n | 1);
+		}
+	};
+	/*324. Wiggle Sort II end */
+
+
 	/*320. Generalized Abbreviation (medium)
 	https://leetcode.com/problems/generalized-abbreviation/
 	https://discuss.leetcode.com/topic/32163/meet-in-google-interview-solution-with-concise-explanation
@@ -1741,12 +1839,13 @@ namespace GG {
 		}
 
 		int findroot(vector<int>&root, int id) {
-			while (id != root[id])
+			while (id != root[id]) {
+				root[id] = root[root[id]];
 				id = root[id];
+			}
 
 			return id;
 		}
-
 
 		int countComponents1(int n, vector<pair<int, int>>& edges) {
 			vector<bool> flag(n, false);
