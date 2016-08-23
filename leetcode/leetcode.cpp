@@ -45,10 +45,35 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*332. Reconstruct Itinerary (medium)
+	https://leetcode.com/problems/reconstruct-itinerary/
+	*/
+	class Solution332 {
+	public:
+		vector<string> findItinerary(vector<pair<string, string>> tickets) {
+			unordered_map<string, set<string>> datas;
+
+			for (auto item : tickets)
+				datas[item.first].insert(item.second);
+
+			stack<string> start;
+			
+			string from("JFK");
+			for (auto item : datas[from]) {
+				unordered_set<string> flag;
+				flag.insert(from);
+
+
+			}
+		}
+	};
+	/*332. Reconstruct Itinerary end */
+
+
 	/*331. Verify Preorder Serialization of a Binary Tree (medium)
 	https://leetcode.com/problems/verify-preorder-serialization-of-a-binary-tree/
 	*/
-	class Solution {
+	class Solution331 {
 	public:
 		bool valid(stack<char>& data) {
 			while (!data.empty() && '#' == data.top()) {
@@ -118,9 +143,9 @@ namespace GG {
 					break;
 				}
 				else if (b > mid)
-					i = mid + 1;
+					j = b - 1;
 				else
-					j = mid - 1;
+					i = b + 1;
 			}
 
 			int left = 0, right = n - 1;
@@ -138,6 +163,14 @@ namespace GG {
 
 		int newindex(int index, int n) {
 			return (1 + 2 * index) % (n | 1);
+		}
+
+		static void main() {
+			Solution324* test = new Solution324;
+			vector<int> nums1 = { 10,11,12,13,14,15,16,17,18,19 };
+
+			test->wiggleSort(nums1);
+			delete test;
 		}
 	};
 	/*324. Wiggle Sort II end */
@@ -2973,6 +3006,7 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+		Solution324::main();
 		Solution294::main();
 		ZigzagIterator281_2::main();
 		Solution253::main();
