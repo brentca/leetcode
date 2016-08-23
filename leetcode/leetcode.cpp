@@ -45,8 +45,53 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*341. Flatten Nested List Iterator (medium)
+	https://leetcode.com/problems/flatten-nested-list-iterator/
+	https://discuss.leetcode.com/topic/41870/real-iterator-in-python-java-c/2
+	*/
+	/*
+	class NestedIterator341 {
+	public:
+		NestedIterator341(vector<NestedIterator341> &nestedList) {
+
+			dfs(nestedList);
+			m_cur = 0;
+		}
+
+		void dfs(vector<NestedIterator341> &nestedList)
+		{
+			for (int i = 0; i < nestedList.size(); ++i)
+			{
+				if (nestedList[i].isInteger())
+					m_vec.push_back(nestedList[i].getInteger());
+				else
+				{
+					vector<NestedIterator341> tmp = nestedList[i].getList();
+					dfs(tmp);
+				}
+			}
+		}
+
+		int next() {
+			return  m_vec[m_cur++];
+		}
+
+		bool hasNext() {
+			return m_cur < m_vec.size();
+		}
+
+
+		vector<int> m_vec;
+		int m_cur;
+	};
+	*/
+	/*341. Flatten Nested List Iterator end */
+
+
 	/*332. Reconstruct Itinerary (medium)
 	https://leetcode.com/problems/reconstruct-itinerary/
+	https://discuss.leetcode.com/topic/36383/share-my-solution
+	http://www.geeksforgeeks.org/euler-circuit-directed-graph/
 	*/
 	class Solution332 {
 	public:
@@ -57,14 +102,40 @@ namespace GG {
 				datas[item.first].insert(item.second);
 
 			stack<string> start;
-			
+			vector<string> result;
+			string next;
+
 			string from("JFK");
+			result.push_back(from);
+
 			for (auto item : datas[from]) {
-				unordered_set<string> flag;
-				flag.insert(from);
+				if (item.empty())
+					continue;
 
+				result.push_back(item);
+				while (true) {
+					if (datas[item].empty() || from == item)
+						break;
 
+					next = *datas[item].begin();
+					datas[item].erase(datas[item].begin());
+					result.push_back(next);
+					item = next;
+				}
 			}
+
+			return result;
+		}
+
+		static void main() {
+			Solution332* test = new Solution332;
+			vector<pair<string, string>> tickets1 = { { "MUC", "LHR" }, { "JFK", "MUC" }, { "SFO", "SJC" }, { "LHR", "SFO" } };
+			vector<pair<string, string>> tickets2 = { { "JFK", "SFO" }, { "JFK", "ATL" }, { "SFO", "ATL" }, { "ATL", "JFK" }, { "ATL", "SFO" } };
+
+			vector<string> result;
+			result = test->findItinerary(tickets2);
+
+			delete test;
 		}
 	};
 	/*332. Reconstruct Itinerary end */
@@ -3006,6 +3077,7 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+		Solution332::main();
 		Solution324::main();
 		Solution294::main();
 		ZigzagIterator281_2::main();
