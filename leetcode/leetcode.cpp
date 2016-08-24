@@ -45,6 +45,171 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*356. Line Reflection (medium)
+	https://leetcode.com/problems/line-reflection/
+	*/
+	class Solution356 {
+	public:
+		bool isReflected(vector<pair<int, int>>& points) {
+			sort(points.begin(), points.end());
+			//sort(points.begin(), points.end(), [](pair<int, int> a, pair<int, int>b) {return a.first > b.first; });
+	
+			int len = points.size();
+
+			if (len < 2)
+				return true;
+
+			int left = points[0].first;
+			int right = points[len - 1].first;
+			
+
+			unordered_map<int, unordered_map<int, int>> lefthash;
+			unordered_map<int, unordered_map<int, int>> righthash;
+
+			for (auto item : points) {
+				if (item.first - left > right - item.first)
+					++lefthash[item.first][item.second];
+				else if (item.first - left < right - item.first) {
+					++righthash[item.first][item.second];
+				}
+			}
+			
+			for (auto item : lefthash) {
+				//pair<int, int> syspoint =  { right - left + item.first.first, item.first.second};
+				//if (righthash.count(syspoint) != item.second)
+				if (righthash[item.first].size() != item.second.size())
+					return false;
+
+				for (auto point : item.second) {
+					if (righthash[item.first][point.first] != point.second)
+						return false;
+				}
+			}
+
+			return lefthash.size() == righthash.size();
+		}
+
+		static void main() {
+			Solution356* test = new Solution356;
+			bool result;
+
+			vector<pair<int, int>>points1 = { {2, 3}, {0, 7}, {1, 9} };
+			result = test->isReflected(points1);
+			delete test;
+		}
+	};
+	/*356. Line Reflection end */
+
+
+	/*351. Android Unlock Patterns (medium)
+	https://leetcode.com/problems/android-unlock-patterns/
+	https://discuss.leetcode.com/topic/46260/java-dfs-solution-with-clear-explanations-and-optimization-beats-97-61-12ms
+	http://blog.csdn.net/qq508618087/article/details/51758481
+	*/
+	class Solution351 {
+	public:
+		int dfs(vector<bool>&visit, vector<vector<int>>&skip, int cur, int remain) {
+			if (remain < 0)
+				return 0;
+			else if (0 == remain)
+				return 1;
+
+			int result = 0;
+			visit[cur] = true;
+			for (int i = 1; i < 10; ++i) {
+				if (!visit[i] && (0 == skip[cur][i] || visit[skip[cur][i]]))
+					result += dfs(visit, skip, i, remain - 1);
+			}
+
+
+			visit[cur] = false;
+			return result;
+		}
+
+		int numberOfPatterns(int m, int n) {
+			vector<bool>visit(10, false);
+			vector<vector<int>>skip(10, vector<int>(10, 0));
+
+			skip[1][3] = skip[3][1] = 2;
+			skip[3][9] = skip[9][3] = 6;
+			skip[7][9] = skip[9][7] = 8;
+			skip[1][7] = skip[7][1] = 4;
+
+
+			skip[1][9] = skip[9][1] = 5;
+			skip[3][7] = skip[7][3] = 5;
+			skip[2][8] = skip[8][2] = 5;
+			skip[4][6] = skip[6][4] = 5;
+
+			int result = 0;
+			for (int i = m; i <= n; ++i) {
+				result += dfs(visit, skip, 1, i - 1) * 4;
+				result += dfs(visit, skip, 2, i - 1) * 4;
+				result += dfs(visit, skip, 5, i - 1);
+			}
+
+			return result;
+		}
+	};
+	/*351. Android Unlock Patterns end */
+
+
+	/*348. Design Tic-Tac-Toe (medium)
+	https://leetcode.com/problems/design-tic-tac-toe/
+	https://leetcode.com/problems/design-tic-tac-toe/
+	*/
+	class TicTacToe348 {
+	public:
+		/** Initialize your data structure here. */
+		TicTacToe348(int n) {
+			rows.resize(n, 0);
+			cols.resize(n, 0);
+			diagonal = 0;
+			antidiagonal = 0;
+		}
+
+		/** Player {player} makes a move at ({row}, {col}).
+		@param row The row of the board.
+		@param col The column of the board.
+		@param player The player, can be either 1 or 2.
+		@return The current winning condition, can be either:
+		0: No one wins.
+		1: Player 1 wins.
+		2: Player 2 wins. */
+		int move(int row, int col, int player) {
+			int toadd = (1 == player ? 1 : -1);
+			int len = rows.size();
+
+			rows[row] += toadd;
+			cols[col] += toadd;
+
+			if (row == col)
+				diagonal += toadd;
+
+			if (row == len - 1 - col)
+				antidiagonal += toadd;
+
+			if (len == abs(rows[row]) || len == abs(cols[col]) ||
+				len == abs(diagonal) || len == abs(antidiagonal))
+				return player;
+			else
+				return 0;
+		}
+
+		vector<int> rows;
+		vector<int> cols;
+		int diagonal;
+		int antidiagonal;
+	};
+
+	/**
+	* Your TicTacToe object will be instantiated and called as such:
+	* TicTacToe obj = new TicTacToe(n);
+	* int param_1 = obj.move(row,col,player);
+	*/
+	/*348. Design Tic-Tac-Toe end */
+
+
 	/*341. Flatten Nested List Iterator (medium)
 	https://leetcode.com/problems/flatten-nested-list-iterator/
 	https://discuss.leetcode.com/topic/41870/real-iterator-in-python-java-c/2
@@ -3077,6 +3242,7 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+		Solution356::main();
 		Solution332::main();
 		Solution324::main();
 		Solution294::main();
