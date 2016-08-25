@@ -47,6 +47,7 @@ namespace GG {
 
 	/*356. Line Reflection (medium)
 	https://leetcode.com/problems/line-reflection/
+	https://discuss.leetcode.com/topic/48172/simple-java-hashset-solution
 	*/
 	class Solution356 {
 	public:
