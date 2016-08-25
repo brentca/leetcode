@@ -45,13 +45,95 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*375. Guess Number Higher or Lower II (medium)
+	https://leetcode.com/problems/guess-number-higher-or-lower-ii/
+	https://discuss.leetcode.com/topic/52100/dp-java-o-n-3-solution-with-explanation-15ms-17-lines
+	https://discuss.leetcode.com/topic/52627/recursion-memization
+	https://discuss.leetcode.com/topic/51984/java-o-n-2-dp-solution-with-clear-explanation
+	*/
+	class Solution375 {
+	public:
+		int dp(vector<vector<int>>&data, int s, int e) {
+			if (s >= e)
+				return 0;
+
+			if (0 != data[s][e])
+				return data[s][e];
+
+			int result = numeric_limits<int>::max();
+			for (int k = s; k <= e; ++k) {
+				int tmp = k + max(dp(data, s, k - 1), dp(data, k + 1, e));
+				result = min(result, tmp);
+			}
+
+			data[s][e] = result;
+			return result;
+		}
+
+		int getMoneyAmount(int n) {
+			if (n < 2)
+				return n;
+
+			vector<vector<int>> data(n + 1, vector<int>(n + 1, 0));
+
+			return dp(data, 1, n);
+		}
+	};
+	/*375. Guess Number Higher or Lower II end */
+
+
 	/*373. Find K Pairs with Smallest Sums (medium)
 	https://leetcode.com/problems/find-k-pairs-with-smallest-sums/
 	https://discuss.leetcode.com/topic/50450/slow-1-liner-to-fast-solutions
 	*/
 	class Solution373 {
 	public:
+		struct node {
+			int idx;
+			int num1;
+			int num2;
+
+			node(int id, int a, int b) : idx(id), num1(a), num2(b)
+			{}
+		};
+
+		class comp {
+		public:
+			bool operator ()(node&a, node& b){
+				return a.num1 + a.num2 < b.num1 + b.num2;
+			}
+		};
+
 		vector<pair<int, int>> kSmallestPairs(vector<int>& nums1, vector<int>& nums2, int k) {
+			vector<pair<int, int>> result;
+
+			if (0 == k || nums1.empty() || nums2.empty())
+				return result;
+
+			//auto cmp = [](pair<int, int> a, pair<int, int> b) { return a.first + a.second < b.first + b.second; };
+			//priority_queue <pair<int, int>, vector<pair<int, int>>, decltype(cmp)> data;
+
+			priority_queue<node, vector<node>, comp> data;
+			for (int i = 0; i < nums1.size() && i < k; ++i) {
+				node cur(0, nums1[i], nums2[0]);
+				data.push(cur);
+			}
+
+			for (int i = 0; i < k && !data.empty(); ++i) {
+				node cur = data.top();
+				result.push_back({ cur.num1, cur.num2 });
+				data.pop();
+
+				if (cur.idx < nums2.size() - 1) {
+					int next = cur.idx + 1;
+					data.push(node(next, cur.num1, nums2[next]));
+				}
+			}
+
+			return result;
+		}
+
+		vector<pair<int, int>> kSmallestPairs1(vector<int>& nums1, vector<int>& nums2, int k) {
 			multimap<int, pair<int, int>> data;
 			vector<pair<int, int>> result;
 
