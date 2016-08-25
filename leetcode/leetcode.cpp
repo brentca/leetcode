@@ -45,6 +45,18 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*378. Kth Smallest Element in a Sorted Matrix (medium)
+	https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/
+	*/
+	class Solution378 {
+	public:
+		int kthSmallest(vector<vector<int>>& matrix, int k) {
+
+		}
+	};
+	/*378. Kth Smallest Element in a Sorted Matrix end */
+
+
 	/*375. Guess Number Higher or Lower II (medium)
 	https://leetcode.com/problems/guess-number-higher-or-lower-ii/
 	https://discuss.leetcode.com/topic/52100/dp-java-o-n-3-solution-with-explanation-15ms-17-lines
