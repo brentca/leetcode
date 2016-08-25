@@ -45,15 +45,156 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*368. Largest Divisible Subset (medium)
+	https://leetcode.com/problems/largest-divisible-subset/
+	*/
+	class Solution368 {
+	public:
+		vector<int> largestDivisibleSubset(vector<int>& nums) {
+			sort(nums.begin(), nums.end());
+
+
+		}
+	};
+	/*368. Largest Divisible Subset end */
+
+
+	/*362. Design Hit Counter (medium)
+	https://leetcode.com/problems/design-hit-counter/
+	https://discuss.leetcode.com/topic/48758/super-easy-design-o-1-hit-o-s-gethits-no-fancy-data-structure-is-needed/3
+	*/
+	class HitCounter362 {
+	public:
+		/** Initialize your data structure here. */
+		HitCounter362() {
+			times.resize(300, 0);
+			hits.resize(300, 0);
+		}
+
+		/** Record a hit.
+		@param timestamp - The current timestamp (in seconds granularity). */
+		void hit(int timestamp) {
+			int idx = timestamp % 300;
+
+			if (timestamp != times[idx]) {
+				times[idx] = timestamp;
+				hits[idx] = 1;
+			}
+			else
+				++hits[idx];
+		}
+
+		/** Return the number of hits in the past 5 minutes.
+		@param timestamp - The current timestamp (in seconds granularity). */
+		int getHits(int timestamp) {
+			int result = 0;
+			for (int i = 0; i < 300; ++i) {
+				if (timestamp - times[i] < 300)
+					result += hits[i];
+			}
+
+			return result;
+		}
+
+		vector<int> hits, times;
+	};
+
+	/*362. Design Hit Counter end */
+
+
+	/*361. Bomb Enemy (medium)
+	https://leetcode.com/problems/bomb-enemy/
+	https://discuss.leetcode.com/topic/48565/short-o-mn-solution
+	*/
+	class Solution361 {
+	public:
+		int maxKilledEnemies(vector<string>& grid) {
+			if (grid.empty() || grid[0].empty())
+				return 0;
+
+			int result = 0;
+			int row = grid.size();
+			int col = grid[0].size();
+			int rowhit;
+			vector<int> colhits(col, 0);
+
+			for (int i = 0; i < row; ++i)
+			for (int j = 0; j < col; ++j){
+				if ('W' == grid[i][j])
+					continue;
+
+				if (!j || 'W' == grid[i][j - 1]) {
+					rowhit = 0;
+					for (int k = j; k < col && grid[i][k] != 'W'; ++k)
+						rowhit += grid[i][k] == 'E';
+				}
+
+				if (!i || 'W' == grid[i - 1][j]) {
+					colhits[j] = 0;
+					for (int k = i; k < row && grid[k][j] != 'W'; ++k)
+						colhits[j] += grid[k][j] == 'E';
+				}
+
+				if ('0' == grid[i][j])
+					result = max(result, rowhit + colhits[j]);
+			}
+
+			return result;
+		}
+
+		static void main() {
+			Solution361* test = new Solution361;
+			vector<string> grid1 = { "0E00", "E0WE", "0E00" };
+			int result;
+
+			result = test->maxKilledEnemies(grid1);
+			delete test;
+		}
+	};
+	/*361. Bomb Enemy end */
+
+
+	/*360. Sort Transformed Array (medium)
+	https://leetcode.com/problems/sort-transformed-array/
+	https://discuss.leetcode.com/topic/48424/java-o-n-incredibly-short-yet-easy-to-understand-ac-solution
+	*/
+	class Solution360 {
+	public:
+		vector<int> sortTransformedArray(vector<int>& nums, int a, int b, int c) {
+			int n = nums.size();
+			vector<int> result(n);
+
+			int i = 0, j = n - 1;
+			int index = (a >= 0 ? n - 1 : 0);
+
+			while (i <= j) {
+				int num1 = cal(a, b, c, nums[i]);
+				int num2 = cal(a, b, c, nums[j]);
+				if (a >= 0)
+					result[index--] = num1 > num2 ? cal(a, b, c, nums[i++]) : cal(a, b, c, nums[j--]);
+				else
+					result[index++] = num1 > num2 ? cal(a, b, c, nums[j--]) : cal(a, b, c, nums[i++]);
+			}
+
+			return result;
+		}
+
+		int cal(int a, int b, int c, int x) {
+			return a * x * x + b * x + c;
+		}
+	};
+	/*360. Sort Transformed Array end */
+
+
 	/*356. Line Reflection (medium)
 	https://leetcode.com/problems/line-reflection/
-	https://discuss.leetcode.com/topic/48172/simple-java-hashset-solution
+	https://discuss.leetcode.com/topic/47851/11ms-two-pass-hashset-based-java-solution/2
 	*/
 	class Solution356 {
 	public:
-		bool isReflected(vector<pair<int, int>>& points) {
+		bool isReflected1(vector<pair<int, int>>& points) {
 			sort(points.begin(), points.end());
-			//sort(points.begin(), points.end(), [](pair<int, int> a, pair<int, int>b) {return a.first > b.first; });
+			//sort(points.begin(), points.end(), [](pair<int, int> a, pair<int, int>b) {return a.first < b.first; });
 	
 			int len = points.size();
 
@@ -63,26 +204,24 @@ namespace GG {
 			int left = points[0].first;
 			int right = points[len - 1].first;
 			
-
-			unordered_map<int, unordered_map<int, int>> lefthash;
-			unordered_map<int, unordered_map<int, int>> righthash;
+			unordered_map<int, unordered_set<int>> lefthash;
+			unordered_map<int, unordered_set<int>> righthash;
 
 			for (auto item : points) {
-				if (item.first - left > right - item.first)
-					++lefthash[item.first][item.second];
-				else if (item.first - left < right - item.first) {
-					++righthash[item.first][item.second];
+				if (item.first - left < right - item.first)
+					lefthash[item.first].insert(item.second);
+				else if (item.first - left > right - item.first) {
+					righthash[item.first].insert(item.second);
 				}
 			}
 			
 			for (auto item : lefthash) {
-				//pair<int, int> syspoint =  { right - left + item.first.first, item.first.second};
-				//if (righthash.count(syspoint) != item.second)
-				if (righthash[item.first].size() != item.second.size())
+				int mirror_x = right - item.first + left;
+				if (righthash[mirror_x].size() != item.second.size())
 					return false;
-
+				
 				for (auto point : item.second) {
-					if (righthash[item.first][point.first] != point.second)
+					if (righthash[mirror_x].count(point) < 1)
 						return false;
 				}
 			}
@@ -90,11 +229,39 @@ namespace GG {
 			return lefthash.size() == righthash.size();
 		}
 
+		bool isReflected(vector<pair<int, int>>& points) {
+			sort(points.begin(), points.end());
+
+			int len = points.size();
+
+			if (len < 2)
+				return true;
+
+			int left = points[0].first;
+			int right = points[len - 1].first;
+
+			unordered_set<string> hash;
+			unordered_set<string> desthash;
+			for (auto item : points) {
+				string key = to_string(item.first - left) + "a" + to_string(right - item.first) + "b" + to_string(item.second);
+				string mirror_key = to_string(right - item.first) + "a" + to_string(item.first - left) + "b" + to_string(item.second);
+				hash.insert(key);
+				desthash.insert(mirror_key);
+			}
+
+			for (auto item : hash) {
+				if (desthash.count(item) < 1)
+					return false;
+			}
+
+			return hash.size() == desthash.size();
+		}
+
 		static void main() {
 			Solution356* test = new Solution356;
 			bool result;
 
-			vector<pair<int, int>>points1 = { {2, 3}, {0, 7}, {1, 9} };
+			vector<pair<int, int>>points1 = { { 1, 1 }, {-1, 1 }};
 			result = test->isReflected(points1);
 			delete test;
 		}
@@ -121,7 +288,6 @@ namespace GG {
 				if (!visit[i] && (0 == skip[cur][i] || visit[skip[cur][i]]))
 					result += dfs(visit, skip, i, remain - 1);
 			}
-
 
 			visit[cur] = false;
 			return result;
@@ -3243,6 +3409,7 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+		Solution361::main();
 		Solution356::main();
 		Solution332::main();
 		Solution324::main();
