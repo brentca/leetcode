@@ -45,15 +45,178 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*373. Find K Pairs with Smallest Sums (medium)
+	https://leetcode.com/problems/find-k-pairs-with-smallest-sums/
+	https://discuss.leetcode.com/topic/50450/slow-1-liner-to-fast-solutions
+	*/
+	class Solution373 {
+	public:
+		vector<pair<int, int>> kSmallestPairs(vector<int>& nums1, vector<int>& nums2, int k) {
+			multimap<int, pair<int, int>> data;
+			vector<pair<int, int>> result;
+
+			for (int i = 0; i < nums1.size(); ++i)
+				for (int j = 0; j < nums2.size(); ++j) {
+					if (data.size() >= k && nums1[i] + nums2[j] >= data.rbegin()->first)
+						break;
+					data.insert({ nums1[i] + nums2[j], make_pair(nums1[i] , nums2[j]) });
+				}
+
+
+			int num = 0;
+
+			for (auto item : data) {
+				result.push_back(item.second);
+				++num;
+
+				if (num >= k)
+					break;
+			}
+
+			return result;
+		}
+	};
+	/*373. Find K Pairs with Smallest Sums end */
+
+
+	/*370. Range Addition (medium)
+	https://leetcode.com/problems/range-addition/
+	https://discuss.leetcode.com/topic/49691/java-o-k-n-time-complexity-solution
+	*/
+	class Solution370 {
+	public:
+		vector<int> getModifiedArray(int length, vector<vector<int>>& updates) {
+			vector<int> result(length, 0);
+
+			for (auto item : updates) {
+				result[item[0]] += item[2];
+
+				if (item[1] < length - 1)
+					result[item[1] + 1] += -item[2];
+			}
+
+			int cur = 0;
+			for (int i = 0; i < length; ++i) {
+				cur += result[i];
+				result[i] = cur;
+			}
+
+			return result;
+		}
+	};
+	/*370. Range Addition end */
+
+
+	/*369. Plus One Linked List (medium)
+	https://leetcode.com/problems/plus-one-linked-list/
+	https://discuss.leetcode.com/topic/49556/iterative-two-pointers-with-dummy-node-java-o-n-time-o-1-space
+	*/
+	class Solution369 {
+	public:
+		ListNode* plusOne1(ListNode* head) {
+			stack<ListNode*> data;
+			ListNode* cur = head;
+
+			while (cur) {
+				data.push(cur);
+				cur = cur->next;
+			}
+
+			int flag = 1;
+			while (!data.empty()) {
+				cur = data.top();
+				data.pop();
+				cur->val += flag;
+				if (cur->val > 9) {
+					cur->val = 0;
+					flag = 1;
+				}
+				else 
+					flag = 0;
+			}
+
+			cur = head;
+			if (flag) {
+				cur = new ListNode(1);
+				cur->next = head;
+			}
+
+			return cur;
+		}
+
+		ListNode* plusOne(ListNode* head) {
+			ListNode dummy(0);
+			dummy.next = head;
+
+			ListNode* i = &dummy;
+			ListNode* j = &dummy;
+
+			while (nullptr != j->next) {
+				j = j->next;
+
+				if (j->val != 9)
+					i = j;
+			}
+
+			if (j->val != 9)
+				j->val++;
+			else {
+				i->val++;
+				i = i->next;
+
+				while (nullptr != i) {
+					i->val = 0;
+					i = i->next;
+				}
+			}
+
+			ListNode* newhead = head;
+			if (0 != dummy.val) {
+				newhead = new ListNode(1);
+				newhead->next = head;
+			}
+
+			return newhead;
+		}
+	};
+	/*369. Plus One Linked List end */
+
+
 	/*368. Largest Divisible Subset (medium)
 	https://leetcode.com/problems/largest-divisible-subset/
+	https://discuss.leetcode.com/topic/49456/c-solution-with-explanations
 	*/
 	class Solution368 {
 	public:
 		vector<int> largestDivisibleSubset(vector<int>& nums) {
+			vector<int> result;
+			int n = nums.size();
 			sort(nums.begin(), nums.end());
+			vector<int> dp(n, 0);
+			vector<int> parent(n, 0);
+			int mi = 0;
+			int m = 0;
 
+			for (int i = n - 1; i >= 0; --i) {
+				for (int j = i; j < n; ++j) {
+					if (0 == nums[j] % nums[i] && dp[i] < dp[j] + 1) {
+						dp[i] = dp[j] + 1;
+						parent[i] = j;
 
+						if (dp[i] > m) {
+							m = dp[i];
+							mi = i;
+						}
+					}
+				}
+			}
+			
+			for (int i = 0; i < m; ++i) {
+				result.push_back(nums[mi]);
+				mi = parent[mi];
+			}
+					
+			return result;
 		}
 	};
 	/*368. Largest Divisible Subset end */
