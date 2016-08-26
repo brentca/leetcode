@@ -47,11 +47,51 @@ namespace GG {
 
 	/*378. Kth Smallest Element in a Sorted Matrix (medium)
 	https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/
+	https://discuss.leetcode.com/topic/52948/share-my-thoughts-and-clean-java-code
 	*/
 	class Solution378 {
 	public:
+		struct item {
+			int val;
+			int row;
+			int col;
+			item(int itemval, int itemr, int itemc) : val(itemval), row(itemr), col(itemc)
+			{}
+		};
+		
+		class cmp {
+		public:
+			bool operator()(item& a, item& b) {
+				return a.val > b.val;
+			}
+		};
+		
 		int kthSmallest(vector<vector<int>>& matrix, int k) {
+			int n = matrix.size();
+			priority_queue < item, vector<item>, cmp> data;
 
+			for (int i = 0; i < n; ++i)
+				data.push(item(matrix[0][i], 0, i));
+
+			while (--k) {
+				item head = data.top();
+				data.pop();
+				if (n - 1 == head.row)
+					continue;
+				++head.row;
+				data.push(item(matrix[head.row][head.col], head.row, head.col));
+			}
+
+			return data.top().val;
+		}
+
+		static void main() {
+			Solution378* test = new Solution378;
+			vector<vector<int>> matrix1 = { { 1,  5,  9}, {10, 11, 13}, {12, 13, 15 } };
+			vector<vector<int>> matrix2 = { { 1,  2 },{ 3, 3 } };
+
+			test->kthSmallest(matrix2, 2);
+			delete test;
 		}
 	};
 	/*378. Kth Smallest Element in a Sorted Matrix end */
@@ -3666,6 +3706,7 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+		Solution378::main();
 		Solution361::main();
 		Solution356::main();
 		Solution332::main();
