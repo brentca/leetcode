@@ -45,6 +45,111 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*388. Longest Absolute File Path (medium)
+	https://leetcode.com/problems/longest-absolute-file-path/
+	https://discuss.leetcode.com/topic/55097/simple-python-solution/12
+	*/
+	class Solution388 {
+	public:
+		vector<string> split(const string &text, char sep) {
+			vector<string> tokens;
+			size_t start = 0, end = 0;
+
+			while ((end = text.find(sep, start)) != string::npos) {
+				while (' ' == text[start])
+					++start;
+
+				string temp = text.substr(start, end - start);
+				if (temp != "") tokens.push_back(temp);
+				start = end + 1;
+			}
+
+			string temp = text.substr(start);
+			if (temp != "") 
+				tokens.push_back(temp);
+
+			return tokens;
+		}
+
+		int lengthLongestPath1(string input) {
+			vector<string> items;
+
+			items = split(input, '\n');
+			stack<string> path;
+
+			int len = 0, result = 0;
+			for (auto item : items) {
+				int idx = 0;
+				while ('\t' == item[idx])
+					++idx;
+
+				if (string::npos != item.find('.'))
+					result = max(result, len + (int)item.size() - idx + (int)path.size());
+				else {
+					if (path.empty() || 0 == idx) {
+						while (!path.empty())
+							path.pop();
+						len = 0;
+						path.push(item);
+						len += item.size() - idx;
+					}
+					else {
+						int level2 = 0;
+						string tmp = path.top();
+						while ('\t' == tmp[level2])
+							++level2;
+
+						while (level2 >= idx) {
+							path.pop();
+							len -= tmp.size() - level2;
+							tmp = path.top();
+							level2 = 0;
+							while ('\t' == tmp[level2])
+								++level2;
+						}
+
+						path.push(item);
+						len += item.size() - idx;
+					}
+				}
+			}
+
+			return result;
+		}
+
+		int lengthLongestPath(string input) {
+			int maxlen = 0;
+			vector<int>pathlen(input.length() + 1);
+			vector<string> items;
+
+			items = split(input, '\n');
+			for (auto line : items) {
+				int idx = 0;
+				while ('\t' == line[idx])
+					++idx;
+
+				int namelen = line.length() - idx;
+				if (string::npos != line.find('.'))
+					maxlen = max(maxlen, pathlen[idx] + namelen);
+				else
+					pathlen[idx + 1] = pathlen[idx] + namelen + 1;
+			}
+
+			return maxlen;
+		}
+
+		static void main() {
+			Solution388* test = new Solution388;
+			int result;
+			string input1("dir\n\tsubdir1\n\t\tfile1.ext\n\t\tsubsubdir1\n\tsubdir2\n\t\tsubsubdir2\n\t\t\tfile2.ext");
+			string input2("a\n\tb.txt\na2\n\tb2.txt");
+			result = test->lengthLongestPath(input2);
+			delete test;
+		}
+	};
+	/*388. Longest Absolute File Path end */
+
+
 	/*378. Kth Smallest Element in a Sorted Matrix (medium)
 	https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/
 	https://discuss.leetcode.com/topic/52948/share-my-thoughts-and-clean-java-code
@@ -3706,6 +3811,7 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+		Solution388::main();
 		Solution378::main();
 		Solution361::main();
 		Solution356::main();
