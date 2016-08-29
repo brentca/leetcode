@@ -45,6 +45,98 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*388. Longest Absolute File Path (medium)
+	https://leetcode.com/problems/longest-absolute-file-path/
+	dir\n\tsubdir1\n\t\tfile1.ext\n\t\tsubsubdir1\n\tsubdir2\n\t\tsubsubdir2\n\t\t\tfile2.ext
+	*/
+	class Solution388 {
+	public:
+		int lengthLongestPath(string input) {
+			int result = 0;
+			char * pch = NULL;
+			//strtk 
+				std::strtok
+
+			return result;
+		}
+	};
+	/*388. Longest Absolute File Path end */
+
+
+	/*379. Design Phone Directory (medium)
+	https://leetcode.com/problems/design-phone-directory/
+	https://discuss.leetcode.com/topic/53098/c-two-array-solution
+	*/
+	class PhoneDirectory379 {
+	public:
+		/** Initialize your data structure here
+		@param maxNumbers - The maximum numbers that can be stored in the phone directory. */
+		PhoneDirectory379(int maxNumbers) {
+			total = maxNumbers;
+			used.resize(total);
+			pool.resize(total, true);
+			index = 0;
+			for (int i = 0; i < total; ++i) {
+				used[i] = i;
+			}
+		}
+
+		/** Provide a number which is not assigned to anyone.
+		@return - Return an available number. Return -1 if none is available. */
+		int get() {
+			int result = -1;
+			if (index < total) {
+				result = used[index++];
+				pool[result] = false;
+			}
+
+			return result;
+		}
+
+		/** Check if a number is available or not. */
+		bool check(int number) {
+			if (number > total || number < 0)
+				return false;
+
+			return pool[number];
+		}
+
+		/** Recycle or release a number. */
+		void release(int number) {
+			if (number > total || number < 0 || pool[number])
+				return;
+
+			used[--index] = number;
+			pool[number] = true;
+		}
+
+		static void main() {
+			PhoneDirectory379* test = new PhoneDirectory379(4);
+			cout << test->get() << endl;
+			cout << test->get() << endl;
+			cout << test->get() << endl;
+			cout << test->get() << endl;
+			test->release(1);
+			cout << test->get() << endl;
+			delete test;
+		}
+
+		int total;
+		int index;
+		vector<int> used;
+		vector<bool> pool;
+	};
+
+	/**
+	* Your PhoneDirectory object will be instantiated and called as such:
+	* PhoneDirectory obj = new PhoneDirectory(maxNumbers);
+	* int param_1 = obj.get();
+	* bool param_2 = obj.check(number);
+	* obj.release(number);
+	*/
+	/*379. Design Phone Directory end */
+
+
 	/*378. Kth Smallest Element in a Sorted Matrix (medium)
 	https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/
 	https://discuss.leetcode.com/topic/52948/share-my-thoughts-and-clean-java-code
@@ -3706,6 +3798,7 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+		PhoneDirectory379::main();
 		Solution378::main();
 		Solution361::main();
 		Solution356::main();
