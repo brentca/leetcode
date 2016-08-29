@@ -40,24 +40,87 @@ namespace GG {
 		vector<UndirectedGraphNode *> neighbors;
 	};
 
-	/*66. Plus One (medium)
+	/*66. Plus One (hard)
 	*/
 	/*66. Plus One end */
 
 
-	/*42. Trapping Rain Water (medium)
+	/*44. Wildcard Matching (hard)
+	https://leetcode.com/problems/wildcard-matching/
+	https://discuss.leetcode.com/topic/17901/accepted-c-dp-solution-with-a-trick
+	*/
+	class Solution44 {
+	public:
+		bool isMatch(string s, string p) {
+			if (p.empty())
+				return s.empty();
+
+			int m = s.size();
+			int n = p.size();
+			vector<vector<bool>> dp(m + 1, vector<bool>(n + 1, false));
+
+			dp[0][0] = true;
+			for (int j = 1; j <= n; ++j)
+				dp[0][j] = dp[0][j - 1] && ('*' == p[j - 1]);
+
+			for (int i = 1; i <= m; ++i) {
+				for (int j = 1; j <= n; ++j) {
+					if ('*' != p[j - 1])
+						dp[i][j] = dp[i - 1][j - 1] && (s[i - 1] == p[j - 1] || '?' == p[j - 1]);
+					else
+						dp[i][j] = dp[i][j - 1] || dp[i - 1][j];
+				}
+			}
+
+			return dp[m][n];
+		}
+
+		static void main() {
+			Solution44* test = new Solution44;
+			bool result;
+			string s1("aa"), p1("*");
+
+			result = test->isMatch(s1, p1);
+			delete test;
+		}
+	};
+	/*44. Wildcard Matching end */
+
+
+	/*42. Trapping Rain Water (hard)
 	https://leetcode.com/problems/trapping-rain-water/
+	https://discuss.leetcode.com/topic/5125/sharing-my-simple-c-code-o-n-time-o-1-space
 	*/
 	class Solution42 {
 	public:
 		int trap(vector<int>& height) {
+			int left = 0, right = height.size() - 1;
+			int result = 0, maxleft = 0, maxright = 0;
 
+			while (left <= right) {
+				if (height[left] < height[right]) {
+					if (height[left] > maxleft)
+						maxleft = height[left];
+					else
+						result += maxleft - height[left];
+					++left;
+				}
+				else {
+					if (height[right] > maxright)
+						maxright = height[right];
+					else
+						result += maxright - height[right];
+					--right;
+				}
+			}
+
+			return result;
 		}
 	};
 	/*42. Trapping Rain Water end */
 
 
-	/*23. Merge k Sorted Lists (medium)
+	/*23. Merge k Sorted Lists (hard)
 	https://leetcode.com/problems/merge-k-sorted-lists/
 	https://discuss.leetcode.com/topic/6882/sharing-my-straightforward-c-solution-without-data-structure-other-than-vector
 	*/
@@ -97,7 +160,7 @@ namespace GG {
 	/*23. Merge k Sorted Lists end */
 
 
-	/*10. Regular Expression Matching (medium)
+	/*10. Regular Expression Matching (hard)
 	https://leetcode.com/problems/regular-expression-matching/
 	https://discuss.leetcode.com/topic/6183/my-concise-recursive-and-dp-solutions-with-full-explanation-in-c
 	*/
@@ -145,7 +208,7 @@ namespace GG {
 	/*10. Regular Expression Matchingend */
 
 
-	/*4. Median of Two Sorted Arrays (medium)
+	/*4. Median of Two Sorted Arrays (hard)
 	https://leetcode.com/problems/median-of-two-sorted-arrays/
 	https://discuss.leetcode.com/topic/4996/share-my-o-log-min-m-n-solution-with-explanation
 	*/
@@ -290,6 +353,79 @@ namespace GG {
 		}
 	};
 	/*388. Longest Absolute File Path end */
+
+	/*379. Design Phone Directory (medium)
+	https://leetcode.com/problems/design-phone-directory/
+	https://discuss.leetcode.com/topic/53098/c-two-array-solution
+	*/
+	class PhoneDirectory379 {
+	public:
+		/** Initialize your data structure here
+		@param maxNumbers - The maximum numbers that can be stored in the phone directory. */
+		PhoneDirectory379(int maxNumbers) {
+			total = maxNumbers;
+			used.resize(total);
+			pool.resize(total, true);
+			index = 0;
+			for (int i = 0; i < total; ++i) {
+				used[i] = i;
+			}
+		}
+
+		/** Provide a number which is not assigned to anyone.
+		@return - Return an available number. Return -1 if none is available. */
+		int get() {
+			int result = -1;
+			if (index < total) {
+				result = used[index++];
+				pool[result] = false;
+			}
+
+			return result;
+		}
+
+		/** Check if a number is available or not. */
+		bool check(int number) {
+			if (number > total || number < 0)
+				return false;
+
+			return pool[number];
+		}
+
+		/** Recycle or release a number. */
+		void release(int number) {
+			if (number > total || number < 0 || pool[number])
+				return;
+
+			used[--index] = number;
+			pool[number] = true;
+		}
+
+		static void main() {
+			PhoneDirectory379* test = new PhoneDirectory379(4);
+			cout << test->get() << endl;
+			cout << test->get() << endl;
+			cout << test->get() << endl;
+			cout << test->get() << endl;
+			test->release(1);
+			cout << test->get() << endl;
+			delete test;
+		}
+
+		int total;
+		int index;
+		vector<int> used;
+		vector<bool> pool;
+	};
+
+	/**
+	* Your PhoneDirectory object will be instantiated and called as such:
+	* PhoneDirectory obj = new PhoneDirectory(maxNumbers);
+	* int param_1 = obj.get();
+	* bool param_2 = obj.check(number);
+	* obj.release(number);
+	*/
+	/*379. Design Phone Directory end */
 
 
 	/*378. Kth Smallest Element in a Sorted Matrix (medium)
@@ -3953,6 +4089,7 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+		Solution44::main();
 		PhoneDirectory379::main();
 		Solution388::main();
 		Solution378::main();
