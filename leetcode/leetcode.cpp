@@ -45,6 +45,148 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*42. Trapping Rain Water (medium)
+	https://leetcode.com/problems/trapping-rain-water/
+	*/
+	class Solution42 {
+	public:
+		int trap(vector<int>& height) {
+
+		}
+	};
+	/*42. Trapping Rain Water end */
+
+
+	/*23. Merge k Sorted Lists (medium)
+	https://leetcode.com/problems/merge-k-sorted-lists/
+	https://discuss.leetcode.com/topic/6882/sharing-my-straightforward-c-solution-without-data-structure-other-than-vector
+	*/
+	class Solution23 {
+	public:
+		ListNode *mergeTwoList(ListNode * node1, ListNode * node2) {
+			if (nullptr == node1)
+				return node2;
+
+			if (nullptr == node2)
+				return node1;
+
+			ListNode * result;
+			if (node1->val > node2->val) {
+				node1->next = mergeTwoList(node1->next, node2);
+				return node1;
+			}
+			else {
+				node2->next = mergeTwoList(node1, node2->next);
+				return node2;
+			}
+		}
+
+		ListNode *mergeKLists(vector<ListNode *> &lists) {
+			if (lists.empty())
+				return nullptr;
+
+			while (lists.size() > 1) {
+				lists.push_back(mergeTwoList(lists[0], lists[1]));
+				lists.erase(lists.begin());
+				lists.erase(lists.begin());
+			}
+
+			return lists.front();
+		}
+	};
+	/*23. Merge k Sorted Lists end */
+
+
+	/*10. Regular Expression Matching (medium)
+	https://leetcode.com/problems/regular-expression-matching/
+	https://discuss.leetcode.com/topic/6183/my-concise-recursive-and-dp-solutions-with-full-explanation-in-c
+	*/
+	class Solution10 {
+	public:
+		bool isMatch(string s, string p) {
+			if (p.empty())
+				return s.empty();
+
+			if (p.size() > 1 && '*' == p[1])
+				return isMatch(s, p.substr(2)) || !s.empty() && (s[0] == p[0] || '.' == p[0]) && isMatch(s.substr(1), p);
+			else
+				return !s.empty() && (s[0] == p[0] || '.' == p[0]) && isMatch(s.substr(1), p.substr(1));
+		}
+
+		bool isMatch1(string s, string p) {
+			int m = s.size();
+			int n = p.size();
+			vector<int> dp(n + 1, false);
+
+			dp[0] = true;
+			// j-3 (dp[j-2]), j-2, j-1(*) (dp[j])
+			for (int j = 1; j <= n; ++j)
+				dp[j] = j > 1 && ('*' == p[j - 1]) && dp[j - 2];
+
+			bool leftup;
+
+			for (int i = 0; i < m; ++i) {
+				leftup = dp[0];
+				dp[0] = 0;
+				for (int j = 0; j < n; ++j) {
+					bool up = dp[j + 1];
+					if ('*' != p[j])
+						dp[j + 1] = (s[i] == p[j] || '.' == p[j]) && leftup;
+					else
+						dp[j + 1] = dp[j - 1] || ((s[i] == p[j - 1] || '.' == p[j - 1])) && dp[j + 1];
+
+					leftup = up;
+				}
+			}
+
+			return dp[n];
+		}
+	};
+	/*10. Regular Expression Matchingend */
+
+
+	/*4. Median of Two Sorted Arrays (medium)
+	https://leetcode.com/problems/median-of-two-sorted-arrays/
+	https://discuss.leetcode.com/topic/4996/share-my-o-log-min-m-n-solution-with-explanation
+	*/
+	class Solution4 {
+	public:
+		int getkth(vector<int>& nums1, int len1, vector<int>& nums2, int len2, int k) {
+			if (len1 > len2)
+				return getkth(nums2, len2, nums1, len1, k);
+
+			if (0 == len1)
+				return nums2[k - 1];
+
+			if (1 == k)
+				return min(nums1[0], nums2[0]);
+
+			int i = min(len1, k / 2);
+			int j = min(len2, k / 2);
+
+			if (nums1[i - 1] > nums2[j - 1]) {
+				vector<int> tmp(nums2.begin() + j, nums2.end());
+				return getkth(nums1, len1, tmp, tmp.size(),  k - j);
+			}
+			else {
+				vector<int> tmp(nums1.begin() + i, nums1.end());
+				return getkth(tmp, tmp.size(), nums2, len2, k - i);
+			}
+		}
+
+		double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+			int len1 = nums1.size();
+			int len2 = nums2.size();
+
+			int m = (len1 + len2 + 1) >> 1;
+			int n = (len1 + len2 + 2) >> 1;
+
+			return (getkth(nums1, len1, nums2, len2, m) + getkth(nums1, len1, nums2, len2, n)) / 2.0;
+		}
+	};
+	/*4. Median of Two Sorted Arrays end */
+
+
 	/*388. Longest Absolute File Path (medium)
 	https://leetcode.com/problems/longest-absolute-file-path/
 	https://discuss.leetcode.com/topic/55097/simple-python-solution/12
