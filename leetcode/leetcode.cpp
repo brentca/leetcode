@@ -45,96 +45,251 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*42. Trapping Rain Water (medium)
+	https://leetcode.com/problems/trapping-rain-water/
+	*/
+	class Solution42 {
+	public:
+		int trap(vector<int>& height) {
+
+		}
+	};
+	/*42. Trapping Rain Water end */
+
+
+	/*23. Merge k Sorted Lists (medium)
+	https://leetcode.com/problems/merge-k-sorted-lists/
+	https://discuss.leetcode.com/topic/6882/sharing-my-straightforward-c-solution-without-data-structure-other-than-vector
+	*/
+	class Solution23 {
+	public:
+		ListNode *mergeTwoList(ListNode * node1, ListNode * node2) {
+			if (nullptr == node1)
+				return node2;
+
+			if (nullptr == node2)
+				return node1;
+
+			ListNode * result;
+			if (node1->val > node2->val) {
+				node1->next = mergeTwoList(node1->next, node2);
+				return node1;
+			}
+			else {
+				node2->next = mergeTwoList(node1, node2->next);
+				return node2;
+			}
+		}
+
+		ListNode *mergeKLists(vector<ListNode *> &lists) {
+			if (lists.empty())
+				return nullptr;
+
+			while (lists.size() > 1) {
+				lists.push_back(mergeTwoList(lists[0], lists[1]));
+				lists.erase(lists.begin());
+				lists.erase(lists.begin());
+			}
+
+			return lists.front();
+		}
+	};
+	/*23. Merge k Sorted Lists end */
+
+
+	/*10. Regular Expression Matching (medium)
+	https://leetcode.com/problems/regular-expression-matching/
+	https://discuss.leetcode.com/topic/6183/my-concise-recursive-and-dp-solutions-with-full-explanation-in-c
+	*/
+	class Solution10 {
+	public:
+		bool isMatch(string s, string p) {
+			if (p.empty())
+				return s.empty();
+
+			if (p.size() > 1 && '*' == p[1])
+				return isMatch(s, p.substr(2)) || !s.empty() && (s[0] == p[0] || '.' == p[0]) && isMatch(s.substr(1), p);
+			else
+				return !s.empty() && (s[0] == p[0] || '.' == p[0]) && isMatch(s.substr(1), p.substr(1));
+		}
+
+		bool isMatch1(string s, string p) {
+			int m = s.size();
+			int n = p.size();
+			vector<int> dp(n + 1, false);
+
+			dp[0] = true;
+			// j-3 (dp[j-2]), j-2, j-1(*) (dp[j])
+			for (int j = 1; j <= n; ++j)
+				dp[j] = j > 1 && ('*' == p[j - 1]) && dp[j - 2];
+
+			bool leftup;
+
+			for (int i = 0; i < m; ++i) {
+				leftup = dp[0];
+				dp[0] = 0;
+				for (int j = 0; j < n; ++j) {
+					bool up = dp[j + 1];
+					if ('*' != p[j])
+						dp[j + 1] = (s[i] == p[j] || '.' == p[j]) && leftup;
+					else
+						dp[j + 1] = dp[j - 1] || ((s[i] == p[j - 1] || '.' == p[j - 1])) && dp[j + 1];
+
+					leftup = up;
+				}
+			}
+
+			return dp[n];
+		}
+	};
+	/*10. Regular Expression Matchingend */
+
+
+	/*4. Median of Two Sorted Arrays (medium)
+	https://leetcode.com/problems/median-of-two-sorted-arrays/
+	https://discuss.leetcode.com/topic/4996/share-my-o-log-min-m-n-solution-with-explanation
+	*/
+	class Solution4 {
+	public:
+		int getkth(vector<int>& nums1, int len1, vector<int>& nums2, int len2, int k) {
+			if (len1 > len2)
+				return getkth(nums2, len2, nums1, len1, k);
+
+			if (0 == len1)
+				return nums2[k - 1];
+
+			if (1 == k)
+				return min(nums1[0], nums2[0]);
+
+			int i = min(len1, k / 2);
+			int j = min(len2, k / 2);
+
+			if (nums1[i - 1] > nums2[j - 1]) {
+				vector<int> tmp(nums2.begin() + j, nums2.end());
+				return getkth(nums1, len1, tmp, tmp.size(),  k - j);
+			}
+			else {
+				vector<int> tmp(nums1.begin() + i, nums1.end());
+				return getkth(tmp, tmp.size(), nums2, len2, k - i);
+			}
+		}
+
+		double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+			int len1 = nums1.size();
+			int len2 = nums2.size();
+
+			int m = (len1 + len2 + 1) >> 1;
+			int n = (len1 + len2 + 2) >> 1;
+
+			return (getkth(nums1, len1, nums2, len2, m) + getkth(nums1, len1, nums2, len2, n)) / 2.0;
+		}
+	};
+	/*4. Median of Two Sorted Arrays end */
+
+
 	/*388. Longest Absolute File Path (medium)
 	https://leetcode.com/problems/longest-absolute-file-path/
-	dir\n\tsubdir1\n\t\tfile1.ext\n\t\tsubsubdir1\n\tsubdir2\n\t\tsubsubdir2\n\t\t\tfile2.ext
+	https://discuss.leetcode.com/topic/55097/simple-python-solution/12
 	*/
 	class Solution388 {
 	public:
+		vector<string> split(const string &text, char sep) {
+			vector<string> tokens;
+			size_t start = 0, end = 0;
+
+			while ((end = text.find(sep, start)) != string::npos) {
+				while (' ' == text[start])
+					++start;
+
+				string temp = text.substr(start, end - start);
+				if (temp != "") tokens.push_back(temp);
+				start = end + 1;
+			}
+
+			string temp = text.substr(start);
+			if (temp != "") 
+				tokens.push_back(temp);
+
+			return tokens;
+		}
+
+		int lengthLongestPath1(string input) {
+			vector<string> items;
+
+			items = split(input, '\n');
+			stack<string> path;
+
+			int len = 0, result = 0;
+			for (auto item : items) {
+				int idx = 0;
+				while ('\t' == item[idx])
+					++idx;
+
+				if (string::npos != item.find('.'))
+					result = max(result, len + (int)item.size() - idx + (int)path.size());
+				else {
+					if (path.empty() || 0 == idx) {
+						while (!path.empty())
+							path.pop();
+						len = 0;
+						path.push(item);
+						len += item.size() - idx;
+					}
+					else {
+						int level2 = 0;
+						string tmp = path.top();
+						while ('\t' == tmp[level2])
+							++level2;
+
+						while (level2 >= idx) {
+							path.pop();
+							len -= tmp.size() - level2;
+							tmp = path.top();
+							level2 = 0;
+							while ('\t' == tmp[level2])
+								++level2;
+						}
+
+						path.push(item);
+						len += item.size() - idx;
+					}
+				}
+			}
+
+			return result;
+		}
+
 		int lengthLongestPath(string input) {
-			int result = 0;
-			char * pch = NULL;
-			//strtk 
-				std::strtok
+			int maxlen = 0;
+			vector<int>pathlen(input.length() + 1);
+			vector<string> items;
 
-			return result;
-		}
-	};
-	/*388. Longest Absolute File Path end */
+			items = split(input, '\n');
+			for (auto line : items) {
+				int idx = 0;
+				while ('\t' == line[idx])
+					++idx;
 
-
-	/*379. Design Phone Directory (medium)
-	https://leetcode.com/problems/design-phone-directory/
-	https://discuss.leetcode.com/topic/53098/c-two-array-solution
-	*/
-	class PhoneDirectory379 {
-	public:
-		/** Initialize your data structure here
-		@param maxNumbers - The maximum numbers that can be stored in the phone directory. */
-		PhoneDirectory379(int maxNumbers) {
-			total = maxNumbers;
-			used.resize(total);
-			pool.resize(total, true);
-			index = 0;
-			for (int i = 0; i < total; ++i) {
-				used[i] = i;
-			}
-		}
-
-		/** Provide a number which is not assigned to anyone.
-		@return - Return an available number. Return -1 if none is available. */
-		int get() {
-			int result = -1;
-			if (index < total) {
-				result = used[index++];
-				pool[result] = false;
+				int namelen = line.length() - idx;
+				if (string::npos != line.find('.'))
+					maxlen = max(maxlen, pathlen[idx] + namelen);
+				else
+					pathlen[idx + 1] = pathlen[idx] + namelen + 1;
 			}
 
-			return result;
-		}
-
-		/** Check if a number is available or not. */
-		bool check(int number) {
-			if (number > total || number < 0)
-				return false;
-
-			return pool[number];
-		}
-
-		/** Recycle or release a number. */
-		void release(int number) {
-			if (number > total || number < 0 || pool[number])
-				return;
-
-			used[--index] = number;
-			pool[number] = true;
+			return maxlen;
 		}
 
 		static void main() {
-			PhoneDirectory379* test = new PhoneDirectory379(4);
-			cout << test->get() << endl;
-			cout << test->get() << endl;
-			cout << test->get() << endl;
-			cout << test->get() << endl;
-			test->release(1);
-			cout << test->get() << endl;
+			Solution388* test = new Solution388;
+			int result;
+			string input1("dir\n\tsubdir1\n\t\tfile1.ext\n\t\tsubsubdir1\n\tsubdir2\n\t\tsubsubdir2\n\t\t\tfile2.ext");
+			string input2("a\n\tb.txt\na2\n\tb2.txt");
+			result = test->lengthLongestPath(input2);
 			delete test;
 		}
-
-		int total;
-		int index;
-		vector<int> used;
-		vector<bool> pool;
 	};
-
-	/**
-	* Your PhoneDirectory object will be instantiated and called as such:
-	* PhoneDirectory obj = new PhoneDirectory(maxNumbers);
-	* int param_1 = obj.get();
-	* bool param_2 = obj.check(number);
-	* obj.release(number);
-	*/
-	/*379. Design Phone Directory end */
+	/*388. Longest Absolute File Path end */
 
 
 	/*378. Kth Smallest Element in a Sorted Matrix (medium)
@@ -3799,6 +3954,7 @@ namespace GG {
 
 	static void main() {
 		PhoneDirectory379::main();
+		Solution388::main();
 		Solution378::main();
 		Solution361::main();
 		Solution356::main();
