@@ -84,14 +84,23 @@ namespace GG {
 			result.insert(result.begin(), intervals.begin(), intervals.begin() + low);
 			Interval next = intervals[low];
 
-			while (low++ <= high && next.start <= newInterval.start && next.end >= newInterval.start)
+			while (low++ <= high && (next.start <= newInterval.start && next.end >= newInterval.start ||
+				next.start >= newInterval.start && next.start <= newInterval.end)) {
+				next.start = min(next.start, newInterval.start);
 				next.end = max(next.end, newInterval.end);
+			}
+
+			if (next.start > newInterval.end)
+				result.push_back(newInterval);
 
 			result.push_back(next);
 			while (low < high) {
 				result.push_back(intervals[low]);
 				++low;
 			}
+			
+			if (result.rbegin()->end < newInterval.end)
+				result.push_back(newInterval);
 
 			return result;
 		}
@@ -100,7 +109,7 @@ namespace GG {
 			Solution57* test = new Solution57;
 			vector<Interval> result;
 			vector<Interval> intervals1 = { {1, 5} };
-			Interval newInterval1 = { 2, 7 };
+			Interval newInterval1 = { 2, 3 };
 
 			result = test->insert(intervals1, newInterval1);
 			delete test;
