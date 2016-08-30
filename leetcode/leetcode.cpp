@@ -53,55 +53,64 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*140. Word Break II (hard)
+	https://leetcode.com/problems/word-break-ii/
+	*/
+	/*140. Word Break II end */
+
+
+	/*128. Longest Consecutive Sequence (hard)
+	https://leetcode.com/problems/longest-consecutive-sequence/
+	https://discuss.leetcode.com/topic/6148/my-really-simple-java-o-n-solution-accepted
+	*/
+	class Solution128 {
+	public:
+		int longestConsecutive(vector<int>& nums) {
+			int result = 0;
+			int left, right;
+			unordered_map<int, int> data;
+
+			for (auto item : nums) {
+				if (0 == data.count(item)) {
+					left = data.count(item - 1) ? data[item - 1] : 0;
+					right = data.count(item + 1) ? data[item + 1] : 0;
+
+					int sum = left + right + 1;
+					data[item] = sum;
+					data[item - left] = sum;
+					data[item + right] = sum;
+					result = max(result, sum);
+				}
+			}
+
+			return result;
+		}
+	};
+	/*128. Longest Consecutive Sequence end */
+
+
 	/*57. Insert Interval (hard)
 	https://leetcode.com/problems/insert-interval/
+	https://discuss.leetcode.com/topic/16988/7-lines-3-easy-solutions
 	*/
 	class Solution57 {
 	public:
 		vector<Interval> insert(vector<Interval>& intervals, Interval newInterval) {
 			vector<Interval> result;
-			if (intervals.empty()) {
-				result.push_back(newInterval);
-				return result;
+			
+			Interval next = newInterval;
+			int i;
+			for (i = 0; i < intervals.size() && intervals[i].end < next.start; ++i)
+				result.push_back(intervals[i]);
+
+			for (; i < intervals.size() && intervals[i].start <= next.end; ++i) {
+				next.start = min(intervals[i].start, next.start);
+				next.end = max(next.end, intervals[i].end);
 			}
-				
-			int low = 0, high = intervals.size() - 1;
-
-			while (low < high) {
-				int mid = low + (high - low) / 2;
-
-				if (intervals[mid].start == newInterval.start) {
-					low = mid;
-					break;
-				}
-				else if (intervals[mid].start > newInterval.start)
-					high = mid - 1;
-				else
-					low = mid + 1;
-			}
-
-			//if (low && intervals[low].end < newInterval.start)
-			result.insert(result.begin(), intervals.begin(), intervals.begin() + low);
-			Interval next = intervals[low];
-
-			while (low++ <= high && (next.start <= newInterval.start && next.end >= newInterval.start ||
-				next.start >= newInterval.start && next.start <= newInterval.end)) {
-				next.start = min(next.start, newInterval.start);
-				next.end = max(next.end, newInterval.end);
-			}
-
-			if (next.start > newInterval.end)
-				result.push_back(newInterval);
 
 			result.push_back(next);
-			while (low < high) {
-				result.push_back(intervals[low]);
-				++low;
-			}
-			
-			if (result.rbegin()->end < newInterval.end)
-				result.push_back(newInterval);
-
+			for (; i < intervals.size(); ++i)
+				result.push_back(intervals[i]);
 			return result;
 		}
 
@@ -109,7 +118,7 @@ namespace GG {
 			Solution57* test = new Solution57;
 			vector<Interval> result;
 			vector<Interval> intervals1 = { {1, 5} };
-			Interval newInterval1 = { 2, 3 };
+			Interval newInterval1 = { 6, 7 };
 
 			result = test->insert(intervals1, newInterval1);
 			delete test;
