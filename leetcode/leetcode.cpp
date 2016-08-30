@@ -40,9 +40,104 @@ namespace GG {
 		vector<UndirectedGraphNode *> neighbors;
 	};
 
+	struct Interval {
+		int start;
+		int end;
+		Interval() : start(0), end(0) {}
+		Interval(int s, int e) : start(s), end(e) {}
+	};
+
+
 	/*66. Plus One (hard)
 	*/
 	/*66. Plus One end */
+
+
+	/*57. Insert Interval (hard)
+	https://leetcode.com/problems/insert-interval/
+	*/
+	class Solution57 {
+	public:
+		vector<Interval> insert(vector<Interval>& intervals, Interval newInterval) {
+			vector<Interval> result;
+			if (intervals.empty()) {
+				result.push_back(newInterval);
+				return result;
+			}
+				
+			int low = 0, high = intervals.size() - 1;
+
+			while (low < high) {
+				int mid = low + (high - low) / 2;
+
+				if (intervals[mid].start == newInterval.start) {
+					low = mid;
+					break;
+				}
+				else if (intervals[mid].start > newInterval.start)
+					high = mid - 1;
+				else
+					low = mid + 1;
+			}
+
+			//if (low && intervals[low].end < newInterval.start)
+			result.insert(result.begin(), intervals.begin(), intervals.begin() + low);
+			Interval next = intervals[low];
+
+			while (low++ <= high && next.start <= newInterval.start && next.end >= newInterval.start)
+				next.end = max(next.end, newInterval.end);
+
+			result.push_back(next);
+			while (low < high) {
+				result.push_back(intervals[low]);
+				++low;
+			}
+
+			return result;
+		}
+
+		static void main() {
+			Solution57* test = new Solution57;
+			vector<Interval> result;
+			vector<Interval> intervals1 = { {1, 5} };
+			Interval newInterval1 = { 2, 7 };
+
+			result = test->insert(intervals1, newInterval1);
+			delete test;
+		}
+	};
+	/*57. Insert Interval end */
+
+
+	/*56. Merge Intervals (hard)
+	https://leetcode.com/problems/merge-intervals/
+	https://discuss.leetcode.com/topic/20263/c-10-line-solution-easing-understanding
+	*/
+	/**
+	* Definition for an interval.*/
+	class Solution56 {
+	public:
+		vector<Interval> merge(vector<Interval>& intervals) {
+			vector<Interval> result;
+			if (intervals.empty())
+				return result;
+
+			sort(intervals.begin(), intervals.end(), [](Interval &a, Interval &b) {return a.start < b.start; });
+
+			result.push_back(intervals[0]);
+
+			for (int i = 1; i < intervals.size(); ++i) {
+				if (intervals[i].start > result.rbegin()->end)
+					result.push_back(intervals[i]);
+				else
+					result.rbegin()->end = max(result.rbegin()->end, intervals[i].end);
+			}
+
+			return result;
+
+		}
+	};
+	/*56. Merge Intervals end */
 
 
 	/*44. Wildcard Matching (hard)
@@ -52,6 +147,35 @@ namespace GG {
 	class Solution44 {
 	public:
 		bool isMatch(string s, string p) {
+			if (p.empty())
+				return s.empty();
+
+			int m = s.size();
+			int n = p.size();
+			vector<bool> dp(m + 1, false);
+			bool upleft;
+
+			dp[0] = true;
+
+			for (int j = 1; j <= n; ++j) {
+				upleft = dp[0];
+				dp[0] = dp[0] && ('*' == p[j - 1]);
+				
+				for (int i = 1; i <= m; ++i) {
+					bool tmp = dp[i];
+					if ('*' != p[j - 1])
+						dp[i] = upleft && (s[i - 1] == p[j - 1] || '?' == p[j - 1]);
+					else
+						dp[i] = dp[i] || dp[i - 1];
+					
+					upleft = tmp;
+				}
+			}
+
+			return dp[m];
+		}
+
+		bool isMatch1(string s, string p) {
 			if (p.empty())
 				return s.empty();
 
@@ -1894,13 +2018,6 @@ namespace GG {
 	https://leetcode.com/problems/meeting-rooms-ii/
 	https://discuss.leetcode.com/topic/20958/ac-java-solution-using-min-heap/6
 	*/
-	struct Interval {
-		int start;
-		int end;
-		Interval() : start(0), end(0) {}
-		Interval(int s, int e) : start(s), end(e) {}
-	};
-
 	class Solution253 {
 	public:
 		int minMeetingRooms(vector<Interval>& intervals) {
@@ -4089,6 +4206,7 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+		Solution57::main();
 		Solution44::main();
 		PhoneDirectory379::main();
 		Solution388::main();
