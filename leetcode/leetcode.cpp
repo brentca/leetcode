@@ -53,9 +53,128 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*146. LRU Cache (hard)
+	https://leetcode.com/problems/lru-cache/
+	https://discuss.leetcode.com/topic/6812/c-11-code-74ms-hash-table-list
+	*/
+	class LRUCache146 {
+	public:
+		LRUCache146(int capacity) {
+			total = capacity;
+		}
+
+		int get(int key) {
+			int result = -1;
+			auto it = hash.find(key);
+			if (it != hash.end()) {
+				data.erase(it->second.second);
+				result = it->second.first;
+				data.push_front(key);
+				it->second.second = data.begin();
+			}
+
+			return result;
+		}
+
+		void set(int key, int value) {
+			if (hash.count(key)) {
+				data.erase(hash[key].second);
+				data.push_front(key);
+				hash[key] = { value, data.begin() };
+			}
+			else {
+				if (data.size() >= total) {
+					hash.erase(data.back());
+					data.pop_back();
+				}
+
+				data.push_front(key);
+				hash[key] = { value, data.begin() };
+			}			
+		}
+
+		int total;
+		unordered_map<int, pair<int, list<int>::iterator>> hash;
+		list<int> data;
+	};
+	/*146. LRU Cache end */
+
+
 	/*140. Word Break II (hard)
 	https://leetcode.com/problems/word-break-ii/
+	https://discuss.leetcode.com/topic/12997/11ms-c-solution-concise
 	*/
+	class Solution140 {
+	public:
+		//void wordmatch()
+		unordered_map<string, vector<string>> m;
+		vector<string> wordBreak(string s, unordered_set<string>& wordDict) {
+			vector<string> result;
+
+			if (m.count(s))
+				return m[s];
+
+			if (wordDict.count(s))
+				result.push_back(s);
+
+			for (int i = 1; i < s.size(); ++i) {
+				string cur = s.substr(0, i);
+				
+				if (wordDict.count(cur)) {
+					string word = s.substr(i);
+
+					vector<string> after = wordBreak(word, wordDict);
+					for (auto item : after)
+						result.push_back(cur.substr(0).append(" " + item));
+				}
+			}
+
+			m[s] = result;
+			return result;
+		}
+
+		
+		vector<string> wordBreak1(string s, unordered_set<string>& wordDict) {
+			vector<string> result;
+			if (s.empty())
+				return result;
+
+			if (m.count(s))
+				return m[s];
+
+			int len = s.size();
+			for (auto item : wordDict) {
+				int itemlen = item.size();
+				
+				vector<string> bresult;
+				if (len >= itemlen && s.substr(0, itemlen) == item) {
+					if (len == itemlen) {
+						result.push_back(item);
+						continue;
+					}
+
+					bresult = wordBreak1(s.substr(itemlen), wordDict);
+				}
+
+				for (auto subitem : bresult)
+					result.push_back(s.substr(0, itemlen).append(" " + subitem));
+			}
+
+			m[s] = result;
+			return result;
+		}
+
+		static void main() {
+			Solution140* test = new Solution140;
+			vector<string> result;
+
+			string s1("catsanddog");
+			unordered_set<string> wordDict1 = { "cat","cats","and","sand","dog" };
+
+			result = test->wordBreak(s1, wordDict1);
+			delete test;
+		}
+	};
 	/*140. Word Break II end */
 
 
@@ -4224,6 +4343,7 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+		Solution140::main();
 		Solution57::main();
 		Solution44::main();
 		PhoneDirectory379::main();
@@ -17624,8 +17744,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	//GG::Solution310::main();
 	//GG::Solution133::main();
 	Codec297::main();
-	LRUCache146::main();
-	Solution128::main();
+	//LRUCache146::main();
+	//GG::Solution128::main();
 	GG::Solution200::main();
 	GG::Solution200::main();
 	Solution130::main();
@@ -17652,4 +17772,5 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	return 0;
 }
+
 
