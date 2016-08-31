@@ -53,17 +53,301 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*212. Word Search II (hard)
+	https://leetcode.com/problems/word-search-ii/
+	https://discuss.leetcode.com/topic/33246/java-15ms-easiest-solution-100-00/2
+	*/
+	class Solution212 {
+	public:
+		class Trie {
+		public:
+			vector<Trie*> data;
+			int idx;
+			bool isword;
+			Trie() {
+				data.assign(26, nullptr);
+				idx = -1;
+				isword = false;
+			}
+		};
+
+		void insertWord(string& str, int idx, Trie *parent) {
+			Trie * cur = parent;
+			for (auto item : str) {
+				int i = item - 'a';
+				if (nullptr == cur->data[i])
+					cur->data[i] = new Trie;
+
+				cur = cur->data[i];
+			}
+
+			cur->idx = idx;
+			cur->isword = true;
+		}
+
+		void buildTrie(vector<string>& words, Trie *parent) {
+			for (int i = 0; i < words.size(); ++i)
+				insertWord(words[i], i, parent);
+		}
+
+		void checkWord(int i, int j, vector<string>& board, vector<string>& words, Trie *parent) {
+			if (i >= board.size() || i < 0 || j >= board[0].size() || j < 0 || 'X' == board[i][j])
+				return;
+
+			char tmp = board[i][j];
+			int k = tmp - 'a';
+			if (nullptr != parent->data[k]) {
+				board[i][j] = 'X';
+
+				if (parent->data[k]->isword) {
+					parent->data[k]->isword = false;
+					result.push_back(words[parent->data[k]->idx]);
+				}
+
+				checkWord(i + 1, j, board, words, parent->data[k]);
+				checkWord(i - 1, j, board, words, parent->data[k]);
+				checkWord(i, j + 1, board, words, parent->data[k]);
+				checkWord(i, j - 1, board, words, parent->data[k]);
+
+				board[i][j] = tmp;
+			}
+		}
+
+		vector<string> result;
+		vector<string> findWords(vector<string>& board, vector<string>& words) {
+			if (board.empty() || board[0].empty() || words.empty())
+				return result;
+
+			Trie root;
+
+			buildTrie(words, &root);
+			for (int i = 0; i < board.size(); ++i)
+			for (int j = 0; j < board[0].size(); ++j)
+				checkWord(i, j, board, words, &root);
+
+			return result;
+		}
+
+		static void main() {
+			Solution212* test = new Solution212;
+			vector<string> result;
+
+			vector<string> board1 = { "oaan", "etae", "ihkr", "iflv" };
+			vector<string> words1 = { "oath", "pea", "eat", "rain" };
+			result = test->findWords(board1, words1);
+			delete test;
+		}
+	};
+	/*212. Word Search II end */
+
+
+	/*159. Longest Substring with At Most Two Distinct Characters (hard)
+	https://leetcode.com/problems/longest-substring-with-at-most-two-distinct-characters/
+	https://discuss.leetcode.com/topic/7399/share-my-c-solution
+	*/
+	class Solution159 {
+	public:
+		int lengthOfLongestSubstringTwoDistinct(string s) {
+			if (s.empty())
+				return 0;
+
+			vector<int> hash(256, 0);
+			int count = 0, result = 1, start = 0;
+
+			for (int i = 0; i < s.size(); ++i) {
+				hash[s[i]] ++;
+
+				if (1 == hash[s[i]]) {
+					++count;
+
+					while (count > 2) {
+						--hash[s[start]];
+						if (0 == hash[s[start]])
+							--count;
+						++start;
+					}
+				}
+
+				result = max(result, i - start + 1);
+			}
+
+			return result;
+		}
+
+		int lengthOfLongestSubstringTwoDistinct1(string s) {
+			int result = 0;
+			int count = 0;
+			int curtotal = 0;
+			unordered_set<char> hash;
+
+			for (int i = 0; i < s.size(); ++i) {
+				if (count < 2 || hash.count(s[i])) {
+					++curtotal;
+					if (!hash.count(s[i]))
+						++count;
+
+					hash.insert(s[i]);
+					result = max(result, curtotal);
+
+				}
+				else {
+					result = max(result, curtotal);
+					curtotal = 2;
+					int k = i - 2;
+					while (s[k] == s[i - 1]) {
+						++curtotal;
+						--k;
+					}
+
+					hash.erase(s[k]);
+					hash.insert(s[i]);
+				}
+			}
+
+			return result;
+		}
+	};
+	/*159. Longest Substring with At Most Two Distinct Characters end */
+
+
+	/*158. Read N Characters Given Read4 II - Call multiple times (hard)
+	https://leetcode.com/problems/read-n-characters-given-read4-ii-call-multiple-times/
+	https://discuss.leetcode.com/topic/7094/a-simple-java-code/2
+	https://discuss.leetcode.com/topic/32780/simple-short-java-c/2
+	*/
+	class Solution158 {
+	public:
+		/**
+		* @param buf Destination buffer
+		* @param n   Maximum number of characters to read
+		* @return    The number of characters read
+		*/
+		int count;
+		int index;
+		char data[4];
+
+		Solution158() {
+			count = 0;
+			index = 0;
+			//buf.resize(4);
+		}
+
+		int read(char *buf, int n) {
+			int total = 0;
+
+			while (total < n) {
+				if (0 == index)
+					;// count = read4(data);
+
+				if (0 == count)
+					break;
+
+				while (total < n && index < count)
+					buf[total++] = data[index++];
+
+				if (index >= count)
+					index = 0;
+			}
+
+			return total;
+		}
+	};
+	/*158. Read N Characters Given Read4 II - Call multiple times end */
+
+
 	/*146. LRU Cache (hard)
 	https://leetcode.com/problems/lru-cache/
 	https://discuss.leetcode.com/topic/6812/c-11-code-74ms-hash-table-list
+	https://discuss.leetcode.com/topic/6613/java-hashtable-double-linked-list-with-a-touch-of-pseudo-nodes
 	*/
 	class LRUCache146 {
 	public:
-		LRUCache146(int capacity) {
-			total = capacity;
+		class DLinkNode {
+		public:
+			DLinkNode() : key(-1), val(-1), pre(nullptr), next(nullptr)
+			{}
+
+			DLinkNode(int inkey, int inval) : key(inkey), val(inval), pre(nullptr), next(nullptr)
+			{}
+
+			int key;
+			int val;
+			DLinkNode* pre;
+			DLinkNode* next;			
+		};
+
+		unordered_map<int, DLinkNode*> usedata;
+		DLinkNode head;
+		DLinkNode tail;
+
+		void addNode(DLinkNode* newnode) {
+			newnode->pre = &head;
+			newnode->next = head.next;
+
+			head.next->pre = newnode;
+			head.next = newnode;
+		}
+
+		void removeNode(DLinkNode* newnode) {
+			DLinkNode* tmpre = newnode->pre;
+			DLinkNode* tmpnext = newnode->next;
+
+			tmpre->next = tmpnext;
+			tmpnext->pre = tmpre;
+		}
+
+		void movetoHead(DLinkNode* newnode) {
+			removeNode(newnode);
+			addNode(newnode);
+		}
+
+		DLinkNode* popTail() {
+			DLinkNode* node = tail.pre;
+			node->pre->next = &tail;
+			tail.pre = node->pre;
+
+			return node;
 		}
 
 		int get(int key) {
+			int result = -1;
+			
+			if (usedata.count(key)) {
+				result = usedata[key]->val;
+				movetoHead(usedata[key]);
+			}
+
+			return result;
+		}
+
+		void set(int key, int value) {
+			if (usedata.count(key)) {
+				usedata[key]->val = value;
+				movetoHead(usedata[key]);
+			}
+			else {
+				DLinkNode* node = nullptr;
+				if (usedata.size() >= total) {
+					node = popTail();
+					usedata.erase(node->key);
+					node->key = key;
+					node->val = value;
+				}
+				else
+					node = new DLinkNode(key, value);
+
+				addNode(node);
+				usedata[key] = node;
+			}
+		}
+
+		LRUCache146(int capacity) {
+			total = capacity;
+			head.next = &tail;
+			tail.pre = &head;
+		}
+
+		int get1(int key) {
 			int result = -1;
 			auto it = hash.find(key);
 			if (it != hash.end()) {
@@ -76,7 +360,7 @@ namespace GG {
 			return result;
 		}
 
-		void set(int key, int value) {
+		void set1(int key, int value) {
 			if (hash.count(key)) {
 				data.erase(hash[key].second);
 				data.push_front(key);
@@ -92,7 +376,13 @@ namespace GG {
 				hash[key] = { value, data.begin() };
 			}			
 		}
-
+		
+		static void main() {
+			LRUCache146* test = new LRUCache146(1);
+			test->set(2, 1);
+			test->get(2);
+			delete test;
+		}
 		int total;
 		unordered_map<int, pair<int, list<int>::iterator>> hash;
 		list<int> data;
@@ -4343,6 +4633,8 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+		Solution212::main();
+		LRUCache146::main();
 		Solution140::main();
 		Solution57::main();
 		Solution44::main();
@@ -17760,7 +18052,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	Solution210::main();
 	Solution207::main();
 	Solution336::main();
-	Solution212::main();
+	//Solution212::main();
 	WordDictionary211::main();
 	//Trie208::main();
 	Solution218::main();
