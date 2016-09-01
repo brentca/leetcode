@@ -53,6 +53,43 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*218. The Skyline Problem (hard)
+	https://leetcode.com/problems/the-skyline-problem/
+	https://briangordon.github.io/2014/08/the-skyline-problem.html
+	*/
+	/*218. The Skyline Problem end */
+
+
+	/*214. Shortest Palindrome (hard)
+	https://leetcode.com/problems/shortest-palindrome/
+	https://discuss.leetcode.com/topic/14526/c-8-ms-kmp-based-o-n-time-o-n-memory-solution
+	*/
+	class Solution214 {
+	public:
+		string shortestPalindrome(string s) {
+			string rev_s(s);
+			reverse(rev_s.begin(), rev_s.end());
+
+			string str = s + "#" + rev_s;
+			vector<int> p(str.size(), 0);
+			p[0] = -1;
+			int k = -1, i = 0;
+			while (i < str.size() - 1) {
+				if (-1 == k || str[i] == str[k]) {
+					++k;
+					++i;
+					p[i] = k;
+				}
+				else
+					k = p[k];
+			}
+			
+			return rev_s.substr(0, s.size() - p[str.size() - 1]) + s;
+		}
+	};
+	/*214. Shortest Palindrome end */
+
+
 	/*212. Word Search II (hard)
 	https://leetcode.com/problems/word-search-ii/
 	https://discuss.leetcode.com/topic/33246/java-15ms-easiest-solution-100-00/2
