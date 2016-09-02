@@ -53,100 +53,6 @@ namespace GG {
 	/*66. Plus One end */
 
 
-	/*272. Closest Binary Search Tree Value II (hard)
-	https://leetcode.com/problems/closest-binary-search-tree-value-ii/
-	https://discuss.leetcode.com/topic/22940/ac-clean-java-solution-using-two-stacks/29
-	*/
-	/*
-	class Solution272 {
-	public:
-		void closestK(TreeNode* root, double target, int k, priority_queue<int, double>&data) {
-		}
-
-		vector<int> closestKValues(TreeNode* root, double target, int k) {
-			priority_queue<int, double> data;
-			//stack<TreeNode*> nodes;
-			TreeNode* cur = root;
-			int closenode;
-
-			double diff = numeric_limits<double>::max();
-			while (cur) {
-				double tmp = abs(target - cur->val);
-				if (diff > tmp) {
-					closenode = cur->val;
-					diff = tmp;
-				}
-
-				if (target > cur->val)
-					cur = cur->right;
-				else
-					cur = cur->left;
-			}
-		}
-	};*/
-	/*272. Closest Binary Search Tree Value II end */
-
-
-	/*269. Alien Dictionary (hard)
-	https://leetcode.com/problems/alien-dictionary/
-	https://discuss.leetcode.com/topic/28308/java-ac-solution-using-bfs/9
-	*/
-	class Solution269 {
-	public:
-		string alienOrder(vector<string>& words) {
-			string result;
-			unordered_map<char, int> degrees;
-			unordered_map<char, unordered_set<char>> nodes;
-
-			for (auto word : words) {
-				int idx = 0;
-				while (idx < word.size() - 1) {
-					if (0 == degrees.count(word[idx]))
-						degrees[word[idx]] = 0;
-
-					if (word[idx] != word[idx + 1])
-						nodes[word[idx]].insert(word[idx + 1]);
-
-					++idx;
-				}
-			}
-
-			for (auto item : nodes)
-				for (auto point : item.second)
-					++degrees[point];
-
-			queue<char> visit;
-			for (auto item : degrees) {
-				if (0 == item.second)
-					visit.push(item.first);
-			}
-
-			while (!visit.empty()) {
-				char tmp = visit.front();
-				visit.pop();
-				result += tmp;
-				for (auto point : nodes[tmp]) {
-					degrees[point] --;
-					if (0 == degrees[point])
-						visit.push(point);
-				}
-			}
-
-			return result.size() == degrees.size() ? result : string("");
-		}
-
-		static void main() {
-			Solution269* test = new Solution269;
-			string result;
-			vector<string> words1 = { "wrt","wrf","er","ett","rftt" };
-
-			result = test->alienOrder(words1);
-			delete test;
-		}
-	};
-	/*269. Alien Dictionary end */
-
-
 	/*239. Sliding Window Maximum (hard)
 	https://leetcode.com/problems/sliding-window-maximum/
 	https://discuss.leetcode.com/topic/19055/java-o-n-solution-using-deque-with-explanation
@@ -163,11 +69,11 @@ namespace GG {
 
 				while (!window.empty() && nums[window.back()] < nums[i])
 					window.pop_back();
-
+				
 				window.push_back(i);
 
 				if (i >= k - 1)
-					result.push_back(nums[window.front()]);
+					result.push_back(nums[window.front()]]);
 			}
 
 			return result;
@@ -179,6 +85,9 @@ namespace GG {
 	/*224. Basic Calculator (hard)
 	https://leetcode.com/problems/basic-calculator/
 	https://discuss.leetcode.com/topic/22359/16-ms-solution-in-c-with-stacks/2
+	"1 + 1" = 2
+	" 2-1 + 2 " = 3
+	"(1+(4+5+2)-3)+(6+8)" = 23
 	*/
 	class Solution224 {
 	public:
@@ -247,7 +156,7 @@ namespace GG {
 					continue;
 				else if (isdigit(str[i]))
 					num = 10 * num + (str[i] - '0');
-				else {
+				else {					
 					result += num * flag;
 					num = 0;
 
@@ -266,7 +175,7 @@ namespace GG {
 						oper.pop();
 						data.pop();
 					}
-
+				
 				}
 			}
 
@@ -5013,7 +4922,8 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
-		Solution269::main();
+		Solution224::main();
+		Solution218::main();
 		Solution212::main();
 		LRUCache146::main();
 		Solution140::main();
@@ -18393,7 +18303,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	Solution93::main();
 	Solution84::main();
 	Solution85::main();
-	//Solution239::main();
+	Solution239::main();
 	GG::Solution313::main();
 	Solution321::main();
 	Solution164::main();

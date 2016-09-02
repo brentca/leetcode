@@ -19,15 +19,7549 @@
 
 using namespace std;
 
+//////////////////////////Tag GG//////////////////////////////////////////
+namespace GG {
+	struct TreeNode {
+		int val;
+		TreeNode *left;
+		TreeNode *right;
+		TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+	};
+
+	struct ListNode {
+		int val;
+		ListNode* next;
+		ListNode(int x) : val(x), next(NULL) {}
+	};
+
+	struct UndirectedGraphNode {
+		int label;
+		UndirectedGraphNode(int x) : label(x) {};
+		vector<UndirectedGraphNode *> neighbors;
+	};
+
+	struct Interval {
+		int start;
+		int end;
+		Interval() : start(0), end(0) {}
+		Interval(int s, int e) : start(s), end(e) {}
+	};
+
+
+	/*66. Plus One (hard)
+	*/
+	/*66. Plus One end */
+
+
+<<<<<<< HEAD
+	/*239. Sliding Window Maximum (hard)
+	https://leetcode.com/problems/sliding-window-maximum/
+	https://discuss.leetcode.com/topic/19055/java-o-n-solution-using-deque-with-explanation
+	*/
+	class Solution239 {
+	public:
+		vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+			vector<int> result;
+			deque<int> window;
+
+			for (int i = 0; i < nums.size(); ++i) {
+				if (!window.empty() && window.front() == i - k)
+					window.pop_front();
+
+				while (!window.empty() && nums[window.back()] < nums[i])
+					window.pop_back();
+				
+				window.push_back(i);
+
+				if (i >= k - 1)
+					result.push_back(nums[window.front()]]);
+			}
+
+			return result;
+		}
+	};
+	/*239. Sliding Window Maximum end */
+
+
+	/*224. Basic Calculator (hard)
+	https://leetcode.com/problems/basic-calculator/
+	https://discuss.leetcode.com/topic/22359/16-ms-solution-in-c-with-stacks/2
+	"1 + 1" = 2
+	" 2-1 + 2 " = 3
+	"(1+(4+5+2)-3)+(6+8)" = 23
+	*/
+	class Solution224 {
+	public:
+		int calculate(string s) {
+			string strtmp("(" + s + ")");
+			stack<char> ops;
+			stack<int> nums;
+
+			int result = 0;
+			int len = strtmp.size();
+
+			for (int i = 0; i < len; ++i) {
+				if (isdigit(strtmp[i])) {
+					result = strtmp[i] - '0';
+
+					while (i + 1 < len && isdigit(strtmp[i + 1]))
+						result = result * 10 + strtmp[++i] - '0';
+				}
+				else if (isspace(strtmp[i]))
+					continue;
+				else if (strtmp[i] == '(') {
+					ops.push('(');
+					ops.push('+');
+				}
+				else {
+					if (ops.top() == '*' || ops.top() == '/') {
+						result = ops.top() == '/' ? nums.top() / result : nums.top() * result;
+						ops.pop();
+						nums.pop();
+					}
+
+					if (')' == strtmp[i]) {
+						if ('-' == ops.top())
+							result = -result;
+						ops.pop();
+
+						while (ops.top() != '(') {
+							result += (ops.top() == '-') ? -nums.top() : nums.top();
+							ops.pop();
+							nums.pop();
+						}
+
+						ops.pop(); // remove '('
+					}
+					else { // +,-,*,/
+						ops.push(strtmp[i]);
+						nums.push(result);
+						result = 0;
+					}
+				}
+			}
+
+			return result;
+		}
+
+		int calculate1(string s) {
+			string str("(" + s + ")");
+			int result = 0;
+			stack<int> data;
+			stack<int> oper;
+			int flag = 1;
+			int num = 0;
+
+			for (int i = 0; i < str.size(); ++i) {
+				if (' ' == str[i])
+					continue;
+				else if (isdigit(str[i]))
+					num = 10 * num + (str[i] - '0');
+				else {					
+					result += num * flag;
+					num = 0;
+
+					if ('-' == str[i])
+						flag = -1;
+					else if ('+' == str[i])
+						flag = 1;
+					else if ('(' == str[i]) {
+						data.push(result);
+						oper.push(flag);
+						result = 0;
+						flag = 1;
+					}
+					else {
+						result = oper.top() * result + data.top();
+						oper.pop();
+						data.pop();
+					}
+				
+				}
+			}
+
+			result += num * flag;
+			return result;
+		}
+
+		static void main() {
+			Solution224* test = new Solution224;
+			int result;
+			string s1(" 2-1 + 2 ");
+			string s2("(1 + ((4 + 5 + 2) - 3)) + (6 + 8)");
+			result = test->calculate(s2);
+
+			delete test;
+		}
+	};
+	/*224. Basic Calculator end */
+=======
+	/*272. Closest Binary Search Tree Value II (hard)
+	https://leetcode.com/problems/closest-binary-search-tree-value-ii/
+	https://discuss.leetcode.com/topic/22940/ac-clean-java-solution-using-two-stacks/29
+	*/
+	class Solution272 {
+	public:
+		void closestK(TreeNode* root, double target, int k, priority_queue<int, double>&data) {
+		}
+
+		vector<int> closestKValues(TreeNode* root, double target, int k) {
+			priority_queue<int, double> data;
+			//stack<TreeNode*> nodes;
+			TreeNode* cur = root;
+			int closenode;
+
+			double diff = numeric_limits<double>::max();
+			while (cur) {
+				double tmp = abs(target - cur->val);
+				if (diff > tmp) {
+					closenode = cur->val;
+					diff = tmp;
+				}
+
+				if (target > cur->val)
+					cur = cur->right;
+				else
+					cur = cur->left;
+			}
+		}
+	};
+	/*272. Closest Binary Search Tree Value II end */
+
+
+	/*269. Alien Dictionary (hard)
+	https://leetcode.com/problems/alien-dictionary/
+	https://discuss.leetcode.com/topic/28308/java-ac-solution-using-bfs/9
+	*/
+	class Solution269 {
+	public:
+		string alienOrder(vector<string>& words) {
+			string result;
+			unordered_map<char, int> degrees;
+			unordered_map<char, unordered_set<char>> nodes;
+
+			for (auto word : words) {
+				int idx = 0;
+				while (idx < word.size() - 1) {
+					if (0 == degrees.count(word[idx]))
+						degrees[word[idx]] = 0;
+
+					if (word[idx] != word[idx + 1])
+						nodes[word[idx]].insert(word[idx + 1]);
+
+					++idx;
+				}
+			}
+
+			for (auto item : nodes)
+				for (auto point : item.second)
+					++degrees[point];
+
+			queue<char> visit;
+			for (auto item : degrees) {
+				if (0 == item.second)
+					visit.push(item.first);
+			}
+
+			while (!visit.empty()) {
+				char tmp = visit.front();
+				visit.pop();
+				result += tmp;
+				for (auto point : nodes[tmp]) {
+					degrees[point] --;
+					if (0 == degrees[point])
+						visit.push(point);
+				}
+			}
+
+			return result.size() == degrees.size() ? result : string("");
+		}
+
+		static void main() {
+			Solution269* test = new Solution269;
+			string result;
+			vector<string> words1 = { "wrt","wrf","er","ett","rftt" };
+
+			result = test->alienOrder(words1);
+			delete test;
+		}
+	};
+	/*269. Alien Dictionary end */
+>>>>>>> 7b1c210e580724aeb4e1c6b4050cbc7d03025957
+
+
+	/*218. The Skyline Problem (hard)
+	https://leetcode.com/problems/the-skyline-problem/
+	https://briangordon.github.io/2014/08/the-skyline-problem.html
+	https://discuss.leetcode.com/topic/38065/java-solution-using-priority-queue-and-sweepline
+	http://www.geeksforgeeks.org/divide-and-conquer-set-7-the-skyline-problem/
+	http://allenlipeng47.com/PersonalPage/index/view/172/nkey
+	*/
+	class Solution218 {
+	public:
+		vector<pair<int, int>> mergeSkyline(vector<pair<int, int>> &A, vector<pair<int, int>> &B) {
+			vector<pair<int, int>> result;
+			int h1 = 0, h2 = 0;
+			int i = 0, j = 0;
+
+			while (i < A.size() && j < B.size()) {
+				int x = 0, h = 0;
+
+				if (A[i].first < B[j].first) {
+					x = A[i].first;
+					h1 = A[i++].second;
+				}
+				else if (A[i].first > B[j].first) {
+					x = B[j].first;
+					h2 = B[j++].second;
+				}
+				else {
+					x = B[j].first;
+					h1 = A[i++].second;
+					h2 = B[j++].second;
+				}
+
+				h = max(h1, h2);
+				int len = result.size();
+				if (len == 0 || h != result[len - 1].second)
+					result.push_back(make_pair(x, h));
+			}
+
+			while (i < A.size())
+				result.push_back(A[i++]);
+
+			while (j < B.size())
+				result.push_back(B[j++]);
+
+			return result;
+		}
+
+		vector<pair<int, int>> recurSkyline(vector<vector<int>>& buildings, int low, int high) {
+			vector<pair<int, int>> result;
+			if (low >= high) {
+				result.push_back(make_pair(buildings[low][0], buildings[low][2]));
+				result.push_back(make_pair(buildings[low][1], 0));
+			}
+			else {
+				int mid = low + (high - low) / 2;
+
+				vector<pair<int, int>> left = recurSkyline(buildings, low, mid);
+				vector<pair<int, int>> right = recurSkyline(buildings, mid + 1, high);
+
+				result = mergeSkyline(left, right);
+
+			}
+
+			return result;
+		}
+
+		vector<pair<int, int>> getSkyline(vector<vector<int>>& buildings) {
+			vector<pair<int, int>> result;
+
+			if (buildings.empty())
+				return result;
+
+			result = recurSkyline(buildings, 0, buildings.size() - 1);
+
+			return result;
+		}
+
+		vector<pair<int, int>> getSkyline1(vector<vector<int>>& buildings) {
+			vector<pair<int, int>> height, skyline;
+
+			for (auto& b : buildings) {
+				height.push_back({ b[0], -b[2] });
+				height.push_back({ b[1], b[2] });
+			}
+
+			sort(height.begin(), height.end());
+			multiset<int> m;
+			int prev = 0;
+			m.insert(0);
+			for (auto& h : height) {
+				if (h.second < 0)
+					m.insert(-h.second);
+				else
+					m.erase(m.find(h.second));
+
+				int cur = *m.rbegin();
+				if (cur != prev) {
+					skyline.push_back({ h.first, cur });
+					prev = cur;
+				}
+			}
+			return skyline;
+		}
+
+		static void main() {
+			Solution218* test = new Solution218;
+			vector<pair<int, int>> result;
+
+			//vector<vector<int>> buildings1 = { { 2, 5, 4 },  { 1, 3, 3 } };
+			vector<vector<int>> buildings2 = { { 2, 5, 4 }, { 3, 4, 3 } };
+			result = test->getSkyline(buildings2);
+			delete test;
+		}
+	};
+	/*218. The Skyline Problem end */
+
+
+	/*214. Shortest Palindrome (hard)
+	https://leetcode.com/problems/shortest-palindrome/
+	https://discuss.leetcode.com/topic/14526/c-8-ms-kmp-based-o-n-time-o-n-memory-solution
+	*/
+	class Solution214 {
+	public:
+		string shortestPalindrome(string s) {
+			string rev_s(s);
+			reverse(rev_s.begin(), rev_s.end());
+
+			string str = s + "#" + rev_s;
+			vector<int> p(str.size(), 0);
+			p[0] = -1;
+			int k = -1, i = 0;
+			while (i < str.size() - 1) {
+				if (-1 == k || str[i] == str[k]) {
+					++k;
+					++i;
+					p[i] = k;
+				}
+				else
+					k = p[k];
+			}
+			
+			return rev_s.substr(0, s.size() - p[str.size() - 1]) + s;
+		}
+	};
+	/*214. Shortest Palindrome end */
+
+
+	/*212. Word Search II (hard)
+	https://leetcode.com/problems/word-search-ii/
+	https://discuss.leetcode.com/topic/33246/java-15ms-easiest-solution-100-00/2
+	*/
+	class Solution212 {
+	public:
+		class Trie {
+		public:
+			vector<Trie*> data;
+			int idx;
+			bool isword;
+			Trie() {
+				data.assign(26, nullptr);
+				idx = -1;
+				isword = false;
+			}
+		};
+
+		void insertWord(string& str, int idx, Trie *parent) {
+			Trie * cur = parent;
+			for (auto item : str) {
+				int i = item - 'a';
+				if (nullptr == cur->data[i])
+					cur->data[i] = new Trie;
+
+				cur = cur->data[i];
+			}
+
+			cur->idx = idx;
+			cur->isword = true;
+		}
+
+		void buildTrie(vector<string>& words, Trie *parent) {
+			for (int i = 0; i < words.size(); ++i)
+				insertWord(words[i], i, parent);
+		}
+
+		void checkWord(int i, int j, vector<string>& board, vector<string>& words, Trie *parent) {
+			if (i >= board.size() || i < 0 || j >= board[0].size() || j < 0 || 'X' == board[i][j])
+				return;
+
+			char tmp = board[i][j];
+			int k = tmp - 'a';
+			if (nullptr != parent->data[k]) {
+				board[i][j] = 'X';
+
+				if (parent->data[k]->isword) {
+					parent->data[k]->isword = false;
+					result.push_back(words[parent->data[k]->idx]);
+				}
+
+				checkWord(i + 1, j, board, words, parent->data[k]);
+				checkWord(i - 1, j, board, words, parent->data[k]);
+				checkWord(i, j + 1, board, words, parent->data[k]);
+				checkWord(i, j - 1, board, words, parent->data[k]);
+
+				board[i][j] = tmp;
+			}
+		}
+
+		vector<string> result;
+		vector<string> findWords(vector<string>& board, vector<string>& words) {
+			if (board.empty() || board[0].empty() || words.empty())
+				return result;
+
+			Trie root;
+
+			buildTrie(words, &root);
+			for (int i = 0; i < board.size(); ++i)
+			for (int j = 0; j < board[0].size(); ++j)
+				checkWord(i, j, board, words, &root);
+
+			return result;
+		}
+
+		static void main() {
+			Solution212* test = new Solution212;
+			vector<string> result;
+
+			vector<string> board1 = { "oaan", "etae", "ihkr", "iflv" };
+			vector<string> words1 = { "oath", "pea", "eat", "rain" };
+			result = test->findWords(board1, words1);
+			delete test;
+		}
+	};
+	/*212. Word Search II end */
+
+
+	/*159. Longest Substring with At Most Two Distinct Characters (hard)
+	https://leetcode.com/problems/longest-substring-with-at-most-two-distinct-characters/
+	https://discuss.leetcode.com/topic/7399/share-my-c-solution
+	*/
+	class Solution159 {
+	public:
+		int lengthOfLongestSubstringTwoDistinct(string s) {
+			if (s.empty())
+				return 0;
+
+			vector<int> hash(256, 0);
+			int count = 0, result = 1, start = 0;
+
+			for (int i = 0; i < s.size(); ++i) {
+				hash[s[i]] ++;
+
+				if (1 == hash[s[i]]) {
+					++count;
+
+					while (count > 2) {
+						--hash[s[start]];
+						if (0 == hash[s[start]])
+							--count;
+						++start;
+					}
+				}
+
+				result = max(result, i - start + 1);
+			}
+
+			return result;
+		}
+
+		int lengthOfLongestSubstringTwoDistinct1(string s) {
+			int result = 0;
+			int count = 0;
+			int curtotal = 0;
+			unordered_set<char> hash;
+
+			for (int i = 0; i < s.size(); ++i) {
+				if (count < 2 || hash.count(s[i])) {
+					++curtotal;
+					if (!hash.count(s[i]))
+						++count;
+
+					hash.insert(s[i]);
+					result = max(result, curtotal);
+
+				}
+				else {
+					result = max(result, curtotal);
+					curtotal = 2;
+					int k = i - 2;
+					while (s[k] == s[i - 1]) {
+						++curtotal;
+						--k;
+					}
+
+					hash.erase(s[k]);
+					hash.insert(s[i]);
+				}
+			}
+
+			return result;
+		}
+	};
+	/*159. Longest Substring with At Most Two Distinct Characters end */
+
+
+	/*158. Read N Characters Given Read4 II - Call multiple times (hard)
+	https://leetcode.com/problems/read-n-characters-given-read4-ii-call-multiple-times/
+	https://discuss.leetcode.com/topic/7094/a-simple-java-code/2
+	https://discuss.leetcode.com/topic/32780/simple-short-java-c/2
+	*/
+	class Solution158 {
+	public:
+		/**
+		* @param buf Destination buffer
+		* @param n   Maximum number of characters to read
+		* @return    The number of characters read
+		*/
+		int count;
+		int index;
+		char data[4];
+
+		Solution158() {
+			count = 0;
+			index = 0;
+			//buf.resize(4);
+		}
+
+		int read(char *buf, int n) {
+			int total = 0;
+
+			while (total < n) {
+				if (0 == index)
+					;// count = read4(data);
+
+				if (0 == count)
+					break;
+
+				while (total < n && index < count)
+					buf[total++] = data[index++];
+
+				if (index >= count)
+					index = 0;
+			}
+
+			return total;
+		}
+	};
+	/*158. Read N Characters Given Read4 II - Call multiple times end */
+
+
+	/*146. LRU Cache (hard)
+	https://leetcode.com/problems/lru-cache/
+	https://discuss.leetcode.com/topic/6812/c-11-code-74ms-hash-table-list
+	https://discuss.leetcode.com/topic/6613/java-hashtable-double-linked-list-with-a-touch-of-pseudo-nodes
+	*/
+	class LRUCache146 {
+	public:
+		class DLinkNode {
+		public:
+			DLinkNode() : key(-1), val(-1), pre(nullptr), next(nullptr)
+			{}
+
+			DLinkNode(int inkey, int inval) : key(inkey), val(inval), pre(nullptr), next(nullptr)
+			{}
+
+			int key;
+			int val;
+			DLinkNode* pre;
+			DLinkNode* next;			
+		};
+
+		unordered_map<int, DLinkNode*> usedata;
+		DLinkNode head;
+		DLinkNode tail;
+
+		void addNode(DLinkNode* newnode) {
+			newnode->pre = &head;
+			newnode->next = head.next;
+
+			head.next->pre = newnode;
+			head.next = newnode;
+		}
+
+		void removeNode(DLinkNode* newnode) {
+			DLinkNode* tmpre = newnode->pre;
+			DLinkNode* tmpnext = newnode->next;
+
+			tmpre->next = tmpnext;
+			tmpnext->pre = tmpre;
+		}
+
+		void movetoHead(DLinkNode* newnode) {
+			removeNode(newnode);
+			addNode(newnode);
+		}
+
+		DLinkNode* popTail() {
+			DLinkNode* node = tail.pre;
+			node->pre->next = &tail;
+			tail.pre = node->pre;
+
+			return node;
+		}
+
+		int get(int key) {
+			int result = -1;
+			
+			if (usedata.count(key)) {
+				result = usedata[key]->val;
+				movetoHead(usedata[key]);
+			}
+
+			return result;
+		}
+
+		void set(int key, int value) {
+			if (usedata.count(key)) {
+				usedata[key]->val = value;
+				movetoHead(usedata[key]);
+			}
+			else {
+				DLinkNode* node = nullptr;
+				if (usedata.size() >= total) {
+					node = popTail();
+					usedata.erase(node->key);
+					node->key = key;
+					node->val = value;
+				}
+				else
+					node = new DLinkNode(key, value);
+
+				addNode(node);
+				usedata[key] = node;
+			}
+		}
+
+		LRUCache146(int capacity) {
+			total = capacity;
+			head.next = &tail;
+			tail.pre = &head;
+		}
+
+		int get1(int key) {
+			int result = -1;
+			auto it = hash.find(key);
+			if (it != hash.end()) {
+				data.erase(it->second.second);
+				result = it->second.first;
+				data.push_front(key);
+				it->second.second = data.begin();
+			}
+
+			return result;
+		}
+
+		void set1(int key, int value) {
+			if (hash.count(key)) {
+				data.erase(hash[key].second);
+				data.push_front(key);
+				hash[key] = { value, data.begin() };
+			}
+			else {
+				if (data.size() >= total) {
+					hash.erase(data.back());
+					data.pop_back();
+				}
+
+				data.push_front(key);
+				hash[key] = { value, data.begin() };
+			}			
+		}
+		
+		static void main() {
+			LRUCache146* test = new LRUCache146(1);
+			test->set(2, 1);
+			test->get(2);
+			delete test;
+		}
+		int total;
+		unordered_map<int, pair<int, list<int>::iterator>> hash;
+		list<int> data;
+	};
+	/*146. LRU Cache end */
+
+
+	/*140. Word Break II (hard)
+	https://leetcode.com/problems/word-break-ii/
+	https://discuss.leetcode.com/topic/12997/11ms-c-solution-concise
+	*/
+	class Solution140 {
+	public:
+		//void wordmatch()
+		unordered_map<string, vector<string>> m;
+		vector<string> wordBreak(string s, unordered_set<string>& wordDict) {
+			vector<string> result;
+
+			if (m.count(s))
+				return m[s];
+
+			if (wordDict.count(s))
+				result.push_back(s);
+
+			for (int i = 1; i < s.size(); ++i) {
+				string cur = s.substr(0, i);
+				
+				if (wordDict.count(cur)) {
+					string word = s.substr(i);
+
+					vector<string> after = wordBreak(word, wordDict);
+					for (auto item : after)
+						result.push_back(cur.substr(0).append(" " + item));
+				}
+			}
+
+			m[s] = result;
+			return result;
+		}
+
+		
+		vector<string> wordBreak1(string s, unordered_set<string>& wordDict) {
+			vector<string> result;
+			if (s.empty())
+				return result;
+
+			if (m.count(s))
+				return m[s];
+
+			int len = s.size();
+			for (auto item : wordDict) {
+				int itemlen = item.size();
+				
+				vector<string> bresult;
+				if (len >= itemlen && s.substr(0, itemlen) == item) {
+					if (len == itemlen) {
+						result.push_back(item);
+						continue;
+					}
+
+					bresult = wordBreak1(s.substr(itemlen), wordDict);
+				}
+
+				for (auto subitem : bresult)
+					result.push_back(s.substr(0, itemlen).append(" " + subitem));
+			}
+
+			m[s] = result;
+			return result;
+		}
+
+		static void main() {
+			Solution140* test = new Solution140;
+			vector<string> result;
+
+			string s1("catsanddog");
+			unordered_set<string> wordDict1 = { "cat","cats","and","sand","dog" };
+
+			result = test->wordBreak(s1, wordDict1);
+			delete test;
+		}
+	};
+	/*140. Word Break II end */
+
+
+	/*128. Longest Consecutive Sequence (hard)
+	https://leetcode.com/problems/longest-consecutive-sequence/
+	https://discuss.leetcode.com/topic/6148/my-really-simple-java-o-n-solution-accepted
+	*/
+	class Solution128 {
+	public:
+		int longestConsecutive(vector<int>& nums) {
+			int result = 0;
+			int left, right;
+			unordered_map<int, int> data;
+
+			for (auto item : nums) {
+				if (0 == data.count(item)) {
+					left = data.count(item - 1) ? data[item - 1] : 0;
+					right = data.count(item + 1) ? data[item + 1] : 0;
+
+					int sum = left + right + 1;
+					data[item] = sum;
+					data[item - left] = sum;
+					data[item + right] = sum;
+					result = max(result, sum);
+				}
+			}
+
+			return result;
+		}
+	};
+	/*128. Longest Consecutive Sequence end */
+
+
+	/*57. Insert Interval (hard)
+	https://leetcode.com/problems/insert-interval/
+	https://discuss.leetcode.com/topic/16988/7-lines-3-easy-solutions
+	*/
+	class Solution57 {
+	public:
+		vector<Interval> insert(vector<Interval>& intervals, Interval newInterval) {
+			vector<Interval> result;
+			
+			Interval next = newInterval;
+			int i;
+			for (i = 0; i < intervals.size() && intervals[i].end < next.start; ++i)
+				result.push_back(intervals[i]);
+
+			for (; i < intervals.size() && intervals[i].start <= next.end; ++i) {
+				next.start = min(intervals[i].start, next.start);
+				next.end = max(next.end, intervals[i].end);
+			}
+
+			result.push_back(next);
+			for (; i < intervals.size(); ++i)
+				result.push_back(intervals[i]);
+			return result;
+		}
+
+		static void main() {
+			Solution57* test = new Solution57;
+			vector<Interval> result;
+			vector<Interval> intervals1 = { {1, 5} };
+			Interval newInterval1 = { 6, 7 };
+
+			result = test->insert(intervals1, newInterval1);
+			delete test;
+		}
+	};
+	/*57. Insert Interval end */
+
+
+	/*56. Merge Intervals (hard)
+	https://leetcode.com/problems/merge-intervals/
+	https://discuss.leetcode.com/topic/20263/c-10-line-solution-easing-understanding
+	*/
+	/**
+	* Definition for an interval.*/
+	class Solution56 {
+	public:
+		vector<Interval> merge(vector<Interval>& intervals) {
+			vector<Interval> result;
+			if (intervals.empty())
+				return result;
+
+			sort(intervals.begin(), intervals.end(), [](Interval &a, Interval &b) {return a.start < b.start; });
+
+			result.push_back(intervals[0]);
+
+			for (int i = 1; i < intervals.size(); ++i) {
+				if (intervals[i].start > result.rbegin()->end)
+					result.push_back(intervals[i]);
+				else
+					result.rbegin()->end = max(result.rbegin()->end, intervals[i].end);
+			}
+
+			return result;
+
+		}
+	};
+	/*56. Merge Intervals end */
+
+
+	/*44. Wildcard Matching (hard)
+	https://leetcode.com/problems/wildcard-matching/
+	https://discuss.leetcode.com/topic/17901/accepted-c-dp-solution-with-a-trick
+	*/
+	class Solution44 {
+	public:
+		bool isMatch(string s, string p) {
+			if (p.empty())
+				return s.empty();
+
+			int m = s.size();
+			int n = p.size();
+			vector<bool> dp(m + 1, false);
+			bool upleft;
+
+			dp[0] = true;
+
+			for (int j = 1; j <= n; ++j) {
+				upleft = dp[0];
+				dp[0] = dp[0] && ('*' == p[j - 1]);
+				
+				for (int i = 1; i <= m; ++i) {
+					bool tmp = dp[i];
+					if ('*' != p[j - 1])
+						dp[i] = upleft && (s[i - 1] == p[j - 1] || '?' == p[j - 1]);
+					else
+						dp[i] = dp[i] || dp[i - 1];
+					
+					upleft = tmp;
+				}
+			}
+
+			return dp[m];
+		}
+
+		bool isMatch1(string s, string p) {
+			if (p.empty())
+				return s.empty();
+
+			int m = s.size();
+			int n = p.size();
+			vector<vector<bool>> dp(m + 1, vector<bool>(n + 1, false));
+
+			dp[0][0] = true;
+			for (int j = 1; j <= n; ++j)
+				dp[0][j] = dp[0][j - 1] && ('*' == p[j - 1]);
+
+			for (int i = 1; i <= m; ++i) {
+				for (int j = 1; j <= n; ++j) {
+					if ('*' != p[j - 1])
+						dp[i][j] = dp[i - 1][j - 1] && (s[i - 1] == p[j - 1] || '?' == p[j - 1]);
+					else
+						dp[i][j] = dp[i][j - 1] || dp[i - 1][j];
+				}
+			}
+
+			return dp[m][n];
+		}
+
+		static void main() {
+			Solution44* test = new Solution44;
+			bool result;
+			string s1("aa"), p1("*");
+
+			result = test->isMatch(s1, p1);
+			delete test;
+		}
+	};
+	/*44. Wildcard Matching end */
+
+
+	/*42. Trapping Rain Water (hard)
+	https://leetcode.com/problems/trapping-rain-water/
+	https://discuss.leetcode.com/topic/5125/sharing-my-simple-c-code-o-n-time-o-1-space
+	*/
+	class Solution42 {
+	public:
+		int trap(vector<int>& height) {
+			int left = 0, right = height.size() - 1;
+			int result = 0, maxleft = 0, maxright = 0;
+
+			while (left <= right) {
+				if (height[left] < height[right]) {
+					if (height[left] > maxleft)
+						maxleft = height[left];
+					else
+						result += maxleft - height[left];
+					++left;
+				}
+				else {
+					if (height[right] > maxright)
+						maxright = height[right];
+					else
+						result += maxright - height[right];
+					--right;
+				}
+			}
+
+			return result;
+		}
+	};
+	/*42. Trapping Rain Water end */
+
+
+	/*23. Merge k Sorted Lists (hard)
+	https://leetcode.com/problems/merge-k-sorted-lists/
+	https://discuss.leetcode.com/topic/6882/sharing-my-straightforward-c-solution-without-data-structure-other-than-vector
+	*/
+	class Solution23 {
+	public:
+		ListNode *mergeTwoList(ListNode * node1, ListNode * node2) {
+			if (nullptr == node1)
+				return node2;
+
+			if (nullptr == node2)
+				return node1;
+
+			ListNode * result;
+			if (node1->val > node2->val) {
+				node1->next = mergeTwoList(node1->next, node2);
+				return node1;
+			}
+			else {
+				node2->next = mergeTwoList(node1, node2->next);
+				return node2;
+			}
+		}
+
+		ListNode *mergeKLists(vector<ListNode *> &lists) {
+			if (lists.empty())
+				return nullptr;
+
+			while (lists.size() > 1) {
+				lists.push_back(mergeTwoList(lists[0], lists[1]));
+				lists.erase(lists.begin());
+				lists.erase(lists.begin());
+			}
+
+			return lists.front();
+		}
+	};
+	/*23. Merge k Sorted Lists end */
+
+
+	/*10. Regular Expression Matching (hard)
+	https://leetcode.com/problems/regular-expression-matching/
+	https://discuss.leetcode.com/topic/6183/my-concise-recursive-and-dp-solutions-with-full-explanation-in-c
+	*/
+	class Solution10 {
+	public:
+		bool isMatch(string s, string p) {
+			if (p.empty())
+				return s.empty();
+
+			if (p.size() > 1 && '*' == p[1])
+				return isMatch(s, p.substr(2)) || !s.empty() && (s[0] == p[0] || '.' == p[0]) && isMatch(s.substr(1), p);
+			else
+				return !s.empty() && (s[0] == p[0] || '.' == p[0]) && isMatch(s.substr(1), p.substr(1));
+		}
+
+		bool isMatch1(string s, string p) {
+			int m = s.size();
+			int n = p.size();
+			vector<int> dp(n + 1, false);
+
+			dp[0] = true;
+			// j-3 (dp[j-2]), j-2, j-1(*) (dp[j])
+			for (int j = 1; j <= n; ++j)
+				dp[j] = j > 1 && ('*' == p[j - 1]) && dp[j - 2];
+
+			bool leftup;
+
+			for (int i = 0; i < m; ++i) {
+				leftup = dp[0];
+				dp[0] = 0;
+				for (int j = 0; j < n; ++j) {
+					bool up = dp[j + 1];
+					if ('*' != p[j])
+						dp[j + 1] = (s[i] == p[j] || '.' == p[j]) && leftup;
+					else
+						dp[j + 1] = dp[j - 1] || ((s[i] == p[j - 1] || '.' == p[j - 1])) && dp[j + 1];
+
+					leftup = up;
+				}
+			}
+
+			return dp[n];
+		}
+	};
+	/*10. Regular Expression Matchingend */
+
+
+	/*4. Median of Two Sorted Arrays (hard)
+	https://leetcode.com/problems/median-of-two-sorted-arrays/
+	https://discuss.leetcode.com/topic/4996/share-my-o-log-min-m-n-solution-with-explanation
+	*/
+	class Solution4 {
+	public:
+		int getkth(vector<int>& nums1, int len1, vector<int>& nums2, int len2, int k) {
+			if (len1 > len2)
+				return getkth(nums2, len2, nums1, len1, k);
+
+			if (0 == len1)
+				return nums2[k - 1];
+
+			if (1 == k)
+				return min(nums1[0], nums2[0]);
+
+			int i = min(len1, k / 2);
+			int j = min(len2, k / 2);
+
+			if (nums1[i - 1] > nums2[j - 1]) {
+				vector<int> tmp(nums2.begin() + j, nums2.end());
+				return getkth(nums1, len1, tmp, tmp.size(),  k - j);
+			}
+			else {
+				vector<int> tmp(nums1.begin() + i, nums1.end());
+				return getkth(tmp, tmp.size(), nums2, len2, k - i);
+			}
+		}
+
+		double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+			int len1 = nums1.size();
+			int len2 = nums2.size();
+
+			int m = (len1 + len2 + 1) >> 1;
+			int n = (len1 + len2 + 2) >> 1;
+
+			return (getkth(nums1, len1, nums2, len2, m) + getkth(nums1, len1, nums2, len2, n)) / 2.0;
+		}
+	};
+	/*4. Median of Two Sorted Arrays end */
+
+
+	/*388. Longest Absolute File Path (medium)
+	https://leetcode.com/problems/longest-absolute-file-path/
+	https://discuss.leetcode.com/topic/55097/simple-python-solution/12
+	*/
+	class Solution388 {
+	public:
+		vector<string> split(const string &text, char sep) {
+			vector<string> tokens;
+			size_t start = 0, end = 0;
+
+			while ((end = text.find(sep, start)) != string::npos) {
+				while (' ' == text[start])
+					++start;
+
+				string temp = text.substr(start, end - start);
+				if (temp != "") tokens.push_back(temp);
+				start = end + 1;
+			}
+
+			string temp = text.substr(start);
+			if (temp != "") 
+				tokens.push_back(temp);
+
+			return tokens;
+		}
+
+		int lengthLongestPath1(string input) {
+			vector<string> items;
+
+			items = split(input, '\n');
+			stack<string> path;
+
+			int len = 0, result = 0;
+			for (auto item : items) {
+				int idx = 0;
+				while ('\t' == item[idx])
+					++idx;
+
+				if (string::npos != item.find('.'))
+					result = max(result, len + (int)item.size() - idx + (int)path.size());
+				else {
+					if (path.empty() || 0 == idx) {
+						while (!path.empty())
+							path.pop();
+						len = 0;
+						path.push(item);
+						len += item.size() - idx;
+					}
+					else {
+						int level2 = 0;
+						string tmp = path.top();
+						while ('\t' == tmp[level2])
+							++level2;
+
+						while (level2 >= idx) {
+							path.pop();
+							len -= tmp.size() - level2;
+							tmp = path.top();
+							level2 = 0;
+							while ('\t' == tmp[level2])
+								++level2;
+						}
+
+						path.push(item);
+						len += item.size() - idx;
+					}
+				}
+			}
+
+			return result;
+		}
+
+		int lengthLongestPath(string input) {
+			int maxlen = 0;
+			vector<int>pathlen(input.length() + 1);
+			vector<string> items;
+
+			items = split(input, '\n');
+			for (auto line : items) {
+				int idx = 0;
+				while ('\t' == line[idx])
+					++idx;
+
+				int namelen = line.length() - idx;
+				if (string::npos != line.find('.'))
+					maxlen = max(maxlen, pathlen[idx] + namelen);
+				else
+					pathlen[idx + 1] = pathlen[idx] + namelen + 1;
+			}
+
+			return maxlen;
+		}
+
+		static void main() {
+			Solution388* test = new Solution388;
+			int result;
+			string input1("dir\n\tsubdir1\n\t\tfile1.ext\n\t\tsubsubdir1\n\tsubdir2\n\t\tsubsubdir2\n\t\t\tfile2.ext");
+			string input2("a\n\tb.txt\na2\n\tb2.txt");
+			result = test->lengthLongestPath(input2);
+			delete test;
+		}
+	};
+	/*388. Longest Absolute File Path end */
+
+	/*379. Design Phone Directory (medium)
+	https://leetcode.com/problems/design-phone-directory/
+	https://discuss.leetcode.com/topic/53098/c-two-array-solution
+	*/
+	class PhoneDirectory379 {
+	public:
+		/** Initialize your data structure here
+		@param maxNumbers - The maximum numbers that can be stored in the phone directory. */
+		PhoneDirectory379(int maxNumbers) {
+			total = maxNumbers;
+			used.resize(total);
+			pool.resize(total, true);
+			index = 0;
+			for (int i = 0; i < total; ++i) {
+				used[i] = i;
+			}
+		}
+
+		/** Provide a number which is not assigned to anyone.
+		@return - Return an available number. Return -1 if none is available. */
+		int get() {
+			int result = -1;
+			if (index < total) {
+				result = used[index++];
+				pool[result] = false;
+			}
+
+			return result;
+		}
+
+		/** Check if a number is available or not. */
+		bool check(int number) {
+			if (number > total || number < 0)
+				return false;
+
+			return pool[number];
+		}
+
+		/** Recycle or release a number. */
+		void release(int number) {
+			if (number > total || number < 0 || pool[number])
+				return;
+
+			used[--index] = number;
+			pool[number] = true;
+		}
+
+		static void main() {
+			PhoneDirectory379* test = new PhoneDirectory379(4);
+			cout << test->get() << endl;
+			cout << test->get() << endl;
+			cout << test->get() << endl;
+			cout << test->get() << endl;
+			test->release(1);
+			cout << test->get() << endl;
+			delete test;
+		}
+
+		int total;
+		int index;
+		vector<int> used;
+		vector<bool> pool;
+	};
+
+	/**
+	* Your PhoneDirectory object will be instantiated and called as such:
+	* PhoneDirectory obj = new PhoneDirectory(maxNumbers);
+	* int param_1 = obj.get();
+	* bool param_2 = obj.check(number);
+	* obj.release(number);
+	*/
+	/*379. Design Phone Directory end */
+
+
+	/*378. Kth Smallest Element in a Sorted Matrix (medium)
+	https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/
+	https://discuss.leetcode.com/topic/52948/share-my-thoughts-and-clean-java-code
+	*/
+	class Solution378 {
+	public:
+		struct item {
+			int val;
+			int row;
+			int col;
+			item(int itemval, int itemr, int itemc) : val(itemval), row(itemr), col(itemc)
+			{}
+		};
+		
+		class cmp {
+		public:
+			bool operator()(item& a, item& b) {
+				return a.val > b.val;
+			}
+		};
+		
+		int kthSmallest(vector<vector<int>>& matrix, int k) {
+			int n = matrix.size();
+			priority_queue < item, vector<item>, cmp> data;
+
+			for (int i = 0; i < n; ++i)
+				data.push(item(matrix[0][i], 0, i));
+
+			while (--k) {
+				item head = data.top();
+				data.pop();
+				if (n - 1 == head.row)
+					continue;
+				++head.row;
+				data.push(item(matrix[head.row][head.col], head.row, head.col));
+			}
+
+			return data.top().val;
+		}
+
+		static void main() {
+			Solution378* test = new Solution378;
+			vector<vector<int>> matrix1 = { { 1,  5,  9}, {10, 11, 13}, {12, 13, 15 } };
+			vector<vector<int>> matrix2 = { { 1,  2 },{ 3, 3 } };
+
+			test->kthSmallest(matrix2, 2);
+			delete test;
+		}
+	};
+	/*378. Kth Smallest Element in a Sorted Matrix end */
+
+
+	/*375. Guess Number Higher or Lower II (medium)
+	https://leetcode.com/problems/guess-number-higher-or-lower-ii/
+	https://discuss.leetcode.com/topic/52100/dp-java-o-n-3-solution-with-explanation-15ms-17-lines
+	https://discuss.leetcode.com/topic/52627/recursion-memization
+	https://discuss.leetcode.com/topic/51984/java-o-n-2-dp-solution-with-clear-explanation
+	*/
+	class Solution375 {
+	public:
+		int dp(vector<vector<int>>&data, int s, int e) {
+			if (s >= e)
+				return 0;
+
+			if (0 != data[s][e])
+				return data[s][e];
+
+			int result = numeric_limits<int>::max();
+			for (int k = s; k <= e; ++k) {
+				int tmp = k + max(dp(data, s, k - 1), dp(data, k + 1, e));
+				result = min(result, tmp);
+			}
+
+			data[s][e] = result;
+			return result;
+		}
+
+		int getMoneyAmount(int n) {
+			if (n < 2)
+				return n;
+
+			vector<vector<int>> data(n + 1, vector<int>(n + 1, 0));
+
+			return dp(data, 1, n);
+		}
+	};
+	/*375. Guess Number Higher or Lower II end */
+
+
+	/*373. Find K Pairs with Smallest Sums (medium)
+	https://leetcode.com/problems/find-k-pairs-with-smallest-sums/
+	https://discuss.leetcode.com/topic/50450/slow-1-liner-to-fast-solutions
+	*/
+	class Solution373 {
+	public:
+		struct node {
+			int idx;
+			int num1;
+			int num2;
+
+			node(int id, int a, int b) : idx(id), num1(a), num2(b)
+			{}
+		};
+
+		class comp {
+		public:
+			bool operator ()(node&a, node& b){
+				return a.num1 + a.num2 < b.num1 + b.num2;
+			}
+		};
+
+		vector<pair<int, int>> kSmallestPairs(vector<int>& nums1, vector<int>& nums2, int k) {
+			vector<pair<int, int>> result;
+
+			if (0 == k || nums1.empty() || nums2.empty())
+				return result;
+
+			//auto cmp = [](pair<int, int> a, pair<int, int> b) { return a.first + a.second < b.first + b.second; };
+			//priority_queue <pair<int, int>, vector<pair<int, int>>, decltype(cmp)> data;
+
+			priority_queue<node, vector<node>, comp> data;
+			for (int i = 0; i < nums1.size() && i < k; ++i) {
+				node cur(0, nums1[i], nums2[0]);
+				data.push(cur);
+			}
+
+			for (int i = 0; i < k && !data.empty(); ++i) {
+				node cur = data.top();
+				result.push_back({ cur.num1, cur.num2 });
+				data.pop();
+
+				if (cur.idx < nums2.size() - 1) {
+					int next = cur.idx + 1;
+					data.push(node(next, cur.num1, nums2[next]));
+				}
+			}
+
+			return result;
+		}
+
+		vector<pair<int, int>> kSmallestPairs1(vector<int>& nums1, vector<int>& nums2, int k) {
+			multimap<int, pair<int, int>> data;
+			vector<pair<int, int>> result;
+
+			for (int i = 0; i < nums1.size(); ++i)
+				for (int j = 0; j < nums2.size(); ++j) {
+					if (data.size() >= k && nums1[i] + nums2[j] >= data.rbegin()->first)
+						break;
+					data.insert({ nums1[i] + nums2[j], make_pair(nums1[i] , nums2[j]) });
+				}
+
+
+			int num = 0;
+
+			for (auto item : data) {
+				result.push_back(item.second);
+				++num;
+
+				if (num >= k)
+					break;
+			}
+
+			return result;
+		}
+	};
+	/*373. Find K Pairs with Smallest Sums end */
+
+
+	/*370. Range Addition (medium)
+	https://leetcode.com/problems/range-addition/
+	https://discuss.leetcode.com/topic/49691/java-o-k-n-time-complexity-solution
+	*/
+	class Solution370 {
+	public:
+		vector<int> getModifiedArray(int length, vector<vector<int>>& updates) {
+			vector<int> result(length, 0);
+
+			for (auto item : updates) {
+				result[item[0]] += item[2];
+
+				if (item[1] < length - 1)
+					result[item[1] + 1] += -item[2];
+			}
+
+			int cur = 0;
+			for (int i = 0; i < length; ++i) {
+				cur += result[i];
+				result[i] = cur;
+			}
+
+			return result;
+		}
+	};
+	/*370. Range Addition end */
+
+
+	/*369. Plus One Linked List (medium)
+	https://leetcode.com/problems/plus-one-linked-list/
+	https://discuss.leetcode.com/topic/49556/iterative-two-pointers-with-dummy-node-java-o-n-time-o-1-space
+	*/
+	class Solution369 {
+	public:
+		ListNode* plusOne1(ListNode* head) {
+			stack<ListNode*> data;
+			ListNode* cur = head;
+
+			while (cur) {
+				data.push(cur);
+				cur = cur->next;
+			}
+
+			int flag = 1;
+			while (!data.empty()) {
+				cur = data.top();
+				data.pop();
+				cur->val += flag;
+				if (cur->val > 9) {
+					cur->val = 0;
+					flag = 1;
+				}
+				else 
+					flag = 0;
+			}
+
+			cur = head;
+			if (flag) {
+				cur = new ListNode(1);
+				cur->next = head;
+			}
+
+			return cur;
+		}
+
+		ListNode* plusOne(ListNode* head) {
+			ListNode dummy(0);
+			dummy.next = head;
+
+			ListNode* i = &dummy;
+			ListNode* j = &dummy;
+
+			while (nullptr != j->next) {
+				j = j->next;
+
+				if (j->val != 9)
+					i = j;
+			}
+
+			if (j->val != 9)
+				j->val++;
+			else {
+				i->val++;
+				i = i->next;
+
+				while (nullptr != i) {
+					i->val = 0;
+					i = i->next;
+				}
+			}
+
+			ListNode* newhead = head;
+			if (0 != dummy.val) {
+				newhead = new ListNode(1);
+				newhead->next = head;
+			}
+
+			return newhead;
+		}
+	};
+	/*369. Plus One Linked List end */
+
+
+	/*368. Largest Divisible Subset (medium)
+	https://leetcode.com/problems/largest-divisible-subset/
+	https://discuss.leetcode.com/topic/49456/c-solution-with-explanations
+	*/
+	class Solution368 {
+	public:
+		vector<int> largestDivisibleSubset(vector<int>& nums) {
+			vector<int> result;
+			int n = nums.size();
+			sort(nums.begin(), nums.end());
+			vector<int> dp(n, 0);
+			vector<int> parent(n, 0);
+			int mi = 0;
+			int m = 0;
+
+			for (int i = n - 1; i >= 0; --i) {
+				for (int j = i; j < n; ++j) {
+					if (0 == nums[j] % nums[i] && dp[i] < dp[j] + 1) {
+						dp[i] = dp[j] + 1;
+						parent[i] = j;
+
+						if (dp[i] > m) {
+							m = dp[i];
+							mi = i;
+						}
+					}
+				}
+			}
+			
+			for (int i = 0; i < m; ++i) {
+				result.push_back(nums[mi]);
+				mi = parent[mi];
+			}
+					
+			return result;
+		}
+	};
+	/*368. Largest Divisible Subset end */
+
+
+	/*362. Design Hit Counter (medium)
+	https://leetcode.com/problems/design-hit-counter/
+	https://discuss.leetcode.com/topic/48758/super-easy-design-o-1-hit-o-s-gethits-no-fancy-data-structure-is-needed/3
+	*/
+	class HitCounter362 {
+	public:
+		/** Initialize your data structure here. */
+		HitCounter362() {
+			times.resize(300, 0);
+			hits.resize(300, 0);
+		}
+
+		/** Record a hit.
+		@param timestamp - The current timestamp (in seconds granularity). */
+		void hit(int timestamp) {
+			int idx = timestamp % 300;
+
+			if (timestamp != times[idx]) {
+				times[idx] = timestamp;
+				hits[idx] = 1;
+			}
+			else
+				++hits[idx];
+		}
+
+		/** Return the number of hits in the past 5 minutes.
+		@param timestamp - The current timestamp (in seconds granularity). */
+		int getHits(int timestamp) {
+			int result = 0;
+			for (int i = 0; i < 300; ++i) {
+				if (timestamp - times[i] < 300)
+					result += hits[i];
+			}
+
+			return result;
+		}
+
+		vector<int> hits, times;
+	};
+
+	/*362. Design Hit Counter end */
+
+
+	/*361. Bomb Enemy (medium)
+	https://leetcode.com/problems/bomb-enemy/
+	https://discuss.leetcode.com/topic/48565/short-o-mn-solution
+	*/
+	class Solution361 {
+	public:
+		int maxKilledEnemies(vector<string>& grid) {
+			if (grid.empty() || grid[0].empty())
+				return 0;
+
+			int result = 0;
+			int row = grid.size();
+			int col = grid[0].size();
+			int rowhit;
+			vector<int> colhits(col, 0);
+
+			for (int i = 0; i < row; ++i)
+			for (int j = 0; j < col; ++j){
+				if ('W' == grid[i][j])
+					continue;
+
+				if (!j || 'W' == grid[i][j - 1]) {
+					rowhit = 0;
+					for (int k = j; k < col && grid[i][k] != 'W'; ++k)
+						rowhit += grid[i][k] == 'E';
+				}
+
+				if (!i || 'W' == grid[i - 1][j]) {
+					colhits[j] = 0;
+					for (int k = i; k < row && grid[k][j] != 'W'; ++k)
+						colhits[j] += grid[k][j] == 'E';
+				}
+
+				if ('0' == grid[i][j])
+					result = max(result, rowhit + colhits[j]);
+			}
+
+			return result;
+		}
+
+		static void main() {
+			Solution361* test = new Solution361;
+			vector<string> grid1 = { "0E00", "E0WE", "0E00" };
+			int result;
+
+			result = test->maxKilledEnemies(grid1);
+			delete test;
+		}
+	};
+	/*361. Bomb Enemy end */
+
+
+	/*360. Sort Transformed Array (medium)
+	https://leetcode.com/problems/sort-transformed-array/
+	https://discuss.leetcode.com/topic/48424/java-o-n-incredibly-short-yet-easy-to-understand-ac-solution
+	*/
+	class Solution360 {
+	public:
+		vector<int> sortTransformedArray(vector<int>& nums, int a, int b, int c) {
+			int n = nums.size();
+			vector<int> result(n);
+
+			int i = 0, j = n - 1;
+			int index = (a >= 0 ? n - 1 : 0);
+
+			while (i <= j) {
+				int num1 = cal(a, b, c, nums[i]);
+				int num2 = cal(a, b, c, nums[j]);
+				if (a >= 0)
+					result[index--] = num1 > num2 ? cal(a, b, c, nums[i++]) : cal(a, b, c, nums[j--]);
+				else
+					result[index++] = num1 > num2 ? cal(a, b, c, nums[j--]) : cal(a, b, c, nums[i++]);
+			}
+
+			return result;
+		}
+
+		int cal(int a, int b, int c, int x) {
+			return a * x * x + b * x + c;
+		}
+	};
+	/*360. Sort Transformed Array end */
+
+
+	/*356. Line Reflection (medium)
+	https://leetcode.com/problems/line-reflection/
+	https://discuss.leetcode.com/topic/47851/11ms-two-pass-hashset-based-java-solution/2
+	*/
+	class Solution356 {
+	public:
+		bool isReflected1(vector<pair<int, int>>& points) {
+			sort(points.begin(), points.end());
+			//sort(points.begin(), points.end(), [](pair<int, int> a, pair<int, int>b) {return a.first < b.first; });
+	
+			int len = points.size();
+
+			if (len < 2)
+				return true;
+
+			int left = points[0].first;
+			int right = points[len - 1].first;
+			
+			unordered_map<int, unordered_set<int>> lefthash;
+			unordered_map<int, unordered_set<int>> righthash;
+
+			for (auto item : points) {
+				if (item.first - left < right - item.first)
+					lefthash[item.first].insert(item.second);
+				else if (item.first - left > right - item.first) {
+					righthash[item.first].insert(item.second);
+				}
+			}
+			
+			for (auto item : lefthash) {
+				int mirror_x = right - item.first + left;
+				if (righthash[mirror_x].size() != item.second.size())
+					return false;
+				
+				for (auto point : item.second) {
+					if (righthash[mirror_x].count(point) < 1)
+						return false;
+				}
+			}
+
+			return lefthash.size() == righthash.size();
+		}
+
+		bool isReflected(vector<pair<int, int>>& points) {
+			sort(points.begin(), points.end());
+
+			int len = points.size();
+
+			if (len < 2)
+				return true;
+
+			int left = points[0].first;
+			int right = points[len - 1].first;
+
+			unordered_set<string> hash;
+			unordered_set<string> desthash;
+			for (auto item : points) {
+				string key = to_string(item.first - left) + "a" + to_string(right - item.first) + "b" + to_string(item.second);
+				string mirror_key = to_string(right - item.first) + "a" + to_string(item.first - left) + "b" + to_string(item.second);
+				hash.insert(key);
+				desthash.insert(mirror_key);
+			}
+
+			for (auto item : hash) {
+				if (desthash.count(item) < 1)
+					return false;
+			}
+
+			return hash.size() == desthash.size();
+		}
+
+		static void main() {
+			Solution356* test = new Solution356;
+			bool result;
+
+			vector<pair<int, int>>points1 = { { 1, 1 }, {-1, 1 }};
+			result = test->isReflected(points1);
+			delete test;
+		}
+	};
+	/*356. Line Reflection end */
+
+
+	/*351. Android Unlock Patterns (medium)
+	https://leetcode.com/problems/android-unlock-patterns/
+	https://discuss.leetcode.com/topic/46260/java-dfs-solution-with-clear-explanations-and-optimization-beats-97-61-12ms
+	http://blog.csdn.net/qq508618087/article/details/51758481
+	*/
+	class Solution351 {
+	public:
+		int dfs(vector<bool>&visit, vector<vector<int>>&skip, int cur, int remain) {
+			if (remain < 0)
+				return 0;
+			else if (0 == remain)
+				return 1;
+
+			int result = 0;
+			visit[cur] = true;
+			for (int i = 1; i < 10; ++i) {
+				if (!visit[i] && (0 == skip[cur][i] || visit[skip[cur][i]]))
+					result += dfs(visit, skip, i, remain - 1);
+			}
+
+			visit[cur] = false;
+			return result;
+		}
+
+		int numberOfPatterns(int m, int n) {
+			vector<bool>visit(10, false);
+			vector<vector<int>>skip(10, vector<int>(10, 0));
+
+			skip[1][3] = skip[3][1] = 2;
+			skip[3][9] = skip[9][3] = 6;
+			skip[7][9] = skip[9][7] = 8;
+			skip[1][7] = skip[7][1] = 4;
+
+
+			skip[1][9] = skip[9][1] = 5;
+			skip[3][7] = skip[7][3] = 5;
+			skip[2][8] = skip[8][2] = 5;
+			skip[4][6] = skip[6][4] = 5;
+
+			int result = 0;
+			for (int i = m; i <= n; ++i) {
+				result += dfs(visit, skip, 1, i - 1) * 4;
+				result += dfs(visit, skip, 2, i - 1) * 4;
+				result += dfs(visit, skip, 5, i - 1);
+			}
+
+			return result;
+		}
+	};
+	/*351. Android Unlock Patterns end */
+
+
+	/*348. Design Tic-Tac-Toe (medium)
+	https://leetcode.com/problems/design-tic-tac-toe/
+	https://leetcode.com/problems/design-tic-tac-toe/
+	*/
+	class TicTacToe348 {
+	public:
+		/** Initialize your data structure here. */
+		TicTacToe348(int n) {
+			rows.resize(n, 0);
+			cols.resize(n, 0);
+			diagonal = 0;
+			antidiagonal = 0;
+		}
+
+		/** Player {player} makes a move at ({row}, {col}).
+		@param row The row of the board.
+		@param col The column of the board.
+		@param player The player, can be either 1 or 2.
+		@return The current winning condition, can be either:
+		0: No one wins.
+		1: Player 1 wins.
+		2: Player 2 wins. */
+		int move(int row, int col, int player) {
+			int toadd = (1 == player ? 1 : -1);
+			int len = rows.size();
+
+			rows[row] += toadd;
+			cols[col] += toadd;
+
+			if (row == col)
+				diagonal += toadd;
+
+			if (row == len - 1 - col)
+				antidiagonal += toadd;
+
+			if (len == abs(rows[row]) || len == abs(cols[col]) ||
+				len == abs(diagonal) || len == abs(antidiagonal))
+				return player;
+			else
+				return 0;
+		}
+
+		vector<int> rows;
+		vector<int> cols;
+		int diagonal;
+		int antidiagonal;
+	};
+
+	/**
+	* Your TicTacToe object will be instantiated and called as such:
+	* TicTacToe obj = new TicTacToe(n);
+	* int param_1 = obj.move(row,col,player);
+	*/
+	/*348. Design Tic-Tac-Toe end */
+
+
+	/*341. Flatten Nested List Iterator (medium)
+	https://leetcode.com/problems/flatten-nested-list-iterator/
+	https://discuss.leetcode.com/topic/41870/real-iterator-in-python-java-c/2
+	*/
+	/*
+	class NestedIterator341 {
+	public:
+		NestedIterator341(vector<NestedIterator341> &nestedList) {
+
+			dfs(nestedList);
+			m_cur = 0;
+		}
+
+		void dfs(vector<NestedIterator341> &nestedList)
+		{
+			for (int i = 0; i < nestedList.size(); ++i)
+			{
+				if (nestedList[i].isInteger())
+					m_vec.push_back(nestedList[i].getInteger());
+				else
+				{
+					vector<NestedIterator341> tmp = nestedList[i].getList();
+					dfs(tmp);
+				}
+			}
+		}
+
+		int next() {
+			return  m_vec[m_cur++];
+		}
+
+		bool hasNext() {
+			return m_cur < m_vec.size();
+		}
+
+
+		vector<int> m_vec;
+		int m_cur;
+	};
+	*/
+	/*341. Flatten Nested List Iterator end */
+
+
+	/*332. Reconstruct Itinerary (medium)
+	https://leetcode.com/problems/reconstruct-itinerary/
+	https://discuss.leetcode.com/topic/36383/share-my-solution
+	http://www.geeksforgeeks.org/euler-circuit-directed-graph/
+	*/
+	class Solution332 {
+	public:
+		vector<string> findItinerary(vector<pair<string, string>> tickets) {
+			unordered_map<string, set<string>> datas;
+
+			for (auto item : tickets)
+				datas[item.first].insert(item.second);
+
+			stack<string> start;
+			vector<string> result;
+			string next;
+
+			string from("JFK");
+			result.push_back(from);
+
+			for (auto item : datas[from]) {
+				if (item.empty())
+					continue;
+
+				result.push_back(item);
+				while (true) {
+					if (datas[item].empty() || from == item)
+						break;
+
+					next = *datas[item].begin();
+					datas[item].erase(datas[item].begin());
+					result.push_back(next);
+					item = next;
+				}
+			}
+
+			return result;
+		}
+
+		static void main() {
+			Solution332* test = new Solution332;
+			vector<pair<string, string>> tickets1 = { { "MUC", "LHR" }, { "JFK", "MUC" }, { "SFO", "SJC" }, { "LHR", "SFO" } };
+			vector<pair<string, string>> tickets2 = { { "JFK", "SFO" }, { "JFK", "ATL" }, { "SFO", "ATL" }, { "ATL", "JFK" }, { "ATL", "SFO" } };
+
+			vector<string> result;
+			result = test->findItinerary(tickets2);
+
+			delete test;
+		}
+	};
+	/*332. Reconstruct Itinerary end */
+
+
+	/*331. Verify Preorder Serialization of a Binary Tree (medium)
+	https://leetcode.com/problems/verify-preorder-serialization-of-a-binary-tree/
+	*/
+	class Solution331 {
+	public:
+		bool valid(stack<char>& data) {
+			while (!data.empty() && '#' == data.top()) {
+				data.pop();
+
+				if (data.empty() || '#' == data.top())
+					return false;
+			}
+
+
+			return true;
+		}
+
+		bool isValidSerialization(string preorder) {
+			if (preorder.empty())
+				return false;
+
+			stack<char> buf;
+			for (int i = 0; i < preorder.size(); ++i) {
+				if ('#' == preorder[i]) {
+					if (!buf.empty() && '#' == buf.top())
+						if (!valid(buf))
+							return false;
+				}
+				else if (',' != preorder[i]) {
+					buf.push(preorder[i]);
+					if (!valid(buf))
+						return false;
+				}
+			}
+
+			if (1 == buf.size() && '#' == buf.top())
+				return true;
+			return false;
+		}
+	};
+	/*331. Verify Preorder Serialization of a Binary Tree end */
+
+
+	/*324. Wiggle Sort II (medium)
+	https://leetcode.com/problems/wiggle-sort-ii/
+	https://discuss.leetcode.com/topic/32929/o-n-o-1-after-median-virtual-indexing/21
+	https://discuss.leetcode.com/topic/41464/step-by-step-explanation-of-index-mapping-in-java
+	*/
+	class Solution324 {
+	public:
+		void wiggleSort(vector<int>& nums) {
+			if (nums.size() < 2)
+				return;
+
+			int n = nums.size();
+			int i = 0, j = n - 1, median = 0;
+			int mid = (n - 1) / 2;
+			while (i <= j) {
+				int p = i, a = i + 1, b = j;
+				while (a <= b) {
+					if (nums[a] <= nums[p])
+						swap(nums[a], nums[b--]);
+					else
+						++a;
+				}
+
+				swap(nums[p], nums[b]);
+
+				if (b == mid) {
+					median = nums[b];
+					break;
+				}
+				else if (b > mid)
+					j = b - 1;
+				else
+					i = b + 1;
+			}
+
+			int left = 0, right = n - 1;
+			i = 0;
+
+			while (i <= right) {
+				if (nums[newindex(i, n)] > median)
+					swap(nums[newindex(left++, n)], nums[newindex(i++, n)]);
+				else if (nums[newindex(i, n)] < median)
+					swap(nums[newindex(right--, n)], nums[newindex(i, n)]);
+				else
+					++i;
+			}
+		}
+
+		int newindex(int index, int n) {
+			return (1 + 2 * index) % (n | 1);
+		}
+
+		static void main() {
+			Solution324* test = new Solution324;
+			vector<int> nums1 = { 10,11,12,13,14,15,16,17,18,19 };
+
+			test->wiggleSort(nums1);
+			delete test;
+		}
+	};
+	/*324. Wiggle Sort II end */
+
+
+	/*320. Generalized Abbreviation (medium)
+	https://leetcode.com/problems/generalized-abbreviation/
+	https://discuss.leetcode.com/topic/32163/meet-in-google-interview-solution-with-concise-explanation
+	https://discuss.leetcode.com/topic/32270/java-backtracking-solution/2
+	*/
+	class Solution320 {
+	public:
+		void dfs(vector<string>& result, string word, int pos, int count, string cur) {
+			if (pos == word.size()) {
+				if (count > 0)
+					cur += to_string(count);
+
+				result.push_back(cur);
+				return;
+			}
+
+			if (count > 0)
+				dfs(result, word, pos + 1, 0, cur + to_string(count) + word[pos]);
+			else
+				dfs(result, word, pos + 1, 0, cur + word[pos]);
+
+			dfs(result, word, pos + 1, count + 1, cur);
+		}
+
+		vector<string> generateAbbreviations(string word) {
+			vector<string> result;
+
+			dfs(result, word, 0, 0, "");
+
+			return result;
+		}
+	};
+	/*320. Generalized Abbreviation end */
+
+
+	/*318. Maximum Product of Word Lengths (medium)
+	https://leetcode.com/problems/maximum-product-of-word-lengths/
+	https://discuss.leetcode.com/topic/35539/java-easy-version-to-understand
+	*/
+	class Solution318 {
+	public:
+		int maxProduct(vector<string>& words) {
+			unordered_map<int, int> maxlen;
+			int result = 0;
+			for (auto item : words) {
+				int mask = 0;
+				for (char c : item)
+					mask |= 1 << (c - 'a');
+
+				maxlen[mask] = max(maxlen[mask], (int)item.size());
+
+				for (auto lenitem : maxlen) {
+					if (!(mask & lenitem.first))
+						result = max(result, int(item.size() * lenitem.second));
+				}
+			}
+
+			return result;
+		}
+	};
+	/*318. Maximum Product of Word Lengths end */
+
+
+	/*314. Binary Tree Vertical Order Traversal (medium)
+	https://leetcode.com/problems/binary-tree-vertical-order-traversal/
+	https://discuss.leetcode.com/topic/31954/5ms-java-clean-solution
+	*/
+	class Solution314 {
+	public:
+		vector<vector<int>> verticalOrder(TreeNode* root) {
+			vector<vector<int>> result;
+
+			if (nullptr == root)
+				return result;
+
+			queue<pair<TreeNode*, int>> que;
+			map<int, vector<int>> data;
+
+			que.push({ root , 0 });
+			while (!que.empty()) {
+				TreeNode* cur = que.front().first;
+				int val = que.front().second;
+
+				que.pop();
+				data[val].push_back(root->val);
+				if (nullptr != cur->left)
+					que.push({ cur->left , val - 1 });
+
+				if (nullptr != cur->right)
+					que.push({ cur->right , val + 1 });
+			}
+
+			for (auto item : data)
+				result.push_back(item.second);
+
+			return result;
+		}
+	};
+	/*314. Binary Tree Vertical Order Traversal end */
+
+
+	/*310. Minimum Height Trees (medium)
+	https://leetcode.com/problems/minimum-height-trees/
+	https://discuss.leetcode.com/topic/30572/share-some-thoughts
+	*/
+	class Solution310 {
+	public:
+		vector<int> findMinHeightTrees(int n, vector<pair<int, int>>& edges) {
+			if (1 == n)
+				return vector<int>(1, 0);
+
+			vector<int> cur;
+			vector<unordered_set<int>> adj(n);
+			for (auto item : edges) {
+				adj[item.first].insert(item.second);
+				adj[item.second].insert(item.first);
+			}
+
+			for (int i = 0; i < n; ++i)
+				if (1 == adj[i].size())
+					cur.push_back(i);
+
+			while (true) {
+				vector<int> next;
+
+				for (auto item : cur) {
+					for (auto neighbor : adj[item]) {
+						adj[neighbor].erase(item);
+						if (1 == adj[neighbor].size())
+							next.push_back(neighbor);
+					}
+				}
+
+				if (next.empty())
+					return cur;
+
+				cur = next;
+			}
+		}
+	};
+	/*310. Minimum Height Trees end */
+
+
+	/*298. Binary Tree Longest Consecutive Sequence (medium)
+	https://leetcode.com/problems/binary-tree-longest-consecutive-sequence/
+	*/
+	class Solution298 {
+	public:
+		int result;
+		void nextNode(TreeNode* root, int cur, int target) {
+			if (nullptr == root)
+				return;
+
+			if (target == root->val)
+				++cur;
+			else
+				cur = 1;
+
+			result = max(result, cur);
+			nextNode(root->left, cur, root->val + 1);
+			nextNode(root->right, cur, root->val + 1);
+		}
+
+		int longestConsecutive(TreeNode* root) {
+			if (nullptr == root)
+				return 0;
+
+			nextNode(root, 0, root->val);
+			return result;
+		}
+	};
+	/*298. Binary Tree Longest Consecutive Sequence end */
+
+
+	/*294. Flip Game II (medium)
+	https://leetcode.com/problems/flip-game-ii/
+	https://discuss.leetcode.com/topic/27282/theory-matters-from-backtracking-128ms-to-dp-0ms
+	*/
+	class Solution294 {
+	public:
+		string str;
+		int len;
+		bool nextStep() {
+			for (int i = 0; i < len - 1; ++i) {
+				if ('+' == str[i] && '+' == str[i + 1]) {
+					str[i] = str[i + 1] = '-';
+					bool flag = !nextStep();
+					str[i] = str[i + 1] = '+';
+
+					if (flag)
+						return true;
+				}
+			}
+
+			return false;
+		}
+
+		bool canWin(string s) {
+			str = s;
+			len = s.size();
+			return nextStep();
+		}
+
+		static void main() {
+			Solution294* test = new Solution294;
+			bool result;
+			string s1("");
+			string s2("+");
+			string s3("++");
+			string s4("+++");
+			string s5("++++");
+			string s6("+++++");
+
+			/*result = test->canWin(s1);
+			result = test->canWin(s2);
+			result = test->canWin(s3);
+			result = test->canWin(s4);
+			result = test->canWin(s5);*/
+			result = test->canWin(s6);
+			delete test;
+		}
+	};
+	/*294. Flip Game II end */
+
+
+	/*289. Game of Life (medium)
+	https://leetcode.com/problems/game-of-life/
+	https://discuss.leetcode.com/topic/26112/c-o-1-space-o-mn-time
+	*/
+	class Solution289 {
+	public:
+		void gameOfLife(vector<vector<int>>& board) {
+			int m = board.size();
+			int n = m ? board[0].size() : 0;
+			int count;
+
+			for (int i = 0; i < m; ++i)
+				for (int j = 0; j < n; ++j) {
+					count = 0;
+					for (int row = max(i - 1, 0); row < min(i + 2, m); ++row)
+						for (int col = max(j - 1, 0); col < min(j + 2, n); ++col)
+							count += board[row][col] & 1;
+
+					if (count == 3 || count - board[i][j] == 3)
+						board[i][j] |= 2;
+
+				}
+
+			for (int i = 0; i < m; ++i)
+				for (int j = 0; j < n; ++j)
+					board[i][j] >>= 1;
+		}
+	};
+	/*289. Game of Life end */
+
+
+	/*286. Walls and Gates (medium)
+	https://leetcode.com/problems/walls-and-gates/
+	https://discuss.leetcode.com/topic/35242/benchmarks-of-dfs-and-bfs
+	*/
+	class Solution286_1 {
+	public:
+		void bsf(int i, int j, int dis, vector<vector<int>>& rooms) {
+			vector<pair<int, int>> offset = { { 1, 0 },{ -1, 0 },{ 0, 1 },{ 0, -1 } };
+
+			for (auto item : offset) {
+				int row = i + item.first;
+				int col = j + item.second;
+
+				if (row < 0 || row >= rooms.size() ||
+					col < 0 || col >= rooms[0].size() || rooms[row][col] < dis)
+					continue;
+
+				rooms[row][col] = min(rooms[row][col], dis);
+				bsf(row, col, dis + 1, rooms);
+			}
+		}
+
+		void wallsAndGates(vector<vector<int>>& rooms) {
+			if (rooms.empty() || rooms[0].empty())
+				return;
+
+			int row = rooms.size();
+			int col = rooms[0].size();
+			queue<pair<int, int>> points;
+
+			for (int i = 0; i < row; ++i)
+				for (int j = 0; j < col; ++j) {
+					if (0 == rooms[i][j])
+						points.push({ i, j });
+				}
+
+			while (!points.empty()) {
+				pair<int, int> cur = points.front();
+				points.pop();
+
+				if (cur.first > 0 && numeric_limits<int>::max() == rooms[cur.first - 1][cur.second]) {
+					rooms[cur.first - 1][cur.second] = rooms[cur.first][cur.second] + 1;
+					points.push({ cur.first - 1 , cur.second });
+				}
+
+				if (cur.second > 0 && numeric_limits<int>::max() == rooms[cur.first][cur.second - 1]) {
+					rooms[cur.first][cur.second - 1] = rooms[cur.first][cur.second] + 1;
+					points.push({ cur.first , cur.second - 1 });
+				}
+
+				if (cur.first < row - 1 && numeric_limits<int>::max() == rooms[cur.first + 1][cur.second]) {
+					rooms[cur.first + 1][cur.second] = rooms[cur.first][cur.second] + 1;
+					points.push({ cur.first + 1 , cur.second });
+				}
+
+				if (cur.second < col - 1 && numeric_limits<int>::max() == rooms[cur.first][cur.second + 1]) {
+					rooms[cur.first][cur.second + 1] = rooms[cur.first][cur.second] + 1;
+					points.push({ cur.first , cur.second + 1 });
+				}
+			}
+		}
+
+		void wallsAndGates1(vector<vector<int>>& rooms) {
+			if (rooms.empty() || rooms[0].empty())
+				return;
+
+			int row = rooms.size();
+			int col = rooms[0].size();
+			vector<pair<int, int>> gates;
+
+			for (int i = 0; i < row; ++i)
+				for (int j = 0; j < col; ++j) {
+					if (0 == rooms[i][j])
+						bsf(i, j, 1, rooms);
+				}
+		}
+	};
+	/*286. Walls and Gates end */
+
+
+	/*284. Peeking Iterator (medium)
+	https://leetcode.com/problems/peeking-iterator/
+	https://discuss.leetcode.com/topic/24883/concise-java-solution
+	*/
+	/*284. Peeking Iterator end */
+
+
+	/*281. Zigzag Iterator (medium)
+	https://leetcode.com/problems/zigzag-iterator/
+	https://discuss.leetcode.com/topic/24548/c-with-queue-compatible-with-k-vectors
+	https://discuss.leetcode.com/topic/24231/short-java-o-1-space
+	*/
+	class ZigzagIterator281 {
+	public:
+		ZigzagIterator281(vector<int>& v1, vector<int>& v2) {
+			if (v1.size() != 0)
+				Q.push(make_pair(v1.begin(), v1.end()));
+			if (v2.size() != 0)
+				Q.push(make_pair(v2.begin(), v2.end()));
+		}
+
+		int next() {
+			vector<int>::iterator it = Q.front().first;
+			vector<int>::iterator endIt = Q.front().second;
+			Q.pop();
+			if (it + 1 != endIt)
+				Q.push(make_pair(it + 1, endIt));
+			return *it;
+		}
+
+		bool hasNext() {
+			return !Q.empty();
+		}
+	private:
+		queue<pair<vector<int>::iterator, vector<int>::iterator>> Q;
+	};
+
+	class ZigzagIterator281_2 {
+	public:
+		ZigzagIterator281_2(vector<int>& v1, vector<int>& v2) {
+			ites.push_back({ v1.begin(), v1.end() });
+			ites.push_back({ v2.begin(), v2.end() });
+
+			idx = 0;
+			begin = v1.begin();
+		}
+
+		int next() {
+			hasNext();
+			
+			int result = *(ites[idx].first);
+			ites[idx].first ++;
+			
+			idx = (idx + 1) % ites.size();
+			begin = ites[idx].first;
+			return result;
+		}
+
+		bool hasNext() {
+			int total = ites.size() + idx;
+			int next = idx;
+
+			while (next < total && begin == ites[next % ites.size()].second) {
+				++next;
+				begin = ites[next % ites.size()].first;
+			}
+
+			idx = next % ites.size();
+			return begin != ites[idx].second;
+		}
+
+		static void main() {
+			vector<int> v1 = { 1, 2 };
+			vector<int> v2 = { 3, 4, 5, 6 };
+			ZigzagIterator281* test = new ZigzagIterator281(v1, v2);
+
+			while (test->hasNext()) 
+				cout << test->next();
+			delete test;
+		}
+
+		vector<pair<vector<int>::iterator, vector<int>::iterator>> ites;
+		int idx;
+		vector<int>::iterator begin;
+	};
+	/*281. Zigzag Iterator end */
+
+
+	/*280. Wiggle Sort (medium)
+	https://leetcode.com/problems/wiggle-sort/
+	https://discuss.leetcode.com/topic/42605/my-explanations-of-the-best-voted-algo/2
+	*/
+	class Solution280 {
+	public:
+		void wiggleSort(vector<int>& nums) {
+			for (int i = 1; i < nums.size(); ++i) {
+				if (((i & 1) && nums[i] < nums[i - 1]) ||
+					(!(i & 1) && nums[i] > nums[i - 1]))
+					swap(nums[i - 1], nums[i]);
+			}
+		}
+
+		void wiggleSort1(vector<int>& nums) {
+			if (nums.empty() || 1 == nums.size())
+				return;
+
+			vector<int> tmp(nums);
+			sort(tmp.begin(), tmp.end());
+
+			int low = 0, high = nums.size() - 1;
+
+			for (int i = 0; i < nums.size(); ++i) {
+				if (i & 1)
+					nums[i] = tmp[high--];
+				else
+					nums[i] = tmp[low++];					
+			}
+		}
+	};
+	/*280. Wiggle Sort end */
+
+
+	/*279. Perfect Squares (medium)
+	https://leetcode.com/problems/perfect-squares/
+	https://discuss.leetcode.com/topic/24255/summary-of-4-different-solutions-bfs-dp-static-dp-and-mathematics
+	*/
+	class Solution279 {
+	public:
+		int numSquares(int n) {
+			vector<int> dp(n + 1);
+
+			for (int i = 1; i <= n; ++i)
+				dp[i] = i;
+
+			for (int i = 1; i <= n; ++i) {
+				for (int j = 1; j*j <= i; ++j) {
+					if (j * j == i) {
+						dp[i] = 1;
+						break;
+					}
+
+					dp[i] = min(dp[i], 1 + dp[i - j * j]);
+				}
+			}
+
+			return dp[n];
+		}
+	};
+	/*279. Perfect Squares end */
+
+
+	/*274. H-Index (medium)
+	https://leetcode.com/problems/h-index/
+	https://discuss.leetcode.com/topic/23307/my-o-n-time-solution-use-java
+	*/
+	class Solution274 {
+	public:
+		int hIndex(vector<int>& citations) {
+			if (citations.empty())
+				return 0;
+
+			int len = citations.size();
+			vector<int> data(len + 1, 0);
+
+			for (auto item : citations) {
+				if (item >= len)
+					++data[len];
+				else
+					++data[item];
+			}
+
+			int total = 0;
+			for (int i = len; i >= 0; --i) {
+				total += data[i];
+				if (total >= i)
+					return i;
+			}
+
+			return 0;
+		}
+	};
+	/*274. H-Index end */
+
+
+	/*271. Encode and Decode Strings (medium)
+	https://leetcode.com/problems/encode-and-decode-strings/
+	https://discuss.leetcode.com/topic/22798/accepted-simple-c-solution
+	*/
+	class Codec271 {
+	public:
+		// Encodes a list of strings to a single string.
+		string encode(vector<string>& strs) {
+			string result;
+
+			for (auto item : strs) {
+				if (item.empty())
+					result += string("").append(8, '0');
+				else {
+					char tmp[9] = { 0 };
+					sprintf(tmp, "%08x", item.size());
+					result += string(tmp) + item;
+				}
+			}
+
+			return result;
+		}
+
+		// Decodes a single string to a list of strings.
+		vector<string> decode(string s) {
+			vector<string> result;
+
+			int i = 0;
+			while (i < s.size()) {
+				int len = stoi(s.substr(i, 8), nullptr, 16);
+				i += 8;
+				if (len)
+					result.push_back(s.substr(i, len));
+				else
+					result.push_back(string(""));
+
+				i += len;
+			}
+
+			return result;
+		}
+	};
+
+	/*271. Encode and Decode Strings end */
+
+
+	/*261. Graph Valid Tree (medium)
+	https://leetcode.com/problems/graph-valid-tree/
+	https://discuss.leetcode.com/topic/21712/ac-java-union-find-solution/6
+	http://www.geeksforgeeks.org/union-find/
+	*/
+	class Solution261 {
+	public:
+		bool validTree(int n, vector<pair<int, int>>& edges) {
+			vector<int> roots(n, -1);
+
+			for (auto item : edges) {
+				int x = findroot(roots, item.first);
+				int y = findroot(roots, item.second);
+
+				if (x == y)
+					return false;
+
+				roots[x] = y;
+			}
+
+			//if less than n - 1, there must be multi tree
+			return n - 1 == edges.size();
+		}
+
+		int findroot(vector<int>&roots, int id) {
+			if (-1 == roots[id])
+				return id;
+
+			return findroot(roots, roots[id]);
+		}
+	};
+	/*261. Graph Valid Tree end */
+
+
+	/*259. 3Sum Smaller (medium)
+	https://leetcode.com/problems/3sum-smaller/
+	https://discuss.leetcode.com/topic/23421/simple-and-easy-understanding-o-n-2-java-solution
+	*/
+	class Solution259 {
+	public:
+		int threeSumSmaller(vector<int>& nums, int target) {
+			int result = 0;
+			sort(nums.begin(), nums.end());
+
+			int len = nums.size();
+			for (int i = 0; i < len - 2; ++i) {
+				int j = i + 1, k = len - 1;
+
+				while (j < k) {
+					if (nums[i] + nums[j] + nums[k] < target) {
+						result += k - j;
+						++j;
+					}
+					else
+						--k;
+				}
+			}
+
+			return result;
+		}
+	};
+	/*259. 3Sum Smaller end */
+
+
+
+	/*253. Meeting Rooms II (medium)
+	https://leetcode.com/problems/meeting-rooms-ii/
+	https://discuss.leetcode.com/topic/20958/ac-java-solution-using-min-heap/6
+	*/
+	class Solution253 {
+	public:
+		int minMeetingRooms(vector<Interval>& intervals) {
+			if (intervals.empty())
+				return 0;
+
+			sort(intervals.begin(), intervals.end(), [](Interval& a, Interval& b) { return a.start < b.start; });
+
+			//auto comp = [](Interval a, Interval b) { return a.end < b.end; };
+			//priority_queue<Interval, decltype(comp)> heap(intervals.begin(), intervals.end());
+			priority_queue<int> heap;
+			int result = 1;
+
+			for (auto item : intervals) {
+				while (!heap.empty() && item.start >= -heap.top())
+					heap.pop();
+
+				heap.push(-item.end);
+			}
+
+			return heap.size();
+		}
+
+		static void main() {
+			Solution253* test = new Solution253;
+			int result;
+
+			vector<Interval> intervals1 = { { 0, 30 }, { 15, 20 }, { 5, 10 } };
+			vector<Interval> intervals2 = { { 0, 15 }, { 5, 20 }, { 6, 10 } };
+			vector<Interval> intervals3 = { { 2, 6 }, { 12, 18 }, { 9, 18 }, { 15, 20 } };
+			//result = test->minMeetingRooms(intervals1);
+			//result = test->minMeetingRooms(intervals2);
+			result = test->minMeetingRooms(intervals3);
+			delete test;
+		}
+	};
+	/*253. Meeting Rooms II end */
+
+
+	/*251. Flatten 2D Vector (medium)
+	https://leetcode.com/problems/flatten-2d-vector/
+	https://discuss.leetcode.com/topic/20697/7-9-lines-added-java-and-c-o-1-space
+	*/
+	class Vector2D251 {
+	public:
+		Vector2D251(vector<vector<int>>& vec2d) {
+			it = vec2d.begin();
+			iend = vec2d.end();
+			j = 0;
+		}
+
+		int next() {
+			hasNext();
+
+			return (*it)[j++];
+		}
+
+		bool hasNext() {
+			while (it != iend && j == it->size())
+				it++, j = 0;
+
+			return it != iend;
+		}
+
+		int j;
+		vector<vector<int>>::iterator it;
+		vector<vector<int>>::iterator iend;
+	};
+
+	class Vector2D251_1 {
+	public:
+		Vector2D251_1(vector<vector<int>>& vec2d) {
+			if (!vec2d.empty()) {
+				for (int i = 0; i < vec2d.size(); ++i) {
+					if (vec2d[i].empty())
+						continue;
+
+					for (int j = 0; j < vec2d[i].size(); ++j)
+						data.push_back(vec2d[i][j]);
+				}
+			}
+
+			cur = 0;
+		}
+
+		int next() {
+			return data[cur++];
+		}
+
+		bool hasNext() {
+			return cur < data.size();
+		}
+
+		int cur;
+		vector<int> data;
+	};
+	/*251. Flatten 2D Vector end */
+
+
+	/*247. Strobogrammatic Number II (medium)
+	https://leetcode.com/problems/strobogrammatic-number-ii/
+	https://discuss.leetcode.com/topic/20753/ac-clean-java-solution
+	*/
+	class Solution247 {
+	public:
+		vector<string> findStrobogrammatic(int n) {
+			return findStrobogrammatic(n, n);
+		}
+
+		vector<string> findStrobogrammatic(int n, int m) {
+			vector<string> result;
+			if (n == 0) {
+				result.push_back("");
+				return result;
+			}
+
+			if (1 == n) {
+				result.push_back("0");
+				result.push_back("1");
+				result.push_back("8");
+				return result;
+			}
+
+			vector<string> tmp = findStrobogrammatic(n - 2, m);
+
+
+			for (auto item : tmp) {
+				if (n != m)
+					result.push_back("0" + item + "0");
+				result.push_back("6" + item + "9");
+				result.push_back("9" + item + "6");
+				result.push_back("8" + item + "8");
+				result.push_back("1" + item + "1");
+			}
+
+			return result;
+		}
+	};
+	/*247. Strobogrammatic Number II end */
+
+
+	/*240. Search a 2D Matrix II (medium)
+	https://leetcode.com/problems/search-a-2d-matrix-ii/
+	https://discuss.leetcode.com/topic/20064/my-concise-o-m-n-java-solution/2
+	*/
+	class Solution240 {
+	public:
+		bool searchMatrix(vector<vector<int>>& matrix, int target) {
+			if (matrix.empty() || matrix[0].empty())
+				return false;
+			int row = matrix.size();
+			int col = matrix[0].size();
+
+			int j = col - 1, i = 0;
+
+			while (j >= 0 && i < row) {
+				if (matrix[i][j] == target)
+					return true;
+
+				if (matrix[i][j] > target)
+					--j;
+				else
+					++i;
+			}
+
+
+
+			return false;
+		}
+	};
+	/*240. Search a 2D Matrix II end */
+
+
+	/*230. Kth Smallest Element in a BST (medium)
+	https://leetcode.com/problems/kth-smallest-element-in-a-bst/
+	https://discuss.leetcode.com/topic/17810/3-ways-implemented-in-java-binary-search-in-order-iterative-recursive/1
+	https://discuss.leetcode.com/topic/17573/4-lines-in-c
+	*/
+	class Solution230 {
+	public:
+		int kthSmallest(TreeNode* root, int k) {
+			stack<TreeNode*> nodes;
+			nodes.push(root);
+
+			while (!nodes.empty()) {
+				TreeNode* tmp = nodes.top();
+
+				while (tmp) {
+					nodes.push(tmp->left);
+					tmp = tmp->left;
+				}
+
+				nodes.pop();
+				tmp = nodes.top();
+				nodes.pop();
+				--k;
+				if (0 == k)
+					return tmp->val;
+
+				nodes.push(tmp->right);
+			}
+
+		}
+	};
+	/*230. Kth Smallest Element in a BST end */
+
+
+	/*228. Summary Ranges (medium)
+	https://leetcode.com/problems/summary-ranges/
+	https://discuss.leetcode.com/topic/17151/accepted-java-solution-easy-to-understand
+	*/
+	class Solution228 {
+	public:
+		//0,1,2,4,5,7
+		vector<string> summaryRanges(vector<int>& nums) {
+			vector<string> result;
+
+			for (int i = 0; i < nums.size(); ++i) {
+				int j = i;
+				while (j + 1 < nums.size() && nums[j + 1] == nums[j] + 1)
+					++j;
+
+				if (j == i)
+					result.push_back(to_string(nums[i]));
+				else
+					result.push_back(to_string(nums[i]) + "->" + to_string(nums[j]));
+
+				i = j;
+			}
+
+			return result;
+		}
+	};
+	/*228. Summary Ranges end */
+
+
+	/*208. Implement Trie (Prefix Tree) (medium)
+	https://leetcode.com/problems/implement-trie-prefix-tree/
+	https://discuss.leetcode.com/topic/13463/maybe-the-code-is-not-too-much-by-using-next-26-c
+	*/
+	class TrieNode {
+	public:
+		// Initialize your data structure here.
+		TrieNode(bool bword=false) {
+			isword = bword;
+			for (int i = 0; i < 26; ++i)
+				next[i] = nullptr;
+		}
+
+		bool isword;
+		TrieNode* next[26];
+	};
+
+	class Trie208 {
+	public:
+		Trie208() {
+			root = new TrieNode();
+		}
+
+		// Inserts a word into the trie.
+		void insert(string word) {
+			TrieNode* node = root;
+			for (auto item : word) {
+				if (nullptr == node->next[item - 'a'])
+					node->next[item - 'a'] = new TrieNode();
+
+				node = node->next[item - 'a'];
+			}
+
+			node->isword = true;
+		}
+
+		// Returns if the word is in the trie.
+		bool search(string word) {
+			TrieNode* node = root;
+			for (auto item : word) {
+				if (nullptr == node->next[item - 'a'])
+					return false;
+				node = node->next[item - 'a'];
+			}
+
+			return node->isword;
+		}
+
+		// Returns if there is any word in the trie
+		// that starts with the given prefix.
+		bool startsWith(string prefix) {
+			TrieNode* node = root;
+			for (auto item : prefix) {
+				if (nullptr == node->next[item - 'a'])
+					return false;
+				node = node->next[item - 'a'];
+			}
+
+			return true;
+		}
+
+	private:
+		TrieNode* root;
+	};
+	/*208. Implement Trie (Prefix Tree) end */
+
+
+	/*200. Number of Islands (medium)
+	https://leetcode.com/problems/number-of-islands/
+	https://discuss.leetcode.com/topic/11589/dfs-and-bfs-in-c
+	*/
+	class Solution200 {
+	public:
+		void expandIsland(vector<vector<char>>& grid, int i, int j) {
+			int row = grid.size();
+			int col = grid[0].size();
+
+			if (i < 0 || j < 0 || i >= row || j >= col || '1' != grid[i][j])
+				return;
+
+			grid[i][j] = '3';
+			expandIsland(grid, i + 1, j);
+			expandIsland(grid, i - 1, j);
+			expandIsland(grid, i, j + 1);
+			expandIsland(grid, i, j - 1);
+		}
+
+		int numIslands1(vector<vector<char>>& grid) {
+			if (grid.empty() || grid[0].empty())
+				return 0;
+
+			int result = 0;
+			int row = grid.size();
+			int col = grid[0].size();
+
+			for (int i = 0; i < row; ++i)
+			for (int j = 0; j < col; ++j) {
+				if ('1' == grid[i][j]) {
+					++result;
+					expandIsland(grid, i, j);
+				}
+			}
+
+			return result;
+		}
+
+		int numIslands(vector<vector<char>>& grid) {
+			if (grid.empty() || grid[0].empty())
+				return 0;
+
+			int result = 0;
+			int row = grid.size();
+			int col = grid[0].size();
+
+			queue<pair<int, int>> points;
+
+			int step = 0, total = row * col;
+			while (step < total) {
+				if ('1' == grid[step / col][step % col]) {
+					++result;
+					points.push(make_pair(step / col, step % col));
+					grid[step / col][step % col] = '0';
+
+					while (!points.empty()) {
+						int i = points.front().first;
+						int j = points.front().second;
+
+						points.pop();
+						if (i > 0 && '1' == grid[i - 1][j]) {
+							points.push(make_pair(i - 1, j));
+							grid[i - 1][j] = '0';
+						}
+
+						if (j > 0 && '1' == grid[i][j - 1]) {
+							points.push(make_pair(i, j - 1));
+							grid[i][j - 1] = '0';
+						}
+
+						if (i < row - 1 && '1' == grid[i + 1][j]) {
+							points.push(make_pair(i + 1, j));
+							grid[i + 1][j] = '0';
+						}
+
+						if (j < col - 1 && '1' == grid[i][j + 1]) {
+							points.push(make_pair(i, j + 1));
+							grid[i][j + 1] = '0';
+						}
+					}
+				}
+
+				++step;
+			}
+
+			return result;
+		}
+
+		int findIsland(vector<int>& roots, int id) {
+			while (id != roots[id]) id = roots[id];
+			return id;
+		}
+
+		static void main() {
+			Solution200* test = new Solution200;
+			int result;
+
+			vector<vector<char>> grid1 = { { '1', '1', '1', '1', '0' }, 
+			{ '1', '1', '0', '1', '0' }, { '1', '1', '0', '0', '0' },
+			{ '0', '0', '0', '0', '0' } };
+
+			vector<vector<char>> grid2 = { { '1', '0', '1', '1', '0', '1', '1' } };
+				result = test->numIslands(grid2);
+			delete test;
+		}
+	};
+	/*200. Number of Islands end */
+
+
+	/*173. Binary Search Tree Iterator (medium)
+	https://leetcode.com/problems/binary-search-tree-iterator/
+	https://discuss.leetcode.com/topic/6575/my-solutions-in-3-languages-with-stack
+	*/
+	class BSTIterator173 {
+	public:
+		BSTIterator173(TreeNode *root) {
+			pushall(root);
+		}
+
+		/** @return whether we have a next smallest number */
+		bool hasNext() {
+			return !nodes.empty();
+		}
+
+		/** @return the next smallest number */
+		int next() {
+			TreeNode *cur = nodes.top();
+			nodes.pop();
+			pushall(cur->right);
+			return cur->val;
+		}
+
+	private:
+		void pushall(TreeNode *cur) {
+			for (; nullptr != cur; nodes.push(cur), cur = cur->left)
+				;
+		}
+		stack<TreeNode*> nodes;
+	};
+	/*173. Binary Search Tree Iterator end */
+
+
+	/*162. Find Peak Element (medium)
+	https://leetcode.com/problems/find-peak-element/
+	https://discuss.leetcode.com/topic/5724/find-the-maximum-by-binary-search-recursion-and-iteration
+	https://discuss.leetcode.com/topic/5848/o-logn-solution-javacode
+	*/
+	class Solution162 {
+	public:
+		int findPeak(vector<int>& nums, int low, int high) {
+			if (low == high)
+				return low;
+			else if (low + 1 == high)
+				return nums[high] > nums[low] ? high : low;
+			else {
+				int mid = low + (high - low) / 2;
+
+				if (nums[mid] > nums[mid + 1] && nums[mid] > nums[mid - 1])
+					return mid;
+				else if (nums[mid] < nums[mid + 1] && nums[mid] > nums[mid - 1])
+					return findPeak(nums, mid + 1, high);
+				else
+					return findPeak(nums, low, mid - 1);
+			}
+		}
+
+		int findPeakElement(vector<int>& nums) {
+			return findPeak(nums, 0, nums.size() - 1);
+		}
+	};
+	/*162. Find Peak Element end */
+
+	/*139. Word Break (medium)
+	https://leetcode.com/problems/word-break/
+	https://discuss.leetcode.com/topic/6156/java-implementation-using-dp-in-two-ways
+	*/
+	class Solution139 {
+	public:
+		bool wordBreak(string s, unordered_set<string>& wordDict) {
+			if (wordDict.empty())
+				return false;
+
+			vector<bool> dp(s.size() + 1, false);
+
+			dp[0] = true;
+			for (int i = 1; i <= s.size(); ++i) {
+				for (int j = i - 1; j >= 0; --j) {
+					if (dp[j]) {
+						if (wordDict.count(s.substr(j, i - j)) > 0) {
+							dp[i] = true;
+							break;
+						}
+					}
+				}
+			}
+
+			return dp[s.size()];
+		}
+
+		bool wordBreak1(string s, unordered_set<string>& wordDict) {
+			if (s.empty() || wordDict.empty())
+				return true;
+
+			std::size_t found;
+			for (auto item : wordDict)
+			{
+				found = s.find(item);
+				if (found != std::string::npos)
+				{
+					bool bleft = true;
+					bool bright = true;
+					if (found != 0)
+					{
+						string strleft = s.substr(0, found);
+						bleft = wordBreak(strleft, wordDict);
+					}
+
+					if (found + item.size() < s.size())
+					{
+						string strleft = s.substr(found + item.size(), s.size() - found - item.size());
+						bright = wordBreak(strleft, wordDict);
+					}
+
+					if (bleft && bright)
+						return true;
+				}
+			}
+
+			return false;
+		}
+
+		/*this will time out*/
+		bool wordBreak2(string s, unordered_set<string>& wordDict) {
+			if (s.empty())
+				return true;
+
+			for (auto item : wordDict) {
+				int len = s.size();
+				bool found = false;
+				if (len >= item.size() && s.substr(0, item.size()) == item)
+					found = wordBreak1(s.substr(item.size()), wordDict);
+
+				if (found)
+					return true;
+			}
+
+			return false;
+		}
+	};
+	/*139. Word Break end */
+
+
+	/*133. Clone Graph (medium)
+	https://leetcode.com/problems/clone-graph/
+	https://discuss.leetcode.com/topic/4690/simple-java-iterative-bfs-solution-with-hashmap-and-queue/2
+	*/
+	class Solution133 {
+	public:
+		UndirectedGraphNode *copyNode(UndirectedGraphNode *node, unordered_map<int, UndirectedGraphNode *>& visit) {
+			UndirectedGraphNode* cur = new UndirectedGraphNode(node->label);
+			visit[node->label] = cur;
+
+			for (auto it : node->neighbors) {
+				if (visit.count(it->label) < 1)
+					cur->neighbors.push_back(copyNode(it, visit));
+				else
+					cur->neighbors.push_back(visit[it->label]);
+			}
+
+			return cur;
+		}
+
+		UndirectedGraphNode *cloneGraph1(UndirectedGraphNode *node) {
+			if (nullptr == node)
+				return nullptr;
+
+			unordered_map<int, UndirectedGraphNode *> visit;
+
+			return copyNode(node, visit);
+		}
+
+		UndirectedGraphNode *cloneGraph(UndirectedGraphNode *node) {
+			if (nullptr == node)
+				return nullptr;
+
+			unordered_map<int, UndirectedGraphNode *> visit;
+
+			queue<UndirectedGraphNode *> qnode;
+			qnode.push(node);
+			UndirectedGraphNode* clonenode = new UndirectedGraphNode(node->label);
+			visit[node->label] = clonenode;
+
+			while (!qnode.empty()) {
+				UndirectedGraphNode * cur = qnode.front();
+				qnode.pop();
+
+				for (auto item : cur->neighbors) {
+					if (visit.count(item->label) < 1) {
+						UndirectedGraphNode* tmp = new UndirectedGraphNode(item->label);
+						visit[item->label] = tmp;
+						qnode.push((UndirectedGraphNode*)item);
+					}
+
+					visit[cur->label]->neighbors.push_back((UndirectedGraphNode*)visit[item->label]);
+				}
+			}
+
+			return clonenode;
+		}
+	};
+	/*133. Clone Graph end */
+
+
+	/*50. Pow(x, n) (medium)
+	https://leetcode.com/problems/powx-n/
+	https://discuss.leetcode.com/topic/5425/short-and-easy-to-understand-solution/25
+	*/
+	class Solution50 {
+	public:
+		double myPow(double x, int n) {
+			if (0 == n)
+				return 1;
+
+			if (n < 0) {
+				return 1 / x * myPow(1 / x, -(++n));
+			}
+
+			return (0 == n % 2) ? myPow(x*x, n / 2) : x * myPow(x*x, n / 2);
+		}
+	};
+	/*50. Pow(x, n) */
+
+
+	/*31. Next Permutation (medium)
+	https://leetcode.com/problems/next-permutation/
+	https://discuss.leetcode.com/topic/2542/share-my-o-n-time-solution
+	https://discuss.leetcode.com/topic/15216/a-simple-algorithm-from-wikipedia-with-c-implementation-can-be-used-in-permutations-and-permutations-ii
+	*/
+	class Solution31 {
+	public:
+		void nextPermutation1(vector<int>& nums) {
+			if (nums.size() <= 1)
+				return;
+
+			int len = nums.size() - 1, start;
+			int swap1 = -1, swap2;
+			while (len >= 0) {
+				for (start = len - 1; start >= 0; --start) {
+					if (nums[len] > nums[start])
+						break;
+				}
+
+				if (start >= 0 && start > swap1) {
+					swap1 = start;
+					swap2 = len;
+				}
+
+				--len;
+			}
+
+			if (swap1 < 0)
+				sort(nums.begin(), nums.end());
+			else {
+				int tmp = nums[swap2];
+				nums[swap2] = nums[swap1];
+				nums[swap1] = tmp;
+
+				sort(nums.begin() + swap1 + 1, nums.end());
+			}
+		}
+
+		void nextPermutation(vector<int>& nums) {
+			if (nums.size() <= 1)
+				return;
+
+			int index = nums.size() - 1;
+
+			while (index > 0) {
+				if (nums[index - 1] < nums[index])
+					break;
+
+				--index;
+			}
+
+			if (index == 0)
+				reversesort(nums, 0, nums.size() - 1);
+			else {
+				int val = nums[index - 1];
+				int j = nums.size() - 1;
+
+				while (j >= index) {
+					if (nums[j] > val)
+						break;
+
+					--j;
+				}
+
+				nums[index - 1] = nums[j];
+				nums[j] = val;
+				reversesort(nums, index, nums.size() - 1);
+			}
+		}
+
+		void reversesort(vector<int>& nums, int start, int end) {
+			if (start >= end)
+				return;
+
+			for (int i = start; i <= (start + (end - start) / 2); ++i) {
+				int tmp = nums[i];
+				nums[i] = nums[end + start - i];
+				nums[end + start - i] = tmp;
+			}
+		}
+	};
+	/*31. Next Permutation end */
+
+
+	/*22. Generate Parentheses (medium)
+	https://leetcode.com/problems/generate-parentheses/
+	https://discuss.leetcode.com/topic/4485/concise-recursive-c-solution/2
+	https://discuss.leetcode.com/topic/3474/an-iterative-method
+	*/
+	class Solution22 {
+	public:
+		vector<string> res;
+
+		vector<string> generateParenthesis(int n) {
+			string str;
+			generate(n, 0, 0, str);
+
+			return res;
+		}
+
+		void generate(int n, int left, int right, string str) {
+			if (left == n && right == n)
+				res.push_back(str);
+
+			if (left < n)
+				generate(n, left + 1, right, str + "(");
+
+			if (right < n && right < left)
+				generate(n, left, right + 1, str + ")");
+		}
+
+		vector<string> generateParenthesis1(int n) {
+			vector<string> result;
+
+			if (n < 1)
+				return result;
+
+			vector<vector<string>> f(n + 1);
+
+			f[0].push_back("");
+
+			for (int i = 1; i < n + 1; ++i) {
+				for (int j = 0; j < i; ++j)
+					for (auto item1 : f[j])
+						for (auto item2 : f[i - j - 1])
+							f[i].push_back("(" + item1 + ")" + item2);
+			}
+
+			return f[n];
+		}
+	};
+	/*22. Generate Parentheses end */
+
+
+	/*17. Letter Combinations of a Phone Number (medium)
+	https://leetcode.com/problems/letter-combinations-of-a-phone-number/
+	https://discuss.leetcode.com/topic/8465/my-java-solution-with-fifo-queue
+	*/
+	class Solution17 {
+	public:
+		vector<string> letterCombinations(string digits) {
+			vector<string> result;
+
+			if (digits.empty())
+				return result;
+
+			result.push_back("");
+			vector<string> strmap = { "", "","abc","def","ghi","jkl","mno","pqrs","tuv","wxyz" };
+
+			for (auto item : digits) {
+				if (item < '2' || item > '9')
+					continue;
+
+				string candidate = strmap[item - '0'];
+				vector<string> tmp;
+
+				for (auto front : result) {
+					for (auto after : candidate)
+						tmp.push_back(front + after);
+				}
+
+				result.swap(tmp);
+			}
+
+			return result;
+		}
+	};
+	/*17. Letter Combinations of a Phone Number end */
+
+
+	/*309. Best Time to Buy and Sell Stock with Cooldown (medium)
+	https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/
+	https://discuss.leetcode.com/topic/30421/share-my-thinking-process
+	*/
+	class Solution309 {
+	public:
+		int maxProfit(vector<int>& prices) {
+			int size = prices.size();
+			if (size < 2)
+				return 0;
+
+			int sell_pre = 0;
+			int sell = 0;
+			int buy_pre;// = -prices[0];
+			int buy = -prices[0];// = max(buy_pre, -price[1]);
+
+			for (int i = 0; i < size; ++i) {
+				buy_pre = buy;
+				buy = max(sell_pre - prices[i], buy_pre);
+
+				sell_pre = sell;
+				sell = max(sell_pre, buy_pre + prices[i]);
+			}
+
+			return sell;
+		}
+	};
+	/*309. Best Time to Buy and Sell Stock with Cooldown end */
+
+
+	/*357. Count Numbers with Unique Digits (medium)
+	https://leetcode.com/problems/count-numbers-with-unique-digits/
+	https://discuss.leetcode.com/topic/47983/java-dp-o-1-solution/2
+	https://discuss.leetcode.com/topic/48332/java-o-1-with-explanation
+	*/
+	class Solution357 {
+	public:
+		int countNumbersWithUniqueDigits(int n) {
+			if (0 == n)     
+				return 1;
+
+			int res = 10;
+			int uniqueDigits = 9;
+			int availableNumber = 9;
+			while (n-- > 1 && availableNumber > 0) {
+				uniqueDigits = uniqueDigits * availableNumber;
+				res += uniqueDigits;
+				availableNumber--;
+			}
+
+			return res;
+		}
+	};
+	/*357. Count Numbers with Unique Digits end */
+
+
+	/*54. Spiral Matrix (medium)
+	https://leetcode.com/problems/spiral-matrix/
+	https://discuss.leetcode.com/topic/15558/a-concise-c-implementation-based-on-directions
+	https://discuss.leetcode.com/topic/3713/super-simple-and-easy-to-understand-solution
+	*/
+	class Solution54 {
+	public:
+		vector<int> spiralOrder(vector<vector<int>>& matrix) {
+			vector<int> ret;
+
+			if (matrix.empty() || matrix[0].empty())
+				return ret;			
+
+			int row = matrix.size();
+			int col = matrix[0].size();
+
+			vector<int> nstep = { col, row - 1 };
+			vector<pair<int, int>> direct = { {0, 1}, {1, 0}, {0, -1}, {-1, 0} };
+
+			int cur = 0;
+			int irow = 0, icol = -1;
+
+			while (nstep[cur % 2]) {
+				for (int i = 0; i < nstep[cur % 2]; ++i) {
+					irow += direct[cur].first;
+					icol += direct[cur].second;
+				}
+
+				--nstep[cur % 2];
+				cur = (cur + 1) % 4;
+			}
+		}
+	};
+
+	/*54. Spiral Matrix end */
+
+
+	/*382. Linked List Random Node (medium)
+	https://leetcode.com/problems/linked-list-random-node/
+	https://discuss.leetcode.com/topic/53753/brief-explanation-for-reservoir-sampling
+	https://en.wikipedia.org/wiki/Reservoir_sampling
+	*/
+	class Solution382 {
+	public:
+		/** @param head The linked list's head.
+		Note that the head is guaranteed to be not null, so it contains at least one node. */
+		Solution382(ListNode* head) {
+			nodes = head;
+		}
+
+		/** Returns a random node's value. */
+		int getRandom() {
+			int val = nodes->val;
+			int i = 2;
+			ListNode* cur = nodes->next;
+
+			while (cur) {
+				int j = rand() % i;
+
+				if (0 == j)
+					val = cur->val;
+
+				++i;
+				cur = cur->next;
+			}
+
+			return val;
+		}
+
+		ListNode* nodes;
+	};
+	/*382. Linked List Random Node end */
+
+
+	/*274. H-Index (medium)
+	https://leetcode.com/problems/h-index/
+	https://discuss.leetcode.com/topic/23307/my-o-n-time-solution-use-java
+	*/
+	class Solution274_2 {
+	public:
+		int hIndex(vector<int>& citations) {
+			int result = 0;
+
+			int len = citations.size();
+			sort(citations.begin(), citations.end());
+			for (int i = 0; i < len; ++i) {
+				if (len - i > citations[i])
+					result = max(result, citations[i]);
+				else
+					result = max(result, len - i);
+			}
+
+			return result;
+		}
+	};
+	/*274. H-Index end */
+
+
+	/*377. Combination Sum IV (medium)
+	https://leetcode.com/problems/combination-sum-iv/
+	https://discuss.leetcode.com/topic/52302/1ms-java-dp-solution-with-detailed-explanation
+	https://discuss.leetcode.com/topic/52186/my-3ms-java-dp-solution
+	*/
+	class Solution377 {
+	public:
+		int combination(vector<int>& nums, int target) {
+			if (0 == target)
+				return 1;
+
+			int count = 0;
+			for (auto item : nums) {
+				if (item > target)
+					break;
+
+				count += combination(nums, target - item);
+			}
+
+			return count;
+		}
+
+		int combinationSum41(vector<int>& nums, int target) {
+			if (nums.empty())
+				return 0;
+
+			sort(nums.begin(), nums.end());
+			return combination(nums, target);
+		}
+
+		int combinationSum4(vector<int>& nums, int target) {
+			if (nums.empty())
+				return 0;
+
+			vector<int> dp(target + 1, 0);
+
+			//target 0 has only 1 empty combination
+			dp[0] = 1;
+			for (int i = 1; i < dp.size(); ++i) {
+				for (auto it : nums) {
+					if (i >= it)
+					{
+						dp[i] += dp[i - it];
+					}
+				}
+			}
+
+			return dp[target];
+		}
+
+		static void main() {
+			Solution377* test = new Solution377;
+			int result;
+			vector<int> nums1 = { 1, 2, 4 };
+			int target1 = 32;
+
+			result = test->combinationSum4(nums1, target1);
+			delete test;
+		}
+	};
+	/*377. Combination Sum IV end */
+
+
+	/*323. Number of Connected Components in an Undirected Graph (medium)
+	https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/
+	https://www.youtube.com/watch?v=9pIvy6fksHs&index=4&list=PLUX6FBiUa2g4YWs6HkkCpXL6ru02i7y3Q
+	https://discuss.leetcode.com/topic/32752/easiest-2ms-java-solution
+	*/
+	class Solution323 {
+	public:
+		int countComponents(int n, vector<pair<int, int>>& edges) {
+			vector<int> root(n);
+
+			for (int i = 0; i < n; ++i)
+				root[i] = i;
+
+			for (auto item : edges) {
+				int p = item.first;
+				int q = item.second;
+
+				int rootp = findroot(root, p);
+				int rootq = findroot(root, q);
+
+				if (rootp != rootq) {
+					--n;
+					root[rootp] = rootq;
+				}
+			}
+
+			return n;
+		}
+
+		int findroot(vector<int>&root, int id) {
+			while (id != root[id]) {
+				root[id] = root[root[id]];
+				id = root[id];
+			}
+
+			return id;
+		}
+
+		int countComponents1(int n, vector<pair<int, int>>& edges) {
+			vector<bool> flag(n, false);
+			queue<int> nodes;
+			int result = 0;
+			unordered_map<int, unordered_set<int>> maps;
+
+			for (auto item : edges) {
+				maps[item.first].insert(item.second);
+				maps[item.second].insert(item.first);
+			}
+
+			for (auto item : maps) {
+				if (flag[item.first])
+					continue;
+
+				++result;
+				nodes.push(item.first);
+				while (!nodes.empty()) {
+					int cur = nodes.front();
+					flag[cur] = true;
+					nodes.pop();
+
+					for (auto next : maps[cur]) {
+						if (!flag[next])
+							nodes.push(next);
+					}
+				}
+			}
+
+			for (auto item : flag) {
+				if (!item)
+					++result;
+			}
+
+			return result;
+		}
+	};
+	/*323. Number of Connected Components in an Undirected Graph end */
+
+
+	/*163. Missing Ranges (medium)
+	https://leetcode.com/problems/missing-ranges/
+	https://discuss.leetcode.com/topic/18612/accepted-java-solution-with-explanation
+	*/
+	class Solution163 {
+	public:
+		//[0, 1, 3, 50, 75], lower = 0 and upper = 99, return ["2", "4->49", "51->74", "76->99"].
+		vector<string> findMissingRanges(vector<int>& nums, int lower, int upper) {
+			vector<string> result;
+			int next = lower;
+
+			for (int i = 0; i < nums.size(); ++i) {
+				if (nums[i] < lower)
+					continue;
+
+				if (nums[i] == next) {
+					++next;
+					continue;
+				}
+
+				next == nums[i] - 1 ? result.push_back(to_string(next)):
+									  result.push_back(to_string(next) + "->" + to_string(nums[i] - 1));
+
+				next = nums[i] + 1;
+			}
+
+			if (next <= upper)
+				next == upper ? result.push_back(to_string(next)) :
+				result.push_back(to_string(next) + "->" + to_string(upper));
+
+			return result;
+		}
+
+		vector<string> findMissingRanges1(vector<int>& nums, int lower, int upper) {
+			vector<string> result;
+
+			if (nums.empty()) {
+
+				if (lower == upper)
+					result.push_back(to_string(lower));
+				else
+					result.push_back(to_string(lower) + "->" + to_string(upper));
+				return result;
+			}
+
+			if (nums[0] > lower + 1)
+				result.push_back(to_string(lower) + "->" + to_string(nums[0] - 1));
+			else if (nums[0] > lower)
+				result.push_back(to_string(lower));
+
+			int lastpos = nums[0];
+			int len = nums.size();
+
+			for (int i = 0; i < len; ++i) {
+				if (nums[i] > lastpos + 2)
+					result.push_back(to_string(lastpos + 1) + "->" + to_string(nums[i] - 1));
+				else if (nums[i] > lastpos + 1)
+					result.push_back(to_string(lastpos + 1));
+
+				while (i < len - 1 && nums[i + 1] == nums[i] + 1)
+					++i;
+
+				lastpos = nums[i];
+			}
+
+			if (upper > nums[len - 1] + 1)
+				result.push_back(to_string(nums[len - 1] + 1) + "->" + to_string(upper));
+			else if (upper > nums[len - 1])
+				result.push_back(to_string(nums[len - 1] + 1));
+
+			return result;
+		}
+	};
+	/*163. Missing Ranges end */
+
+
+	/*286. Walls and Gates (medium)
+	https://leetcode.com/problems/walls-and-gates/
+	https://discuss.leetcode.com/topic/25265/java-bfs-solution-o-mn-time
+	https://discuss.leetcode.com/topic/33459/my-short-java-solution-very-easy-to-understand
+	*/
+	class Solution286 {
+	public:
+		void dsf(int i, int j, int dis, vector<vector<int>>& rooms) {
+			vector<pair<int, int>> offset = { { 1, 0 },{ -1, 0 },{ 0, 1 },{ 0, -1 } };
+
+			for (auto item : offset) {
+				int row = i + item.first;
+				int col = j + item.second;
+
+				if (row < 0 || row >= rooms.size() ||
+					col < 0 || col >= rooms[0].size() || rooms[row][col] < dis)
+					continue;
+
+				rooms[row][col] = min(rooms[row][col], dis);
+				dsf(row, col, dis + 1, rooms);
+			}
+		}
+
+		void wallsAndGates1(vector<vector<int>>& rooms) {
+			if (rooms.empty() || rooms[0].empty())
+				return;
+
+			int row = rooms.size();
+			int col = rooms[0].size();
+			vector<pair<int, int>> gates;
+
+			for (int i = 0; i < row; ++i)
+				for (int j = 0; j < col; ++j) {
+					if (0 == rooms[i][j])
+						dsf(i, j, 1, rooms);
+				}
+		}
+
+		void wallsAndGates(vector<vector<int>>& rooms) {
+			if (rooms.empty() || rooms[0].empty())
+				return;
+
+			int row = rooms.size();
+			int col = rooms[0].size();
+			queue<pair<int, int>> nodes;
+
+			for (int i = 0; i < row; ++i) {
+				for (int j = 0; j < col; ++j) {
+					if (rooms[i][j] == 0) 
+						nodes.push(make_pair(i, j));
+				}
+			}
+
+			//the queue starts from gates
+			//the next nearest level always in the top of queue
+			//so next possible position will be always nearest 
+			while (!nodes.empty()) {
+				int i = nodes.front().first;
+				int j = nodes.front().second;
+				nodes.pop();
+
+				if (i > 0 && INT_MAX == rooms[i - 1][j]) {
+					rooms[i - 1][j] = rooms[i][j] + 1;
+					nodes.push(make_pair(i, j));
+				}
+
+				if (i < row - 1 && INT_MAX == rooms[i + 1][j]) {
+					rooms[i + 1][j] = rooms[i][j] + 1;
+					nodes.push(make_pair(i + 1, j));
+				}
+
+				if (j > 0 && INT_MAX == rooms[i][j - 1]) {
+					rooms[i][j - 1] = rooms[i][j] + 1;
+					nodes.push(make_pair(i, j - 1));
+				}
+
+				if (j < col - 1 && INT_MAX == rooms[i][j + 1]) {
+					rooms[i][j + 1] = rooms[i][j] + 1;
+					nodes.push(make_pair(i, j + 1));
+				}
+			}
+		}
+
+		static void main() {
+			Solution286* test = new Solution286;
+			vector<vector<int>> rooms1 = { { INT_MAX, -1, 0, INT_MAX },
+											{ INT_MAX, INT_MAX, INT_MAX, -1 },
+											{ INT_MAX, -1, INT_MAX, -1 },
+											{ 0, -1, INT_MAX, INT_MAX } };
+
+			vector<vector<int>> rooms2 = { { -1, INT_MAX, 0},
+											{ INT_MAX, -1, INT_MAX},
+											{ INT_MAX, 0, INT_MAX}};
+			test->wallsAndGates(rooms2);
+			delete test;
+		}
+	};
+	/*286. Walls and Gates end */
+
+
+	/*353. Design Snake Game (medium)
+	https://leetcode.com/problems/design-snake-game/
+	https://discuss.leetcode.com/topic/47385/c-straightforward-solution
+	*/
+	class SnakeGame353 {
+	public:
+		/** Initialize your data structure here.
+		@param width - screen width
+		@param height - screen height
+		@param food - A list of food positions
+		E.g food = [[1,1], [1,0]] means the first food is positioned at [1,1], the second is at [1,0]. */
+		SnakeGame353(int width, int height, vector<pair<int, int>> food) {
+			m_width = width;
+			m_height = height;
+
+			m_body.push_back(make_pair(0, 0));
+			for (auto item : food)
+				m_food.push(item);
+		}
+
+		/** Moves the snake.
+		@param direction - 'U' = Up, 'L' = Left, 'R' = Right, 'D' = Down
+		@return The game's score after the move. Return -1 if game over.
+		Game over when snake crosses the screen boundary or bites its body. */
+		int move(string direction) {
+			pair<int, int> newpos(m_body.front());
+
+			switch (direction[0])
+			{
+			case 'U':
+				--newpos.first;
+				break;
+
+			case 'D':
+				++newpos.first;
+				break;
+
+			case 'L':
+				--newpos.second;
+				break;
+
+			case 'R':
+				++newpos.second;
+				break;
+
+			default:
+				return -1;
+			}
+
+			//check pos
+			if (newpos.first < 0 || newpos.first >= m_height ||
+				newpos.second < 0 || newpos.second >= m_width)
+				return -1;
+
+			//check body
+			for (int i = 0; i < m_body.size() - 1; ++i) {
+				if (m_body.at(i).first == newpos.first && m_body.at(i).second == newpos.second)
+					return -1;
+			}
+
+			m_body.push_front(newpos);
+			if (!m_food.empty() && m_food.front().first == newpos.first && m_food.front().second == newpos.second)
+				m_food.pop();
+			else
+				m_body.pop_back();
+
+			return m_body.size() - 1;
+		}
+
+		static void main() {
+			int width = 3, height = 2;
+			vector<pair<int, int>> food = { { 3, 2 }, { 0, 1 } };
+			int result;
+
+			SnakeGame353* test = new SnakeGame353(width, height, food);
+			//["R"],["D"],["R"],["U"],["L"],["U"]
+			result = test->move("R");
+			result = test->move("D");
+			result = test->move("R");
+			result = test->move("U");
+			result = test->move("L");
+			result = test->move("U");
+
+			delete test;
+		}
+
+		int m_width;
+		int m_height;
+		deque<pair<int, int>> m_body;
+		queue<pair<int, int>> m_food;
+	};
+
+	/**
+	* Your SnakeGame object will be instantiated and called as such:
+	* SnakeGame obj = new SnakeGame(width, height, food);
+	* int param_1 = obj.move(direction);
+	*/
+	/*353. Design Snake Game end */
+
+
+	/*313. Super Ugly Number (medium)
+	https://leetcode.com/problems/super-ugly-number/
+	https://discuss.leetcode.com/topic/31012/7-line-consice-o-kn-c-solution
+	https://discuss.leetcode.com/topic/52791/fastest-nth-ugly-number-ugly-number-ii-and-super-ugly-number-similar-solutions-java-dynamic-programming
+	https://discuss.leetcode.com/topic/24306/elegant-c-solution-o-n-space-time-with-detailed-explanation/2
+	*/
+	class Solution313 {
+	public:
+		int nthSuperUglyNumber(int n, vector<int>& primes) {
+			int len = primes.size();
+			vector<int> index(len, 0);
+			vector<int> result(n, INT_MAX);
+
+			//current prime generate by former multiply one of primes
+			//index[j] always point to the first unused index 
+			//in result for primes[j]
+			result[0] = 1;
+			for (int i = 1; i < n; ++i) {
+				for (int j = 0; j < len; ++j)
+					result[i] = min(result[i], result[index[j]] * primes[j]);
+
+				for (int j = 0; j < len; ++j)
+					index[j] += (result[i] == result[index[j]] * primes[j]);
+			}
+
+
+			return result[n - 1];
+		}
+
+		static void main() {
+			Solution313* test = new Solution313;
+			int result;
+			vector<int> primes = { 2, 7, 13, 19 };
+
+			result = test->nthSuperUglyNumber(10, primes);
+			delete test;
+		}
+	};
+	/*313. Super Ugly Number end */
+
+
+	/*270. Closest Binary Search Tree Value (easy)
+	https://leetcode.com/problems/closest-binary-search-tree-value/
+	*/
+	class Solution270 {
+	public:
+		int closestValue(TreeNode* root, double target) {
+			stack<TreeNode*> nodes;
+			double diff = std::numeric_limits<double>::max();
+
+			nodes.push(root);
+			int result = root->val;
+			while (!nodes.empty()) {
+				TreeNode* cur = nodes.top();
+				nodes.pop();
+				double tmp = abs(double(cur->val) - target);
+				if (tmp <= diff) {
+					diff = tmp;
+					result = cur->val;
+				}
+
+				if (target < cur->val) {
+					if (cur->left)
+						nodes.push(cur->left);
+				}
+				else {
+					if (cur->right)
+						nodes.push(cur->right);
+				}
+			}
+
+			return result;
+		}
+
+		int closestValue1(TreeNode* root, double target) {
+			int closest = root->val;
+			double diff = std::numeric_limits<double>::max();
+
+			while (root) {
+				double tmp = abs(double(root->val) - target);
+				if (diff >= tmp) {
+					closest = root->val;
+					diff = tmp;
+				}
+
+				root = target < root->val ? root->left : root->right;
+			}
+			return closest;
+		}
+
+		int closestValue3(TreeNode* root, double target) {
+			int a = root->val;
+			auto kid = target < root->val ? root->left : root->right;
+
+			if (!kid)
+				return a;
+
+			int b = closestValue(kid, target);
+			return abs(double(a) - target) > abs(double(b) - target) ? b : a;
+		}
+
+		static void main() {
+			Solution270* test = new Solution270;
+			int result;
+			TreeNode node1(1);
+			TreeNode node2(2);
+
+			node1.right = &node2;
+			result = test->closestValue(&node1, 3.415f);
+			delete test;
+		}
+	};
+	/*270. Closest Binary Search Tree Value end */
+
+
+	/*266. Palindrome Permutation (easy)
+	https://leetcode.com/problems/palindrome-permutation/
+	https://discuss.leetcode.com/topic/21999/1-4-lines-python-ruby-c-c-java
+	*/
+	class Solution266 {
+	public:
+		bool canPermutePalindrome(string s) {
+			unordered_map<char, int> map;
+
+			for (auto it : s)
+				++map[it];
+
+			int odds = 0;
+			for (auto it : map)
+				odds += (it.second % 2);
+
+			return odds < 2;
+		}
+	};
+	/*266. Palindrome Permutation end */
+
+
+	/*359. Logger Rate Limiter (easy)
+	https://leetcode.com/problems/logger-rate-limiter/
+	https://discuss.leetcode.com/topic/48359/short-c-java-python-bit-different
+	*/
+	class Logger {
+	public:
+		/** Initialize your data structure here. */
+		Logger() {
+		}
+
+		/** Returns true if the message should be printed in the given timestamp, otherwise returns false.
+		If this method returns false, the message will not be printed.
+		The timestamp is in seconds granularity. */
+		bool shouldPrintMessage(int timestamp, string message) {
+			if (map.count(message)) {
+				if (timestamp - map[message] >= 10) {
+					map[message] = timestamp;
+					return true;
+				}
+
+				return false;
+			}
+			else
+				map[message] = timestamp;
+
+			return true;
+		}
+
+		unordered_map<string, int> map;
+	};
+	/*359. Logger Rate Limiter end */
+
+
+	/*326. Power of Three (easy)
+	https://leetcode.com/problems/power-of-three/
+	https://discuss.leetcode.com/topic/43385/c-solution-no-loop-recursion
+	*/
+	class Solution326 {
+	public:
+		bool isPowerOfThree(int n) {
+			if (n < 1)
+				return false;
+
+			int t = pow(3, (int)(log(INT_MAX) / log(3)));
+			return (t%n == 0);
+		}
+	};
+	/*326. Power of Three end */
+
+
+	/*257. Binary Tree Paths (easy)
+	https://leetcode.com/problems/binary-tree-paths/
+	https://discuss.leetcode.com/topic/21559/python-solutions-dfs-stack-bfs-queue-dfs-recursively
+	*/
+	class Solution257 {
+	public:
+		void dfs(TreeNode* root, string path, vector<string>& result) {
+			if (nullptr == root)
+				return;
+
+			path += to_string(root->val);
+
+			if (nullptr == root->left && nullptr == root->right)
+				result.push_back(path);
+			else {
+				dfs(root->left, path + "->", result);
+				dfs(root->right, path + "->", result);
+			}
+		}
+
+		vector<string> binaryTreePaths(TreeNode* root) {
+			vector<string> result;
+
+			dfs(root, "", result);
+
+			return result;
+		}
+	};
+	/*257. Binary Tree Paths end */
+
+
+	/*293. Flip Game (easy)
+	https://leetcode.com/problems/flip-game/
+	https://discuss.leetcode.com/topic/27190/8-lines-c-7-lines-python
+	*/
+	class Solution293 {
+	public:
+		vector<string> generatePossibleNextMoves(string s) {
+			vector<string> result;
+
+			if (s.empty())
+				return result;
+
+			for (int i = 0; i < s.size() - 1; ++i) {
+				if ('+' == s[i] && '+' == s[i + 1]) {
+					s[i] = s[i + 1] = '-';
+					result.push_back(s);
+					s[i] = s[i + 1] = '+';
+				}
+			}
+
+			return result;
+		}
+	};
+	/*293. Flip Game end */
+
+
+
+	/*249. Group Shifted Strings (easy)
+	https://leetcode.com/problems/group-shifted-strings/
+	https://discuss.leetcode.com/topic/20823/4ms-easy-c-solution-with-explanations
+	*/
+	class Solution249 {
+	public:
+		bool check(const string& str1, const string& str2) {
+			if (str1.size() != str2.size())
+				return false;
+
+			int dif1, dif2;
+			for (int i = 1; i < str1.size(); ++i) {
+				dif1 = (str1[i] + 26 - str1[i - 1]) % 26;
+				dif2 = (str2[i] + 26 - str2[i - 1]) % 26;
+
+				if (dif1 != dif2)
+					return false;
+			}
+
+			return true;
+		}
+
+		vector<vector<string>> groupStrings(vector<string>& strings) {
+			vector<vector<string>> result;
+			unordered_map<string, vector<string>> map;
+
+			for (auto item : strings) {
+				if (map.empty())
+					map[item].push_back(item);
+				else {
+					bool found = false;
+					for (auto it = map.begin(); it != map.end(); ++it) {
+						if (check(it->first, item)) {
+							map[it->first].push_back(item);
+							found = true;
+							break;
+						}
+					}
+
+					if (!found)
+						map[item].push_back(item);
+				}
+			}
+
+			for (auto it : map)
+				result.push_back(it.second);
+
+			return result;
+		}
+
+		vector<vector<string>> groupStrings1(vector<string>& strings) {
+			unordered_map<string, vector<string>> map;
+			vector<vector<string>> result;
+
+			for (auto item : strings)
+				map[shift(item)].push_back(item);
+
+			for (auto item : map)
+				result.push_back(item.second);
+
+
+			return result;
+		}
+
+		string shift(const string& str) {
+			string result;
+
+			for (int i = 1; i < str.size(); ++i)
+				result += 'a' + ((str[i] + 26 - str[i - 1]) % 26);
+
+			return result;
+		}
+		static void main() {
+			Solution249* test = new Solution249;
+			vector<vector<string>> result;
+
+			vector<string> strings1 = { "abc", "bcd", "acef", "xyz", "az", "ba", "a", "z" };
+			result = test->groupStrings(strings1);
+			delete test;
+		}
+	};
+	/*249. Group Shifted Strings end */
+
+
+	/*276. Paint Fence (easy)
+	https://leetcode.com/problems/paint-fence/
+	https://discuss.leetcode.com/topic/23463/lucas-formula-maybe-o-1-and-3-4-liners
+	*/
+	class Solution276 {
+	public:
+		int numWays(int n, int k) {
+			vector<int> dp(n + 1, 0);
+
+			if (1 == n)
+				return k;
+			else if (2 == n)
+				return k * k;
+
+			dp[1] = k;
+			dp[2] = k * k;
+
+			for (int i = 3; i <= n; ++i)
+				dp[i] = (dp[i - 1] + dp[i - 2]) * (k - 1);
+
+			return dp[n];
+		}
+
+		static void main() {
+			Solution276* test = new Solution276;
+			int result;
+			int n1 = 4, k1 = 2;
+			result = test->numWays(n1, k1);
+
+			delete test;
+		}
+	};
+	/*276. Paint Fence end */
+
+
+	/*374. Guess Number Higher or Lower (easy)
+	https://leetcode.com/problems/guess-number-higher-or-lower/
+	https://discuss.leetcode.com/topic/51184/0ms-c-binary-search
+	*/
+	class Solution374 {
+	public:
+		int guessNumber(int n) {
+			int low = 1, high = n;
+
+			while (1) {
+				int mid = low + (high - low) / 2;
+
+				int res = 0;// guess(mid);
+				if (0 == res)
+					return mid;
+				else if (1 == res)
+					low = mid + 1;
+				else
+					high = mid - 1;
+			}
+
+			return 0;
+		}
+	};
+	/*374. Guess Number Higher or Lower end */
+
+
+	/*346. Moving Average from Data Stream (easy)
+	https://leetcode.com/problems/moving-average-from-data-stream/
+	https://discuss.leetcode.com/topic/44113/java-o-1-using-deque
+	*/
+	class MovingAverage346 {
+	public:
+		/** Initialize your data structure here. */
+		int m_total;
+		int m_size;
+		queue<int> nums;
+
+		MovingAverage346(int size) {
+			m_total = 0;
+			m_size = size;
+		}
+
+		double next(int val) {
+			if (nums.size() >= m_size) {
+				m_total -= nums.front();
+				nums.pop();
+			}
+
+			m_total += val;
+			nums.push(val);
+
+			return (double)m_total / nums.size();
+		}
+
+		static void main() {
+			MovingAverage346* test = new MovingAverage346(3);
+			double result;
+
+			result = test->next(1);		//output 1
+			result = test->next(10);	//output (1 + 10) / 2
+			result = test->next(3);		//output (1 + 10 + 3) / 3
+			result = test->next(5);		//output (10 + 3 + 5) / 3
+			delete test;
+		}
+	};
+	/*346. Moving Average from Data Stream end */
+
+
+	/*246. Strobogrammatic Number (easy)
+	https://leetcode.com/problems/strobogrammatic-number/
+	*/
+	class Solution246 {
+	public:
+		bool isStrobogrammatic1(string num) {
+			int low = 0, high = num.size() - 1;
+			unordered_map<char, char> map;
+
+			map['0'] = '0';
+			map['8'] = '8';
+			map['1'] = '1';
+			map['6'] = '9';
+			map['9'] = '6';
+
+			while (low < high) {
+				char a = num[low];
+				char b = num[high];
+
+				if (!map.count(a) || map[a] != b)
+					return false;
+
+				++low;
+				--high;
+			}
+
+			return high < low || '0' == num[low] || '1' == num[low] || '8' == num[low];
+		}
+
+		bool isStrobogrammatic(string num) {
+			int low = 0, high = num.size() - 1;
+
+			if (low == high)
+				return '0' == num[0] || '1' == num[0] || '8' == num[0];
+
+			while (low <= high) {
+				switch (num[low])
+				{
+				case '0':
+				case '1':
+				case '8':
+					if (num[high] != num[low])
+						return false;
+					break;
+
+				case '6':
+					if ('9' != num[high])
+						return false;
+					break;
+
+				case '9':
+					if ('6' != num[high])
+						return false;
+					break;
+
+				default:
+					return false;
+				}
+
+				++low;
+				--high;
+			}
+
+			return true;
+		}
+	};
+	/*246. Strobogrammatic Number end */
+
+
+	/*231. Power of Two (easy)
+	https://leetcode.com/problems/power-of-two/
+	https://discuss.leetcode.com/topic/17857/using-n-n-1-trick
+	*/
+	class Solution231 {
+	public:
+		bool isPowerOfTwo(int n) {
+			int count = 0;
+
+			if (n <= 0)
+				return false;
+
+			for (int i = 0; i < 8 * sizeof(int); ++i) {
+				if (n & (1 << i))
+					++count;
+
+				if (count > 1)
+					return false;
+			}
+
+			return true;
+		}
+
+		static void main() {
+			Solution231* test = new Solution231;
+			bool result;
+			int n1 = 1;
+			int n2 = 3;
+			int n3 = 16;
+
+			result = test->isPowerOfTwo(n1);
+			result = test->isPowerOfTwo(n2);
+			result = test->isPowerOfTwo(n3);
+			delete test;
+		}
+	};
+	/*231. Power of Two end */
+
+
+	/*345. Reverse Vowels of a String (easy)
+	https://leetcode.com/problems/reverse-vowels-of-a-string/
+	https://discuss.leetcode.com/topic/53760/compare-three-java-solutions
+	*/
+	class Solution345 {
+	public:
+		bool isvowel(char c) {
+			if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' ||
+				c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U')
+				return true;
+
+			return false;
+		}
+
+		string reverseVowels(string s) {
+			string result(s);
+
+			int low = 0, high = s.size() - 1;
+
+			while (low < high) {
+				while (low < high && !isvowel(result[low]))
+					++low;
+
+				while (low < high && !isvowel(result[high]))
+					--high;
+
+				if (high <= low)
+					break;
+
+				swap(result[low], result[high]);
+				++low;
+				--high;
+			}
+
+			return result;
+		}
+	};
+	/*345. Reverse Vowels of a String end */
+
+
+	/*155. Min Stack (easy)
+	https://leetcode.com/problems/min-stack/
+	https://discuss.leetcode.com/topic/36246/c-concise-solution-with-explanation
+	https://discuss.leetcode.com/topic/52709/c-6-lines-solution-beat-all
+	*/
+	class MinStack155_1 {
+	public:
+		stack<pair<int, int>> stk;
+		int  minval;
+		MinStack155_1() {
+
+		}
+
+		void push(int x) {
+			if (stk.empty()) stk.push(make_pair(x, x));
+			else stk.push(make_pair(x, min(x, stk.top().second)));
+		}
+
+		void pop() {
+			stk.pop();
+		}
+
+		int top() {
+			return stk.top().first;
+		}
+
+		int getMin() {
+			return stk.top().second;
+		}
+
+		static void main() {
+			MinStack155_1* test = new MinStack155_1;
+
+			test->push(2);
+			test->push(0);
+			test->push(3);
+
+			cout << "MinStack155:" << test->top() << "," << test->getMin() << endl;
+			test->pop();
+
+			cout << "MinStack155:" << test->top() << "," << test->getMin() << endl;
+			test->pop();
+
+			cout << "MinStack155:" << test->top() << "," << test->getMin() << endl;
+			test->pop();
+			//cout << "MinStack155:" << test->top() << "," << test->getMin() << endl;
+			delete test;
+		}
+	};
+
+
+	class MinStack155 {
+	public:
+		stack<int> nums;
+		stack<int> minstack;
+		MinStack155() {
+
+		}
+
+		void push(int x) {
+			nums.push(x);
+
+			if (minstack.empty() || minstack.top() >= x)
+				minstack.push(x);
+		}
+
+		void pop() {
+			if (nums.top() == minstack.top())
+				minstack.pop();
+			
+			nums.pop();
+		}
+
+		int top() {
+			return nums.top();
+		}
+
+		int getMin() {
+			return minstack.top();
+		}
+
+		static void main() {
+			MinStack155* test = new MinStack155;
+
+			test->push(2);
+			test->push(0);
+			test->push(3);
+
+			cout << "MinStack155:" << test->top() << "," << test->getMin() << endl;
+			test->pop();
+
+			cout << "MinStack155:" << test->top() << "," << test->getMin() << endl;
+			test->pop();
+
+			cout << "MinStack155:" << test->top() << "," << test->getMin() << endl;
+			test->pop();
+			//cout << "MinStack155:" << test->top() << "," << test->getMin() << endl;
+			delete test;
+		}
+	};
+	/*155. Min Stack end */
+
+
+	/*20. Valid Parentheses (easy)
+	https://leetcode.com/problems/valid-parentheses/
+	https://discuss.leetcode.com/topic/13231/2ms-c-sloution
+	*/
+	class Solution20 {
+	public:
+		bool isValid(string s) {
+			stack<char> parents;
+
+			for (int i = 0; i < s.size(); ++i) {
+				char tmp = s[i];
+				if ('(' == tmp || '[' == tmp || '{' == tmp)
+					parents.push(tmp);
+				else if ((')' == tmp) && !parents.empty() && ('(' == parents.top()))
+					parents.pop();
+				else if ((']' == tmp) && !parents.empty() && ('[' == parents.top()))
+					parents.pop();
+				else if (('}' == tmp) && !parents.empty() && ('{' == parents.top()))
+					parents.pop();
+				else
+					return false;
+			}
+
+			return parents.empty();
+		}
+	};
+	/*20. Valid Parentheses end */
+
+
+	/*288. Unique Word Abbreviation (easy)
+	https://leetcode.com/problems/unique-word-abbreviation/
+	https://discuss.leetcode.com/topic/25929/8-lines-in-c
+	*/
+	class ValidWordAbbr288 {
+	public:
+		ValidWordAbbr288(vector<string> &dictionary) {
+			for (auto item : dictionary) {
+				string key;
+				int len = item.size();
+
+				key = item[0] + to_string(len) + item[len - 1];
+				map[key].insert(item);
+			}
+		}
+
+		bool isUnique(string word) {
+			if (word.empty() || map.empty())
+				return true;
+			
+			string key;
+			int len = word.size();
+
+			key = word[0] + to_string(len) + word[len - 1];
+
+			return map.count(key) && (map[key].count(word) == map[key].size());
+		}
+
+		static void main() {
+			vector<string> dic1;
+			vector<string> dic2 = {"a", "a"};
+			ValidWordAbbr288* test1 = new ValidWordAbbr288(dic1);
+			ValidWordAbbr288* test2 = new ValidWordAbbr288(dic2);
+			bool result;
+
+			string word1_1("");
+			string word1_2("a");
+
+			result = test1->isUnique(word1_1);
+			result = test1->isUnique(word1_2);
+
+			string word2_1("a");
+			string word2_2("aa");
+
+			result = test2->isUnique(word2_1);
+			result = test2->isUnique(word2_2);
+			delete test1;
+			delete test2;
+		}
+
+		unordered_map<string, unordered_set<string>> map;
+	};
+	/*288. Unique Word Abbreviation end */
+
+
+	/*66. Plus One (easy)
+	https://leetcode.com/problems/plus-one/
+	https://discuss.leetcode.com/topic/4556/is-it-a-simple-code-c
+	*/
+	class Solution66 {
+	public:
+		vector<int> plusOne(vector<int>& digits) {
+			vector<int> result(digits);
+			int n = result.size();
+
+			for (int i = n - 1; i >= 0; --i) {
+				if (result[i] < 9) {
+					++result[i];
+					return result;
+				}
+				else
+					result[i] = 0;
+			}
+
+			result[0] = 0;
+			result.insert(result.begin(), 1);
+			return result;
+		}		
+
+		static void main() {
+			Solution66* test = new Solution66;
+			vector<int> result;
+
+			vector<int> digits1 = { 0 };
+			result = test->plusOne(digits1);
+
+			vector<int> digits2 = { 9, 9 };
+			result = test->plusOne(digits2);
+
+			vector<int> digits3 = { 9, 8, 9 };
+			result = test->plusOne(digits3);
+			delete test;
+		}
+	};
+	/*66. Plus One end */
+
+	static void main() {
+<<<<<<< HEAD
+		Solution224::main();
+		Solution218::main();
+=======
+		Solution269::main();
+>>>>>>> 7b1c210e580724aeb4e1c6b4050cbc7d03025957
+		Solution212::main();
+		LRUCache146::main();
+		Solution140::main();
+		Solution57::main();
+		Solution44::main();
+		PhoneDirectory379::main();
+		Solution388::main();
+		Solution378::main();
+		Solution361::main();
+		Solution356::main();
+		Solution332::main();
+		Solution324::main();
+		Solution294::main();
+		ZigzagIterator281_2::main();
+		Solution253::main();
+		Solution200::main();
+		Solution377::main();
+		Solution286::main();
+		SnakeGame353::main();
+		Solution313::main();
+		Solution270::main();
+		Solution249::main();
+		Solution276::main();
+		MovingAverage346::main();
+		Solution231::main();
+		MinStack155_1::main();
+		MinStack155::main();
+		ValidWordAbbr288::main();
+		Solution66::main();
+		
+	}
+}
+//////////////////////////Tag GG//////////////////////////////////////////
+
+
+//////////////////////////Tag Array//////////////////////////////////////////
+namespace ARRAY {
+	struct TreeNode {
+		int val;
+		TreeNode *left;
+		TreeNode *right;
+		TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+	};
+
+	/*41. First Missing Positive (medium)
+	https://leetcode.com/problems/first-missing-positive/
+	https://discuss.leetcode.com/topic/8293/my-short-c-solution-o-1-space-and-o-n-time
+	*/
+	class Solution41 {
+	public:
+		int firstMissingPositive(vector<int>& nums) {
+			if (nums.size() < 1)
+				return 1;
+
+			int result = 0;
+			int n = nums.size();
+
+			for (int i = 0; i < n; ++i) {
+				while (nums[i] > 0 && nums[i] <= n && nums[nums[i] - 1] != nums[i])
+					swap(nums[i], nums[nums[i] - 1]);
+			}
+
+			for (int i = 0; i < n; ++i) {
+				if (nums[i] != i + 1)
+					return i + 1;
+			}
+
+			return n + 1;
+		}
+	};
+	/*41. First Missing Positive end */
+
+
+	/*154. Find Minimum in Rotated Sorted Array II (hard)
+	https://leetcode.com/problems/find-minimum-in-rotated-sorted-array-ii/
+	https://discuss.leetcode.com/topic/6468/my-pretty-simple-code-to-solve-it
+	*/
+	class Solution154 {
+	public:
+		int findMin(vector<int>& nums) {
+			int low = 0;
+			int high = nums.size() - 1;
+			int mid;
+
+			while (low < high) {
+				mid = low + (high - low) / 2;
+				if (nums[mid] > nums[high])
+					low = mid + 1;
+				else if (nums[mid] < nums[high])
+					high = mid;
+				else
+					--high;
+			}
+
+			return nums[low];
+		}
+	};
+	/*154. Find Minimum in Rotated Sorted Array II end */
+
+
+	/*54. Spiral Matrix (medium)
+	https://leetcode.com/problems/spiral-matrix/
+	https://discuss.leetcode.com/topic/15558/a-concise-c-implementation-based-on-directions
+	*/
+	class Solution54 {
+	public:
+		vector<int> spiralOrder(vector<vector<int>>& matrix) {
+			vector<int> ret;
+			if (matrix.empty() || matrix[0].empty())
+				return ret;
+
+			int m = matrix.size();
+			int n = matrix[0].size();
+
+			vector<int> nstep = { n, m - 1 };
+			vector<pair<int, int>> dirs = { { 0, 1 },{ 1, 0 },{ 0, -1 },{ -1, 0 } };
+
+			int cur = 0;
+			int ir = 0, ic = -1;
+
+			while (nstep[cur % 2]) {
+				for (int i = 0; i < nstep[cur % 2]; ++i) {
+					ir += dirs[cur].first;
+					ic += dirs[cur].second;
+
+					ret.push_back(matrix[ir][ic]);
+				}
+
+				--nstep[cur % 2];
+				cur = (cur + 1) % 4;
+			}
+
+			return ret;
+		}
+	};
+	/*54. Spiral Matrix end */
+
+
+	/*228. Summary Ranges (medium)
+	https://leetcode.com/problems/summary-ranges/
+	https://discuss.leetcode.com/topic/17151/accepted-java-solution-easy-to-understand
+	*/
+	class Solution228 {
+	public:
+		vector<string> summaryRanges(vector<int>& nums) {
+			vector<string> result;
+			string tmp;
+			int nLen = nums.size();
+			char temp[32];
+
+			if (nLen == 1) {
+				sprintf(temp, "%d", nums[0]);
+				tmp.append(temp);
+				result.push_back(tmp);
+			}
+
+			if (nLen <= 1)
+				return result;
+
+			int step;
+			for (int nIdx = 0; nIdx < nLen; nIdx += step) {
+				memset(temp, 0x00, sizeof(temp));
+				sprintf(temp, "%d", nums[nIdx]);
+				tmp = temp;
+
+				step = 1;
+				while (nIdx + step < nLen && nums[nIdx + step - 1] + 1 == nums[nIdx + step])
+					step++;
+
+				if (step > 1) {
+					memset(temp, 0x00, sizeof(temp));
+					sprintf(temp, "%d", nums[nIdx + step - 1]);
+					tmp.append(string("->") + temp);
+				}
+
+				result.push_back(tmp);
+			}
+
+			return result;
+		}
+	};
+	/*228. Summary Ranges end */
+
+
+	/*238. Product of Array Except Self (medium)
+	https://leetcode.com/problems/product-of-array-except-self/
+	https://discuss.leetcode.com/topic/18864/simple-java-solution-in-o-n-without-extra-space
+	*/
+	class Solution238 {
+	public:
+		vector<int> productExceptSelf(vector<int>& nums) {
+			vector<int> result(nums.size(), 1);
+			int tmp;
+
+			for (int nIdx = 0, tmp = 1; nIdx < nums.size(); ++nIdx) {
+				result[nIdx] = tmp;
+				tmp *= nums[nIdx];
+			}
+
+			for (int nIdx = nums.size() - 1, tmp = 1; nIdx >= 0; --nIdx) {
+				result[nIdx] *= tmp;
+				tmp *= nums[nIdx];
+			}
+
+			return result;
+		}
+	};
+	/*238. Product of Array Except Self end */
+
+
+	/*48. Rotate Image (medium)
+	https://leetcode.com/problems/rotate-image/
+	https://discuss.leetcode.com/topic/6796/a-common-method-to-rotate-the-image
+	*/
+	class Solution48 {
+	public:
+		void rotate(vector<vector<int>>& matrix) {
+			reverse(matrix.begin(), matrix.end());
+
+			for (int i = 0; i < matrix.size(); ++i)
+				for (int j = i; j < matrix.size(); ++j)
+					swap(matrix[i][j], matrix[j][i]);
+		}
+	};
+	/*48. Rotate Image end */
+
+
+	/*31. Next Permutation (medium)
+	https://leetcode.com/problems/next-permutation/
+	https://discuss.leetcode.com/topic/2542/share-my-o-n-time-solution
+	*/
+	class Solution31 {
+	public:
+		void nextPermutation1(vector<int>& nums) {
+			if (nums.size() <= 1)
+				return;
+
+			int len = nums.size() - 1, start;
+			int swap1 = -1, swap2;
+			while (len >= 0) {
+				for (start = len - 1; start >= 0; --start) {
+					if (nums[len] > nums[start])
+						break;
+				}
+
+				if (start >= 0 && start > swap1) {
+					swap1 = start;
+					swap2 = len;
+				}
+
+				--len;
+			}
+
+			if (swap1 < 0)
+				sort(nums.begin(), nums.end());
+			else {
+				int tmp = nums[swap2];
+				nums[swap2] = nums[swap1];
+				nums[swap1] = tmp;
+
+				sort(nums.begin() + swap1 + 1, nums.end());
+			}
+		}
+
+
+		void nextPermutation(vector<int>& nums) {
+			if (nums.size() <= 1)
+				return;
+
+			int index = nums.size() - 1;
+
+			while (index > 0) {
+				if (nums[index - 1] < nums[index])
+					break;
+
+				--index;
+			}
+
+			if (index == 0)
+				reversesort(nums, 0, nums.size() - 1);
+			else {
+				int val = nums[index - 1];
+				int j = nums.size() - 1;
+
+				while (j >= index) {
+					if (nums[j] > val)
+						break;
+
+					--j;
+				}
+
+				nums[index - 1] = nums[j];
+				nums[j] = val;
+
+				reversesort(nums, index, nums.size() - 1);
+			}
+		}
+
+		void reversesort(vector<int>& nums, int start, int end)
+		{
+			if (start >= end)
+				return;
+
+			for (int i = start; i <= (start + (end - start) / 2); ++i) {
+				int tmp = nums[i];
+				nums[i] = nums[end + start - i];
+				nums[end + start - i] = tmp;
+			}
+		}
+	};
+	/*31. Next Permutation end */
+
+
+	/*34. Search for a Range (medium)
+	https://leetcode.com/problems/search-for-a-range/
+	https://discuss.leetcode.com/topic/5891/clean-iterative-solution-with-two-binary-searches-with-explanation
+	*/
+	class Solution34 {
+	public:
+		int findvec(vector<int>& nums, int target) {
+			int low = 0, high = nums.size() - 1;
+			int mid;
+
+			while (low <= high) {
+				mid = low + ((high - low) >> 2);
+				if (nums[mid] == target)
+					return mid;
+
+				if (target > nums[mid])
+					low = mid + 1;
+				else
+					high = mid - 1;
+			}
+
+			return -1;
+		}
+
+		vector<int> searchRange(vector<int>& nums, int target) {
+			if (nums.empty())
+				return vector<int>(2, -1);
+
+			int found = findvec(nums, target);
+
+			if (found == -1)
+				return vector<int>(2, -1);
+
+			vector<int> result(2, 0);
+
+			int left = found;
+			int right = found;
+			//while (left >= 0 && nums[left--] == target);
+			for (int i = found - 1; i >= 0; --i) {
+				if (nums[i] == target)
+					left = i;
+				else
+					break;
+			}
+
+			for (int i = found + 1; i < nums.size(); ++i) {
+				if (nums[i] == target)
+					right = i;
+				else
+					break;
+			}
+
+			result[0] = left;
+			result[1] = right;
+
+			return result;
+		}
+	};
+	/*34. Search for a Range end */
+
+
+	/*73. Set Matrix Zeroes (medium)
+	https://leetcode.com/problems/set-matrix-zeroes/
+	https://discuss.leetcode.com/topic/5056/any-shortest-o-1-space-solution
+	*/
+	class Solution73 {
+	public:
+		void setZeroes(vector<vector<int>>& matrix) {
+			if (matrix.empty() || matrix[0].empty())
+				return;
+
+			int m = matrix.size();
+			int n = matrix[0].size();
+
+			unordered_map<int, int> indexR;
+			unordered_map<int, int> indexC;
+
+			for (int i = 0; i < m; ++i) {
+				for (int j = 0; j < n; ++j) {
+					if (matrix[i][j] == 0) {
+						indexR[i] = 1;
+						indexC[j] = 1;
+					}
+				}
+			}
+
+			for (int i = 0; i < m; ++i) {
+				for (int j = 0; j < n; ++j) {
+					if (indexR[i] == 1 || indexC[j] == 1)
+						matrix[i][j] = 0;
+				}
+			}
+		}
+	};
+	/*73. Set Matrix Zeroes end */
+
+
+	/*289. Game of Life (medium)
+	https://leetcode.com/problems/game-of-life/
+	https://discuss.leetcode.com/topic/29054/easiest-java-solution-with-explanation
+	*/
+	class Solution289 {
+	public:
+		void gameOfLife(vector<vector<int>>& board) {
+			int m = board.size();
+			int n = m ? board[0].size() : 0;
+			int count;
+
+			for (int i = 0; i < m; ++i)
+				for (int j = 0; j < n; ++j) {
+					count = 0;
+					for (int row = max(i - 1, 0); row < min(i + 2, m); ++row)
+						for (int col = max(j - 1, 0); col < min(j + 2, n); ++col)
+							count += board[row][col] & 1;
+
+					if (count == 3 || count - board[i][j] == 3)
+						board[i][j] |= 2;
+				}
+
+			for (int i = 0; i < m; ++i)
+				for (int j = 0; j < n; ++j)
+					board[i][j] >>= 1;
+		}
+	};
+	/*289. Game of Life end */
+
+
+	/*105. Construct Binary Tree from Preorder and Inorder Traversal (medium)
+	https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/
+	https://discuss.leetcode.com/topic/3695/my-accepted-java-solution
+	*/
+	class Solution105 {
+	public:
+		int finditem(vector<int> invec, int low, int high, int target) {
+			for (int i = low; i <= high; ++i) {
+				if (invec[i] == target)
+					return i;
+			}
+		}
+
+		TreeNode* buildTree(vector<int>& preorder, int prelow, int prehigh, vector<int>& inorder, int inlow, int inhigh) {
+			TreeNode* root = new TreeNode(preorder[prelow]);
+			if (prelow == prehigh)
+				return root;
+
+			int index = finditem(inorder, inlow, inhigh, preorder[prelow]);
+			int leftnum = index - inlow;
+			int rightnum = inhigh - index;
+
+
+			if (leftnum > 0)
+				root->left = buildTree(preorder, prelow + 1, prelow + leftnum, inorder, inlow, index - 1);
+
+			if (rightnum > 0)
+				root->right = buildTree(preorder, prelow + leftnum + 1, prehigh, inorder, index + 1, inhigh);
+
+			return root;
+		}
+
+		TreeNode* buildTree1(vector<int>& preorder, vector<int>& inorder) {
+			if (preorder.empty() || preorder.size() != inorder.size())
+				return NULL;
+
+			return buildTree(preorder, 0, preorder.size() - 1, inorder, 0, inorder.size() - 1);
+		}
+
+		TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+			if (preorder.empty() || preorder.size() != inorder.size())
+				return NULL;
+
+			int i = 0, j = 0;
+			TreeNode root(0x80000000);
+			stack<TreeNode*> nodes;
+			nodes.push(&root);
+			TreeNode *pp = NULL, *ptr = &root;
+
+			while (j < inorder.size()) {
+				if (nodes.top()->val == inorder[j]) {
+					pp = nodes.top();
+					nodes.pop();
+					j++;
+				}
+				else if (pp) {
+					ptr = new TreeNode(preorder[i]);
+					pp->right = ptr;
+					pp = NULL;
+					nodes.push(ptr);
+					++i;
+				}
+				else {
+					ptr = new TreeNode(preorder[i]);
+					nodes.top()->left = ptr;
+					nodes.push(ptr);
+					++i;
+				}
+			}
+
+			TreeNode* result = root.left;
+			return result;
+		}
+	};
+	/*105. Construct Binary Tree from Preorder and Inorder Traversal end */
+
+
+	/*81. Search in Rotated Sorted Array II (medium)
+	https://leetcode.com/problems/search-in-rotated-sorted-array-ii/
+	https://discuss.leetcode.com/topic/8087/c-concise-log-n-solution
+	*/
+	class Solution81 {
+	public:
+		bool search(vector<int>& nums, int target) {
+			int low = 0;
+			int high = nums.size() - 1;
+			int mid;
+
+			while (low <= high) {
+				mid = low + (high - low) / 2;
+
+				if (nums[mid] == target)
+					return true;
+
+				if (nums[mid] > nums[low]) {
+					if (target >= nums[low] && target < nums[mid])
+						high = mid - 1;
+					else
+						low = mid + 1;
+				}
+				else if (nums[mid] < nums[low]) {
+					if (target <= nums[high] && target > nums[mid])
+						low = mid + 1;
+					else
+						high = mid - 1;
+				}
+				else
+					++low;
+			}
+
+			return false;
+		}
+	};
+	/*81. Search in Rotated Sorted Array II end */
+
+
+	/*216. Combination Sum III (medium)
+	https://leetcode.com/problems/combination-sum-iii/
+	https://discuss.leetcode.com/topic/14641/my-c-solution-backtracking
+	*/
+	class Solution216 {
+	public:
+		void combinationSum(vector<vector<int>>&result, vector<int> cur, int k, int n) {
+			if (cur.size() == k && n == 0) {
+				result.push_back(cur);
+				return;
+			}
+
+			if (cur.size() < k) {
+				for (int i = (cur.size() > 0 ? cur.back() + 1 : 1); i <= 9; ++i) {
+					if (n - i < 0)
+						break;
+					cur.push_back(i);
+					combinationSum(result, cur, k, n - i);
+					cur.pop_back();
+				}
+			}
+		}
+
+		vector<vector<int>> combinationSum3(int k, int n) {
+			vector<int> cur;
+			vector<vector<int>> result;
+
+			combinationSum(result, cur, k, n);
+
+			return result;
+		}
+	};
+	/*216. Combination Sum III end */
+
+
+	/*229. Majority Element II (medium)
+	https://leetcode.com/problems/majority-element-ii/
+	https://discuss.leetcode.com/topic/17564/boyer-moore-majority-vote-algorithm-and-my-elaboration
+	*/
+	class Solution229 {
+	public:
+		vector<int> majorityElement(vector<int>& nums) {
+			int num1 = 0, num2 = 0, a1 = 0, a2 = 1;
+
+			for (auto item : nums) {
+				if (item == a1)
+					num1++;
+				else if (item == a2)
+					num2++;
+				else if (num1 == 0) {
+					a1 = item;
+					num1 = 1;
+				}
+				else if (num2 == 0) {
+					a2 = item;
+					num2 = 1;
+				}
+				else {
+					--num1;
+					--num2;
+				}
+			}
+
+			num1 = 0;
+			num2 = 0;
+
+			for (auto item : nums) {
+				if (item == a1)
+					++num1;
+				else if (item == a2)
+					++num2;
+			}
+
+			vector<int> ret;
+
+			if (num1 > (nums.size() / 3))
+				ret.push_back(a1);
+
+			if (num2 > (nums.size() / 3))
+				ret.push_back(a2);
+
+			return ret;
+		}
+	};
+	/*229. Majority Element II end */
+
+
+	/*59. Spiral Matrix II (medium)
+	https://leetcode.com/problems/spiral-matrix-ii/
+	https://discuss.leetcode.com/topic/7282/simple-c-solution-with-explaination
+	*/
+	class Solution59 {
+	public:
+		vector<vector<int>> generateMatrix(int n) {
+			vector<vector<int>> result(n, vector<int>(n));
+			int k = 1;
+			int total = n * n;
+			int i = 0, j;
+
+			while (k <= total) {
+				j = i;
+				while (j < n - i) {
+					result[i][j] = k++;
+					j++;
+				}
+
+				j = i + 1;
+				while (j < n - i)
+					result[j++][n - i - 1] = k++;
+
+				j = n - i - 2;
+				while (j > i)
+					result[n - i - 1][j--] = k++;
+
+				j = n - i - 1;
+				while (j > i)
+					result[j--][i] = k++;
+
+				++i;
+			}
+
+			return result;
+		}
+	};
+	/*59. Spiral Matrix II end */
+
+
+	/*40. Combination Sum II (medium)
+	https://leetcode.com/problems/combination-sum-ii/
+	https://discuss.leetcode.com/topic/19845/java-solution-using-dfs-easy-understand
+	*/
+	class Solution40 {
+	public:
+		vector<vector<int> > combinationSum2(vector<int> &candidates, int target) {
+			sort(candidates.begin(), candidates.end());
+			vector<vector<int> > res;
+			vector<int> combination;
+			combinationSum(candidates, target, res, combination, 0);
+			return res;
+		}
+
+		void combinationSum(std::vector<int> &candidates, int target, std::vector<std::vector<int> > &res, std::vector<int> &combination, int begin) {
+			if (0 == target) {
+				res.push_back(combination);
+				return;
+			}
+
+			for (int i = begin; i != candidates.size() && target >= candidates[i]; ++i) {
+				if (i && candidates[i - 1] == candidates[i] && i > begin)
+					continue;
+
+				combination.push_back(candidates[i]);
+				combinationSum(candidates, target - candidates[i], res, combination, i + 1);
+				combination.pop_back();
+			}
+		}
+
+		void dsf(vector<int>& candidates, int target, int start, vector<vector<int>>& ret, vector<int>& locaret) {
+			if (target == 0) {
+				ret.push_back(locaret);
+				return;
+			}
+
+			for (int i = start; i < candidates.size(); ++i) {
+				if (candidates[i] > target)
+					return;
+
+				if (i && candidates[i - 1] == candidates[i] && i > start)
+					continue;
+
+				locaret.push_back(candidates[i]);
+				dsf(candidates, target - candidates[i], i + 1, ret, locaret);
+				locaret.pop_back();
+			}
+		}
+
+		vector<vector<int>> combinationSum2_1(vector<int>& candidates, int target) {
+			vector<vector<int>> result;
+			vector<int> localret;
+
+			sort(candidates.begin(), candidates.end());
+			if (candidates.empty() || target < candidates[0])
+				return result;
+
+			dsf(candidates, target, 0, result, localret);
+			return result;
+		}
+	};
+	/*40. Combination Sum II end */
+
+
+	/*153. Find Minimum in Rotated Sorted Array (medium)
+	https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/
+	https://discuss.leetcode.com/topic/4100/compact-and-clean-c-solution
+	*/
+	class Solution153 {
+	public:
+		int findMin(vector<int>& nums) {
+			int low = 0, high = nums.size() - 1;
+			int middle;
+
+			while (low < high) {
+				middle = (low + high) / 2;
+
+				if (nums[middle] > nums[high])
+					low = middle + 1;
+				else if (nums[middle] < nums[high])
+					high = middle;
+			}
+
+			return nums[low];
+		}
+	};
+	/*153. Find Minimum in Rotated Sorted Array end */
+
+
+	/*106. Construct Binary Tree from Inorder and Postorder Traversal (medium)
+	https://leetcode.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/
+	*/
+	class Solution106 {
+	public:
+		int finditem(vector<int>& nodes, int low, int high, int target) {
+			for (int i = low; i <= high; ++i) {
+				if (nodes[i] == target)
+					return i;
+			}
+		}
+
+		TreeNode* buildTree(vector<int>& inorder, int instart, int inend, vector<int>& postorder, int poststart, int posend) {
+			TreeNode* root = new TreeNode(postorder[posend]);
+
+			int index = finditem(inorder, instart, inend, postorder[posend]);
+			int leftnum = index - instart;
+			int rightnum = inend - index;
+
+			if (posend == poststart)
+				return root;
+
+			if (leftnum > 0)
+				root->left = buildTree(inorder, instart, index - 1, postorder, poststart, poststart + leftnum - 1);
+
+			if (rightnum > 0)
+				root->right = buildTree(inorder, index + 1, inend, postorder, posend - rightnum, posend - 1);
+
+			return root;
+		}
+
+		TreeNode* buildTree1(vector<int>& inorder, vector<int>& postorder) {
+			if (inorder.empty() || postorder.size() != inorder.size())
+				return NULL;
+
+			TreeNode* root = buildTree(inorder, 0, inorder.size() - 1, postorder, 0, postorder.size() - 1);
+			return root;
+		}
+
+		TreeNode* myBuild2(vector<int>& inorder, vector<int>& postorder, TreeNode* lastnode) {
+			if (posPost < 0)
+				return NULL;
+
+			TreeNode* node = new TreeNode(postorder[posPost--]);
+
+			if (inorder[posIn] != node->val)
+				node->right = myBuild2(inorder, postorder, node);
+
+			posIn--;
+
+			if ((lastnode == NULL) || (inorder[posIn] != lastnode->val))
+				node->left = myBuild2(inorder, postorder, lastnode);
+
+			return node;
+		}
+
+		int posIn, posPost;
+		TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
+			if (inorder.empty() || postorder.size() != inorder.size())
+				return NULL;
+
+			posIn = inorder.size() - 1;
+			posPost = postorder.size() - 1;
+
+			TreeNode* result = myBuild2(inorder, postorder, NULL);
+			return result;
+
+		}
+	};
+	/*106. Construct Binary Tree from Inorder and Postorder Traversal end */
+
+
+	/*209. Minimum Size Subarray Sum (medium)
+	https://leetcode.com/problems/minimum-size-subarray-sum/
+	https://discuss.leetcode.com/topic/13749/two-ac-solutions-in-java-with-time-complexity-of-n-and-nlogn-with-explanation
+	*/
+	class Solution209 {
+	public:
+		int minSubArrayLen1(int s, vector<int>& nums) {
+			if (nums.empty())
+				return 0;
+
+			int ret = 0, total, j, len;
+
+			for (int i = 0; i < nums.size(); ++i) {
+				total = 0;
+				for (j = i; j < nums.size(); ++j) {
+					if (total + nums[j] < s)
+						total += nums[j];
+					else
+						break;
+				}
+
+				len = j - i + 1;
+				if (j < nums.size() && total + nums[j] >= s)
+					ret = min(ret == 0 ? len : ret, len);
+			}
+
+			return ret;
+		}
+
+		int minSubArrayLen(int s, vector<int>& nums) {
+			if (nums.empty())
+				return 0;
+			int ret = INT_MAX, total = 0, start = 0, end = 0, len;
+
+			while (end < nums.size()) {
+				while (end < nums.size() && total < s)
+					total += nums[end++];
+
+				if (total < s)
+					break;
+
+				while (start < end && total >= s)
+					total -= nums[start++];
+
+				if (end - start + 1 < ret)
+					ret = end - start + 1;
+			}
+
+			return ret == INT_MAX ? 0 : ret;
+		}
+	};
+	/*209. Minimum Size Subarray Sum end */
+
+
+	/*27. Remove Element (easy)
+	https://leetcode.com/problems/remove-element/
+	https://discuss.leetcode.com/topic/1228/my-solution-for-your-reference
+	*/
+	class Solution27 {
+	public:
+		int removeElement(int A[], int n, int elem) {
+			int count = 0;
+			for (int i = 0; i<n; ++i) {
+				if (A[i] != elem)
+					A[count++] = A[i];
+			}
+
+			return count;
+		}
+	};
+	/*27. Remove Element end */
+
+
+	/*119. Pascal's Triangle II (easy)
+	https://leetcode.com/problems/pascals-triangle-ii/
+	https://discuss.leetcode.com/topic/2510/here-is-my-brief-o-k-solution
+	*/
+	class Solution119 {
+	public:
+		vector<int> getRow(int rowIndex) {
+			vector<int> result;
+			result.resize(rowIndex + 1);
+			result[0] = result[rowIndex] = 1;
+
+			for (int i = 1; i <= rowIndex / 2; ++i)
+				result[i] = result[rowIndex - i] = (unsigned long)result[i - 1] * (unsigned long)(rowIndex + 1 - i) / i;
+
+			return result;
+		}
+	};
+	/*119. Pascal's Triangle II end */
+
+
+	/*118. Pascal's Triangle (easy)
+	https://leetcode.com/problems/pascals-triangle/
+	https://discuss.leetcode.com/topic/4303/maybe-shortest-c-solution
+	*/
+	class Solution118 {
+	public:
+		vector<vector<int>> generate(int numRows) {
+			vector<vector<int>> result(numRows);
+
+			for (int i = 0; i < numRows; ++i) {
+				result[i].resize(i + 1);
+
+				result[i][0] = result[i][i] = 1;
+				for (int j = 1; j < i; ++j)
+					result[i][j] = result[i - 1][j - 1] + result[i - 1][j];
+			}
+
+			return result;
+		}
+	};
+	/*118. Pascal's Triangle end */
+
+
+	/*189. Rotate Array (easy)
+	https://leetcode.com/problems/rotate-array/
+	https://discuss.leetcode.com/topic/9801/summary-of-c-solutions
+	*/
+	class Solution189 {
+	public:
+		void rotate(vector<int>& nums, int k) {
+			int offset = nums.size() - (k % nums.size());
+			
+			vector<int> t(nums.begin() + offset, nums.end());
+			nums.resize(offset);
+			nums.insert(nums.begin(), t.begin(), t.end());
+		}
+	};
+	/*189. Rotate Array end */
+
+
+	/*26. Remove Duplicates from Sorted Array (easy)
+	https://leetcode.com/problems/remove-duplicates-from-sorted-array/
+	*/
+	class Solution26 {
+	public:
+		int removeDuplicates(vector<int>& nums) {
+			int len = nums.size();
+
+			if (len < 2)
+				return len;
+
+			int count = 0;
+			for (int i = 0; i < len; ++i) {
+				if (nums[i] != nums[count])
+					nums[++count] = nums[i];
+			}
+
+			return count + 1;
+		}
+	};
+	/*26. Remove Duplicates from Sorted Array end */
+}
+//////////////////////////Tag Array end//////////////////////////////////////////
+
+
+
+//////////////////////////Tag Hash Table//////////////////////////////////////////
+namespace HASHT {
+	/*380. Insert Delete GetRandom O(1) (medium)
+	https://leetcode.com/problems/insert-delete-getrandom-o1/
+	https://discuss.leetcode.com/topic/53216/java-solution-using-a-hashmap-and-a-arraylist-131-ms
+	*/
+	class RandomizedSet380 {
+	public:
+		/** Initialize your data structure here. */
+		RandomizedSet380() {
+
+		}
+
+		/** Inserts a value to the set. Returns true if the set did not already contain the specified element. */
+		bool insert(int val) {
+			if (m.find(val) != m.end()) return false;
+			nums.emplace_back(val);
+			m[val] = nums.size() - 1;
+			return true;
+		}
+
+		/** Removes a value from the set. Returns true if the set contained the specified element. */
+		bool remove(int val) {
+			if (m.find(val) == m.end()) 
+				return false;
+
+			int last = nums.back();
+			m[last] = m[val];
+			nums[m[val]] = last;
+			nums.pop_back();
+			m.erase(val);
+			return true;
+		}
+
+		/** Get a random element from the set. */
+		int getRandom() {
+			int n = nums.size();
+
+			return  0 == n ? -1 : nums[rand() % n];
+		}
+
+	private:
+		vector<int> nums;
+		unordered_map<int, int> m;
+	};
+	/*380. Insert Delete GetRandom O(1) end */
+
+
+	/*219. Contains Duplicate II (easy)
+	https://leetcode.com/problems/contains-duplicate-ii/
+	https://discuss.leetcode.com/topic/15045/c-solution-with-unordered_set
+	*/
+	class Solution219 {
+	public:
+		bool containsNearbyDuplicate(vector<int>& nums, int k) {
+			set<int> cand;
+
+			for (int nIdx = 0; nIdx < nums.size(); ++nIdx) {
+				if (nIdx > k)
+					cand.erase(nums[nIdx - k - 1]);
+
+				if (!cand.insert(nums[nIdx]).second)
+					return true;
+			}
+
+			return false;
+		}
+	};
+	/*219. Contains Duplicate II end */
+
+
+	/*36. Valid Sudoku (easy)
+	https://leetcode.com/problems/valid-sudoku/
+	https://discuss.leetcode.com/topic/8241/my-short-solution-by-c-o-n2
+	*/
+	class Solution36 {
+	public:
+		bool isValidSudoku(vector<vector<char>>& board) {
+			int use1[9][9] = { 0 };
+			int use2[9][9] = { 0 };
+			int use3[9][9] = { 0 };
+			int k, num;
+
+			for (int i = 0; i < 9; ++i)
+				for (int j = 0; j < board[i].size(); ++j) {
+					if (board[i][j] != '.') {
+						num = board[i][j] - '1';
+						k = i / 3 * 3 + j / 3;
+
+						if (use1[i][num] || use2[j][num] || use3[k][num])
+							return false;
+
+						use1[i][num] = 1;
+						use2[j][num] = 1;
+						use3[k][num] = 1;
+					}
+				}
+
+			return true;
+		}
+	};
+	/*36. Valid Sudoku end */
+
+
+	/*290. Word Pattern (easy)
+	https://leetcode.com/problems/word-pattern/
+	https://leetcode.com/problems/word-pattern/
+	https://discuss.leetcode.com/topic/26376/short-c-read-words-on-the-fly
+	*/
+	class Solution290 {
+	public:
+		bool wordPattern(string pattern, string str) {
+			map<char, int> patoi;
+			map<string, int> strtoi;
+
+			istringstream in(str);
+			int i = 0;
+			int n = pattern.size();
+			for (string word; in >> word; ++i) {
+				if (i == n || patoi[pattern[i]] != strtoi[word])
+					return false;
+
+				patoi[pattern[i]] = strtoi[word] = i + 1;
+			}
+
+			return i == n;
+		}
+	};
+	/*290. Word Pattern end */
+
+
+	/*1. Two Sum (easy)
+	https://leetcode.com/problems/two-sum/
+	https://discuss.leetcode.com/topic/3294/accepted-c-o-n-solution
+	*/
+	class Solution1 {
+	public:
+		vector<int> twoSum(vector<int>& nums, int target) {
+			unordered_map<int, int> value_index;
+			vector<int> result;
+
+			for (int i = 0; i < nums.size(); ++i) {
+				if (value_index.count(target - nums[i])) {
+					result.push_back(value_index[target - nums[i]]);
+					result.push_back(i + 1);
+					break;
+				}
+
+				value_index[nums[i]] = i + 1;
+			}
+
+			return result;
+		}
+	};
+	/*1. Two Sum end */
+
+
+	/*217. Contains Duplicate (easy)
+	https://leetcode.com/problems/contains-duplicate/
+	https://discuss.leetcode.com/topic/14944/single-line-c-solution-60ms
+	*/
+	class Solution217 {
+	public:
+		bool containsDuplicate(vector<int>& nums) {
+			if ((nums.size() == 0) || (nums.size() == 1)) return false;
+
+			std::sort(nums.begin(), nums.end());
+
+			for (int nIdx = 0; nIdx<nums.size() - 1; ++nIdx)
+				if (nums[nIdx] == nums[nIdx + 1])
+					return true;
+
+			return false;
+		}
+	};
+	/*217. Contains Duplicate end */
+
+
+	/*205. Isomorphic Strings (easy)
+	https://leetcode.com/problems/isomorphic-strings/
+	https://discuss.leetcode.com/topic/12981/my-6-lines-solution
+	*/
+	class Solution205 {
+	public:
+		bool isIsomorphic(string a, string b) {
+			if (a.size() != b.size()) 
+				return false;
+
+			vector<char> aTob(128, NULL);
+			vector<char> bToa(128, NULL);
+
+			for (int i = 0; i < a.size(); ++i) {
+				if (!aTob[a[i]] && !bToa[b[i]]) {
+					aTob[a[i]] = b[i];
+					bToa[b[i]] = a[i];
+				}
+				else if (aTob[a[i]] != b[i] || bToa[b[i]] != a[i])
+					return false;
+			}
+
+			return true;
+		}
+	};
+	/*205. Isomorphic Strings end */
+
+
+	/*299. Bulls and Cows (easy)
+	https://leetcode.com/problems/bulls-and-cows/
+	https://discuss.leetcode.com/topic/28463/one-pass-java-solution
+	*/
+	class Solution29 {
+	public:
+		string getHint(string secret, string guess) {
+			string result;
+			vector<int> gcount(10, 0);
+			vector<int> scount(10, 0);
+			int bull = 0, cows = 0;
+
+			if (secret.empty() || guess.empty())
+				return string("0A0B");
+
+			for (int i = 0; i < secret.size(); ++i) {
+				if (secret[i] == guess[i])
+					bull++;
+				else {
+					scount[secret[i] - '0'] ++;
+					gcount[guess[i] - '0'] ++;
+				}
+			}
+
+			for (int i = 0; i < 10; ++i)
+				cows += (scount[i] > gcount[i] ? gcount[i] : scount[i]);
+
+			char tmp[100];
+
+			memset(tmp, 0x00, sizeof(tmp));
+			sprintf(tmp, "%dA%dB", bull, cows);
+			result = string(tmp);
+
+			return result;
+		}
+	};
+	/*299. Bulls and Cows end */
+
+}
+
+//////////////////////////Tag Hash Table end//////////////////////////////////////////
+
+
+
+
+//////////////////////////Tag Linked List//////////////////////////////////////////
+namespace LLIST {
+	struct ListNode {
+		int val;
+		ListNode *next;
+		ListNode(int x) : val(x), next(NULL) {}
+	};
+
+
+	/*25. Reverse Nodes in k-Group (hard)
+	https://leetcode.com/problems/reverse-nodes-in-k-group/
+	https://discuss.leetcode.com/topic/7126/short-but-recursive-java-code-with-comments
+	*/
+	class Solution25 {
+	public:
+		ListNode* reverseKGroup(ListNode* head, int k) {
+			if (head == NULL || head->next == NULL || k < 2)
+				return head;
+
+			ListNode dummy(-1);
+			dummy.next = head;
+			ListNode* pre = &dummy;
+			ListNode* tmp = NULL;
+			ListNode* next = NULL;
+			ListNode* curr = head;
+			int count = 0;
+
+			while (curr) {
+				++count;
+				curr = curr->next;
+			}
+
+			while (count >= k) {
+				curr = pre->next;
+				next = curr->next;
+
+				for (int i = 1; i < k; ++i) {
+					tmp = next->next;
+					next->next = pre->next;
+					pre->next = next;
+					curr->next = tmp;
+					next = tmp;
+				}
+
+				pre = curr;
+				count -= k;
+			}
+
+			return dummy.next;
+		}
+	};
+	/*25. Reverse Nodes in k-Group end */
+
+
+	/*23. Merge k Sorted Lists (hard)
+	https://leetcode.com/problems/merge-k-sorted-lists/
+	https://discuss.leetcode.com/topic/6882/sharing-my-straightforward-c-solution-without-data-structure-other-than-vector
+	*/
+	class Solution23 {
+	public:
+		ListNode *mergeTwoLists(ListNode* l1, ListNode* l2) {
+			if (NULL == l1) 
+				return l2;
+
+			else if (NULL == l2) 
+				return l1;
+
+			if (l1->val <= l2->val) {
+				l1->next = mergeTwoLists(l1->next, l2);
+				return l1;
+			}
+			else {
+				l2->next = mergeTwoLists(l1, l2->next);
+				return l2;
+			}
+		}
+
+		ListNode *mergeKLists(vector<ListNode *> &lists) {
+			if (lists.empty()) 
+				return NULL;
+
+			int len = lists.size();
+			while (len > 1) {
+				for (int i = 0; i < len / 2; ++i)
+					lists[i] = mergeTwoLists(lists[i], lists[len - 1 - i]);
+
+				len = (len + 1) / 2;
+			}
+
+			return lists.front();
+		}
+
+		ListNode* mergetwo(ListNode* l1, ListNode* l2) {
+			ListNode dummy(-1);
+			ListNode* pre = &dummy;
+
+			while (l1 && l2) {
+				if (l1->val <= l2->val) {
+					pre->next = l1;
+					l1 = l1->next;
+				}
+				else {
+					pre->next = l2;
+					l2 = l2->next;
+				}
+
+				pre = pre->next;
+			}
+
+			pre->next = (l1 != NULL ? l1 : l2);
+
+			return dummy.next;
+		}
+
+		ListNode* mergeKLists1(vector<ListNode*>& lists) {
+			ListNode* result = NULL;
+
+			if (lists.empty())
+				return NULL;
+
+			result = lists[0];
+
+			for (int i = 1; i < lists.size(); ++i)
+				result = mergetwo(result, lists[i]);
+
+			return result;
+		}
+	};
+	/*23. Merge k Sorted Lists end */
+
+
+	/*138. Copy List with Random Pointer (hard)
+	https://leetcode.com/problems/copy-list-with-random-pointer/
+	https://discuss.leetcode.com/topic/53289/c-o-n-time-complexity-o-1-space
+	*/
+	struct RandomListNode {
+		int label;
+		RandomListNode *next, *random;
+		RandomListNode(int x) : label(x), next(NULL), random(NULL) {}
+	};
+
+	class Solution138 {
+	public:
+		RandomListNode *copyRandomList(RandomListNode *head) {
+			if (head == NULL)
+				return NULL;
+
+			unordered_map<RandomListNode *, int> map;
+			unordered_map<int, RandomListNode *> destmap;
+			RandomListNode *phead = NULL;
+			RandomListNode *p1;
+			RandomListNode *p2;
+			RandomListNode dummy(0);
+
+			p2 = &dummy;
+			int count = 0;
+			for (p1 = head; p1 != NULL; p1 = p1->next) {
+				RandomListNode *tmp = new RandomListNode(p1->label);
+
+				destmap[count] = tmp;
+				map[p1] = count++;
+				p2->next = tmp;
+				p2 = p2->next;
+			}
+
+			count = 0;
+			phead = dummy.next;
+			p2 = phead;
+			for (p1 = head; p1 != NULL; p1 = p1->next) {
+				if (p1->random != NULL) {
+					int tmp = map[p1->random];
+					p2->random = destmap[tmp];
+				}
+
+				p2 = p2->next;
+			}
+
+			return phead;
+		}
+	};
+	/*138. Copy List with Random Pointer end */
+
+
+	/*82. Remove Duplicates from Sorted List II (medium)
+	https://leetcode.com/problems/remove-duplicates-from-sorted-list-ii/
+	https://discuss.leetcode.com/topic/51656/short-c-iterative-solution-using-dummy
+	*/
+	class Solution82 {
+	public:
+		ListNode* deleteDuplicates(ListNode* head) {
+			ListNode dummy(0);
+			ListNode* ptmp = &dummy;
+			bool duplicate;
+
+			while (head) {
+				duplicate = false;
+				while (head->next && head->next->val == head->val) {
+					head = head->next;
+					duplicate = true;
+				}
+
+				if (!duplicate) {
+					ptmp->next = head;
+					ptmp = ptmp->next;
+				}
+
+				head = head->next;
+			}
+
+			ptmp->next = NULL;
+			return dummy.next;
+		}
+	};
+	/*82. Remove Duplicates from Sorted List II end */
+
+
+	/*92. Reverse Linked List II (medium)
+	https://leetcode.com/problems/reverse-linked-list-ii/
+	https://discuss.leetcode.com/topic/53273/clean-yet-efficient-solution-in-c
+	*/
+	class Solution92 {
+	public:
+		ListNode* reverseBetween1(ListNode* head, int m, int n) {
+			if (m == n)
+				return head;
+
+			ListNode root(0);
+			ListNode* pre = &root;
+			ListNode* cur = head;
+			ListNode* next = NULL;
+
+			root.next = head;
+			int pos = 1;
+
+			while (pos < n) {
+				if (pos < m) {
+					pre = cur;
+					cur = cur->next;
+				}
+				else {
+					next = cur->next;
+					cur->next = cur->next->next;
+					next->next = pre->next;
+					pre->next = next;
+				}
+
+				++pos;
+			}
+
+			return root.next;
+		}
+
+
+		ListNode* reverseBetween(ListNode* head, int m, int n) {
+			stack<ListNode*> nodes;
+			ListNode root(0);
+			ListNode* father = &root;
+
+			int count = 1;
+			ListNode* reverfather = NULL;
+			while (head && count <= n) {
+				if (count >= m) {
+					nodes.push(head);
+					if (count == m)
+						reverfather = father;
+				}
+
+				father->next = head;
+				father = head;
+				head = head->next;
+				count++;
+			}
+
+			if (nodes.size() > 1) {
+				ListNode* tmp = nodes.top()->next;
+
+				while (!nodes.empty()) {
+					reverfather->next = nodes.top();
+					nodes.pop();
+					reverfather = reverfather->next;
+				}
+
+				reverfather->next = tmp;
+			}
+
+			return root.next;
+		}
+	};
+	/*92. Reverse Linked List II end */
+
+
+	/*328. Odd Even Linked List (medium)
+	https://leetcode.com/problems/odd-even-linked-list/
+	https://discuss.leetcode.com/topic/50295/sharing-my-16-ms-cpp-solution-beats-99-54
+	*/
+	class Solution328 {
+	public:
+		ListNode* oddEvenList(ListNode* head) {
+			if (head == NULL)
+				return NULL;
+
+			ListNode* oddnode = head;
+			ListNode* evennode = head->next;
+			ListNode* evenhead = evennode;
+
+			while (evennode != NULL && evennode->next != NULL) {
+				oddnode->next = oddnode->next->next;
+				evennode->next = evennode->next->next;
+				evennode = evennode->next;
+				oddnode = oddnode->next;
+			}
+
+			oddnode->next = evenhead;
+			return head;
+		}
+	};
+	/*328. Odd Even Linked List end */
+
+
+	/*143. Reorder List (medium)
+	https://leetcode.com/problems/reorder-list/
+	https://discuss.leetcode.com/topic/53032/accept-answer-in-c-using-stack
+	*/
+	class Solution143 {
+	public:
+		void reorderList(ListNode* head) {
+			if (NULL == head)
+				return;
+
+			stack<ListNode*> nodes;
+			ListNode* tmp = head;
+			int count = 0;
+
+			while (tmp) {
+				nodes.push(tmp);
+				tmp = tmp->next;
+				++count;
+			}
+
+			tmp = head;
+			for (int i = 0; i < count / 2; ++i) {
+				ListNode* end = nodes.top();
+				nodes.pop();
+				ListNode* next = tmp->next;
+
+				tmp->next = end;
+				end->next = next;
+				tmp = next;
+			}
+
+			tmp->next = NULL;
+		}
+	};
+	/*143. Reorder List end */
+
+
+	/*83. Remove Duplicates from Sorted List (easy)
+	https://leetcode.com/problems/remove-duplicates-from-sorted-list/
+	https://discuss.leetcode.com/topic/8345/my-pretty-solution-java
+	*/
+	class Solution83 {
+	public:
+		ListNode *deleteDuplicates(ListNode *head) {
+			if (head == NULL) 
+				return head;
+
+			ListNode* cur = head;
+			while (cur->next != NULL) {
+				if (cur->val == cur->next->val) {
+					ListNode* tmp = cur->next;
+					cur->next = tmp->next;
+					delete tmp;
+				}
+				else cur = cur->next;
+			}
+
+			return head;
+		}
+	};
+	/*83. Remove Duplicates from Sorted List end */
+
+
+	/*203. Remove Linked List Elements (easy)
+	https://leetcode.com/problems/remove-linked-list-elements/
+	https://discuss.leetcode.com/topic/52063/easy-c-solution
+	*/
+	class Solution203 {
+	public:
+		ListNode* removeElements(ListNode* head, int val) {
+			ListNode node(0);
+			node.next = head;
+			ListNode* cur = &node;
+
+			while (cur->next) {
+				ListNode* entry = cur->next;
+
+				if (entry->val == val) {
+					cur->next = entry->next;
+					delete entry;
+				}
+				else
+					cur = cur->next;
+			}
+
+			return node.next;
+		}
+
+		ListNode* removeElements1(ListNode* head, int val) {
+			ListNode* root = head;
+			ListNode* result = head;
+			ListNode* pre = head;
+			while (root) {
+				if (root->val == val) {
+					if (result == root) {
+						result = root->next;
+						pre = result;
+					}
+					else
+						pre->next = root->next;
+				}
+				else
+					pre = root;
+
+				root = root->next;
+			}
+
+			return result;
+		}
+	};
+	/*203. Remove Linked List Elements end */
+
+
+	/*206. Reverse Linked List (easy)
+	https://leetcode.com/problems/reverse-linked-list/
+	https://discuss.leetcode.com/topic/52949/simple-5-liner-in-java
+	*/
+	class Solution206 {
+	public:
+		ListNode* reverseList(ListNode* head) {
+			ListNode* root = head;
+			ListNode* pre = NULL;
+
+			while (root) {
+				ListNode* tmp = root->next;
+				root->next = pre;
+
+				pre = root;
+				root = tmp;
+			}
+
+			return pre;
+		}
+	};
+	/*206. Reverse Linked List end */
+
+
+	/*160. Intersection of Two Linked Lists (easy)
+	https://leetcode.com/problems/intersection-of-two-linked-lists/
+	https://discuss.leetcode.com/topic/50006/simple-yet-best-solution-in-c/2
+	*/
+	class Solution160 {
+	public:
+		ListNode *getIntersectionNode(ListNode *headA, ListNode *headB)
+		{
+			ListNode *pA = headA, *pB = headB;
+			int lenA = 0, lenB = 0;
+			while (pA) 
+				pA = pA->next, lenA++;
+
+			while (pB) 
+				pB = pB->next, lenB++;
+
+			pA = headA, pB = headB;
+			if (lenA > lenB) 
+				for (int i = 0; i < lenA - lenB; ++i) 
+					pA = pA->next;
+			else 
+				for (int i = 0; i < lenB - lenA; ++i) 
+					pB = pB->next;
+
+			while (pA)
+			{
+				if (pA == pB) return pA;
+				pA = pA->next;
+				pB = pB->next;
+			}
+
+			return NULL;
+		}
+
+		ListNode *getIntersectionNode1(ListNode *headA, ListNode *headB) {
+			if (headA == NULL || headB == NULL)
+				return NULL;
+
+			ListNode *headAEnd = NULL;
+			ListNode *headAStart = headA;
+			while (headAStart) {
+				headAEnd = headAStart;
+				headAStart = headAStart->next;
+			}
+
+			headAEnd->next = headB;
+			ListNode * fast = headA->next;
+			ListNode * slow = headA;
+
+			while (1) {
+				if (fast == slow)
+					break;
+
+				if (fast == NULL || slow == NULL || fast->next == NULL) {
+					headAEnd->next = NULL;
+					return NULL;
+				}
+
+				fast = fast->next->next;
+				slow = slow->next;
+			}
+
+			int loopsize = 1;
+			fast = fast->next;
+
+			while (fast != slow) {
+				fast = fast->next;
+				loopsize++;
+			}
+
+			fast = headA;
+			slow = headA;
+			for (int i = 0; i < loopsize; ++i)
+				fast = fast->next;
+
+			while (fast != slow) {
+				fast = fast->next;
+				slow = slow->next;
+			}
+
+			headAEnd->next = NULL;
+			return fast;
+		}
+	};
+	/*160. Intersection of Two Linked Lists end */
+
+
+	/*21. Merge Two Sorted Lists (easy)
+	https://leetcode.com/problems/merge-two-sorted-lists/
+	https://discuss.leetcode.com/topic/39228/1ms-java-clean-code
+	*/
+	class Solution21 {
+	public:
+		ListNode *mergeTwoLists(ListNode *l1, ListNode *l2) {
+			if ((NULL == l1) || (NULL == l2))
+				return (NULL == l1) ? l2 : l1;
+
+			ListNode head = ListNode(0);
+			ListNode* curr = &head;
+
+			while (l1 && l2) {
+				if (l1->val < l2->val) {
+					curr->next = l1;
+					l1 = l1->next;
+				}
+				else {
+					curr->next = l2;
+					l2 = l2->next;
+				}
+
+				curr = curr->next;
+			}
+
+			if (l1 == NULL)
+				curr->next = l2;
+
+			if (l2 == NULL)
+				curr->next = l1;
+
+			return head.next;
+		}
+	};
+	/*21. Merge Two Sorted Lists end */
+
+
+	/*237. Delete Node in a Linked List (easy)
+	https://leetcode.com/problems/delete-node-in-a-linked-list/
+	https://discuss.leetcode.com/topic/51739/2-solutions
+	*/
+	class Solution237 {
+	public:
+		void deleteNode(ListNode* node) {
+			ListNode* temp = node->next;
+			*node = *temp;
+			delete temp;
+		}
+	};
+	/*237. Delete Node in a Linked List end */
+
+
+	/*24. Swap Nodes in Pairs (easy)
+	https://leetcode.com/problems/swap-nodes-in-pairs/
+	https://discuss.leetcode.com/topic/53021/maybe-the-most-easy-to-understand-one
+	*/
+	class Solution24 {
+	public:
+		ListNode* swapPairs(ListNode* head) {
+			ListNode node(0);
+			node.next = head;
+
+			ListNode* cur = &node;
+			while (cur->next && cur->next->next) {
+				ListNode* node1 = cur->next;
+				ListNode* node2 = node1->next;
+				ListNode* node3 = node2->next;
+
+				node2->next = node1;
+				node1->next = node3;
+				cur->next = node2;
+				cur = node1;
+			}
+
+			return node.next;
+		}
+
+		ListNode* swapPairs1(ListNode* head) {
+			if ((head == NULL) || (head->next == NULL))
+				return head;
+
+			ListNode* pNewHead = head->next;
+			ListNode* pPair1 = head;
+			ListNode* pPair2 = head->next;
+
+			while (pPair1 && pPair2) {
+				head->next = pPair2;
+				ListNode* pTmp = pPair2->next;
+				pPair2->next = pPair1;
+
+				pPair1->next = pTmp;
+				head = pPair1;
+				pPair1 = pTmp;
+				pPair2 = pPair1 ? pPair1->next : NULL;
+			}
+
+			return pNewHead;
+		}
+
+		static void main() {
+			Solution24* test = new Solution24;
+			ListNode* result;
+			ListNode node1(1);
+			ListNode node2(2);
+			ListNode node3(3);
+
+			node1.next = &node2;
+			node2.next = &node3;
+
+			result = test->swapPairs(&node1);
+			delete test;
+		}
+	};
+	/*24. Swap Nodes in Pairs end */
+}
+//////////////////////////Tag Linked List end//////////////////////////////////////////
+
+
 
 //////////////////////////Tag Math//////////////////////////////////////////
 namespace MATH {
-	/*287. Find the Duplicate Number(easy)
+	struct ListNode {
+		int val;
+		ListNode *next;
+		ListNode(int x) : val(x), next(NULL) {}
+	};
+
+
+	/*149. Max Points on a Line (hard)
+	https://leetcode.com/problems/max-points-on-a-line/
+	https://discuss.leetcode.com/topic/52957/really-think-hash-map-with-floating-point-is-awkward-as-the-input-data-is-integer-only-my-solution-is-o-n-3-with-pruning-12ms-and-beat-94
 	*/
-	/*287. Find the Duplicate Number end */
+	struct Point {
+		int x;
+		int y;
+		Point() : x(0), y(0) {}
+		Point(int a, int b) : x(a), y(b) {}
+	};
+
+	class Solution149 {
+	public:
+		int maxPoints(vector<Point>& points) {
+			if (points.size() < 2)
+				return points.size();
+
+			int result = 0;
+			for (int i = 0; i < points.size(); ++i) {
+				map<pair<int, int>, int> dict;
+				int localmax = 0, vertical = 0, overlap = 0;
+
+				for (int j = i + 1; j < points.size(); ++j) {
+					if (points[i].x == points[j].x && points[i].y == points[j].y) {
+						++overlap;
+						continue;
+					}
+					else if (points[i].x == points[j].x)
+						++vertical;
+					else {
+						int a = points[j].x - points[i].x;
+						int b = points[j].y - points[i].y;
+						int gcd = GCD(a, b);
+
+						a = a / gcd;
+						b = b / gcd;
+
+						dict[make_pair(a, b)] ++;
+						localmax = max(localmax, dict[make_pair(a, b)]);
+					}
+
+					localmax = max(localmax, vertical);
+				}
+
+				result = max(result, localmax + overlap + 1);
+			}
+
+			return result;
+		}
+
+		int GCD(int a, int b) {
+			if (b == 0) return a;
+			else return GCD(b, a%b);
+		}
+
+		static void main() {
+			Solution149* test = new Solution149;
+			int result;
+			vector<Point> points1 = { Point(4, 4), Point(2, 2), Point(8, 8) };
+
+			result = test->maxPoints(points1);
+			delete test;
+		}
+	};
+	/*149. Max Points on a Line end */
 
 
-	/*9. Palindrome Number(easy)
+	/*65. Valid Number (hard)
+	https://leetcode.com/problems/valid-number/
+	https://discuss.leetcode.com/topic/51867/solution-using-a-state-machine
+	*/
+	class Solution65 {
+	public:
+		bool isNumber(string s) {
+			int state = 0, flag = 0;
+
+			while (s[0] == ' ')
+				s.erase(0, 1);
+
+			while (s[s.size() - 1] == ' ')
+				s.erase(s.size() - 1, 1);
+
+			for (int i = 0; i < s.size(); ++i) {
+				if (isdigit(s[i])) {
+					flag = 1;
+
+					if (state <= 2)
+						state = 2;
+					else
+						state = (state <= 5) ? 5 : 7;
+				}
+				else if (s[i] == '+' || s[i] == '-') {
+					if (state == 0 || state == 3)
+						state++;
+					else
+						return false;
+				}
+				else if (s[i] == '.') {
+					if (state <= 2)
+						state = 6;
+					else
+						return false;
+				}
+				else if (s[i] == 'e') {
+					if (flag && (state == 2 || state == 6 || state == 7))
+						state = 3;
+					else
+						return false;
+				}
+				else
+					return false;
+			}
+
+			return (state == 2 || state == 5 || (flag&&state == 6) || state == 7);
+		}
+	};
+	/*65. Valid Number end */
+
+
+	/*335. Self Crossing (hard)
+	https://leetcode.com/problems/self-crossing/
+	https://discuss.leetcode.com/topic/50325/more-intuitive-explanation-added-here
+	*/
+	class Solution335 {
+	public:
+		bool isSelfCrossing(vector<int>& x) {
+			for (int i = 3; i < x.size(); ++i) {
+				if (x[i] >= x[i - 2] && x[i - 1] <= x[i - 3])
+					return true;
+				else if (i > 3 && x[i - 4] + x[i] == x[i - 2] && x[i - 1] == x[i - 3])
+					return true;
+				else if (i > 4 && x[i - 2] >= x[i - 4] && x[i] + x[i - 4] >= x[i - 2]
+					&& x[i - 3] >= x[i - 1] && x[i - 1] + x[i - 5] >= x[i - 3])
+					return true;
+			}
+
+			return false;
+		}
+	};
+	/*335. Self Crossing end */
+
+
+	/*233. Number of Digit One (hard)
+	https://leetcode.com/problems/number-of-digit-one/
+	https://discuss.leetcode.com/topic/18054/4-lines-o-log-n-c-java-python
+	*/
+	class Solution233 {
+	public:
+		int countDigitOne(int n) {
+			int ones = 0;
+
+			for (long long m = 1; m <= n; m *= 10) {
+				int a = n / m, b = n % m;
+				ones += (a + 8) / 10 * m + (a % 10 == 1) * (b + 1);
+			}
+
+			return ones;
+		}
+	};
+	/*233. Number of Digit One end */
+
+
+	/*2. Add Two Numbers (medium)
+	https://leetcode.com/problems/add-two-numbers/
+	https://discuss.leetcode.com/topic/5905/c-sharing-my-11-line-c-solution-can-someone-make-it-even-more-concise
+	*/
+	class Solution2 {
+	public:
+		ListNode *addTwoNumbers(ListNode *l1, ListNode *l2) {
+			ListNode preHead(0), *p = &preHead;
+			int extra = 0;
+
+			while (l1 || l2 || extra) {
+				int sum = (l1 ? l1->val : 0) + (l2 ? l2->val : 0) + extra;
+				extra = sum / 10;
+				p->next = new ListNode(sum % 10);
+				p = p->next;
+				l1 = l1 ? l1->next : l1;
+				l2 = l2 ? l2->next : l2;
+			}
+
+			return preHead.next;
+		}
+
+		ListNode* addTwoNumbers1(ListNode* l1, ListNode* l2) {
+			int carry = 0;
+
+			ListNode* sb = new ListNode(0);
+			ListNode* result = sb;
+			int val_1, val_2, val;
+
+			while (l1 || l2) {
+				val_1 = l1 ? l1->val : 0;
+				val_2 = l2 ? l2->val : 0;
+
+				if (val_1 + val_2 + carry >= 10) {
+					val = val_1 + val_2 + carry - 10;
+					carry = 1;
+				}
+				else {
+					val = val_1 + val_2 + carry;
+					carry = 0;
+				}
+
+				result->next = new ListNode(val);
+				result = result->next;
+				if (l1)
+					l1 = l1->next;
+
+				if (l2)
+					l2 = l2->next;
+			}
+
+			if (carry)
+				result->next = new ListNode(1);
+
+			return sb->next;
+		}
+	};
+	/*2. Add Two Numbers end */
+
+
+	/*368. Largest Divisible Subset (medium)
+	https://leetcode.com/problems/largest-divisible-subset/
+	https://discuss.leetcode.com/topic/49456/c-solution-with-explanations
+	*/
+	class Solution368 {
+	public:
+		vector<int> largestDivisibleSubset(vector<int>& nums) {
+			int nsize = nums.size();
+			vector<int> dp(nsize, 0);
+			vector<int> parent(nsize, 0);
+			sort(nums.begin(), nums.end());
+
+			int m = 0;
+			int mi = 0;
+			for (int i = nsize - 1; i >= 0; --i) {
+				for (int j = i; j < nsize; ++j) {
+					if (0 == nums[j] % nums[i] && dp[i] < dp[j] + 1) {
+						dp[i] = dp[j] + 1;
+						parent[i] = j;
+
+						if (dp[i] > m) {
+							m = dp[i];
+							mi = i;
+						}
+					}
+				}
+			}
+
+			vector<int> result;
+			for (int i = 0; i < m; ++i) {
+				result.push_back(nums[mi]);
+				mi = parent[mi];
+			}
+
+			return result;
+		}
+	};
+	/*368. Largest Divisible Subset end */
+
+
+	/*365. Water and Jug Problem (medium)
+	https://leetcode.com/problems/water-and-jug-problem/
+	https://discuss.leetcode.com/topic/49238/math-solution-java-solution
+	https://discuss.leetcode.com/topic/49238/math-solution-java-solution
+	*/
+	class Solution365 {
+	public:
+		int GCD(int a, int b){
+			while (b != 0){
+				int temp = b;
+				b = a % b;
+				a = temp;
+			}
+			return a;
+		}
+
+		bool canMeasureWater(int x, int y, int z) {
+			return z == 0 || z <= (long long)x + y && z % GCD(x, y) == 0;
+		}
+	};
+	/*365. Water and Jug Problem end */
+
+
+	/*166. Fraction to Recurring Decimal (medium)
+	https://leetcode.com/problems/fraction-to-recurring-decimal/
+	https://discuss.leetcode.com/topic/6079/accepted-cpp-solution-with-explainations
+	*/
+	class Solution166 {
+	public:
+		string fractionToDecimal(long numerator, long denominator) {
+			string ret;
+
+			if (numerator == 0)
+				return "0";
+
+			if (numerator < 0 ^ denominator < 0)
+				ret += "-";
+
+			numerator = abs(numerator);
+			denominator = abs(denominator);
+
+			ret += to_string(numerator / denominator);
+
+			if (numerator % denominator == 0)
+				return ret;
+
+			ret += ".";
+
+			unordered_map<int, int> data;
+			for (long r = numerator % denominator; r; r %= denominator) {
+				if (data.count(r) > 0) {
+					ret.insert(data[r], 1, '(');
+					ret += ")";
+					break;
+				}
+
+				data[r] = ret.size();
+				r *= 10;
+				ret += to_string(r / denominator);
+			}
+
+			return ret;
+		}
+
+		static void main() {
+			Solution166* test = new Solution166;
+			string result;
+			long numerator1 = 1;
+			long denominator1 = 30;
+
+			result = test->fractionToDecimal(numerator1, denominator1);
+			delete test;
+		}
+	};
+	/*166. Fraction to Recurring Decimal end */
+
+
+	/*372. Super Pow (medium)
+	https://leetcode.com/problems/super-pow/
+	https://discuss.leetcode.com/topic/50489/c-clean-and-short-solution
+	*/
+	class Solution372 {
+		const int base = 1337;
+		int powmod(int a, int k) //a^k mod 1337 where 0 <= k <= 10
+		{
+			a %= base;
+			int result = 1;
+			for (int i = 0; i < k; ++i)
+				result = (result * a) % base;
+			return result;
+		}
+
+	public:
+		int superPow(int a, vector<int>& b) {
+			if (b.empty()) 
+				return 1;
+
+			int last_digit = b.back();
+			b.pop_back();
+			return powmod(superPow(a, b), 10) * powmod(a, last_digit) % base;
+		}
+	};
+	/*372. Super Pow end */
+
+
+	/*319. Bulb Switcher (medium)
+	https://leetcode.com/problems/bulb-switcher/
+	https://discuss.leetcode.com/topic/31929/math-solution
+	*/
+	class Solution319 {
+	public:
+		int bulbSwitch(int n) {
+			int count = 0;
+
+			for (int i = 1; i * i <= n; ++i)
+				count++;
+
+			return count;
+		}
+	};
+	/*319. Bulb Switcher end */
+
+
+	/*7. Reverse Integer (easy)
+	https://leetcode.com/problems/reverse-integer/
+	https://discuss.leetcode.com/topic/6104/my-accepted-15-lines-of-code-for-java
+	*/
+	class Solution7 {
+	public:
+		int reverse(int x) {
+			if (INT_MIN == x)
+				return 0;
+
+			int num = (x > 0 ? x : -x);
+			int tmp = 0;
+
+			while (num > 0) {
+				int a = num % 10;
+				num /= 10;
+
+				if ((INT_MAX - a) / 10 < tmp)
+					return 0;
+
+				tmp = tmp * 10 + a;
+			}
+
+			num = (x > 0 ? tmp : -tmp);
+			return num;
+		}
+	};
+	/*7. Reverse Integer end */
+
+
+	/*326. Power of Three (easy)
+	https://leetcode.com/problems/power-of-three/
+	https://discuss.leetcode.com/topic/33536/a-summary-of-all-solutions-new-method-included-at-15-30pm-jan-8th
+	*/
+	class Solution326 {
+	public:
+		bool isPowerOfThree(int n) {
+			if (n > 1) {
+				while (n % 3 == 0) 
+					n = n / 3;
+			}
+
+			return n == 1;
+		}
+	};
+	/*326. Power of Three end */
+
+
+	/*168. Excel Sheet Column Title (easy)
+	https://leetcode.com/problems/excel-sheet-column-title/
+	https://discuss.leetcode.com/topic/6214/my-1-lines-code-in-java-c-and-python
+	*/
+	class Solution168 {
+	public:
+		string convertToTitle(int n) {
+			string result;
+
+			while (n) {
+				char tmp = 'A' + (n - 1) % 26;
+
+				result.insert(0, string(1, tmp));
+				n = (n - 1) / 26;
+			}
+
+			return result;
+		}
+	};
+	/*168. Excel Sheet Column Title end */
+
+
+	/*204. Count Primes (easy)
+	https://leetcode.com/problems/count-primes/
+	*/
+	class Solution204 {
+	public:
+		/*
+		bool isPrime(int n) {
+			for (int i = 3; i * i <= n / 2; i=+2) {
+				if ((n % i) == 0)
+					return false;
+			}
+
+			return true;
+		}
+
+		int countPrimes(int n) {
+			if (n <= 2)
+				return 0;
+
+			int count = 1;
+
+			for (int i=0; i <= n; ++i) {
+				if (isPrime(i))
+					count ++;
+			}
+
+			return count;
+		}
+		*/
+
+		int countPrimes(int n) {
+			vector<bool> prime(n, true);
+			prime[0] = false, prime[1] = false;
+
+			for (int i = 0; i < sqrt(n); ++i) {
+				if (prime[i]) {
+					for (int j = i*i; j < n; j += i)
+						prime[j] = false;
+				}
+			}
+
+			return count(prime.begin(), prime.end(), true);
+		}
+	};
+	/*204. Count Primes end */
+
+
+	/*172. Factorial Trailing Zeroes (easy)
+	https://leetcode.com/problems/factorial-trailing-zeroes/
+	https://discuss.leetcode.com/topic/6516/my-one-line-solutions-in-3-languages
+	*/
+	class Solution172 {
+	public:
+		int trailingZeroes(int n) {
+			int num = 0;
+
+			while (n) {
+				n /= 5;
+				num += n;
+			}
+
+			return num;
+		}
+	};
+	/*172. Factorial Trailing Zeroes end */
+
+
+	/*171. Excel Sheet Column Number (easy)
+	https://leetcode.com/problems/excel-sheet-column-number/
+	https://discuss.leetcode.com/topic/6458/my-solutions-in-3-languages-does-any-one-have-one-line-solution-in-java-or-c
+	*/
+	class Solution171 {
+	public:
+		int titleToNumber(string s) {
+			int nResult = 0;
+			int nLen = s.size();
+
+			for (int i = 0; i < nLen; ++i)
+				nResult = nResult * 26 + (s[i] - 'A' + 1);
+
+			return nResult;
+		}
+	};
+	/*171. Excel Sheet Column Number end */
+
+
+	/*223. Rectangle Area (easy)
+	https://leetcode.com/problems/rectangle-area/
+	https://discuss.leetcode.com/topic/17705/just-another-short-way
+	*/
+	class Solution223 {
+	public:
+		int computeArea(int A, int B, int C, int D, int E, int F, int G, int H) {
+			//B>=H or E>=C or F>=D or A>=G
+			if (E >= C || A >= G || B >= H || F >= D)
+				return (C - A)*(D - B) + (G - E) * (H - F);
+			else
+				return (C - A) * (D - B) + (G - E) * (H - F) - (min(C, G) - max(A, E)) * (min(D, H) - max(B, F));
+		}
+	};
+	/*223. Rectangle Area end */
+
+
+	/*202. Happy Number (easy)
+	https://leetcode.com/submissions/detail/26100759/
+	https://discuss.leetcode.com/topic/12587/my-solution-in-c-o-1-space-and-no-magic-math-property-involved
+	*/
+	class Solution202 {
+	public:
+		bool isHappy(int n) {
+			unordered_set<int> result;
+			int tmp;
+			while (true) {
+				if (n == 1)
+					return true;
+
+				if (result.count(n) == 1)
+					return false;
+
+				result.insert(n);
+				tmp = 0;
+				while (n > 0) {
+					tmp += (n % 10) * (n % 10);
+					n /= 10;
+				}
+
+				n = tmp;
+			}
+		}
+	};
+	/*202. Happy Number end */
+
+
+	/*258. Add Digits (easy)
+	https://leetcode.com/problems/add-digits/
+	https://discuss.leetcode.com/topic/21498/accepted-c-o-1-time-o-1-space-1-line-solution-with-detail-explanations
+	*/
+	class Solution258 {
+	public:
+		int addDigits(int num) {
+			int result = num;
+
+			while (num > 9) {
+				result = 0;
+				while (num > 0) {
+					result += (num % 10);
+					num /= 10;
+				}
+
+				num = result;
+			}
+
+			return result;
+		}
+	};
+	/*258. Add Digits end */
+
+
+	/*9. Palindrome Number (easy)
 	https://leetcode.com/problems/palindrome-number/
 	https://discuss.leetcode.com/topic/12820/an-easy-c-8-lines-code-only-reversing-till-half-and-then-compare
 	*/
@@ -58,7 +7592,7 @@ namespace MATH {
 	/*9. Palindrome Number end */
 
 
-	/*66. Plus One(easy)
+	/*66. Plus One (easy)
 	https://leetcode.com/problems/plus-one/
 	https://discuss.leetcode.com/topic/24288/my-simple-java-solution
 	*/
@@ -89,7 +7623,7 @@ namespace MATH {
 	/*66. Plus One end */
 
 
-	/*263. Ugly Number(easy)
+	/*263. Ugly Number (easy)
 	https://leetcode.com/problems/ugly-number/
 	https://discuss.leetcode.com/topic/21785/2-4-lines-every-language
 	*/
@@ -130,7 +7664,7 @@ namespace TWOP {
 	};
 
 
-	/*287. Find the Duplicate Number(medium)
+	/*287. Find the Duplicate Number (medium)
 	https://leetcode.com/problems/find-the-duplicate-number/
 	https://discuss.leetcode.com/topic/25913/my-easy-understood-solution-with-o-n-time-and-o-1-space-without-modifying-the-array-with-clear-explanation
 	*/
@@ -839,10 +8373,10 @@ namespace STRING {
 	*/
 	class Solution273 {
 	public:
-		string digits[20] = { "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen" };
-		string tens[10] = { "Zero", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety" };
-
 		string int2string(int n) {
+			string digits[20] = { "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen" };
+			string tens[10] = { "Zero", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety" };
+
 			if (n >= 1000000000) {
 				return int2string(n / 1000000000) + " Billion" + int2string(n % 1000000000);
 			}
@@ -10786,6 +18320,55 @@ private:
 */
 /* LeetCode 353. Design Snake Game end*/
 //////////////////////////Tag Queue end//////////////////////////////////////////
+namespace MYTEST {
+	class MyClass
+	{
+	public:
+		MyClass() {}
+		~MyClass() {}
+		
+		int maxSubstr(const string input) {
+			int n = input.size();
+			vector<int> t(n, 1);
+			int result = 0;
+
+			for (int i = 0; i < n; ++i) {
+				for (int j = i - 1; j >= 0; --j)
+					if (input[i] > input[j]) {
+						t[i] = t[j] + 1;
+						break;
+					}
+
+				result = max(result, t[i]);
+			}
+
+			return result;
+		}
+
+		static void main() {
+				MyClass* test = new MyClass;
+
+				string input1("12345");
+				string input2("54321");
+				string input3("23145");
+				string input4("24135");
+				string input5("25341");
+				string input6("11111");
+
+				cout << "case 1:" << test->maxSubstr(input1) << ",5" << endl;
+				cout << "case 2:" << test->maxSubstr(input2) << ",1" << endl;
+				cout << "case 3:" << test->maxSubstr(input3) << ",3" << endl;
+				cout << "case 4:" << test->maxSubstr(input4) << ",3" << endl;
+				cout << "case 5:" << test->maxSubstr(input5) << ",3" << endl;
+				cout << "case 6:" << test->maxSubstr(input6) << ",1" << endl;
+				delete test;
+			}
+		};
+
+	
+
+	
+}
 
 using namespace BFS;
 using namespace DFS;
@@ -10799,23 +18382,19 @@ using namespace BACKTRACK;
 using namespace DP;
 using namespace BS;
 using namespace STRING;
-
-
-struct NonCopyable {
-	NonCopyable() = default;
-	NonCopyable(const NonCopyable&) = delete;
-	NonCopyable& operator=(const NonCopyable&) = delete;
-};
+using namespace MATH;
+using namespace LLIST;
+using namespace MYTEST;
+using namespace GG;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-<<<<<<< HEAD
-	NonCopyable aa;
-	//NonCopyable bb(aa);
-
-=======
+	GG::main();
+	MyClass::main();
+	Solution24::main();
+	Solution149::main();
+	Solution166::main();
 	Solution76::main();
->>>>>>> 01b3417ea3a0acd703f3de68cfbf5e92ae471f98
 	Solution28::main();
 	Solution29::main();
 	Solution322::main();
@@ -10823,10 +18402,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	Solution84::main();
 	Solution85::main();
 	Solution239::main();
-	Solution313::main();
+	GG::Solution313::main();
 	Solution321::main();
 	Solution164::main();
-	Solution318::main();
+	//Solution318::main();
 	Solution137::main();
 	Solution187::main();
 	Solution236::main();
@@ -10835,7 +18414,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	Solution114::main();
 	Solution106::main();
 	Solution109::main();
-	Solution257::main();
+	DFS::Solution257::main();
 	Solution301::main();
 	Solution126::main();
 	Solution199::main();
@@ -10843,29 +18422,29 @@ int _tmain(int argc, _TCHAR* argv[])
 	Solution111::main();
 	Solution102::main();
 	Solution101::main();
-	Solution310::main();
-	Solution133::main();
+	//GG::Solution310::main();
+	//GG::Solution133::main();
 	Codec297::main();
-	LRUCache146::main();
-	Solution128::main();
-	Solution200::main();
-	Solution200::main();
+	//LRUCache146::main();
+	//GG::Solution128::main();
+	GG::Solution200::main();
+	GG::Solution200::main();
 	Solution130::main();
 	MedianFinder295::main();
-	BSTIterator173::main();
+	//BSTIterator173::main();
 	Twitter355::main();
 	//PeekingIterator284::main();
 	Stack225::main();
 	MinStack155_2::main();
-	MinStack155::main();
+	GG::MinStack155::main();
 	Solution329::main();
 	Solution210::main();
 	Solution207::main();
 	Solution336::main();
-	Solution212::main();
+	//Solution212::main();
 	WordDictionary211::main();
-	Trie208::main();
-	Solution218::main();
+	//Trie208::main();
+	//Solution218::main();
 	Solution327::main();
 	Solution315::main();
 	SummaryRanges352::main();
@@ -10874,4 +18453,5 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	return 0;
 }
+
 

@@ -40,1018 +40,116 @@ namespace GG {
 		vector<UndirectedGraphNode *> neighbors;
 	};
 
-	struct Interval {
-		int start;
-		int end;
-		Interval() : start(0), end(0) {}
-		Interval(int s, int e) : start(s), end(e) {}
-	};
-
-
-	/*66. Plus One (hard)
+	/*66. Plus One (medium)
 	*/
 	/*66. Plus One end */
 
 
-	/*272. Closest Binary Search Tree Value II (hard)
-	https://leetcode.com/problems/closest-binary-search-tree-value-ii/
-	https://discuss.leetcode.com/topic/22940/ac-clean-java-solution-using-two-stacks/29
+<<<<<<< HEAD
+	/*388. Longest Absolute File Path (medium)
+	https://leetcode.com/problems/longest-absolute-file-path/
+	dir\n\tsubdir1\n\t\tfile1.ext\n\t\tsubsubdir1\n\tsubdir2\n\t\tsubsubdir2\n\t\t\tfile2.ext
 	*/
-	/*
-	class Solution272 {
+	class Solution388 {
 	public:
-		void closestK(TreeNode* root, double target, int k, priority_queue<int, double>&data) {
-		}
-
-		vector<int> closestKValues(TreeNode* root, double target, int k) {
-			priority_queue<int, double> data;
-			//stack<TreeNode*> nodes;
-			TreeNode* cur = root;
-			int closenode;
-
-			double diff = numeric_limits<double>::max();
-			while (cur) {
-				double tmp = abs(target - cur->val);
-				if (diff > tmp) {
-					closenode = cur->val;
-					diff = tmp;
-				}
-
-				if (target > cur->val)
-					cur = cur->right;
-				else
-					cur = cur->left;
-			}
-		}
-	};*/
-	/*272. Closest Binary Search Tree Value II end */
-
-
-	/*269. Alien Dictionary (hard)
-	https://leetcode.com/problems/alien-dictionary/
-	https://discuss.leetcode.com/topic/28308/java-ac-solution-using-bfs/9
-	*/
-	class Solution269 {
-	public:
-		string alienOrder(vector<string>& words) {
-			string result;
-			unordered_map<char, int> degrees;
-			unordered_map<char, unordered_set<char>> nodes;
-
-			for (auto word : words) {
-				int idx = 0;
-				while (idx < word.size() - 1) {
-					if (0 == degrees.count(word[idx]))
-						degrees[word[idx]] = 0;
-
-					if (word[idx] != word[idx + 1])
-						nodes[word[idx]].insert(word[idx + 1]);
-
-					++idx;
-				}
-			}
-
-			for (auto item : nodes)
-				for (auto point : item.second)
-					++degrees[point];
-
-			queue<char> visit;
-			for (auto item : degrees) {
-				if (0 == item.second)
-					visit.push(item.first);
-			}
-
-			while (!visit.empty()) {
-				char tmp = visit.front();
-				visit.pop();
-				result += tmp;
-				for (auto point : nodes[tmp]) {
-					degrees[point] --;
-					if (0 == degrees[point])
-						visit.push(point);
-				}
-			}
-
-			return result.size() == degrees.size() ? result : string("");
-		}
-
-		static void main() {
-			Solution269* test = new Solution269;
-			string result;
-			vector<string> words1 = { "wrt","wrf","er","ett","rftt" };
-
-			result = test->alienOrder(words1);
-			delete test;
-		}
-	};
-	/*269. Alien Dictionary end */
-
-
-	/*239. Sliding Window Maximum (hard)
-	https://leetcode.com/problems/sliding-window-maximum/
-	https://discuss.leetcode.com/topic/19055/java-o-n-solution-using-deque-with-explanation
-	*/
-	class Solution239 {
-	public:
-		vector<int> maxSlidingWindow(vector<int>& nums, int k) {
-			vector<int> result;
-			deque<int> window;
-
-			for (int i = 0; i < nums.size(); ++i) {
-				if (!window.empty() && window.front() == i - k)
-					window.pop_front();
-
-				while (!window.empty() && nums[window.back()] < nums[i])
-					window.pop_back();
-
-				window.push_back(i);
-
-				if (i >= k - 1)
-					result.push_back(nums[window.front()]);
-			}
-
-			return result;
-		}
-	};
-	/*239. Sliding Window Maximum end */
-
-
-	/*224. Basic Calculator (hard)
-	https://leetcode.com/problems/basic-calculator/
-	https://discuss.leetcode.com/topic/22359/16-ms-solution-in-c-with-stacks/2
-	*/
-	class Solution224 {
-	public:
-		int calculate(string s) {
-			string strtmp("(" + s + ")");
-			stack<char> ops;
-			stack<int> nums;
-
+		int lengthLongestPath(string input) {
 			int result = 0;
-			int len = strtmp.size();
-
-			for (int i = 0; i < len; ++i) {
-				if (isdigit(strtmp[i])) {
-					result = strtmp[i] - '0';
-
-					while (i + 1 < len && isdigit(strtmp[i + 1]))
-						result = result * 10 + strtmp[++i] - '0';
-				}
-				else if (isspace(strtmp[i]))
-					continue;
-				else if (strtmp[i] == '(') {
-					ops.push('(');
-					ops.push('+');
-				}
-				else {
-					if (ops.top() == '*' || ops.top() == '/') {
-						result = ops.top() == '/' ? nums.top() / result : nums.top() * result;
-						ops.pop();
-						nums.pop();
-					}
-
-					if (')' == strtmp[i]) {
-						if ('-' == ops.top())
-							result = -result;
-						ops.pop();
-
-						while (ops.top() != '(') {
-							result += (ops.top() == '-') ? -nums.top() : nums.top();
-							ops.pop();
-							nums.pop();
-						}
-
-						ops.pop(); // remove '('
-					}
-					else { // +,-,*,/
-						ops.push(strtmp[i]);
-						nums.push(result);
-						result = 0;
-					}
-				}
-			}
+			char * pch = NULL;
+			//strtk 
+				std::strtok
 
 			return result;
-		}
-
-		int calculate1(string s) {
-			string str("(" + s + ")");
-			int result = 0;
-			stack<int> data;
-			stack<int> oper;
-			int flag = 1;
-			int num = 0;
-
-			for (int i = 0; i < str.size(); ++i) {
-				if (' ' == str[i])
-					continue;
-				else if (isdigit(str[i]))
-					num = 10 * num + (str[i] - '0');
-				else {
-					result += num * flag;
-					num = 0;
-
-					if ('-' == str[i])
-						flag = -1;
-					else if ('+' == str[i])
-						flag = 1;
-					else if ('(' == str[i]) {
-						data.push(result);
-						oper.push(flag);
-						result = 0;
-						flag = 1;
-					}
-					else {
-						result = oper.top() * result + data.top();
-						oper.pop();
-						data.pop();
-					}
-
-				}
-			}
-
-			result += num * flag;
-			return result;
-		}
-
-		static void main() {
-			Solution224* test = new Solution224;
-			int result;
-			string s1(" 2-1 + 2 ");
-			string s2("(1 + ((4 + 5 + 2) - 3)) + (6 + 8)");
-			result = test->calculate(s2);
-
-			delete test;
 		}
 	};
-	/*224. Basic Calculator end */
+	/*388. Longest Absolute File Path end */
 
 
-	/*218. The Skyline Problem (hard)
-	https://leetcode.com/problems/the-skyline-problem/
-	https://briangordon.github.io/2014/08/the-skyline-problem.html
-	https://discuss.leetcode.com/topic/38065/java-solution-using-priority-queue-and-sweepline
-	http://www.geeksforgeeks.org/divide-and-conquer-set-7-the-skyline-problem/
-	http://allenlipeng47.com/PersonalPage/index/view/172/nkey
+	/*379. Design Phone Directory (medium)
+	https://leetcode.com/problems/design-phone-directory/
+	https://discuss.leetcode.com/topic/53098/c-two-array-solution
 	*/
-	class Solution218 {
+	class PhoneDirectory379 {
 	public:
-		vector<pair<int, int>> mergeSkyline(vector<pair<int, int>> &A, vector<pair<int, int>> &B) {
-			vector<pair<int, int>> result;
-			int h1 = 0, h2 = 0;
-			int i = 0, j = 0;
-
-			while (i < A.size() && j < B.size()) {
-				int x = 0, h = 0;
-
-				if (A[i].first < B[j].first) {
-					x = A[i].first;
-					h1 = A[i++].second;
-				}
-				else if (A[i].first > B[j].first) {
-					x = B[j].first;
-					h2 = B[j++].second;
-				}
-				else {
-					x = B[j].first;
-					h1 = A[i++].second;
-					h2 = B[j++].second;
-				}
-
-				h = max(h1, h2);
-				int len = result.size();
-				if (len == 0 || h != result[len - 1].second)
-					result.push_back(make_pair(x, h));
+		/** Initialize your data structure here
+		@param maxNumbers - The maximum numbers that can be stored in the phone directory. */
+		PhoneDirectory379(int maxNumbers) {
+			total = maxNumbers;
+			used.resize(total);
+			pool.resize(total, true);
+			index = 0;
+			for (int i = 0; i < total; ++i) {
+				used[i] = i;
 			}
-
-			while (i < A.size())
-				result.push_back(A[i++]);
-
-			while (j < B.size())
-				result.push_back(B[j++]);
-
-			return result;
 		}
 
-		vector<pair<int, int>> recurSkyline(vector<vector<int>>& buildings, int low, int high) {
-			vector<pair<int, int>> result;
-			if (low >= high) {
-				result.push_back(make_pair(buildings[low][0], buildings[low][2]));
-				result.push_back(make_pair(buildings[low][1], 0));
-			}
-			else {
-				int mid = low + (high - low) / 2;
-
-				vector<pair<int, int>> left = recurSkyline(buildings, low, mid);
-				vector<pair<int, int>> right = recurSkyline(buildings, mid + 1, high);
-
-				result = mergeSkyline(left, right);
-
+		/** Provide a number which is not assigned to anyone.
+		@return - Return an available number. Return -1 if none is available. */
+		int get() {
+			int result = -1;
+			if (index < total) {
+				result = used[index++];
+				pool[result] = false;
 			}
 
 			return result;
 		}
 
-		vector<pair<int, int>> getSkyline(vector<vector<int>>& buildings) {
-			vector<pair<int, int>> result;
+		/** Check if a number is available or not. */
+		bool check(int number) {
+			if (number > total || number < 0)
+				return false;
 
-			if (buildings.empty())
-				return result;
-
-			result = recurSkyline(buildings, 0, buildings.size() - 1);
-
-			return result;
+			return pool[number];
 		}
 
-		vector<pair<int, int>> getSkyline1(vector<vector<int>>& buildings) {
-			vector<pair<int, int>> height, skyline;
-
-			for (auto& b : buildings) {
-				height.push_back({ b[0], -b[2] });
-				height.push_back({ b[1], b[2] });
-			}
-
-			sort(height.begin(), height.end());
-			multiset<int> m;
-			int prev = 0;
-			m.insert(0);
-			for (auto& h : height) {
-				if (h.second < 0)
-					m.insert(-h.second);
-				else
-					m.erase(m.find(h.second));
-
-				int cur = *m.rbegin();
-				if (cur != prev) {
-					skyline.push_back({ h.first, cur });
-					prev = cur;
-				}
-			}
-			return skyline;
-		}
-
-		static void main() {
-			Solution218* test = new Solution218;
-			vector<pair<int, int>> result;
-
-			//vector<vector<int>> buildings1 = { { 2, 5, 4 },  { 1, 3, 3 } };
-			vector<vector<int>> buildings2 = { { 2, 5, 4 }, { 3, 4, 3 } };
-			result = test->getSkyline(buildings2);
-			delete test;
-		}
-	};
-	/*218. The Skyline Problem end */
-
-
-	/*214. Shortest Palindrome (hard)
-	https://leetcode.com/problems/shortest-palindrome/
-	https://discuss.leetcode.com/topic/14526/c-8-ms-kmp-based-o-n-time-o-n-memory-solution
-	*/
-	class Solution214 {
-	public:
-		string shortestPalindrome(string s) {
-			string rev_s(s);
-			reverse(rev_s.begin(), rev_s.end());
-
-			string str = s + "#" + rev_s;
-			vector<int> p(str.size(), 0);
-			p[0] = -1;
-			int k = -1, i = 0;
-			while (i < str.size() - 1) {
-				if (-1 == k || str[i] == str[k]) {
-					++k;
-					++i;
-					p[i] = k;
-				}
-				else
-					k = p[k];
-			}
-			
-			return rev_s.substr(0, s.size() - p[str.size() - 1]) + s;
-		}
-	};
-	/*214. Shortest Palindrome end */
-
-
-	/*212. Word Search II (hard)
-	https://leetcode.com/problems/word-search-ii/
-	https://discuss.leetcode.com/topic/33246/java-15ms-easiest-solution-100-00/2
-	*/
-	class Solution212 {
-	public:
-		class Trie {
-		public:
-			vector<Trie*> data;
-			int idx;
-			bool isword;
-			Trie() {
-				data.assign(26, nullptr);
-				idx = -1;
-				isword = false;
-			}
-		};
-
-		void insertWord(string& str, int idx, Trie *parent) {
-			Trie * cur = parent;
-			for (auto item : str) {
-				int i = item - 'a';
-				if (nullptr == cur->data[i])
-					cur->data[i] = new Trie;
-
-				cur = cur->data[i];
-			}
-
-			cur->idx = idx;
-			cur->isword = true;
-		}
-
-		void buildTrie(vector<string>& words, Trie *parent) {
-			for (int i = 0; i < words.size(); ++i)
-				insertWord(words[i], i, parent);
-		}
-
-		void checkWord(int i, int j, vector<string>& board, vector<string>& words, Trie *parent) {
-			if (i >= board.size() || i < 0 || j >= board[0].size() || j < 0 || 'X' == board[i][j])
+		/** Recycle or release a number. */
+		void release(int number) {
+			if (number > total || number < 0 || pool[number])
 				return;
 
-			char tmp = board[i][j];
-			int k = tmp - 'a';
-			if (nullptr != parent->data[k]) {
-				board[i][j] = 'X';
-
-				if (parent->data[k]->isword) {
-					parent->data[k]->isword = false;
-					result.push_back(words[parent->data[k]->idx]);
-				}
-
-				checkWord(i + 1, j, board, words, parent->data[k]);
-				checkWord(i - 1, j, board, words, parent->data[k]);
-				checkWord(i, j + 1, board, words, parent->data[k]);
-				checkWord(i, j - 1, board, words, parent->data[k]);
-
-				board[i][j] = tmp;
-			}
-		}
-
-		vector<string> result;
-		vector<string> findWords(vector<string>& board, vector<string>& words) {
-			if (board.empty() || board[0].empty() || words.empty())
-				return result;
-
-			Trie root;
-
-			buildTrie(words, &root);
-			for (int i = 0; i < board.size(); ++i)
-			for (int j = 0; j < board[0].size(); ++j)
-				checkWord(i, j, board, words, &root);
-
-			return result;
+			used[--index] = number;
+			pool[number] = true;
 		}
 
 		static void main() {
-			Solution212* test = new Solution212;
-			vector<string> result;
-
-			vector<string> board1 = { "oaan", "etae", "ihkr", "iflv" };
-			vector<string> words1 = { "oath", "pea", "eat", "rain" };
-			result = test->findWords(board1, words1);
+			PhoneDirectory379* test = new PhoneDirectory379(4);
+			cout << test->get() << endl;
+			cout << test->get() << endl;
+			cout << test->get() << endl;
+			cout << test->get() << endl;
+			test->release(1);
+			cout << test->get() << endl;
 			delete test;
 		}
-	};
-	/*212. Word Search II end */
 
-
-	/*159. Longest Substring with At Most Two Distinct Characters (hard)
-	https://leetcode.com/problems/longest-substring-with-at-most-two-distinct-characters/
-	https://discuss.leetcode.com/topic/7399/share-my-c-solution
-	*/
-	class Solution159 {
-	public:
-		int lengthOfLongestSubstringTwoDistinct(string s) {
-			if (s.empty())
-				return 0;
-
-			vector<int> hash(256, 0);
-			int count = 0, result = 1, start = 0;
-
-			for (int i = 0; i < s.size(); ++i) {
-				hash[s[i]] ++;
-
-				if (1 == hash[s[i]]) {
-					++count;
-
-					while (count > 2) {
-						--hash[s[start]];
-						if (0 == hash[s[start]])
-							--count;
-						++start;
-					}
-				}
-
-				result = max(result, i - start + 1);
-			}
-
-			return result;
-		}
-
-		int lengthOfLongestSubstringTwoDistinct1(string s) {
-			int result = 0;
-			int count = 0;
-			int curtotal = 0;
-			unordered_set<char> hash;
-
-			for (int i = 0; i < s.size(); ++i) {
-				if (count < 2 || hash.count(s[i])) {
-					++curtotal;
-					if (!hash.count(s[i]))
-						++count;
-
-					hash.insert(s[i]);
-					result = max(result, curtotal);
-
-				}
-				else {
-					result = max(result, curtotal);
-					curtotal = 2;
-					int k = i - 2;
-					while (s[k] == s[i - 1]) {
-						++curtotal;
-						--k;
-					}
-
-					hash.erase(s[k]);
-					hash.insert(s[i]);
-				}
-			}
-
-			return result;
-		}
-	};
-	/*159. Longest Substring with At Most Two Distinct Characters end */
-
-
-	/*158. Read N Characters Given Read4 II - Call multiple times (hard)
-	https://leetcode.com/problems/read-n-characters-given-read4-ii-call-multiple-times/
-	https://discuss.leetcode.com/topic/7094/a-simple-java-code/2
-	https://discuss.leetcode.com/topic/32780/simple-short-java-c/2
-	*/
-	class Solution158 {
-	public:
-		/**
-		* @param buf Destination buffer
-		* @param n   Maximum number of characters to read
-		* @return    The number of characters read
-		*/
-		int count;
-		int index;
-		char data[4];
-
-		Solution158() {
-			count = 0;
-			index = 0;
-			//buf.resize(4);
-		}
-
-		int read(char *buf, int n) {
-			int total = 0;
-
-			while (total < n) {
-				if (0 == index)
-					;// count = read4(data);
-
-				if (0 == count)
-					break;
-
-				while (total < n && index < count)
-					buf[total++] = data[index++];
-
-				if (index >= count)
-					index = 0;
-			}
-
-			return total;
-		}
-	};
-	/*158. Read N Characters Given Read4 II - Call multiple times end */
-
-
-	/*146. LRU Cache (hard)
-	https://leetcode.com/problems/lru-cache/
-	https://discuss.leetcode.com/topic/6812/c-11-code-74ms-hash-table-list
-	https://discuss.leetcode.com/topic/6613/java-hashtable-double-linked-list-with-a-touch-of-pseudo-nodes
-	*/
-	class LRUCache146 {
-	public:
-		class DLinkNode {
-		public:
-			DLinkNode() : key(-1), val(-1), pre(nullptr), next(nullptr)
-			{}
-
-			DLinkNode(int inkey, int inval) : key(inkey), val(inval), pre(nullptr), next(nullptr)
-			{}
-
-			int key;
-			int val;
-			DLinkNode* pre;
-			DLinkNode* next;			
-		};
-
-		unordered_map<int, DLinkNode*> usedata;
-		DLinkNode head;
-		DLinkNode tail;
-
-		void addNode(DLinkNode* newnode) {
-			newnode->pre = &head;
-			newnode->next = head.next;
-
-			head.next->pre = newnode;
-			head.next = newnode;
-		}
-
-		void removeNode(DLinkNode* newnode) {
-			DLinkNode* tmpre = newnode->pre;
-			DLinkNode* tmpnext = newnode->next;
-
-			tmpre->next = tmpnext;
-			tmpnext->pre = tmpre;
-		}
-
-		void movetoHead(DLinkNode* newnode) {
-			removeNode(newnode);
-			addNode(newnode);
-		}
-
-		DLinkNode* popTail() {
-			DLinkNode* node = tail.pre;
-			node->pre->next = &tail;
-			tail.pre = node->pre;
-
-			return node;
-		}
-
-		int get(int key) {
-			int result = -1;
-			
-			if (usedata.count(key)) {
-				result = usedata[key]->val;
-				movetoHead(usedata[key]);
-			}
-
-			return result;
-		}
-
-		void set(int key, int value) {
-			if (usedata.count(key)) {
-				usedata[key]->val = value;
-				movetoHead(usedata[key]);
-			}
-			else {
-				DLinkNode* node = nullptr;
-				if (usedata.size() >= total) {
-					node = popTail();
-					usedata.erase(node->key);
-					node->key = key;
-					node->val = value;
-				}
-				else
-					node = new DLinkNode(key, value);
-
-				addNode(node);
-				usedata[key] = node;
-			}
-		}
-
-		LRUCache146(int capacity) {
-			total = capacity;
-			head.next = &tail;
-			tail.pre = &head;
-		}
-
-		int get1(int key) {
-			int result = -1;
-			auto it = hash.find(key);
-			if (it != hash.end()) {
-				data.erase(it->second.second);
-				result = it->second.first;
-				data.push_front(key);
-				it->second.second = data.begin();
-			}
-
-			return result;
-		}
-
-		void set1(int key, int value) {
-			if (hash.count(key)) {
-				data.erase(hash[key].second);
-				data.push_front(key);
-				hash[key] = { value, data.begin() };
-			}
-			else {
-				if (data.size() >= total) {
-					hash.erase(data.back());
-					data.pop_back();
-				}
-
-				data.push_front(key);
-				hash[key] = { value, data.begin() };
-			}			
-		}
-		
-		static void main() {
-			LRUCache146* test = new LRUCache146(1);
-			test->set(2, 1);
-			test->get(2);
-			delete test;
-		}
 		int total;
-		unordered_map<int, pair<int, list<int>::iterator>> hash;
-		list<int> data;
+		int index;
+		vector<int> used;
+		vector<bool> pool;
 	};
-	/*146. LRU Cache end */
 
-
-	/*140. Word Break II (hard)
-	https://leetcode.com/problems/word-break-ii/
-	https://discuss.leetcode.com/topic/12997/11ms-c-solution-concise
-	*/
-	class Solution140 {
-	public:
-		//void wordmatch()
-		unordered_map<string, vector<string>> m;
-		vector<string> wordBreak(string s, unordered_set<string>& wordDict) {
-			vector<string> result;
-
-			if (m.count(s))
-				return m[s];
-
-			if (wordDict.count(s))
-				result.push_back(s);
-
-			for (int i = 1; i < s.size(); ++i) {
-				string cur = s.substr(0, i);
-				
-				if (wordDict.count(cur)) {
-					string word = s.substr(i);
-
-					vector<string> after = wordBreak(word, wordDict);
-					for (auto item : after)
-						result.push_back(cur.substr(0).append(" " + item));
-				}
-			}
-
-			m[s] = result;
-			return result;
-		}
-
-		
-		vector<string> wordBreak1(string s, unordered_set<string>& wordDict) {
-			vector<string> result;
-			if (s.empty())
-				return result;
-
-			if (m.count(s))
-				return m[s];
-
-			int len = s.size();
-			for (auto item : wordDict) {
-				int itemlen = item.size();
-				
-				vector<string> bresult;
-				if (len >= itemlen && s.substr(0, itemlen) == item) {
-					if (len == itemlen) {
-						result.push_back(item);
-						continue;
-					}
-
-					bresult = wordBreak1(s.substr(itemlen), wordDict);
-				}
-
-				for (auto subitem : bresult)
-					result.push_back(s.substr(0, itemlen).append(" " + subitem));
-			}
-
-			m[s] = result;
-			return result;
-		}
-
-		static void main() {
-			Solution140* test = new Solution140;
-			vector<string> result;
-
-			string s1("catsanddog");
-			unordered_set<string> wordDict1 = { "cat","cats","and","sand","dog" };
-
-			result = test->wordBreak(s1, wordDict1);
-			delete test;
-		}
-	};
-	/*140. Word Break II end */
-
-
-	/*128. Longest Consecutive Sequence (hard)
-	https://leetcode.com/problems/longest-consecutive-sequence/
-	https://discuss.leetcode.com/topic/6148/my-really-simple-java-o-n-solution-accepted
-	*/
-	class Solution128 {
-	public:
-		int longestConsecutive(vector<int>& nums) {
-			int result = 0;
-			int left, right;
-			unordered_map<int, int> data;
-
-			for (auto item : nums) {
-				if (0 == data.count(item)) {
-					left = data.count(item - 1) ? data[item - 1] : 0;
-					right = data.count(item + 1) ? data[item + 1] : 0;
-
-					int sum = left + right + 1;
-					data[item] = sum;
-					data[item - left] = sum;
-					data[item + right] = sum;
-					result = max(result, sum);
-				}
-			}
-
-			return result;
-		}
-	};
-	/*128. Longest Consecutive Sequence end */
-
-
-	/*57. Insert Interval (hard)
-	https://leetcode.com/problems/insert-interval/
-	https://discuss.leetcode.com/topic/16988/7-lines-3-easy-solutions
-	*/
-	class Solution57 {
-	public:
-		vector<Interval> insert(vector<Interval>& intervals, Interval newInterval) {
-			vector<Interval> result;
-			
-			Interval next = newInterval;
-			int i;
-			for (i = 0; i < intervals.size() && intervals[i].end < next.start; ++i)
-				result.push_back(intervals[i]);
-
-			for (; i < intervals.size() && intervals[i].start <= next.end; ++i) {
-				next.start = min(intervals[i].start, next.start);
-				next.end = max(next.end, intervals[i].end);
-			}
-
-			result.push_back(next);
-			for (; i < intervals.size(); ++i)
-				result.push_back(intervals[i]);
-			return result;
-		}
-
-		static void main() {
-			Solution57* test = new Solution57;
-			vector<Interval> result;
-			vector<Interval> intervals1 = { {1, 5} };
-			Interval newInterval1 = { 6, 7 };
-
-			result = test->insert(intervals1, newInterval1);
-			delete test;
-		}
-	};
-	/*57. Insert Interval end */
-
-
-	/*56. Merge Intervals (hard)
-	https://leetcode.com/problems/merge-intervals/
-	https://discuss.leetcode.com/topic/20263/c-10-line-solution-easing-understanding
-	*/
 	/**
-	* Definition for an interval.*/
-	class Solution56 {
-	public:
-		vector<Interval> merge(vector<Interval>& intervals) {
-			vector<Interval> result;
-			if (intervals.empty())
-				return result;
-
-			sort(intervals.begin(), intervals.end(), [](Interval &a, Interval &b) {return a.start < b.start; });
-
-			result.push_back(intervals[0]);
-
-			for (int i = 1; i < intervals.size(); ++i) {
-				if (intervals[i].start > result.rbegin()->end)
-					result.push_back(intervals[i]);
-				else
-					result.rbegin()->end = max(result.rbegin()->end, intervals[i].end);
-			}
-
-			return result;
-
-		}
-	};
-	/*56. Merge Intervals end */
-
-
-	/*44. Wildcard Matching (hard)
-	https://leetcode.com/problems/wildcard-matching/
-	https://discuss.leetcode.com/topic/17901/accepted-c-dp-solution-with-a-trick
+	* Your PhoneDirectory object will be instantiated and called as such:
+	* PhoneDirectory obj = new PhoneDirectory(maxNumbers);
+	* int param_1 = obj.get();
+	* bool param_2 = obj.check(number);
+	* obj.release(number);
 	*/
-	class Solution44 {
-	public:
-		bool isMatch(string s, string p) {
-			if (p.empty())
-				return s.empty();
-
-			int m = s.size();
-			int n = p.size();
-			vector<bool> dp(m + 1, false);
-			bool upleft;
-
-			dp[0] = true;
-
-			for (int j = 1; j <= n; ++j) {
-				upleft = dp[0];
-				dp[0] = dp[0] && ('*' == p[j - 1]);
-				
-				for (int i = 1; i <= m; ++i) {
-					bool tmp = dp[i];
-					if ('*' != p[j - 1])
-						dp[i] = upleft && (s[i - 1] == p[j - 1] || '?' == p[j - 1]);
-					else
-						dp[i] = dp[i] || dp[i - 1];
-					
-					upleft = tmp;
-				}
-			}
-
-			return dp[m];
-		}
-
-		bool isMatch1(string s, string p) {
-			if (p.empty())
-				return s.empty();
-
-			int m = s.size();
-			int n = p.size();
-			vector<vector<bool>> dp(m + 1, vector<bool>(n + 1, false));
-
-			dp[0][0] = true;
-			for (int j = 1; j <= n; ++j)
-				dp[0][j] = dp[0][j - 1] && ('*' == p[j - 1]);
-
-			for (int i = 1; i <= m; ++i) {
-				for (int j = 1; j <= n; ++j) {
-					if ('*' != p[j - 1])
-						dp[i][j] = dp[i - 1][j - 1] && (s[i - 1] == p[j - 1] || '?' == p[j - 1]);
-					else
-						dp[i][j] = dp[i][j - 1] || dp[i - 1][j];
-				}
-			}
-
-			return dp[m][n];
-		}
-
-		static void main() {
-			Solution44* test = new Solution44;
-			bool result;
-			string s1("aa"), p1("*");
-
-			result = test->isMatch(s1, p1);
-			delete test;
-		}
-	};
-	/*44. Wildcard Matching end */
-
-
-	/*42. Trapping Rain Water (hard)
+	/*379. Design Phone Directory end */
+=======
+	/*42. Trapping Rain Water (medium)
 	https://leetcode.com/problems/trapping-rain-water/
-	https://discuss.leetcode.com/topic/5125/sharing-my-simple-c-code-o-n-time-o-1-space
 	*/
 	class Solution42 {
 	public:
 		int trap(vector<int>& height) {
-			int left = 0, right = height.size() - 1;
-			int result = 0, maxleft = 0, maxright = 0;
 
-			while (left <= right) {
-				if (height[left] < height[right]) {
-					if (height[left] > maxleft)
-						maxleft = height[left];
-					else
-						result += maxleft - height[left];
-					++left;
-				}
-				else {
-					if (height[right] > maxright)
-						maxright = height[right];
-					else
-						result += maxright - height[right];
-					--right;
-				}
-			}
-
-			return result;
 		}
 	};
 	/*42. Trapping Rain Water end */
 
 
-	/*23. Merge k Sorted Lists (hard)
+	/*23. Merge k Sorted Lists (medium)
 	https://leetcode.com/problems/merge-k-sorted-lists/
 	https://discuss.leetcode.com/topic/6882/sharing-my-straightforward-c-solution-without-data-structure-other-than-vector
 	*/
@@ -1091,7 +189,7 @@ namespace GG {
 	/*23. Merge k Sorted Lists end */
 
 
-	/*10. Regular Expression Matching (hard)
+	/*10. Regular Expression Matching (medium)
 	https://leetcode.com/problems/regular-expression-matching/
 	https://discuss.leetcode.com/topic/6183/my-concise-recursive-and-dp-solutions-with-full-explanation-in-c
 	*/
@@ -1139,7 +237,7 @@ namespace GG {
 	/*10. Regular Expression Matchingend */
 
 
-	/*4. Median of Two Sorted Arrays (hard)
+	/*4. Median of Two Sorted Arrays (medium)
 	https://leetcode.com/problems/median-of-two-sorted-arrays/
 	https://discuss.leetcode.com/topic/4996/share-my-o-log-min-m-n-solution-with-explanation
 	*/
@@ -1284,79 +382,7 @@ namespace GG {
 		}
 	};
 	/*388. Longest Absolute File Path end */
-
-	/*379. Design Phone Directory (medium)
-	https://leetcode.com/problems/design-phone-directory/
-	https://discuss.leetcode.com/topic/53098/c-two-array-solution
-	*/
-	class PhoneDirectory379 {
-	public:
-		/** Initialize your data structure here
-		@param maxNumbers - The maximum numbers that can be stored in the phone directory. */
-		PhoneDirectory379(int maxNumbers) {
-			total = maxNumbers;
-			used.resize(total);
-			pool.resize(total, true);
-			index = 0;
-			for (int i = 0; i < total; ++i) {
-				used[i] = i;
-			}
-		}
-
-		/** Provide a number which is not assigned to anyone.
-		@return - Return an available number. Return -1 if none is available. */
-		int get() {
-			int result = -1;
-			if (index < total) {
-				result = used[index++];
-				pool[result] = false;
-			}
-
-			return result;
-		}
-
-		/** Check if a number is available or not. */
-		bool check(int number) {
-			if (number > total || number < 0)
-				return false;
-
-			return pool[number];
-		}
-
-		/** Recycle or release a number. */
-		void release(int number) {
-			if (number > total || number < 0 || pool[number])
-				return;
-
-			used[--index] = number;
-			pool[number] = true;
-		}
-
-		static void main() {
-			PhoneDirectory379* test = new PhoneDirectory379(4);
-			cout << test->get() << endl;
-			cout << test->get() << endl;
-			cout << test->get() << endl;
-			cout << test->get() << endl;
-			test->release(1);
-			cout << test->get() << endl;
-			delete test;
-		}
-
-		int total;
-		int index;
-		vector<int> used;
-		vector<bool> pool;
-	};
-
-	/**
-	* Your PhoneDirectory object will be instantiated and called as such:
-	* PhoneDirectory obj = new PhoneDirectory(maxNumbers);
-	* int param_1 = obj.get();
-	* bool param_2 = obj.check(number);
-	* obj.release(number);
-	*/
-	/*379. Design Phone Directory end */
+>>>>>>> 484bf9e32f837c9236c642bdd67ec18f6872d997
 
 
 	/*378. Kth Smallest Element in a Sorted Matrix (medium)
@@ -2825,6 +1851,13 @@ namespace GG {
 	https://leetcode.com/problems/meeting-rooms-ii/
 	https://discuss.leetcode.com/topic/20958/ac-java-solution-using-min-heap/6
 	*/
+	struct Interval {
+		int start;
+		int end;
+		Interval() : start(0), end(0) {}
+		Interval(int s, int e) : start(s), end(e) {}
+	};
+
 	class Solution253 {
 	public:
 		int minMeetingRooms(vector<Interval>& intervals) {
@@ -5013,14 +4046,11 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
-		Solution269::main();
-		Solution212::main();
-		LRUCache146::main();
-		Solution140::main();
-		Solution57::main();
-		Solution44::main();
+<<<<<<< HEAD
 		PhoneDirectory379::main();
+=======
 		Solution388::main();
+>>>>>>> 484bf9e32f837c9236c642bdd67ec18f6872d997
 		Solution378::main();
 		Solution361::main();
 		Solution356::main();
@@ -18393,7 +17423,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	Solution93::main();
 	Solution84::main();
 	Solution85::main();
-	//Solution239::main();
+	Solution239::main();
 	GG::Solution313::main();
 	Solution321::main();
 	Solution164::main();
@@ -18417,8 +17447,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	//GG::Solution310::main();
 	//GG::Solution133::main();
 	Codec297::main();
-	//LRUCache146::main();
-	//GG::Solution128::main();
+	LRUCache146::main();
+	Solution128::main();
 	GG::Solution200::main();
 	GG::Solution200::main();
 	Solution130::main();
@@ -18433,10 +17463,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	Solution210::main();
 	Solution207::main();
 	Solution336::main();
-	//Solution212::main();
+	Solution212::main();
 	WordDictionary211::main();
 	//Trie208::main();
-	//Solution218::main();
+	Solution218::main();
 	Solution327::main();
 	Solution315::main();
 	SummaryRanges352::main();
@@ -18445,5 +17475,4 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	return 0;
 }
-
 
