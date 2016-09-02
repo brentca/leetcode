@@ -53,6 +53,99 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*272. Closest Binary Search Tree Value II (hard)
+	https://leetcode.com/problems/closest-binary-search-tree-value-ii/
+	https://discuss.leetcode.com/topic/22940/ac-clean-java-solution-using-two-stacks/29
+	*/
+	class Solution272 {
+	public:
+		void closestK(TreeNode* root, double target, int k, priority_queue<int, double>&data) {
+		}
+
+		vector<int> closestKValues(TreeNode* root, double target, int k) {
+			priority_queue<int, double> data;
+			//stack<TreeNode*> nodes;
+			TreeNode* cur = root;
+			int closenode;
+
+			double diff = numeric_limits<double>::max();
+			while (cur) {
+				double tmp = abs(target - cur->val);
+				if (diff > tmp) {
+					closenode = cur->val;
+					diff = tmp;
+				}
+
+				if (target > cur->val)
+					cur = cur->right;
+				else
+					cur = cur->left;
+			}
+		}
+	};
+	/*272. Closest Binary Search Tree Value II end */
+
+
+	/*269. Alien Dictionary (hard)
+	https://leetcode.com/problems/alien-dictionary/
+	https://discuss.leetcode.com/topic/28308/java-ac-solution-using-bfs/9
+	*/
+	class Solution269 {
+	public:
+		string alienOrder(vector<string>& words) {
+			string result;
+			unordered_map<char, int> degrees;
+			unordered_map<char, unordered_set<char>> nodes;
+
+			for (auto word : words) {
+				int idx = 0;
+				while (idx < word.size() - 1) {
+					if (0 == degrees.count(word[idx]))
+						degrees[word[idx]] = 0;
+
+					if (word[idx] != word[idx + 1])
+						nodes[word[idx]].insert(word[idx + 1]);
+
+					++idx;
+				}
+			}
+
+			for (auto item : nodes)
+				for (auto point : item.second)
+					++degrees[point];
+
+			queue<char> visit;
+			for (auto item : degrees) {
+				if (0 == item.second)
+					visit.push(item.first);
+			}
+
+			while (!visit.empty()) {
+				char tmp = visit.front();
+				visit.pop();
+				result += tmp;
+				for (auto point : nodes[tmp]) {
+					degrees[point] --;
+					if (0 == degrees[point])
+						visit.push(point);
+				}
+			}
+
+			return result.size() == degrees.size() ? result : string("");
+		}
+
+		static void main() {
+			Solution269* test = new Solution269;
+			string result;
+			vector<string> words1 = { "wrt","wrf","er","ett","rftt" };
+
+			result = test->alienOrder(words1);
+			delete test;
+		}
+	};
+	/*269. Alien Dictionary end */
+
+
 	/*218. The Skyline Problem (hard)
 	https://leetcode.com/problems/the-skyline-problem/
 	https://briangordon.github.io/2014/08/the-skyline-problem.html
@@ -4670,6 +4763,7 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+		Solution269::main();
 		Solution212::main();
 		LRUCache146::main();
 		Solution140::main();
