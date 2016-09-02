@@ -53,37 +53,218 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*282. Expression Add Operators (hard)
+	https://leetcode.com/problems/expression-add-operators/
+	https://discuss.leetcode.com/topic/24523/java-standard-backtrace-ac-solutoin-short-and-clear/2
+	https://discuss.leetcode.com/topic/24478/17-lines-solution-dfs-c
+	*/
+	class Solution282 {
+	public:
+		void cal(string num, int target, char preoper, long prenum, vector<string>&res, int total, string form) {
+			int curtotal;
+			for (int i = 1; i <= num.size(); ++i) {
+				string s = num.substr(0, i);
+				curtotal = total;
+				if (s.size() > 1 && '0' == s[0])
+					continue;
+
+				int flag = 1;
+				if ('-' == preoper)
+					flag = -1;
+
+				long cur = atol(s.c_str()) * flag;
+				if ('+' == preoper || '-' == preoper)
+					curtotal += cur;
+				else {
+					curtotal -= prenum;
+					cur *= prenum;
+					curtotal += cur;
+				}
+
+				if (i == num.size()) {
+					if (curtotal == target)
+						res.push_back(form + s);
+
+					return;
+				}
+
+				cal(num.substr(i), target, '-', cur, res, curtotal, form + s + "-");
+				cal(num.substr(i), target, '+', cur, res, curtotal, form + s + "+");
+				cal(num.substr(i), target, '*', cur, res, curtotal, form + s + "*");
+			}
+		}
+
+		vector<string> addOperators(string num, int target) {
+			vector<string> result;
+			int total = 0;
+			string form;
+			cal(num, target, '+', 0, result, total, form);
+			return result;
+		}
+
+
+		// cur: {string} expression generated so far.
+		// pos: {int}    current visiting position of num.
+		// cv:  {long}   cumulative value so far.
+		// pv:  {long}   previous operand value.
+		// op:  {char}   previous operator used.
+		void dfs(std::vector<string>& res, const string& num, const int target, string cur, int pos, const long cv, const long pv, const char op) {
+			if (pos == num.size() && cv == target) {
+				res.push_back(cur);
+			}
+			else {
+				for (int i = pos + 1; i <= num.size(); i++) {
+					string t = num.substr(pos, i - pos);
+					long now = stol(t);
+					if (to_string(now).size() != t.size()) continue;
+					dfs(res, num, target, cur + '+' + t, i, cv + now, now, '+');
+					dfs(res, num, target, cur + '-' + t, i, cv - now, now, '-');
+					dfs(res, num, target, cur + '*' + t, i, (op == '-') ? cv + pv - pv*now : ((op == '+') ? cv - pv + pv*now : pv*now), pv*now, op);
+				}
+			}
+		}
+
+
+		vector<string> addOperators1(string num, int target) {
+			vector<string> res;
+			if (num.empty()) return res;
+			for (int i = 1; i <= num.size(); i++) {
+				string s = num.substr(0, i);
+				long cur = stol(s);
+				if (to_string(cur).size() != s.size()) continue;
+				dfs(res, num, target, s, i, cur, cur, '#');         // no operator defined.
+			}
+
+			return res;
+		}
+		static void main() {
+			Solution282* test = new Solution282;
+			vector<string> result;
+
+			string num1("123");
+			int target1 = 6;
+
+			string num2("105");
+			int target2 = 5;
+
+			string num3("2147483648");
+			int target3 = -2147483648;
+
+			//result = test->addOperators(num1, target1);
+			result = test->addOperators(num3, target3);
+			delete test;
+		}
+	};
+	/*282. Expression Add Operators end */
+
+
 	/*272. Closest Binary Search Tree Value II (hard)
 	https://leetcode.com/problems/closest-binary-search-tree-value-ii/
 	https://discuss.leetcode.com/topic/22940/ac-clean-java-solution-using-two-stacks/29
 	*/
-	/*
 	class Solution272 {
 	public:
-		void closestK(TreeNode* root, double target, int k, priority_queue<int, double>&data) {
+		void findClosest(TreeNode* root, double target, int k, priority_queue<pair<double, int>>& diffs) {
+			if (nullptr == root)
+				return;
+
+			if (diffs.size() == k) {
+				double tmp = abs(target - root->val);
+				if (tmp < diffs.top().first) {
+					diffs.pop();
+					diffs.push({ tmp, root->val });
+				}
+
+				findClosest(root->left, target, k, diffs);
+				findClosest(root->right, target, k, diffs);
+			}
+			else {
+				diffs.push({ abs(target - root->val), root->val });
+				findClosest(root->left, target, k, diffs);
+				findClosest(root->right, target, k, diffs);
+			}
 		}
 
 		vector<int> closestKValues(TreeNode* root, double target, int k) {
-			priority_queue<int, double> data;
-			//stack<TreeNode*> nodes;
-			TreeNode* cur = root;
-			int closenode;
+			priority_queue<pair<double, int>> diffs;
 
+			findClosest(root, target, k, diffs);
+
+			vector<int> result;
+			while (!diffs.empty()) {
+				result.push_back(diffs.top().second);
+				diffs.pop();
+			}
+
+			return result;
+		}
+
+		vector<int> preOrder(TreeNode* root) {
+			vector<int> left;
+
+			if (nullptr == root)
+				return left;
+
+			vector<int> right;
+			left = preOrder(root->left);
+			left.push_back(root->val);
+			right = preOrder(root->right);
+			left.insert(left.end(), right.begin(), right.end());
+			return left;
+		}
+
+		vector<int> closestKValues1(TreeNode* root, double target, int k) {
+			vector<int> pre_vec;
+			vector<int> result;
+			pre_vec = preOrder(root);
+
+			int len = pre_vec.size();
 			double diff = numeric_limits<double>::max();
-			while (cur) {
-				double tmp = abs(target - cur->val);
-				if (diff > tmp) {
-					closenode = cur->val;
+			int start;
+			for (int i = 0; i < len; ++i) {
+				double tmp = abs(target - pre_vec[i]);
+				if (tmp < diff) {
+					start = i;
 					diff = tmp;
 				}
-
-				if (target > cur->val)
-					cur = cur->right;
-				else
-					cur = cur->left;
 			}
+			
+			result.push_back(pre_vec[start]);
+			int left = start - 1;
+			int right = start + 1;
+			while (--k > 0) {
+				if (left >= 0 && right < len) {
+					if (abs(target - pre_vec[left]) < abs(target - pre_vec[right]))
+						result.insert(result.begin(), pre_vec[left--]);
+					else
+						result.push_back(pre_vec[right++]);
+				}
+				else if (left >= 0)
+					result.insert(result.begin(), pre_vec[left--]);
+				else
+					result.push_back(pre_vec[right++]);
+			}
+
+			return result;
 		}
-	};*/
+
+		static void main() {
+			Solution272* test = new Solution272;
+			vector<int> result;
+
+			TreeNode node43(43), node44(44), node10(10), node3(3), node12(12), node11(11), node21(21);
+			TreeNode node1(1), node7(7), node0(0), node2(2), node5(5), node9(9);
+			
+			node43.left = &node10, node43.right = &node44;
+			node10.left = &node3, node10.right = &node12;
+			node3.left = &node1, node3.right = &node7;
+			node12.left = &node11, node12.right = &node21;
+			node1.left = &node0, node1.right = &node2;
+			node7.left = &node5, node7.right = &node9;
+			result = test->closestKValues(&node43, 4.857143, 1);
+			delete test;
+		}
+	};
 	/*272. Closest Binary Search Tree Value II end */
 
 
@@ -5013,6 +5194,8 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+		Solution282::main();
+		Solution272::main();
 		Solution269::main();
 		Solution212::main();
 		LRUCache146::main();
