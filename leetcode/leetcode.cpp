@@ -53,6 +53,82 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*297. Serialize and Deserialize Binary Tree (hard)
+	https://leetcode.com/problems/serialize-and-deserialize-binary-tree/
+	*/
+	class Codec297 {
+	public:
+		void serialize(TreeNode* root, ostringstream& out) {
+			if (root) {
+				out << root->val << ' ';
+				serialize(root->left, out);
+				serialize(root->right, out);
+			}
+			else
+				out << "# ";
+		}
+
+		// Encodes a tree to a single string.
+		string serialize(TreeNode* root) {
+			ostringstream out;
+			serialize(root, out);
+
+			return out.str();
+		}
+
+		TreeNode* deserialize(istringstream &in) {
+			string str;
+
+			in >> str;
+			if (str == "#")
+				return NULL;
+
+			TreeNode* node = new TreeNode(stoi(str));
+			node->left = deserialize(in);
+			node->right = deserialize(in);
+			return node;
+		}
+
+		// Decodes your encoded data to tree.
+		TreeNode* deserialize(string data) {
+			istringstream in(data);
+
+			return deserialize(in);
+		}
+	};
+	/*297. Serialize and Deserialize Binary Tree end */
+
+
+	/*295. Find Median from Data Stream (hard)
+	https://leetcode.com/problems/find-median-from-data-stream/
+	https://discuss.leetcode.com/topic/27521/short-simple-java-c-python-o-log-n-o-1
+	https://discuss.leetcode.com/topic/27522/java-python-two-heap-solution-o-log-n-add-o-1-find
+	*/
+	class MedianFinder295 {
+	public:
+		// Adds a number into the data structure.
+		void addNum(int num) {
+			small.push(num);
+			large.push(-small.top());
+			small.pop();
+
+			if (large.size() > small.size()) {
+				small.push(-large.top());
+				large.pop();
+			}
+		}
+
+
+		// Returns the median of current data stream
+		double findMedian() {
+			return small.size() > large.size() ? small.top() : (small.top() - large.top()) / 2.0;
+		}
+
+		priority_queue<long> small, large;
+	};
+	/*295. Find Median from Data Stream end */
+
+
 	/*282. Expression Add Operators (hard)
 	https://leetcode.com/problems/expression-add-operators/
 	https://discuss.leetcode.com/topic/24523/java-standard-backtrace-ac-solutoin-short-and-clear/2
@@ -18599,13 +18675,13 @@ int _tmain(int argc, _TCHAR* argv[])
 	Solution101::main();
 	//GG::Solution310::main();
 	//GG::Solution133::main();
-	Codec297::main();
+	//Codec297::main();
 	//LRUCache146::main();
 	//GG::Solution128::main();
 	GG::Solution200::main();
 	GG::Solution200::main();
 	Solution130::main();
-	MedianFinder295::main();
+	//MedianFinder295::main();
 	//BSTIterator173::main();
 	Twitter355::main();
 	//PeekingIterator284::main();
