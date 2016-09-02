@@ -53,10 +53,262 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*239. Sliding Window Maximum (hard)
+	https://leetcode.com/problems/sliding-window-maximum/
+	https://discuss.leetcode.com/topic/19055/java-o-n-solution-using-deque-with-explanation
+	*/
+	class Solution239 {
+	public:
+		vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+			vector<int> result;
+			deque<int> window;
+
+			for (int i = 0; i < nums.size(); ++i) {
+				if (!window.empty() && window.front() == i - k)
+					window.pop_front();
+
+				while (!window.empty() && nums[window.back()] < nums[i])
+					window.pop_back();
+				
+				window.push_back(i);
+
+				if (i >= k - 1)
+					result.push_back(nums[window.front()]]);
+			}
+
+			return result;
+		}
+	};
+	/*239. Sliding Window Maximum end */
+
+
+	/*224. Basic Calculator (hard)
+	https://leetcode.com/problems/basic-calculator/
+	https://discuss.leetcode.com/topic/22359/16-ms-solution-in-c-with-stacks/2
+	"1 + 1" = 2
+	" 2-1 + 2 " = 3
+	"(1+(4+5+2)-3)+(6+8)" = 23
+	*/
+	class Solution224 {
+	public:
+		int calculate(string s) {
+			string strtmp("(" + s + ")");
+			stack<char> ops;
+			stack<int> nums;
+
+			int result = 0;
+			int len = strtmp.size();
+
+			for (int i = 0; i < len; ++i) {
+				if (isdigit(strtmp[i])) {
+					result = strtmp[i] - '0';
+
+					while (i + 1 < len && isdigit(strtmp[i + 1]))
+						result = result * 10 + strtmp[++i] - '0';
+				}
+				else if (isspace(strtmp[i]))
+					continue;
+				else if (strtmp[i] == '(') {
+					ops.push('(');
+					ops.push('+');
+				}
+				else {
+					if (ops.top() == '*' || ops.top() == '/') {
+						result = ops.top() == '/' ? nums.top() / result : nums.top() * result;
+						ops.pop();
+						nums.pop();
+					}
+
+					if (')' == strtmp[i]) {
+						if ('-' == ops.top())
+							result = -result;
+						ops.pop();
+
+						while (ops.top() != '(') {
+							result += (ops.top() == '-') ? -nums.top() : nums.top();
+							ops.pop();
+							nums.pop();
+						}
+
+						ops.pop(); // remove '('
+					}
+					else { // +,-,*,/
+						ops.push(strtmp[i]);
+						nums.push(result);
+						result = 0;
+					}
+				}
+			}
+
+			return result;
+		}
+
+		int calculate1(string s) {
+			string str("(" + s + ")");
+			int result = 0;
+			stack<int> data;
+			stack<int> oper;
+			int flag = 1;
+			int num = 0;
+
+			for (int i = 0; i < str.size(); ++i) {
+				if (' ' == str[i])
+					continue;
+				else if (isdigit(str[i]))
+					num = 10 * num + (str[i] - '0');
+				else {					
+					result += num * flag;
+					num = 0;
+
+					if ('-' == str[i])
+						flag = -1;
+					else if ('+' == str[i])
+						flag = 1;
+					else if ('(' == str[i]) {
+						data.push(result);
+						oper.push(flag);
+						result = 0;
+						flag = 1;
+					}
+					else {
+						result = oper.top() * result + data.top();
+						oper.pop();
+						data.pop();
+					}
+				
+				}
+			}
+
+			result += num * flag;
+			return result;
+		}
+
+		static void main() {
+			Solution224* test = new Solution224;
+			int result;
+			string s1(" 2-1 + 2 ");
+			string s2("(1 + ((4 + 5 + 2) - 3)) + (6 + 8)");
+			result = test->calculate(s2);
+
+			delete test;
+		}
+	};
+	/*224. Basic Calculator end */
+
+
 	/*218. The Skyline Problem (hard)
 	https://leetcode.com/problems/the-skyline-problem/
 	https://briangordon.github.io/2014/08/the-skyline-problem.html
+	https://discuss.leetcode.com/topic/38065/java-solution-using-priority-queue-and-sweepline
+	http://www.geeksforgeeks.org/divide-and-conquer-set-7-the-skyline-problem/
+	http://allenlipeng47.com/PersonalPage/index/view/172/nkey
 	*/
+	class Solution218 {
+	public:
+		vector<pair<int, int>> mergeSkyline(vector<pair<int, int>> &A, vector<pair<int, int>> &B) {
+			vector<pair<int, int>> result;
+			int h1 = 0, h2 = 0;
+			int i = 0, j = 0;
+
+			while (i < A.size() && j < B.size()) {
+				int x = 0, h = 0;
+
+				if (A[i].first < B[j].first) {
+					x = A[i].first;
+					h1 = A[i++].second;
+				}
+				else if (A[i].first > B[j].first) {
+					x = B[j].first;
+					h2 = B[j++].second;
+				}
+				else {
+					x = B[j].first;
+					h1 = A[i++].second;
+					h2 = B[j++].second;
+				}
+
+				h = max(h1, h2);
+				int len = result.size();
+				if (len == 0 || h != result[len - 1].second)
+					result.push_back(make_pair(x, h));
+			}
+
+			while (i < A.size())
+				result.push_back(A[i++]);
+
+			while (j < B.size())
+				result.push_back(B[j++]);
+
+			return result;
+		}
+
+		vector<pair<int, int>> recurSkyline(vector<vector<int>>& buildings, int low, int high) {
+			vector<pair<int, int>> result;
+			if (low >= high) {
+				result.push_back(make_pair(buildings[low][0], buildings[low][2]));
+				result.push_back(make_pair(buildings[low][1], 0));
+			}
+			else {
+				int mid = low + (high - low) / 2;
+
+				vector<pair<int, int>> left = recurSkyline(buildings, low, mid);
+				vector<pair<int, int>> right = recurSkyline(buildings, mid + 1, high);
+
+				result = mergeSkyline(left, right);
+
+			}
+
+			return result;
+		}
+
+		vector<pair<int, int>> getSkyline(vector<vector<int>>& buildings) {
+			vector<pair<int, int>> result;
+
+			if (buildings.empty())
+				return result;
+
+			result = recurSkyline(buildings, 0, buildings.size() - 1);
+
+			return result;
+		}
+
+		vector<pair<int, int>> getSkyline1(vector<vector<int>>& buildings) {
+			vector<pair<int, int>> height, skyline;
+
+			for (auto& b : buildings) {
+				height.push_back({ b[0], -b[2] });
+				height.push_back({ b[1], b[2] });
+			}
+
+			sort(height.begin(), height.end());
+			multiset<int> m;
+			int prev = 0;
+			m.insert(0);
+			for (auto& h : height) {
+				if (h.second < 0)
+					m.insert(-h.second);
+				else
+					m.erase(m.find(h.second));
+
+				int cur = *m.rbegin();
+				if (cur != prev) {
+					skyline.push_back({ h.first, cur });
+					prev = cur;
+				}
+			}
+			return skyline;
+		}
+
+		static void main() {
+			Solution218* test = new Solution218;
+			vector<pair<int, int>> result;
+
+			//vector<vector<int>> buildings1 = { { 2, 5, 4 },  { 1, 3, 3 } };
+			vector<vector<int>> buildings2 = { { 2, 5, 4 }, { 3, 4, 3 } };
+			result = test->getSkyline(buildings2);
+			delete test;
+		}
+	};
 	/*218. The Skyline Problem end */
 
 
@@ -4670,6 +4922,8 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+		Solution224::main();
+		Solution218::main();
 		Solution212::main();
 		LRUCache146::main();
 		Solution140::main();
@@ -18092,7 +18346,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//Solution212::main();
 	WordDictionary211::main();
 	//Trie208::main();
-	Solution218::main();
+	//Solution218::main();
 	Solution327::main();
 	Solution315::main();
 	SummaryRanges352::main();
