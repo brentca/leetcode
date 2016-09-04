@@ -53,8 +53,205 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*305. Number of Islands II (hard)
+	https://leetcode.com/problems/number-of-islands-ii/
+	https://discuss.leetcode.com/topic/29518/java-python-clear-solution-with-unionfind-class-weighting-and-path-compression
+	*/
+	class Solution305 {
+	public:
+		class unionFind {
+		public:
+			int m, n, count;
+			vector<int> ids;
+			vector<int> sz;
+
+			unionFind(int row, int col) {
+				m = row;
+				n = col;
+				count = 0;
+				ids.resize(m * n + 1, 0);
+				sz.resize(m * n + 1, 0);
+			}
+
+			int index(int x, int y) {
+				return x * n + y + 1;
+			}
+
+			int getid(int x, int y) {
+				if (x >= 0 && x < m && y >= 0 && y < n)
+					return ids[index(x, y)];
+
+				return -1;
+			}
+
+			bool find(int p, int q) {
+				return root(p) == root(q);
+			}
+
+			void merge(int p, int q) {
+				int i = root(p);
+				int j = root(q);
+
+				if (sz[i] < sz[j]) {
+					ids[i] = j;
+					sz[j] += sz[i];
+				}
+				else {
+					ids[j] = i;
+					sz[i] += sz[j];
+				}
+
+				--count;
+			}
+
+			int add(int id) {
+				//int id = index(x, y);
+				ids[id] = id;
+				sz[id] = 1;
+				++count;
+
+				return id;
+			}
+
+			int root(int index) {
+				while (index != ids[index]) {
+					ids[index] = ids[ids[index]];
+					index = ids[index];
+				}
+
+				return index;
+			}
+		};
+
+		vector<int> numIslands2(int m, int n, vector<pair<int, int>>& positions) {
+			vector<int> result;
+			unionFind islands(m, n);
+			vector<pair<int, int>>dirs = { {1, 0}, {-1, 0}, {0, 1}, {0, -1} };
+
+			for (auto item : positions) {
+				int x = item.first;
+				int y = item.second;
+				int p = islands.index(x, y);
+
+				islands.add(p);
+				for (auto dir : dirs) {
+					int q = islands.getid(x + dir.first, y + dir.second);
+					if (q > 0 && !islands.find(p, q))
+						islands.merge(p, q);
+				}
+
+				result.push_back(islands.count);
+			}
+
+			return result;
+		}
+
+	};
+	/*305. Number of Islands II end */
+
+
+	/*302. Smallest Rectangle Enclosing Black Pixels (hard)
+	https://leetcode.com/problems/smallest-rectangle-enclosing-black-pixels/
+	https://discuss.leetcode.com/topic/29006/c-java-python-binary-search-solution-with-explanation
+	*/
+	class Solution302 {
+	public:
+		vector<vector<char>> *image;
+		int minArea(vector<vector<char>>& iImage, int x, int y) {
+			image = &iImage;
+			int row = iImage.size();
+			int col = iImage[0].size();
+			int left, right, up, down;
+
+			up = searchRow(0, x, 0, col, true);
+			down = searchRow(x + 1, row, 0, col, false);
+			left = searchCol(0, y, up, down, true);
+			right = searchCol(y + 1, col, up, down, false);
+			return (right - left) * (down - up);
+		}
+
+		int searchRow(int i, int j, int low, int high, bool opt) {
+			while (i != j) {
+				int k = low;
+				int mid = i + (j - i) / 2;
+				while (k < high && '0' == (*image)[mid][k])
+					++k;
+
+				if (k < high == opt)
+					j = mid;
+				else
+					i = mid + 1;
+			}
+
+			return i;
+		}
+
+		int searchCol(int i, int j, int low, int high, bool opt) {
+			while (i != j) {
+				int k = low;
+				int mid = i + (j - i) / 2;
+				while (k < high && '0' == (*image)[k][mid])
+					++k;
+
+				if (k < high == opt)
+					j = mid;
+				else
+					i = mid + 1;
+			}
+
+			return i;
+		}
+
+		int minArea1(vector<vector<char>>& image, int x, int y) {
+			if (image.empty() || image[0].empty() ||
+				x > image.size() || x < 0 ||
+				y > image[0].size() || y < 0)
+				return 0;
+
+			int row = image.size();
+			int col = image[0].size();
+			unordered_set<int> flag;
+			queue<pair<int, int>> visit;
+			int left, right, up, down;
+
+			left = right = y;
+			up = down = x;
+			visit.push({ x, y });
+
+			while (!visit.empty()) {
+				pair<int, int> cur = visit.front();
+				int i = cur.first;
+				int j = cur.second;
+				flag.insert(i * col + j);
+				visit.pop();
+
+				left = min(left, j);
+				right = max(right, j);
+				up = min(up, i);
+				down = max(down, i);
+
+				if (i > 0 && '1' == image[i - 1][j] && 0 == flag.count((i - 1) * col + j))
+					visit.push({ i - 1, j });
+
+				if (i < row - 1 && '1' == image[i + 1][j] && 0 == flag.count((i + 1) * col + j))
+					visit.push({ i + 1, j });
+
+				if (j > 0 && '1' == image[i][j - 1] && 0 == flag.count(i * col + j - 1))
+					visit.push({ i, j - 1 });
+
+				if (j < col - 1 && '1' == image[i][j + 1] && 0 == flag.count(i * col + j + 1))
+					visit.push({ i, j + 1 });
+			}
+
+			return (right - left + 1) * (down - up + 1);
+		}
+	};
+	/*302. Smallest Rectangle Enclosing Black Pixels end */
+
+
 	/*297. Serialize and Deserialize Binary Tree (hard)
 	https://leetcode.com/problems/serialize-and-deserialize-binary-tree/
+	https://discuss.leetcode.com/topic/28041/recursive-preorder-python-and-c-o-n/2
 	*/
 	class Codec297 {
 	public:
