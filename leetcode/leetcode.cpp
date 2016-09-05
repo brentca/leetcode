@@ -53,6 +53,69 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*66. Plus One (hard)
+	*/
+	/*66. Plus One end */
+
+
+	/*308. Range Sum Query 2D - Mutable (hard)
+	https://leetcode.com/problems/range-sum-query-2d-mutable/
+	http://blog.csdn.net/qq508618087/article/details/51303552
+	http://www.guoting.org/leetcode/leetcode-308-range-sum-query-2d-mutable/
+	http://blog.csdn.net/qq508618087/article/details/50952147
+	*/
+	class NumMatrix308 {
+	public:
+		vector<vector<int>> &vec;
+		vector<vector<int>> sum;
+		NumMatrix308(vector<vector<int>> &matrix):vec(matrix){
+			if (matrix.empty())
+				return;
+
+			int m = matrix.size();
+			int n = matrix[0].size();
+
+			sum.resize(m, vector<int>(n + 1, 0));
+			for (int i = 0; i < m; i++)
+				for (int j = 1; j <= n; j++)
+					add(matrix[i][j - 1], i, j);
+		}
+		
+		void add(int val, int x, int y) {
+			while (y < sum[x].size()) {
+				sum[x][y] += val;
+				y += (y & -y);
+			}
+		}
+		
+		int getSum(int x, int y) {
+			int ans = 0;
+			while (y > 0) {
+				ans += sum[x][y];
+				y -= (y & -y);
+			}
+
+			return ans;
+		}
+
+		void update(int row, int col, int val) {
+			int d = val - vec[row][col];
+			vec[row][col] = val;
+			add(d, row, col + 1);
+		}
+
+		int sumRegion(int row1, int col1, int row2, int col2) {
+			int ans = 0;
+			for(int i = row1; i <= row2; ++i)
+				ans += (getSum(i, col2 + 1) - getSum(i, col1));
+
+			return ans;
+		}
+	};
+
+	/*308. Range Sum Query 2D - Mutable end */
+
+
 	/*305. Number of Islands II (hard)
 	https://leetcode.com/problems/number-of-islands-ii/
 	https://discuss.leetcode.com/topic/29518/java-python-clear-solution-with-unionfind-class-weighting-and-path-compression
