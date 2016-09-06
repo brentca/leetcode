@@ -53,9 +53,107 @@ namespace GG {
 	/*66. Plus One end */
 
 
-	/*66. Plus One (hard)
+	/*316. Remove Duplicate Letters (hard)
+	https://leetcode.com/problems/remove-duplicate-letters/
 	*/
-	/*66. Plus One end */
+	/*316. Remove Duplicate Letters end */
+
+
+	/*315. Count of Smaller Numbers After Self (hard)
+	https://leetcode.com/problems/count-of-smaller-numbers-after-self/
+	https://discuss.leetcode.com/topic/31405/9ms-short-java-bst-solution-get-answer-when-building-bst
+	https://discuss.leetcode.com/topic/31162/mergesort-solution
+	https://discuss.leetcode.com/topic/31288/c-o-nlogn-time-o-n-space-mergesort-solution-with-detail-explanation
+	*/
+	class Solution315 {
+	public:
+		class Node {
+		public:
+			Node* left;
+			Node* right;
+			int val, sum, dup;
+			Node(int v, int s):left(nullptr), right(nullptr),val(v),sum(s), dup(1){}
+		};
+
+		Node* insert(int num, Node* root, int i, int presum, vector<int>& result) {
+			if (nullptr == root) {
+				root = new Node(num, 0);
+				result[i] = presum;
+			}
+			else if (root->val == num) {
+				root->dup++;
+				result[i] = presum + root->sum;
+			}
+			else if (root->val < num)
+				root->right = insert(num, root->right, i, presum + root->sum + root->dup, result);
+			else {
+				root->sum++;
+				root->left = insert(num, root->left, i, presum, result);
+			}
+
+			return root;
+		}
+
+		void myCount(vector<int>& nums, vector<int>& result) {
+			if (nums.size() == result.size())
+				return;
+
+			int len = result.size();
+			for (int i = 0; i < len; ++i) {
+				if (nums[i] > nums[len])
+					result[i] ++;
+			}
+
+			result.push_back(0);
+			myCount(nums, result);
+		}
+		
+		vector<int> countSmaller(vector<int>& nums) {
+			vector<int> result(nums.size(), 0);
+
+			if (nums.empty())
+				return result;
+
+			//myCount(nums, result);
+			Node* root = nullptr;
+			for (int i = nums.size() - 1; i >= 0; --i)
+				root = insert(nums[i], root, i, 0, result);
+
+			return result;
+		}
+	};
+	/*315. Count of Smaller Numbers After Self end */
+
+
+
+	/*312. Burst Balloons (hard)
+	https://leetcode.com/problems/burst-balloons/
+	https://discuss.leetcode.com/topic/30746/share-some-analysis-and-explanations/16
+	*/
+	class Solution312 {
+	public:
+		int maxCoins(vector<int>& nums) {
+			vector<int> inums(nums.size() + 2, 0);
+			int n = inums.size();
+
+			inums[0] = inums[n - 1] = 1;
+			int idx = 1;
+			for (auto item : nums)
+				inums[idx++] = item;
+
+			vector<vector<int>> dp(n, vector<int>(n, 0));
+			for (int k = 2; k < n; ++k) {
+				for (int left = 0; left < n - k; ++left) {
+					int right = left + k;
+					for (int i = left + 1; i < right; ++i)
+						dp[left][right] = max(dp[left][right], inums[left] * inums[i] * inums[right] + dp[left][i] + dp[i][right]);
+				}
+			}
+
+			return dp[0][n - 1];
+		}
+	};
+	/*312. Burst Balloons end */
 
 
 	/*308. Range Sum Query 2D - Mutable (hard)
@@ -18957,7 +19055,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//Trie208::main();
 	//Solution218::main();
 	Solution327::main();
-	Solution315::main();
+	//Solution315::main();
 	SummaryRanges352::main();
 	Solution220::main();
 	SnakeGame::main();
