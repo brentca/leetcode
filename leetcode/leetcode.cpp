@@ -53,9 +53,103 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*321. Create Maximum Number (hard)
+	https://leetcode.com/problems/create-maximum-number/
+	*/
+	class Solution321 {
+	public:
+	public:
+		vector<int> maxNumber(vector<int>& nums1, vector<int>& nums2, int k) {
+		}
+	};
+	/*321. Create Maximum Number end */
+
+
+	/*317. Shortest Distance from All Buildings (hard)
+	https://leetcode.com/problems/shortest-distance-from-all-buildings/
+	https://discuss.leetcode.com/topic/31702/36-ms-c-solution
+	https://discuss.leetcode.com/topic/31925/java-solution-with-explanation-and-time-complexity-analysis
+	*/
+	class Solution317 {
+	public:
+		int shortestDistance(vector<vector<int>>& grid) {
+			int m = grid.size(), n = grid[0].size();
+			auto total = grid;
+			int walk = 0, mindist, delta[] = { 0, 1, 0, -1, 0 };
+			for (int i = 0; i<m; ++i) {
+				for (int j = 0; j<n; ++j) {
+					if (grid[i][j] == 1) {
+						mindist = -1;
+						auto dist = grid;
+						queue<pair<int, int>> q;
+						q.emplace(i, j);
+						while (q.size()) {
+							auto ij = q.front();
+							q.pop();
+							for (int d = 0; d<4; ++d) {
+								int pos_i = ij.first + delta[d];
+								int pos_j = ij.second + delta[d + 1];
+								if (pos_i >= 0 && pos_i < m && pos_j >= 0 && pos_j < n && grid[pos_i][pos_j] == walk) {
+									grid[pos_i][pos_j]--;
+									dist[pos_i][pos_j] = dist[ij.first][ij.second] + 1;
+									total[pos_i][pos_j] += dist[pos_i][pos_j] - 1;
+									q.emplace(pos_i, pos_j);
+									if (mindist < 0 || mindist > total[pos_i][pos_j])
+										mindist = total[pos_i][pos_j];
+								}
+							}
+						}
+						walk--;
+					}
+				}
+			}
+
+			return mindist;
+		}
+
+		static void main() {
+			auto_ptr<Solution317> test(new Solution317);
+			int result;
+			vector<vector<int>> grid1 = { { 1, 0, 2, 0, 1 }, { 0, 0, 0, 0, 0 }, { 0, 0, 1, 0, 0 } };
+
+			result = test->shortestDistance(grid1);
+		}
+	};
+	/*317. Shortest Distance from All Buildings end */
+
+
 	/*316. Remove Duplicate Letters (hard)
 	https://leetcode.com/problems/remove-duplicate-letters/
+	https://discuss.leetcode.com/topic/31404/a-short-o-n-recursive-greedy-solution
+	https://discuss.leetcode.com/topic/31413/easy-to-understand-iterative-java-solution
 	*/
+	class Solution316 {
+	public:
+		string removeDuplicateLetters(string s) {
+			vector<int> hash(26, 0);
+
+			for (auto item : s)
+				hash[item - 'a'] ++;
+
+			int pos = 0;
+			char c;
+			for (int i = 0; i < s.size(); ++i) {
+				c = s[i];
+				if (s[pos] > c)
+					pos = i;
+
+				if (--hash[c - 'a'] == 0)
+					break;
+			}
+
+			string tmp;
+			for (int i = pos + 1; i < s.size(); ++i)
+			if (s[i] != s[pos])
+				tmp.push_back(s[i]);
+
+			return s.empty() ? "" : s[pos] + removeDuplicateLetters(tmp);
+		}
+	};
 	/*316. Remove Duplicate Letters end */
 
 
@@ -5628,6 +5722,7 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+		Solution317::main();
 		Solution282::main();
 		Solution272::main();
 		Solution269::main();
