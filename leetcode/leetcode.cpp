@@ -53,13 +53,80 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*327. Count of Range Sum (hard)
+	https://leetcode.com/problems/count-of-range-sum/
+	*/
+	/*327. Count of Range Sum end */
+
+
 	/*321. Create Maximum Number (hard)
 	https://leetcode.com/problems/create-maximum-number/
+	https://discuss.leetcode.com/topic/32272/share-my-greedy-solution/2
 	*/
 	class Solution321 {
 	public:
-	public:
+		vector<int> maxArray(vector<int>& nums, int k) {
+			vector<int> result(k);
+			int len = nums.size();
+
+			for (int i = 0, j = 0; i < len; ++i) {
+				while (len - i + j > k && j > 0 && result[j - 1] < nums[i])
+					--j;
+
+				if (j < k)
+					result[j++] = nums[i];
+			}
+
+			return result;
+		}
+
+		bool greater(vector<int>& num1, int i, vector<int>& num2, int j) {
+			int len1 = num1.size();
+			int len2 = num2.size();
+
+			while (i < len1 && j < len2 && num1[i] == num2[j]) {
+				++i;
+				++j;
+			}
+
+			return j == len2 || (i < len1 && num1[i] > num2[j]);
+		}
+
+		vector<int> mergerArray(vector<int>& num1, vector<int>& num2, int k) {
+			vector<int> result(k);
+			int idx = 0;
+
+			for (int i = 0, j = 0; idx < k; ++idx)
+				result[idx] = greater(num1, i, num2, j) ? num1[i++] : num2[j++];
+
+			return result;
+		}
+
 		vector<int> maxNumber(vector<int>& nums1, vector<int>& nums2, int k) {
+			int len1 = nums1.size();
+			int len2 = nums2.size();
+			vector<int> result;
+
+			for (int i = max(0, k - len2); i <= k && i <= len1; ++i) {
+				vector<int> max1 = maxArray(nums1, i);
+				vector<int> max2 = maxArray(nums2, k - i);
+				vector<int> tmp = mergerArray(max1, max2, k);
+				
+				if (greater(tmp, 0, result, 0))
+					result = tmp;
+			}
+
+			return result;
+		}
+
+		static void main() {
+			auto_ptr<Solution321> test(new Solution321);
+			vector<int> result;
+			vector<int> nums1 = {6, 7};
+			vector<int> nums2 = { 6, 0, 4 };
+			int k = 5;
+
+			result = test->maxNumber(nums1, nums2, k);
 		}
 	};
 	/*321. Create Maximum Number end */
@@ -5722,6 +5789,7 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+		Solution321::main();
 		Solution317::main();
 		Solution282::main();
 		Solution272::main();
@@ -19107,7 +19175,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	Solution85::main();
 	//Solution239::main();
 	GG::Solution313::main();
-	Solution321::main();
+	//Solution321::main();
 	Solution164::main();
 	//Solution318::main();
 	Solution137::main();
