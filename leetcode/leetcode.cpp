@@ -55,7 +55,75 @@ namespace GG {
 
 	/*327. Count of Range Sum (hard)
 	https://leetcode.com/problems/count-of-range-sum/
+	https://discuss.leetcode.com/topic/33738/share-my-solution
 	*/
+	class Solution327 {
+	public:
+		int countRangeSum(vector<int>& nums, int lower, int upper) {
+			int size = nums.size();
+			if (size == 0)  return 0;
+			vector<long> sums(size + 1, 0);
+			for (int i = 0; i<size; i++)  sums[i + 1] = sums[i] + nums[i];
+			return help(sums, 0, size + 1, lower, upper);
+		}
+
+		/*** [start, end)  ***/
+		int help(vector<long>& sums, int start, int end, int lower, int upper){
+			/*** only-one-element, so the count-pair=0 ***/
+			if (end - start <= 1)  return 0;
+			int mid = (start + end) / 2;
+			int count = help(sums, start, mid, lower, upper)
+				+ help(sums, mid, end, lower, upper);
+
+			int m = mid, n = mid, t = mid, len = 0;
+			/*** cache stores the sorted-merged-2-list ***/
+			/*** so we use the "len" to record the merged length ***/
+			vector<long> cache(end - start, 0);
+			for (int i = start, s = 0; i<mid; i++, s++){
+				/*** wrong code: while(m<end && sums[m++]-sums[i]<lower);  ***/
+				while (m<end && sums[m] - sums[i]<lower) m++;
+				while (n<end && sums[n] - sums[i] <= upper) n++;
+				count += n - m;
+				/*** cache will merge-in-the-smaller-part-of-list2 ***/
+				while (t<end && sums[t]<sums[i]) cache[s++] = sums[t++];
+				cache[s] = sums[i];
+				len = s;
+			}
+
+			for (int i = 0; i <= len; i++)  sums[start + i] = cache[i];
+			return count;
+		}
+
+		int countRangeSum1(vector<int>& nums, int lower, int upper) {
+			int result = 0;
+			int len = nums.size();
+			vector<long> sums(len + 1, 0);
+
+			for (int i = 0; i < len; ++i)
+				sums[i + 1] = sums[i] + nums[i];
+
+			for (int i = 0; i < len; ++i) {
+				for (int j = i + 1; j <= len; ++j) {
+					long tmp = sums[j] - sums[i];
+					if (tmp >= lower && tmp <= upper)
+						++result;
+				}
+
+			}
+
+			return result;
+		}
+
+		static void main() {
+			//Solution327* test = new Solution327;
+			auto_ptr<Solution327> test(new Solution327);
+			int result;
+			vector<int> nums1 = {1, -2, 4, -4};
+
+			result = test->countRangeSum(nums1, -2, 2);
+			result = result;
+		}
+	};
 	/*327. Count of Range Sum end */
 
 
@@ -5789,6 +5857,7 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+		Solution327::main();
 		Solution321::main();
 		Solution317::main();
 		Solution282::main();
@@ -19217,7 +19286,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	WordDictionary211::main();
 	//Trie208::main();
 	//Solution218::main();
-	Solution327::main();
+	//Solution327::main();
 	//Solution315::main();
 	SummaryRanges352::main();
 	Solution220::main();
