@@ -53,6 +53,57 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*329. Longest Increasing Path in a Matrix (hard)
+	https://leetcode.com/problems/longest-increasing-path-in-a-matrix/
+	https://discuss.leetcode.com/topic/35021/graph-theory-java-solution-o-v-2-no-dfs
+	https://discuss.leetcode.com/topic/34835/15ms-concise-java-solution
+	*/
+	class Solution329 {
+	public:
+		int findPath(vector<vector<int>>& matrix, int i, int j, int row, int col, vector<vector<int>>& mem, int &result) {
+			vector<pair<int, int>> dir = { {1, 0}, {-1, 0}, {0, 1}, {0, -1} };
+			if (mem[i][j] != 1)
+				return mem[i][j];
+
+			int ans = 1;
+			for (auto item : dir) {
+				int pos_i = i + item.first;
+				int pos_j = j + item.second;
+
+				if (pos_i < 0 || pos_j < 0 || pos_i >= row || pos_j >= col)
+					continue;
+
+				if (matrix[i][j] >= matrix[pos_i][pos_j])
+					continue;
+
+				int tmp = findPath(matrix, pos_i, pos_j, row, col, mem, result) + 1;
+				ans = max(ans, tmp);
+			}
+
+			result = max(result, ans);
+			mem[i][j] = ans;
+			return ans;
+		}
+
+		int longestIncreasingPath(vector<vector<int>>& matrix) {
+			if (matrix.empty() || matrix[0].empty())
+				return 0;
+
+			int result = 0;
+			int row = matrix.size();
+			int col = matrix[0].size();
+
+			vector<vector<int>> mem(row, vector<int>(col, 1));
+			for (int i = 0; i < row; ++i)
+				for (int j = 0; j < col; ++j)
+					findPath(matrix, i, j, row, col, mem, result);
+
+			return result;
+		}
+	};
+	/*329. Longest Increasing Path in a Matrix end */
+
+
 	/*327. Count of Range Sum (hard)
 	https://leetcode.com/problems/count-of-range-sum/
 	https://discuss.leetcode.com/topic/33738/share-my-solution
@@ -77,15 +128,17 @@ namespace GG {
 
 			int m = mid, n = mid, t = mid, len = 0;
 			/*** cache stores the sorted-merged-2-list ***/
-			/*** so we use the "len" to record the merged length ***/
+			/*** so we use the "count" to record the merged length ***/
 			vector<long> cache(end - start, 0);
-			for (int i = start, s = 0; i<mid; i++, s++){
+			for (int i = start, s = 0; i < mid; ++i, ++s){
 				/*** wrong code: while(m<end && sums[m++]-sums[i]<lower);  ***/
-				while (m<end && sums[m] - sums[i]<lower) m++;
-				while (n<end && sums[n] - sums[i] <= upper) n++;
+				while (m < end && sums[m] - sums[i] < lower) ++m;
+				while (n < end && sums[n] - sums[i] <= upper) ++n;
 				count += n - m;
-				/*** cache will merge-in-the-smaller-part-of-list2 ***/
-				while (t<end && sums[t]<sums[i]) cache[s++] = sums[t++];
+				/*** cache will merge-in-the-smaller-part-of-list2 
+				that means small part of list2 needs to be mergerd to the front,
+				because all the merge are in the same vector***/
+				while (t < end && sums[t] < sums[i]) cache[s++] = sums[t++];
 				cache[s] = sums[i];
 				len = s;
 			}
@@ -293,6 +346,7 @@ namespace GG {
 	https://discuss.leetcode.com/topic/31405/9ms-short-java-bst-solution-get-answer-when-building-bst
 	https://discuss.leetcode.com/topic/31162/mergesort-solution
 	https://discuss.leetcode.com/topic/31288/c-o-nlogn-time-o-n-space-mergesort-solution-with-detail-explanation
+	http://blog.csdn.net/qq508618087/article/details/51320926
 	*/
 	class Solution315 {
 	public:
@@ -337,7 +391,7 @@ namespace GG {
 			myCount(nums, result);
 		}
 		
-		vector<int> countSmaller(vector<int>& nums) {
+		vector<int> countSmaller1(vector<int>& nums) {
 			vector<int> result(nums.size(), 0);
 
 			if (nums.empty())
@@ -348,6 +402,43 @@ namespace GG {
 			for (int i = nums.size() - 1; i >= 0; --i)
 				root = insert(nums[i], root, i, 0, result);
 
+			return result;
+		}
+
+		void help(vector<pair<int, int>>& vec, int low, int high, vector<int>& result) {
+			if (low == high - 1)
+				return;
+
+			int count = 0;
+			int mid = low + (high - low) / 2;
+			int right = mid;
+			help(vec, low, mid, result);
+			help(vec, mid, high, result);
+			
+			vector<long> cache(high - low, 0);
+			for (int i = low; i < mid; ++i) {
+				while (right < high && vec[i].first > vec[right].first)
+					++right;
+
+				result[vec[i].second] += right - mid;
+			}
+
+			//after loop, all the bigger number postion will >= rigth
+			//so, no sorting for that part
+			inplace_merge(vec.begin() + low, vec.begin() + mid, vec.begin() + right);
+		}
+
+		vector<int> countSmaller(vector<int>& nums) {
+			if (nums.empty())
+				return vector<int>();
+			int len = nums.size();
+			vector<int> result(len, 0);
+			vector<pair<int, int>> vec(len);
+
+			for (int i = 0; i < len; ++i)
+				vec[i] = { nums[i], i };
+
+			help(vec, 0, len, result);
 			return result;
 		}
 	};
@@ -19278,7 +19369,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	Stack225::main();
 	MinStack155_2::main();
 	GG::MinStack155::main();
-	Solution329::main();
+	//Solution329::main();
 	Solution210::main();
 	Solution207::main();
 	Solution336::main();
