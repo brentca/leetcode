@@ -53,6 +53,24 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*354. Russian Doll Envelopes (hard)
+	https://leetcode.com/problems/russian-doll-envelopes/
+	*/
+	class Solution354 {
+	public:
+		int maxEnvelopes(vector<pair<int, int>>& envelopes) {
+			int result = 0;
+
+			int len = envelopes.size();
+			if (len < 2)
+				return len;
+
+			sort(envelopes.begin(), envelopes.end(), [](pair<int, int>&a, pair<int, int>&b) { return a.first == b.first ? a.second < b.second : a.first < b.first; });
+		}
+	};
+	/*354. Russian Doll Envelopes end */
+
+
 	/*340. Longest Substring with At Most K Distinct Characters (hard)
 	https://leetcode.com/problems/longest-substring-with-at-most-k-distinct-characters/
 	https://discuss.leetcode.com/topic/41711/8-lines-c-o-n-8ms
