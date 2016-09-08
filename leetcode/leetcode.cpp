@@ -53,6 +53,197 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*340. Longest Substring with At Most K Distinct Characters (hard)
+	https://leetcode.com/problems/longest-substring-with-at-most-k-distinct-characters/
+	https://discuss.leetcode.com/topic/41711/8-lines-c-o-n-8ms
+	*/
+	class Solution340 {
+	public:
+		int lengthOfLongestSubstringKDistinct(string s, int k) {
+			if (s.empty() || 0 == k)
+				return 0;
+
+			int result = 1;
+			int len = s.size();
+			unordered_map<int, int> hash;
+			for (int idx = 0, start = 0; idx < len; ++idx) {
+				hash[s[idx]] ++;
+
+				if (hash.size() <= k)
+					result = max(result, idx - start + 1);
+
+				while (hash.size() > k && start < len) {
+					if (--hash[s[start]] == 0)
+						hash.erase(s[start]);
+
+					++start;
+				}
+			}
+
+			return result;
+		}
+
+		int lengthOfLongestSubstringKDistinct1(string s, int k) {
+			if (s.empty() || 0 == k)
+				return 0;
+
+			int result = 1;
+			vector<int> hash(256, 0);
+			int len = s.size();
+			int count = 0, idx = 0;
+			for (auto item : s)
+				hash[item - 'a']++;
+
+			for (int i = 0; i < len; ++i) {
+				unordered_set<char> data;
+				data.insert(s[i]);
+				for (int j = i + 1; j < len; ++j){
+					data.insert(s[j]);
+
+					if (data.size() > k)
+						break;
+					
+					result = max(result, j - i + 1);
+				}
+			}
+
+			return result;
+		}
+
+		static void main() {
+			auto_ptr<Solution340> test(new Solution340);
+			int result;
+
+			string s1("bacc");
+			int k1 = 2;
+			result = test->lengthOfLongestSubstringKDistinct(s1, k1);
+		}
+	};
+	/*340. Longest Substring with At Most K Distinct Characters end */
+
+
+	/*336. Palindrome Pairs (hard)
+	https://leetcode.com/problems/palindrome-pairs/
+	https://discuss.leetcode.com/topic/40657/150-ms-45-lines-java-solution
+	*/
+	class Solution336 {
+	public:
+		bool isPalin(string & str) {
+			int low = 0, high = str.size() - 1;
+			while (low < high) {
+				if (str[low] != str[high])
+					return false;
+
+				++low;
+				--high;
+			}
+
+			return true;
+		}
+
+		vector<vector<int>> palindromePairs(vector<string>& words) {
+			vector<vector<int>> result;
+			int len = words.size();
+			if (len < 2)
+				return result;
+
+			unordered_map<string, int> hash;
+			for (int i = 0; i < len; ++i)
+				hash[words[i]] = i;
+
+			for (int i = 0; i < len; ++i)
+			for (int k = 0; k <= words[i].size(); ++k) {
+				string str1 = words[i].substr(0, k);
+				string str2 = words[i].substr(k);
+
+				if (isPalin(str1)) {
+					string tmp(str2);
+					reverse(tmp.begin(), tmp.end());
+					if (hash.count(tmp) && hash[tmp] != i)
+						result.push_back({ hash[tmp], i });
+				}
+
+				if (isPalin(str2)) {
+					string tmp(str1);
+					reverse(tmp.begin(), tmp.end());
+					if (hash.count(tmp) && hash[tmp] != i && !tmp.empty())
+						result.push_back({ i, hash[tmp] });
+				}
+			}
+
+			return result;
+		}
+
+		vector<vector<int>> palindromePairs1(vector<string>& words) {
+			vector<vector<int>> result;
+			int len = words.size();
+			if (len < 2)
+				return result;
+			
+			unordered_set<string> hash;
+
+			for (int i = 0; i < len - 1; ++i)
+			for (int j = i + 1; j < len; ++j) {
+				string tmp = words[i] + words[j];
+
+				if (hash.count(tmp) || isPalin(tmp)) {
+					result.push_back({ i, j });
+					if (0 == hash.count(tmp))
+						hash.insert(tmp);
+				}
+
+				tmp = words[j] + words[i];
+				if (hash.count(tmp) || isPalin(tmp)) {
+					result.push_back({ j, i });
+
+					if (0 == hash.count(tmp))
+						hash.insert(tmp);
+				}
+			}
+
+			return result;
+		}
+
+		static void main() {
+			auto_ptr<Solution336> test(new Solution336);
+			vector<vector<int>> result;
+
+			vector<string> words1 = { "bat", "tab", "cat" };
+			vector<string> words2 = { "abcd", "dcba", "lls", "s", "sssll" };
+			vector<string> words3 = { "a", "" };
+
+			//result = test->palindromePairs(words1);
+			result = test->palindromePairs(words3);
+		}
+	};
+	/*336. Palindrome Pairs end */
+
+
+	/*330. Patching Array (hard)
+	https://leetcode.com/problems/patching-array/
+	https://discuss.leetcode.com/topic/35494/solution-explanation
+	*/
+	class Solution330 {
+	public:
+		int minPatches(vector<int>& nums, int n) {
+			long missed = 1, result = 0, i = 0;
+			int len = nums.size();
+
+			while (missed <= n) {
+				if (i < len && missed >= nums[i])
+					missed += nums[i++];
+				else {
+					missed += missed;
+					++result;
+				}
+			}
+
+			return result;
+		}
+	};
+	/*330. Patching Array end */
+
+
 	/*329. Longest Increasing Path in a Matrix (hard)
 	https://leetcode.com/problems/longest-increasing-path-in-a-matrix/
 	https://discuss.leetcode.com/topic/35021/graph-theory-java-solution-o-v-2-no-dfs
@@ -5948,6 +6139,8 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+		Solution340::main();
+		Solution336::main();
 		Solution327::main();
 		Solution321::main();
 		Solution317::main();
@@ -19372,7 +19565,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//Solution329::main();
 	Solution210::main();
 	Solution207::main();
-	Solution336::main();
+	//Solution336::main();
 	//Solution212::main();
 	WordDictionary211::main();
 	//Trie208::main();
