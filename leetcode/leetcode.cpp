@@ -53,30 +53,76 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*363. Max Sum of Rectangle No Larger Than K (hard)
+	https://leetcode.com/problems/max-sum-of-sub-matrix-no-larger-than-k/
+	https://discuss.leetcode.com/topic/48875/accepted-c-codes-with-explanation-and-references
+	*/
+	class Solution363 {
+	public:
+		int maxSumSubmatrix(vector<vector<int>>& matrix, int k) {
+			int row = matrix.size();
+			int col = matrix[0].size();
+
+			long maxleft, maxright, maxup, maxdown;
+			long cursum, maxsum;
+
+			maxleft = maxright = maxup = maxdown;
+			cursum = maxsum = 0;
+			for (int left = 0; left < col; ++left) {
+				vector<long> cur(row, 0);
+
+				for (int right = left; right < col; ++right) {
+					for (int i = 0; i < row; ++i)
+						cur[i] += matrix[i][right];
+				}
+			}
+		}
+	};
+	/*363. Max Sum of Rectangle No Larger Than K end */
+
+
 	/*358. Rearrange String k Distance Apart (hard)
 	https://leetcode.com/problems/rearrange-string-k-distance-apart/
+	https://discuss.leetcode.com/topic/48091/c-unordered_map-priority_queue-solution-using-cache
+	https://discuss.leetcode.com/topic/48260/java-15ms-solution-with-two-auxiliary-array-o-n-time
 	*/
 	class Solution358 {
 	public:
 		string rearrangeString(string str, int k) {
-			if (str.empty() || 0 == k)
-				return "";
-
-			if (1 == k)
+			if (k < 2)
 				return str;
 
-			vector<int> data(26, 0);
+			string result("");
+			unordered_map<char, int> data;
 			for (auto item : str)
-				data[item - 'a'] ++;
+				data[item] ++;
 
-			sort(data.begin(), data.end(), greater<int>());
-			int i = 0;
-			while (i < 26) {
-				if (data[i] > 0) {
-					for ()
+			int len = str.size();
+			priority_queue<pair<int, char>> que;
+			for (auto item : data)
+				que.push({ item.second, item.first });
+
+			while (!que.empty()) {
+				vector<pair<int, char>> cache;
+				int count = min(k, len);
+
+				for (int i = 0; i < count; ++i) {
+					if (que.empty())
+						return "";
+
+					auto item = que.top();
+					que.pop();
+					result += item.second;
+					if (--item.first)
+						cache.push_back(item);
+					--len;
 				}
+
+				for (auto item : cache)
+					que.push(item);
 			}
 
+			return result;
 		}
 	};
 	/*358. Rearrange String k Distance Apart end */
