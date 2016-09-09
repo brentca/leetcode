@@ -53,19 +53,71 @@ namespace GG {
 	/*66. Plus One end */
 
 
+	/*358. Rearrange String k Distance Apart (hard)
+	https://leetcode.com/problems/rearrange-string-k-distance-apart/
+	*/
+	class Solution358 {
+	public:
+		string rearrangeString(string str, int k) {
+			if (str.empty() || 0 == k)
+				return "";
+
+			if (1 == k)
+				return str;
+
+			vector<int> data(26, 0);
+			for (auto item : str)
+				data[item - 'a'] ++;
+
+			sort(data.begin(), data.end(), greater<int>());
+			int i = 0;
+			while (i < 26) {
+				if (data[i] > 0) {
+					for ()
+				}
+			}
+
+		}
+	};
+	/*358. Rearrange String k Distance Apart end */
+
+
 	/*354. Russian Doll Envelopes (hard)
 	https://leetcode.com/problems/russian-doll-envelopes/
+	https://discuss.leetcode.com/topic/47469/java-nlogn-solution-with-explanation/4
+	https://discuss.leetcode.com/topic/28738/java-python-binary-search-o-nlogn-time-with-explanation
+	https://discuss.leetcode.com/topic/28685/c-typical-dp-n-2-solution-and-nlogn-solution-from-geekforgeek/2
 	*/
 	class Solution354 {
 	public:
 		int maxEnvelopes(vector<pair<int, int>>& envelopes) {
-			int result = 0;
-
 			int len = envelopes.size();
 			if (len < 2)
 				return len;
 
-			sort(envelopes.begin(), envelopes.end(), [](pair<int, int>&a, pair<int, int>&b) { return a.first == b.first ? a.second < b.second : a.first < b.first; });
+			sort(envelopes.begin(), envelopes.end(), [](pair<int, int>&a, pair<int, int>&b) { return a.first == b.first ? a.second > b.second : a.first < b.first; });
+			vector<int> tails(len + 1);
+
+			int i = 0, count = 0, j;
+			for (auto x : envelopes) {
+				i = 0;
+				j = count;
+
+				while (i != j) {
+					int mid = i + (j - i) / 2;
+
+					if (tails[mid] < x.second)
+						i = mid + 1;
+					else
+						j = mid;
+				}
+
+				tails[i] = x.second;
+				if (i == count)
+					++count;
+			}
+
+			return count;
 		}
 	};
 	/*354. Russian Doll Envelopes end */
