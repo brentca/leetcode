@@ -48,9 +48,117 @@ namespace GG {
 	};
 
 
-	/*66. Plus One (hard)
+	/*391. Perfect Rectangle (hard)
+	https://leetcode.com/problems/perfect-rectangle/
+	https://discuss.leetcode.com/topic/55997/short-java-solution-with-explanation-updated
 	*/
-	/*66. Plus One end */
+	class Solution391 {
+	public:
+		unordered_map<string, int> hash;
+		bool isRectangleCover(vector<vector<int>>& rectangles) {
+			int lx = numeric_limits<int>::max();
+			int ly = lx;
+			int rx = numeric_limits<int>::min();
+			int ry = rx;
+			int total = 0;
+
+			for (auto item : rectangles) {
+				lx = min(item[0], lx);
+				ly = min(item[1], ly);
+				rx = max(item[2], rx);
+				ry = max(item[3], ry);
+
+				total += (item[2] - item[0]) * (item[3] - item[1]);
+				//bottom left 
+				if (overLap(to_string(item[0]) + " " + to_string(item[1]), 1))
+					return false;
+
+				//top left
+				if (overLap(to_string(item[0]) + " " + to_string(item[3]), 2))
+					return false;
+
+				//bottom right
+				if (overLap(to_string(item[2]) + " " + to_string(item[1]), 4))
+					return false;
+
+				//top right
+				if (overLap(to_string(item[2]) + " " + to_string(item[3]), 8))
+					return false;
+			}
+
+			int count = 0;
+			for (auto item : hash) {
+				int type = item.second;
+				//1111, 1100, 1010, 1001, 0110, 0101, 0011
+				if (15 != type && 12 != type && 10 != type && 9 != type
+					&& 6 != type && 5 != type && 3 != type)
+					++count;
+			}
+
+			return 4 == count && total == (rx - lx)*(ry - ly);
+		}
+
+		bool overLap(string str, int type) {
+			int tmp;
+			if (hash.count(str) < 1)
+				tmp = type;
+			else {
+				tmp = hash[str];
+				if (0 != (tmp & type))
+					return false;
+				else
+					tmp |= type;
+			}
+
+			hash[str] = tmp;
+			return false;
+		}
+	};
+	/*391. Perfect Rectangle end */
+
+
+	/*380. Insert Delete GetRandom O(1) (hard)
+	https://leetcode.com/problems/insert-delete-getrandom-o1/
+	https://discuss.leetcode.com/topic/53286/ac-c-solution-unordered_map-vector
+	*/
+	class RandomizedSet380 {
+	public:
+		/** Initialize your data structure here. */
+		RandomizedSet380() {
+
+		}
+
+		/** Inserts a value to the set. Returns true if the set did not already contain the specified element. */
+		bool insert(int val) {
+			if (m.find(val) != m.end()) return false;
+			nums.emplace_back(val);
+			m[val] = nums.size() - 1;
+			return true;
+		}
+
+		/** Removes a value from the set. Returns true if the set contained the specified element. */
+		bool remove(int val) {
+			if (m.find(val) == m.end()) return false;
+			int last = nums.back();
+			m[last] = m[val];
+			nums[m[val]] = last;
+			nums.pop_back();
+			m.erase(val);
+			return true;
+		}
+
+		/** Get a random element from the set. */
+		int getRandom() {
+			int n = nums.size();
+
+			return  0 == n ? -1 : nums[rand() % n];
+		}
+	private:
+		vector<int> nums;
+		unordered_map<int, int> m;
+	};
+	/*380. Insert Delete GetRandom O(1) end */
+
 
 
 	/*363. Max Sum of Rectangle No Larger Than K (hard)
@@ -62,20 +170,95 @@ namespace GG {
 		int maxSumSubmatrix(vector<vector<int>>& matrix, int k) {
 			int row = matrix.size();
 			int col = matrix[0].size();
+			long cursum, result, curmax;
 
-			long maxleft, maxright, maxup, maxdown;
-			long cursum, maxsum;
-
-			maxleft = maxright = maxup = maxdown;
-			cursum = maxsum = 0;
+			result = numeric_limits<long>::min();
 			for (int left = 0; left < col; ++left) {
 				vector<long> cur(row, 0);
 
 				for (int right = left; right < col; ++right) {
 					for (int i = 0; i < row; ++i)
 						cur[i] += matrix[i][right];
+
+					set<long> sets;
+					cursum = 0;
+					curmax = numeric_limits<long>::min();
+					sets.insert(0);
+
+					for (auto item : cur) {
+						cursum += item;
+
+						set<long>::iterator ite = sets.lower_bound(cursum - k);
+						if (ite != sets.end())
+							curmax = max(curmax, cursum - *ite);
+
+						sets.insert(cursum);
+					}
+
+					result = max(result, curmax);
 				}
 			}
+
+			return result;
+		}
+
+		vector<int> findKadane1(vector<int> vec, int k) {
+			long maxcur = vec[0];
+			long maxglobal = vec[0];
+			vector<int> result(2, -1);
+			int left = 0;
+			int right = 0;
+
+			for (int i = 1; i < vec.size(); ++i) {
+				if (vec[i] > maxcur + vec[i]) {
+					left = i;
+					maxcur = vec[i];
+				}
+				else
+					maxcur = maxcur + vec[i];
+
+				right = i;
+				if (maxcur > maxglobal) {
+					result[0] = left;
+					result[1] = right;
+					maxglobal = maxcur;
+				}
+			}
+
+			return result;
+		}
+
+		vector<int> findKadane(vector<int> vec) {
+			long maxcur = vec[0];
+			long maxglobal = vec[0];
+			vector<int> result(2, 0);
+			int left = 0;
+			int right = 0;
+
+			for (int i = 1; i < vec.size(); ++i) {
+				if (vec[i] > maxcur + vec[i]) {
+					left = i;
+					maxcur = vec[i];
+				}
+				else
+					maxcur = maxcur + vec[i];
+
+				right = i;
+				if (maxcur > maxglobal) {
+					result[0] = left;
+					result[1] = right;
+					maxglobal = maxcur;
+				}
+			}
+
+			return result;
+		}
+
+		static void main() {
+			auto_ptr<Solution363> test(new Solution363);
+			vector<int> result;
+			vector<int> vec1 = { -2, 1, -3, 4, -1, 2, 1, -5, 4 };
+			result = test->findKadane(vec1);
 		}
 	};
 	/*363. Max Sum of Rectangle No Larger Than K end */
@@ -2421,6 +2604,18 @@ namespace GG {
 		}
 	};
 	/*4. Median of Two Sorted Arrays end */
+
+
+	/*394. Decode String (medium)
+	https://leetcode.com/problems/decode-string/
+	*/
+	class Solution394 {
+	public:
+		string decodeString(string s) {
+
+		}
+	};
+	/*394. Decode String end */
 
 
 	/*388. Longest Absolute File Path (medium)
@@ -6255,6 +6450,7 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+		Solution363::main();
 		Solution340::main();
 		Solution336::main();
 		Solution327::main();
