@@ -2673,17 +2673,17 @@ namespace GG {
 			int count = 0;
 			for (auto item : data) {
 				if (0 == count) {
-					if (item >> 5 == 0b110)
+					if (item >> 5 == 0xC0)//if (item >> 5 == 0b110)
 						count = 1;
-					else if (item >> 4 == 0b1110)
+					else if (item >> 4 == 0xE0)//else if (item >> 4 == 0b1110)
 						count = 2;
-					else if (item >> 3 == 0b11110)
+					else if (item >> 3 == 0xF0)//else if (item >> 3 == 0b11110)
 						count = 3;
 					else if (item >> 7)
 						return false;
 				}
 				else {
-					if (item >> 6 != 0b10)
+					if (item >> 6 != 0x80)//if (item >> 6 != 0b10)
 						return false;
 
 					--count;
