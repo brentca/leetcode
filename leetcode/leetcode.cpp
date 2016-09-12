@@ -2608,15 +2608,92 @@ namespace GG {
 
 	/*394. Decode String (medium)
 	https://leetcode.com/problems/decode-string/
+	https://discuss.leetcode.com/topic/57159/simple-java-solution-using-stack
 	*/
 	class Solution394 {
 	public:
 		string decodeString(string s) {
+			stack<string> data;
+			data.push("");
 
+			int i = 0;
+			int len = s.size();
+			string cur("");
+			while (i < len) {
+				if ('[' == s[i]) {
+					data.push(cur);
+					cur = "";
+				}
+				else if (']' == s[i]) {
+					while (!isdigit(data.top()[0])) {
+						cur = data.top() + cur;
+						data.pop();
+					}
+					
+					int times = stoi(data.top());
+					data.pop();
+					string tmp("");
+					while (times-- > 0)
+						tmp.append(cur);
+
+					data.push(tmp);
+					cur = "";
+				}
+				else if (isdigit(s[i])) {
+					if (!cur.empty())
+						data.push(cur);
+					cur = s[i];
+					while ('[' != s[i + 1])
+						cur += s[++i];
+				}
+				else
+					cur += s[i];
+
+				++i;
+			}
+
+			while (!data.empty()) {
+				cur = data.top() + cur;
+				data.pop();
+			}
+
+			return cur;
 		}
 	};
 	/*394. Decode String end */
 
+
+	/*393. UTF-8 Validation (medium)
+	https://leetcode.com/problems/utf-8-validation/
+	https://discuss.leetcode.com/topic/57195/concise-c-implementation
+	*/
+	class Solution393 {
+	public:
+		bool validUtf8(vector<int>& data) {
+			int count = 0;
+			for (auto item : data) {
+				if (0 == count) {
+					if (item >> 5 == 0b110)
+						count = 1;
+					else if (item >> 4 == 0b1110)
+						count = 2;
+					else if (item >> 3 == 0b11110)
+						count = 3;
+					else if (item >> 7)
+						return false;
+				}
+				else {
+					if (item >> 6 != 0b10)
+						return false;
+
+					--count;
+				}
+			}
+
+			return count == 0;
+		}
+	};
+	/*393. UTF-8 Validation end */
 
 	/*388. Longest Absolute File Path (medium)
 	https://leetcode.com/problems/longest-absolute-file-path/
