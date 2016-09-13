@@ -2606,7 +2606,56 @@ namespace GG {
 	/*4. Median of Two Sorted Arrays end */
 
 
-	/*394. Decode String (medium)
+	/*399. Evaluate Division (medium)
+	https://leetcode.com/problems/evaluate-division/
+	https://discuss.leetcode.com/topic/58312/c-0ms-hash-dfs-solution
+	*/
+	class Solution399 {
+	public:
+		vector<double> calcEquation(vector<pair<string, string>> equations, vector<double>& values, vector<pair<string, string>> queries) {
+			unordered_map<string, unordered_map<string, double>> hash;
+			vector<double> res;
+
+			for (int i = 0; i < values.size(); ++i) {
+				hash[equations[i].first].insert({ equations[i].second, values [i] });
+
+				if (0 != values[i])
+					hash[equations[i].second].insert({ equations[i].first, 1 / values[i] });
+			}
+
+			for (auto item : queries) {
+				unordered_set<string> s;
+				double tmp = checkVal(item.first, item.second, hash, s);
+				if (0 == tmp)
+					res.push_back(-1);
+				else
+					res.push_back(tmp);
+			}
+
+			return res;
+		}
+
+		double checkVal(string up, string down,
+			unordered_map<string, unordered_map<string, double>> &m,
+			unordered_set<string> &s) {
+			if (m[up].count(down))
+				return m[up][down];
+
+			for (auto item : m[up]) {
+				if (0 == s.count(item.first)) {
+					s.insert(item.first);
+					double tmp = checkVal(item.first, down, m, s);
+					if (0 != tmp)
+						return item.second * tmp;
+				}
+			}
+
+			return 0;
+		}
+	};
+	/*394. Decode String end */
+
+	/*399. Evaluate Division (medium)
 	https://leetcode.com/problems/decode-string/
 	https://discuss.leetcode.com/topic/57159/simple-java-solution-using-stack
 	*/
