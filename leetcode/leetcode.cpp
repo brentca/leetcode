@@ -544,6 +544,7 @@ namespace GG {
 
 
 	/*329. Longest Increasing Path in a Matrix (hard)
+	Time = O(m*n)	Space = O(m*n)
 	https://leetcode.com/problems/longest-increasing-path-in-a-matrix/
 	https://discuss.leetcode.com/topic/35021/graph-theory-java-solution-o-v-2-no-dfs
 	https://discuss.leetcode.com/topic/34835/15ms-concise-java-solution
@@ -595,6 +596,7 @@ namespace GG {
 
 
 	/*327. Count of Range Sum (hard)
+	Time = O(n*logn)	Space = O(n)
 	https://leetcode.com/problems/count-of-range-sum/
 	https://discuss.leetcode.com/topic/33738/share-my-solution
 	*/
@@ -661,7 +663,7 @@ namespace GG {
 			//Solution327* test = new Solution327;
 			auto_ptr<Solution327> test(new Solution327);
 			int result;
-			vector<int> nums1 = {1, -2, 4, -4};
+			vector<int> nums1 = {1, -2, -1, 4};
 
 			result = test->countRangeSum(nums1, -2, 2);
 			result = result;
