@@ -673,6 +673,7 @@ namespace GG {
 
 
 	/*321. Create Maximum Number (hard)
+	Time O((m+n)^3) in the worst case
 	https://leetcode.com/problems/create-maximum-number/
 	https://discuss.leetcode.com/topic/32272/share-my-greedy-solution/2
 	*/
@@ -683,7 +684,8 @@ namespace GG {
 			int len = nums.size();
 
 			for (int i = 0, j = 0; i < len; ++i) {
-				while (len - i + j > k && j > 0 && result[j - 1] < nums[i])
+				//make sure enough items for compose k items
+				while (len - i > k - j  && j > 0 && result[j - 1] < nums[i])
 					--j;
 
 				if (j < k)
@@ -746,6 +748,7 @@ namespace GG {
 
 
 	/*317. Shortest Distance from All Buildings (hard)
+	Time = O()	Space = O(m*n) maximal
 	https://leetcode.com/problems/shortest-distance-from-all-buildings/
 	https://discuss.leetcode.com/topic/31702/36-ms-c-solution
 	https://discuss.leetcode.com/topic/31925/java-solution-with-explanation-and-time-complexity-analysis
@@ -756,8 +759,9 @@ namespace GG {
 			int m = grid.size(), n = grid[0].size();
 			auto total = grid;
 			int walk = 0, mindist, delta[] = { 0, 1, 0, -1, 0 };
-			for (int i = 0; i<m; ++i) {
-				for (int j = 0; j<n; ++j) {
+
+			for (int i = 0; i < m; ++i) {
+				for (int j = 0; j < n; ++j) {
 					if (grid[i][j] == 1) {
 						mindist = -1;
 						auto dist = grid;
@@ -766,7 +770,7 @@ namespace GG {
 						while (q.size()) {
 							auto ij = q.front();
 							q.pop();
-							for (int d = 0; d<4; ++d) {
+							for (int d = 0; d < 4; ++d) {
 								int pos_i = ij.first + delta[d];
 								int pos_j = ij.second + delta[d + 1];
 								if (pos_i >= 0 && pos_i < m && pos_j >= 0 && pos_j < n && grid[pos_i][pos_j] == walk) {
