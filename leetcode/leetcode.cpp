@@ -1000,10 +1000,12 @@ namespace GG {
 			for (auto item : nums)
 				inums[idx++] = item;
 
+			//k can be seen as right
 			vector<vector<int>> dp(n, vector<int>(n, 0));
 			for (int k = 2; k < n; ++k) {
 				for (int left = 0; left < n - k; ++left) {
 					int right = left + k;
+					//this loop can be thought as first loop
 					for (int i = left + 1; i < right; ++i)
 						dp[left][right] = max(dp[left][right], inums[left] * inums[i] * inums[right] + dp[left][i] + dp[i][right]);
 				}
@@ -1016,6 +1018,7 @@ namespace GG {
 
 
 	/*308. Range Sum Query 2D - Mutable (hard)
+	Time = O(n * log n)		Space = O(2 * n) 
 	https://leetcode.com/problems/range-sum-query-2d-mutable/
 	http://blog.csdn.net/qq508618087/article/details/51303552
 	http://www.guoting.org/leetcode/leetcode-308-range-sum-query-2d-mutable/
@@ -1171,6 +1174,7 @@ namespace GG {
 
 
 	/*302. Smallest Rectangle Enclosing Black Pixels (hard)
+	Time = O(m * log n + n * log m)		Space = O(1)
 	https://leetcode.com/problems/smallest-rectangle-enclosing-black-pixels/
 	https://discuss.leetcode.com/topic/29006/c-java-python-binary-search-solution-with-explanation
 	*/
@@ -1194,9 +1198,11 @@ namespace GG {
 			while (i != j) {
 				int k = low;
 				int mid = i + (j - i) / 2;
+				//try to find 1 in current row 
 				while (k < high && '0' == (*image)[mid][k])
 					++k;
 
+				//no any 1 in current row
 				if (k < high == opt)
 					j = mid;
 				else
@@ -20001,6 +20007,7 @@ using namespace GG;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	cout << __cplusplus << endl;
 	GG::main();
 	MyClass::main();
 	Solution24::main();
