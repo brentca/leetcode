@@ -748,7 +748,7 @@ namespace GG {
 
 
 	/*317. Shortest Distance from All Buildings (hard)
-	Time = O()	Space = O(m*n) maximal
+	Time = O(kmn)	Space = O(m*n)  k is number of empty place 
 	https://leetcode.com/problems/shortest-distance-from-all-buildings/
 	https://discuss.leetcode.com/topic/31702/36-ms-c-solution
 	https://discuss.leetcode.com/topic/31925/java-solution-with-explanation-and-time-complexity-analysis
@@ -803,6 +803,7 @@ namespace GG {
 
 
 	/*316. Remove Duplicate Letters (hard)
+	Time = O(26 * n)	Space = O(n) or O(1)
 	https://leetcode.com/problems/remove-duplicate-letters/
 	https://discuss.leetcode.com/topic/31404/a-short-o-n-recursive-greedy-solution
 	https://discuss.leetcode.com/topic/31413/easy-to-understand-iterative-java-solution
@@ -833,11 +834,53 @@ namespace GG {
 
 			return s.empty() ? "" : s[pos] + removeDuplicateLetters(tmp);
 		}
+
+		string removeDuplicateLetters1(string s) {
+			map<char, int> pos;
+
+			//find last postion of every char
+			for (int i = s.size() - 1; i >= 0; --i) {
+				if (pos.count(s[i]) < 1)
+					pos[s[i]] = i;
+
+				if (pos.size() >= 26)
+					break;
+			}
+
+			string result;
+			result.resize(pos.size());
+			int start = 0;
+			int cur = 0;
+
+			for (int i = 0; i < pos.size(); ++i) {
+				start = findSmallest(s, start, pos);
+				char c = s[start++];
+				result[cur++] = c;
+				pos[c] = -1;
+			}
+
+			return result;
+		}
+
+		int findSmallest(const string& s, int start, map<char, int>& pos) {
+			int end = INT_MAX;
+			for (auto item : pos)
+				if (item.second != -1)
+					end = min(end, item.second);
+
+			int result = end;
+			for (int i = end - 1; i >= start; --i)
+				if ((pos[s[i]] != -1) && (s[i] <= s[result]))
+					result = i;
+
+			return result;
+		}
 	};
 	/*316. Remove Duplicate Letters end */
 
 
 	/*315. Count of Smaller Numbers After Self (hard)
+	Time = O(log n * n)	Space = O(n)
 	https://leetcode.com/problems/count-of-smaller-numbers-after-self/
 	https://discuss.leetcode.com/topic/31405/9ms-short-java-bst-solution-get-answer-when-building-bst
 	https://discuss.leetcode.com/topic/31162/mergesort-solution
@@ -919,7 +962,7 @@ namespace GG {
 				result[vec[i].second] += right - mid;
 			}
 
-			//after loop, all the bigger number postion will >= rigth
+			//after loop, all the bigger number postion will >= final right
 			//so, no sorting for that part
 			inplace_merge(vec.begin() + low, vec.begin() + mid, vec.begin() + right);
 		}
@@ -941,8 +984,8 @@ namespace GG {
 	/*315. Count of Smaller Numbers After Self end */
 
 
-
 	/*312. Burst Balloons (hard)
+	Time = O(n^3)		Space = O(n)
 	https://leetcode.com/problems/burst-balloons/
 	https://discuss.leetcode.com/topic/30746/share-some-analysis-and-explanations/16
 	*/
