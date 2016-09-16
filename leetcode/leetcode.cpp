@@ -1323,6 +1323,7 @@ namespace GG {
 
 
 	/*295. Find Median from Data Stream (hard)
+	Time = O(1)		Space = O(n)
 	https://leetcode.com/problems/find-median-from-data-stream/
 	https://discuss.leetcode.com/topic/27521/short-simple-java-c-python-o-log-n-o-1
 	https://discuss.leetcode.com/topic/27522/java-python-two-heap-solution-o-log-n-add-o-1-find
@@ -1353,6 +1354,10 @@ namespace GG {
 
 
 	/*282. Expression Add Operators (hard)
+	Time = O(4 ^ n)		Space = O(4 ^ n)
+	T(n) = 3 * T(n-1) + 3 * T(n-2) + 3 * T(n-3) + ... + 3 *T(1);
+	T(n-1) = 3 * T(n-2) + 3 * T(n-3) + ... 3 * T(1);
+	Thus T(n) = 4T(n-1);
 	https://leetcode.com/problems/expression-add-operators/
 	https://discuss.leetcode.com/topic/24523/java-standard-backtrace-ac-solutoin-short-and-clear/2
 	https://discuss.leetcode.com/topic/24478/17-lines-solution-dfs-c
@@ -1423,7 +1428,6 @@ namespace GG {
 			}
 		}
 
-
 		vector<string> addOperators1(string num, int target) {
 			vector<string> res;
 			if (num.empty()) return res;
@@ -1436,6 +1440,7 @@ namespace GG {
 
 			return res;
 		}
+
 		static void main() {
 			Solution282* test = new Solution282;
 			vector<string> result;
@@ -1458,8 +1463,10 @@ namespace GG {
 
 
 	/*272. Closest Binary Search Tree Value II (hard)
+	Time = O(n)		Space = O(n)
 	https://leetcode.com/problems/closest-binary-search-tree-value-ii/
 	https://discuss.leetcode.com/topic/22940/ac-clean-java-solution-using-two-stacks/29
+	http://codingmelon.com/2015/12/13/closest-binary-search-tree-value-ii-leetcode-272/
 	*/
 	class Solution272 {
 	public:
@@ -1568,6 +1575,7 @@ namespace GG {
 
 
 	/*269. Alien Dictionary (hard)
+	Time = O()
 	https://leetcode.com/problems/alien-dictionary/
 	https://discuss.leetcode.com/topic/28308/java-ac-solution-using-bfs/9
 	*/
@@ -1628,6 +1636,7 @@ namespace GG {
 
 
 	/*239. Sliding Window Maximum (hard)
+	Time = O(n)		Space = O(k)
 	https://leetcode.com/problems/sliding-window-maximum/
 	https://discuss.leetcode.com/topic/19055/java-o-n-solution-using-deque-with-explanation
 	*/
