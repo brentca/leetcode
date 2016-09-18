@@ -2267,7 +2267,6 @@ namespace GG {
 	*/
 	class Solution140 {
 	public:
-		//void wordmatch()
 		unordered_map<string, vector<string>> m;
 		vector<string> wordBreak(string s, unordered_set<string>& wordDict) {
 			vector<string> result;
@@ -2411,8 +2410,6 @@ namespace GG {
 	https://leetcode.com/problems/merge-intervals/
 	https://discuss.leetcode.com/topic/20263/c-10-line-solution-easing-understanding
 	*/
-	/**
-	* Definition for an interval.*/
 	class Solution56 {
 	public:
 		vector<Interval> merge(vector<Interval>& intervals) {
@@ -2512,6 +2509,7 @@ namespace GG {
 	/*42. Trapping Rain Water (hard)
 	https://leetcode.com/problems/trapping-rain-water/
 	https://discuss.leetcode.com/topic/5125/sharing-my-simple-c-code-o-n-time-o-1-space
+	https://discuss.leetcode.com/topic/4939/a-stack-based-solution-for-reference-inspired-by-histogram
 	*/
 	class Solution42 {
 	public:
