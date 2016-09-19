@@ -2541,6 +2541,7 @@ namespace GG {
 
 
 	/*23. Merge k Sorted Lists (hard)
+	Time = O(k*n*logk)
 	https://leetcode.com/problems/merge-k-sorted-lists/
 	https://discuss.leetcode.com/topic/6882/sharing-my-straightforward-c-solution-without-data-structure-other-than-vector
 	*/
