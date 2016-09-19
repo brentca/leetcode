@@ -2541,7 +2541,7 @@ namespace GG {
 
 
 	/*23. Merge k Sorted Lists (hard)
-	Time = O(k*n*logk)
+	Time = O(k*n*logk)		Space = O(1)
 	https://leetcode.com/problems/merge-k-sorted-lists/
 	https://discuss.leetcode.com/topic/6882/sharing-my-straightforward-c-solution-without-data-structure-other-than-vector
 	*/
@@ -2672,6 +2672,7 @@ namespace GG {
 
 
 	/*399. Evaluate Division (medium)
+	Time = Big-Theta(|V| + |E|)		Space = O(|V|) in the worst case
 	https://leetcode.com/problems/evaluate-division/
 	https://discuss.leetcode.com/topic/58312/c-0ms-hash-dfs-solution
 	*/
@@ -2718,9 +2719,11 @@ namespace GG {
 			return 0;
 		}
 	};
-	/*394. Decode String end */
+	/*399. Evaluate Division end */
 
-	/*399. Evaluate Division (medium)
+
+	/*394. Decode String (medium)
+	
 	https://leetcode.com/problems/decode-string/
 	https://discuss.leetcode.com/topic/57159/simple-java-solution-using-stack
 	*/
