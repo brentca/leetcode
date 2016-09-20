@@ -2723,12 +2723,53 @@ namespace GG {
 
 
 	/*394. Decode String (medium)
-	
 	https://leetcode.com/problems/decode-string/
 	https://discuss.leetcode.com/topic/57159/simple-java-solution-using-stack
 	*/
 	class Solution394 {
 	public:
+		string decodeString1(string s) {
+			stack<string> data;
+			data.push("");
+
+			string cur("");
+			for (auto c : s) {
+				if ('[' == c) {
+					data.push(cur);
+					cur = "";
+				}
+				else if (']' == c) {
+					while (!isdigit(data.top()[0])) {
+						cur = data.top() + cur;
+						data.pop();
+					}
+
+					int times = stoi(data.top());
+					data.pop();
+					string tmp("");
+					while (times-- > 0)
+						tmp.append(cur);
+
+					data.push(tmp);
+					cur = "";
+				}
+				else if (isdigit(c))
+					cur += c;
+				else {
+					cur = c;
+					data.push(cur);
+					cur = "";
+				}
+			}
+
+			while (!data.empty()) {
+				cur = data.top() + cur;
+				data.pop();
+			}
+
+			return cur;
+		}
+
 		string decodeString(string s) {
 			stack<string> data;
 			data.push("");
@@ -2796,7 +2837,7 @@ namespace GG {
 						count = 2;
 					else if (item >> 3 == 0xF0)//else if (item >> 3 == 0b11110)
 						count = 3;
-					else if (item >> 7)
+					else if (item >> 7)	//first bit is 1
 						return false;
 				}
 				else {
@@ -2811,6 +2852,7 @@ namespace GG {
 		}
 	};
 	/*393. UTF-8 Validation end */
+
 
 	/*388. Longest Absolute File Path (medium)
 	https://leetcode.com/problems/longest-absolute-file-path/
@@ -2827,13 +2869,12 @@ namespace GG {
 					++start;
 
 				string temp = text.substr(start, end - start);
-				if (temp != "") tokens.push_back(temp);
+				tokens.push_back(temp);
 				start = end + 1;
 			}
 
 			string temp = text.substr(start);
-			if (temp != "") 
-				tokens.push_back(temp);
+			tokens.push_back(temp);
 
 			return tokens;
 		}
