@@ -2927,7 +2927,7 @@ namespace GG {
 
 		int lengthLongestPath(string input) {
 			int maxlen = 0;
-			vector<int>pathlen(input.length() + 1);
+			vector<int>pathlen(input.length() + 1, 0);
 			vector<string> items;
 
 			items = split(input, '\n');
@@ -2951,11 +2951,49 @@ namespace GG {
 			int result;
 			string input1("dir\n\tsubdir1\n\t\tfile1.ext\n\t\tsubsubdir1\n\tsubdir2\n\t\tsubsubdir2\n\t\t\tfile2.ext");
 			string input2("a\n\tb.txt\na2\n\tb2.txt");
-			result = test->lengthLongestPath(input2);
+			result = test->lengthLongestPath(input1);
 			delete test;
 		}
 	};
 	/*388. Longest Absolute File Path end */
+
+
+	/*382. Linked List Random Node (medium)
+	https://leetcode.com/problems/linked-list-random-node/
+	https://discuss.leetcode.com/topic/53753/brief-explanation-for-reservoir-sampling
+	https://en.wikipedia.org/wiki/Reservoir_sampling
+	*/
+	class Solution382 {
+	public:
+		/** @param head The linked list's head.
+		Note that the head is guaranteed to be not null, so it contains at least one node. */
+		Solution382(ListNode* head) {
+			nodes = head;
+		}
+
+		/** Returns a random node's value. */
+		int getRandom() {
+			int val = nodes->val;
+			int i = 2;
+			ListNode* cur = nodes->next;
+
+			while (cur) {
+				int j = rand() % i;
+
+				if (0 == j)
+					val = cur->val;
+
+				++i;
+				cur = cur->next;
+			}
+
+			return val;
+		}
+
+		ListNode* nodes;
+	};
+	/*382. Linked List Random Node end */
+
 
 	/*379. Design Phone Directory (medium)
 	https://leetcode.com/problems/design-phone-directory/
@@ -3032,6 +3070,7 @@ namespace GG {
 
 
 	/*378. Kth Smallest Element in a Sorted Matrix (medium)
+	Time = O(k)		Space = O(k)
 	https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/
 	https://discuss.leetcode.com/topic/52948/share-my-thoughts-and-clean-java-code
 	*/
@@ -3054,11 +3093,14 @@ namespace GG {
 		
 		int kthSmallest(vector<vector<int>>& matrix, int k) {
 			int n = matrix.size();
-			priority_queue < item, vector<item>, cmp> data;
+			priority_queue <item, vector<item>, cmp> data;
 
+			//time = Big-Theta n * n * log n
 			for (int i = 0; i < n; ++i)
 				data.push(item(matrix[0][i], 0, i));
 
+			//time = around k * log n
+			//top one is always minimal, pop k - 1 will get the kth
 			while (--k) {
 				item head = data.top();
 				data.pop();
@@ -3084,6 +3126,7 @@ namespace GG {
 
 
 	/*375. Guess Number Higher or Lower II (medium)
+	Time = O(n ^ 3)		Space = O(n * n)
 	https://leetcode.com/problems/guess-number-higher-or-lower-ii/
 	https://discuss.leetcode.com/topic/52100/dp-java-o-n-3-solution-with-explanation-15ms-17-lines
 	https://discuss.leetcode.com/topic/52627/recursion-memization
@@ -3157,6 +3200,7 @@ namespace GG {
 				data.push(cur);
 			}
 
+			//top is always the smallest one
 			for (int i = 0; i < k && !data.empty(); ++i) {
 				node cur = data.top();
 				result.push_back({ cur.num1, cur.num2 });
@@ -3175,13 +3219,12 @@ namespace GG {
 			multimap<int, pair<int, int>> data;
 			vector<pair<int, int>> result;
 
-			for (int i = 0; i < nums1.size(); ++i)
-				for (int j = 0; j < nums2.size(); ++j) {
-					if (data.size() >= k && nums1[i] + nums2[j] >= data.rbegin()->first)
-						break;
-					data.insert({ nums1[i] + nums2[j], make_pair(nums1[i] , nums2[j]) });
-				}
-
+			for (int i = 0; i < nums1.size() && i < k; ++i)
+			for (int j = 0; j < nums2.size() && j < k; ++j) {
+				if (data.size() >= k && nums1[i] + nums2[j] >= data.rbegin()->first)
+					break;
+				data.insert({ nums1[i] + nums2[j], make_pair(nums1[i] , nums2[j]) });
+			}
 
 			int num = 0;
 
@@ -3317,16 +3360,17 @@ namespace GG {
 			int mi = 0;
 			int m = 0;
 
-			for (int i = n - 1; i >= 0; --i) {
-				for (int j = i; j < n; ++j) {
-					if (0 == nums[j] % nums[i] && dp[i] < dp[j] + 1) {
-						dp[i] = dp[j] + 1;
-						parent[i] = j;
+			//m used for the maximal length, mi used for the first in that subset
+			//so it is easier to start from the end of the array
+			for (int i = n - 1; i >= 0; --i)
+			for (int j = i; j < n; ++j) {
+				if (0 == nums[j] % nums[i] && dp[i] < dp[j] + 1) {
+					dp[i] = dp[j] + 1;
+					parent[i] = j;
 
-						if (dp[i] > m) {
-							m = dp[i];
-							mi = i;
-						}
+					if (dp[i] > m) {
+						m = dp[i];
+						mi = i;
 					}
 				}
 			}
@@ -5393,45 +5437,7 @@ namespace GG {
 			}
 		}
 	};
-
 	/*54. Spiral Matrix end */
-
-
-	/*382. Linked List Random Node (medium)
-	https://leetcode.com/problems/linked-list-random-node/
-	https://discuss.leetcode.com/topic/53753/brief-explanation-for-reservoir-sampling
-	https://en.wikipedia.org/wiki/Reservoir_sampling
-	*/
-	class Solution382 {
-	public:
-		/** @param head The linked list's head.
-		Note that the head is guaranteed to be not null, so it contains at least one node. */
-		Solution382(ListNode* head) {
-			nodes = head;
-		}
-
-		/** Returns a random node's value. */
-		int getRandom() {
-			int val = nodes->val;
-			int i = 2;
-			ListNode* cur = nodes->next;
-
-			while (cur) {
-				int j = rand() % i;
-
-				if (0 == j)
-					val = cur->val;
-
-				++i;
-				cur = cur->next;
-			}
-
-			return val;
-		}
-
-		ListNode* nodes;
-	};
-	/*382. Linked List Random Node end */
 
 
 	/*274. H-Index (medium)
