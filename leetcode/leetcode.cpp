@@ -3602,6 +3602,7 @@ namespace GG {
 
 
 	/*356. Line Reflection (medium)
+	Timer = O(n) without sorting	Space = O(n)
 	https://leetcode.com/problems/line-reflection/
 	https://discuss.leetcode.com/topic/47851/11ms-two-pass-hashset-based-java-solution/2
 	*/
@@ -3616,6 +3617,8 @@ namespace GG {
 			if (len < 2)
 				return true;
 
+			//left and right can be got via going over the
+			//whole vector, no need for sorting firstly
 			int left = points[0].first;
 			int right = points[len - 1].first;
 			
@@ -3682,6 +3685,106 @@ namespace GG {
 		}
 	};
 	/*356. Line Reflection end */
+
+
+	/*353. Design Snake Game (medium)
+	https://leetcode.com/problems/design-snake-game/
+	https://discuss.leetcode.com/topic/47385/c-straightforward-solution
+	*/
+	class SnakeGame353 {
+	public:
+		/** Initialize your data structure here.
+		@param width - screen width
+		@param height - screen height
+		@param food - A list of food positions
+		E.g food = [[1,1], [1,0]] means the first food is positioned at [1,1], the second is at [1,0]. */
+		SnakeGame353(int width, int height, vector<pair<int, int>> food) {
+			m_width = width;
+			m_height = height;
+
+			m_body.push_back(make_pair(0, 0));
+			for (auto item : food)
+				m_food.push(item);
+		}
+
+		/** Moves the snake.
+		@param direction - 'U' = Up, 'L' = Left, 'R' = Right, 'D' = Down
+		@return The game's score after the move. Return -1 if game over.
+		Game over when snake crosses the screen boundary or bites its body. */
+		int move(string direction) {
+			pair<int, int> newpos(m_body.front());
+
+			switch (direction[0])
+			{
+			case 'U':
+				--newpos.first;
+				break;
+
+			case 'D':
+				++newpos.first;
+				break;
+
+			case 'L':
+				--newpos.second;
+				break;
+
+			case 'R':
+				++newpos.second;
+				break;
+
+			default:
+				return -1;
+			}
+
+			//check pos
+			if (newpos.first < 0 || newpos.first >= m_height ||
+				newpos.second < 0 || newpos.second >= m_width)
+				return -1;
+
+			//check body
+			for (int i = 0; i < m_body.size() - 1; ++i) {
+				if (m_body.at(i).first == newpos.first && m_body.at(i).second == newpos.second)
+					return -1;
+			}
+
+			m_body.push_front(newpos);
+			if (!m_food.empty() && m_food.front().first == newpos.first && m_food.front().second == newpos.second)
+				m_food.pop();
+			else
+				m_body.pop_back();
+
+			return m_body.size() - 1;
+		}
+
+		static void main() {
+			int width = 3, height = 2;
+			vector<pair<int, int>> food = { { 3, 2 }, { 0, 1 } };
+			int result;
+
+			SnakeGame353* test = new SnakeGame353(width, height, food);
+			//["R"],["D"],["R"],["U"],["L"],["U"]
+			result = test->move("R");
+			result = test->move("D");
+			result = test->move("R");
+			result = test->move("U");
+			result = test->move("L");
+			result = test->move("U");
+
+			delete test;
+		}
+
+		int m_width;
+		int m_height;
+		deque<pair<int, int>> m_body;
+		queue<pair<int, int>> m_food;
+	};
+
+	/**
+	* Your SnakeGame object will be instantiated and called as such:
+	* SnakeGame obj = new SnakeGame(width, height, food);
+	* int param_1 = obj.move(direction);
+	*/
+	/*353. Design Snake Game end */
 
 
 	/*351. Android Unlock Patterns (medium)
@@ -5804,106 +5907,6 @@ namespace GG {
 		}
 	};
 	/*286. Walls and Gates end */
-
-
-	/*353. Design Snake Game (medium)
-	https://leetcode.com/problems/design-snake-game/
-	https://discuss.leetcode.com/topic/47385/c-straightforward-solution
-	*/
-	class SnakeGame353 {
-	public:
-		/** Initialize your data structure here.
-		@param width - screen width
-		@param height - screen height
-		@param food - A list of food positions
-		E.g food = [[1,1], [1,0]] means the first food is positioned at [1,1], the second is at [1,0]. */
-		SnakeGame353(int width, int height, vector<pair<int, int>> food) {
-			m_width = width;
-			m_height = height;
-
-			m_body.push_back(make_pair(0, 0));
-			for (auto item : food)
-				m_food.push(item);
-		}
-
-		/** Moves the snake.
-		@param direction - 'U' = Up, 'L' = Left, 'R' = Right, 'D' = Down
-		@return The game's score after the move. Return -1 if game over.
-		Game over when snake crosses the screen boundary or bites its body. */
-		int move(string direction) {
-			pair<int, int> newpos(m_body.front());
-
-			switch (direction[0])
-			{
-			case 'U':
-				--newpos.first;
-				break;
-
-			case 'D':
-				++newpos.first;
-				break;
-
-			case 'L':
-				--newpos.second;
-				break;
-
-			case 'R':
-				++newpos.second;
-				break;
-
-			default:
-				return -1;
-			}
-
-			//check pos
-			if (newpos.first < 0 || newpos.first >= m_height ||
-				newpos.second < 0 || newpos.second >= m_width)
-				return -1;
-
-			//check body
-			for (int i = 0; i < m_body.size() - 1; ++i) {
-				if (m_body.at(i).first == newpos.first && m_body.at(i).second == newpos.second)
-					return -1;
-			}
-
-			m_body.push_front(newpos);
-			if (!m_food.empty() && m_food.front().first == newpos.first && m_food.front().second == newpos.second)
-				m_food.pop();
-			else
-				m_body.pop_back();
-
-			return m_body.size() - 1;
-		}
-
-		static void main() {
-			int width = 3, height = 2;
-			vector<pair<int, int>> food = { { 3, 2 }, { 0, 1 } };
-			int result;
-
-			SnakeGame353* test = new SnakeGame353(width, height, food);
-			//["R"],["D"],["R"],["U"],["L"],["U"]
-			result = test->move("R");
-			result = test->move("D");
-			result = test->move("R");
-			result = test->move("U");
-			result = test->move("L");
-			result = test->move("U");
-
-			delete test;
-		}
-
-		int m_width;
-		int m_height;
-		deque<pair<int, int>> m_body;
-		queue<pair<int, int>> m_food;
-	};
-
-	/**
-	* Your SnakeGame object will be instantiated and called as such:
-	* SnakeGame obj = new SnakeGame(width, height, food);
-	* int param_1 = obj.move(direction);
-	*/
-	/*353. Design Snake Game end */
 
 
 	/*313. Super Ugly Number (medium)
