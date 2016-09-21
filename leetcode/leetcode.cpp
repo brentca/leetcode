@@ -3125,6 +3125,67 @@ namespace GG {
 	/*378. Kth Smallest Element in a Sorted Matrix end */
 
 
+	/*377. Combination Sum IV (medium)
+	https://leetcode.com/problems/combination-sum-iv/
+	https://discuss.leetcode.com/topic/52302/1ms-java-dp-solution-with-detailed-explanation
+	https://discuss.leetcode.com/topic/52186/my-3ms-java-dp-solution
+	*/
+	class Solution377 {
+	public:
+		int combination(vector<int>& nums, int target) {
+			if (0 == target)
+				return 1;
+
+			int count = 0;
+			for (auto item : nums) {
+				if (item > target)
+					break;
+
+				count += combination(nums, target - item);
+			}
+
+			return count;
+		}
+
+		int combinationSum41(vector<int>& nums, int target) {
+			if (nums.empty())
+				return 0;
+
+			sort(nums.begin(), nums.end());
+			return combination(nums, target);
+		}
+
+		int combinationSum4(vector<int>& nums, int target) {
+			if (nums.empty())
+				return 0;
+
+			vector<int> dp(target + 1, 0);
+
+			//target 0 has only 1 empty combination
+			dp[0] = 1;
+			for (int i = 1; i < dp.size(); ++i) {
+				for (auto it : nums) {
+					if (i >= it)
+						dp[i] += dp[i - it];
+				}
+			}
+
+			return dp[target];
+		}
+
+		static void main() {
+			Solution377* test = new Solution377;
+			int result;
+			vector<int> nums1 = { 1, 2, 4 };
+			int target1 = 32;
+
+			result = test->combinationSum4(nums1, target1);
+			delete test;
+		}
+	};
+	/*377. Combination Sum IV end */
+
+
 	/*375. Guess Number Higher or Lower II (medium)
 	Time = O(n ^ 3)		Space = O(n * n)
 	https://leetcode.com/problems/guess-number-higher-or-lower-ii/
@@ -3141,6 +3202,9 @@ namespace GG {
 			if (0 != data[s][e])
 				return data[s][e];
 
+			//query for every item's lost and get the minimal one
+			//for every item, use bigger lost of left side and right
+			//will gurantee a win for this lost with that bigger value
 			int result = numeric_limits<int>::max();
 			for (int k = s; k <= e; ++k) {
 				int tmp = k + max(dp(data, s, k - 1), dp(data, k + 1, e));
@@ -3511,6 +3575,30 @@ namespace GG {
 		}
 	};
 	/*360. Sort Transformed Array end */
+
+
+	/*357. Count Numbers with Unique Digits (medium)
+	https://leetcode.com/problems/count-numbers-with-unique-digits/
+	https://discuss.leetcode.com/topic/47983/java-dp-o-1-solution
+	*/
+	class Solution357 {
+	public:
+		int countNumbersWithUniqueDigits(int n) {
+			if (n == 0)     return 1;
+
+			int res = 10;
+			int uniqueDigits = 9;
+			int availableNumber = 9;
+			while (n-- > 1 && availableNumber > 0) {
+				uniqueDigits = uniqueDigits * availableNumber;
+				res += uniqueDigits;
+				availableNumber--;
+			}
+
+			return res;
+		}
+	};
+	/*357. Count Numbers with Unique Digits end */
 
 
 	/*356. Line Reflection (medium)
@@ -5462,69 +5550,6 @@ namespace GG {
 		}
 	};
 	/*274. H-Index end */
-
-
-	/*377. Combination Sum IV (medium)
-	https://leetcode.com/problems/combination-sum-iv/
-	https://discuss.leetcode.com/topic/52302/1ms-java-dp-solution-with-detailed-explanation
-	https://discuss.leetcode.com/topic/52186/my-3ms-java-dp-solution
-	*/
-	class Solution377 {
-	public:
-		int combination(vector<int>& nums, int target) {
-			if (0 == target)
-				return 1;
-
-			int count = 0;
-			for (auto item : nums) {
-				if (item > target)
-					break;
-
-				count += combination(nums, target - item);
-			}
-
-			return count;
-		}
-
-		int combinationSum41(vector<int>& nums, int target) {
-			if (nums.empty())
-				return 0;
-
-			sort(nums.begin(), nums.end());
-			return combination(nums, target);
-		}
-
-		int combinationSum4(vector<int>& nums, int target) {
-			if (nums.empty())
-				return 0;
-
-			vector<int> dp(target + 1, 0);
-
-			//target 0 has only 1 empty combination
-			dp[0] = 1;
-			for (int i = 1; i < dp.size(); ++i) {
-				for (auto it : nums) {
-					if (i >= it)
-					{
-						dp[i] += dp[i - it];
-					}
-				}
-			}
-
-			return dp[target];
-		}
-
-		static void main() {
-			Solution377* test = new Solution377;
-			int result;
-			vector<int> nums1 = { 1, 2, 4 };
-			int target1 = 32;
-
-			result = test->combinationSum4(nums1, target1);
-			delete test;
-		}
-	};
-	/*377. Combination Sum IV end */
 
 
 	/*323. Number of Connected Components in an Undirected Graph (medium)
@@ -12619,30 +12644,6 @@ namespace DP {
 		}
 	};
 	/*91. Decode Ways end */
-
-
-	/*357. Count Numbers with Unique Digits (medium)
-	https://leetcode.com/problems/count-numbers-with-unique-digits/
-	https://discuss.leetcode.com/topic/47983/java-dp-o-1-solution
-	*/
-	class Solution357 {
-	public:
-		int countNumbersWithUniqueDigits(int n) {
-			if (n == 0)     return 1;
-
-			int res = 10;
-			int uniqueDigits = 9;
-			int availableNumber = 9;
-			while (n-- > 1 && availableNumber > 0) {
-				uniqueDigits = uniqueDigits * availableNumber;
-				res += uniqueDigits;
-				availableNumber--;
-			}
-
-			return res;
-		}
-	};
-	/*357. Count Numbers with Unique Digits end */
 
 
 	/*300. Longest Increasing Subsequence (medium)
