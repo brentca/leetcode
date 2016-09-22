@@ -3993,6 +3993,8 @@ namespace GG {
 
 	/*331. Verify Preorder Serialization of a Binary Tree (medium)
 	https://leetcode.com/problems/verify-preorder-serialization-of-a-binary-tree/
+	https://discuss.leetcode.com/topic/35976/7-lines-easy-java-solution
+	https://www.hrwhisper.me/leetcode-verify-preorder-serialization-of-a-binary-tree/
 	*/
 	class Solution331 {
 	public:
@@ -4003,7 +4005,6 @@ namespace GG {
 				if (data.empty() || '#' == data.top())
 					return false;
 			}
-
 
 			return true;
 		}
@@ -4028,6 +4029,47 @@ namespace GG {
 
 			if (1 == buf.size() && '#' == buf.top())
 				return true;
+			return false;
+		}
+
+		bool isValidSerialization1(string preorder) {
+			if (preorder.empty())
+				return false;
+
+			int len = preorder.size();
+			stack<string> buf;
+			string strnum;
+
+			for (int i = 0; i < len; ++i) {
+				if (preorder[i] == '#') {
+					strnum.clear();
+					if (!buf.empty() && buf.top() == "#") {
+						while (!buf.empty() && buf.top() == "#") {
+							buf.pop();
+
+							if (!buf.empty() && buf.top() != "#")
+								buf.pop();
+							else
+								return false;
+						}
+
+						buf.push("#");
+					}
+					else
+						buf.push("#");
+				}
+				else if (preorder[i] != ',') {
+					strnum.push_back(preorder[i]);
+					if (i == len - 1)
+						buf.push(strnum);
+				}
+				else if (!strnum.empty())
+					buf.push(strnum);
+			}
+
+			if (buf.size() == 1 && buf.top() == "#")
+				return true;
+
 			return false;
 		}
 	};
@@ -14294,56 +14336,6 @@ namespace STACK {
 		}
 	};
 	/*150. Evaluate Reverse Polish Notation end */
-
-
-	/*331. Verify Preorder Serialization of a Binary Tree (medium)
-	https://leetcode.com/problems/verify-preorder-serialization-of-a-binary-tree/
-	https://discuss.leetcode.com/topic/35976/7-lines-easy-java-solution
-	*/
-	class Solution331 {
-	public:
-		bool isValidSerialization(string preorder) {
-			if (preorder.empty())
-				return false;
-
-			int len = preorder.size();
-			stack<string> buf;
-			string strnum;
-
-			for (int i = 0; i < len; ++i) {
-				if (preorder[i] == '#') {
-					strnum.clear();
-					if (!buf.empty() && buf.top() == "#") {
-						while (!buf.empty() && buf.top() == "#") {
-							buf.pop();
-
-							if (!buf.empty() && buf.top() != "#")
-								buf.pop();
-							else
-								return false;
-						}
-
-						buf.push("#");
-					}
-					else
-						buf.push("#");
-				}
-				else if (preorder[i] != ',') {
-					strnum.push_back(preorder[i]);
-					if (i == len - 1)
-						buf.push(strnum);
-				}
-				else if (!strnum.empty())
-					buf.push(strnum);
-			}
-
-			if (buf.size() == 1 && buf.top() == "#")
-				return true;
-
-			return false;
-		}
-	};
-	/*331. Verify Preorder Serialization of a Binary Tree end */
 
 
 	/*71. Simplify Path (medium)
