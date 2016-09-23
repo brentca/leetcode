@@ -4082,6 +4082,7 @@ namespace GG {
 	https://leetcode.com/problems/wiggle-sort-ii/
 	https://discuss.leetcode.com/topic/32929/o-n-o-1-after-median-virtual-indexing/21
 	https://discuss.leetcode.com/topic/41464/step-by-step-explanation-of-index-mapping-in-java
+	https://en.wikipedia.org/wiki/Quickselect
 	*/
 	class Solution324 {
 	public:
@@ -4089,6 +4090,7 @@ namespace GG {
 			if (nums.size() < 2)
 				return;
 
+			//quickselect, get median, O(n) time and O(1) space
 			int n = nums.size();
 			int i = 0, j = n - 1, median = 0;
 			int mid = (n - 1) / 2;
@@ -4126,15 +4128,16 @@ namespace GG {
 			}
 		}
 
+		//n | 1 means when n is odd(n | 1 = n) and when n is even(n | 1 = n + 1)
 		int newindex(int index, int n) {
 			return (1 + 2 * index) % (n | 1);
 		}
 
 		static void main() {
 			Solution324* test = new Solution324;
-			vector<int> nums1 = { 10,11,12,13,14,15,16,17,18,19 };
-
-			test->wiggleSort(nums1);
+			//vector<int> nums1 = { 10,11,12,13,14,15,16,17,18,19 };
+			vector<int> nums2 = { 4, 3, 6, 5, 2, 9 };
+			test->wiggleSort(nums2);
 			delete test;
 		}
 	};
