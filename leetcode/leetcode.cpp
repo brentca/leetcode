@@ -4274,6 +4274,9 @@ namespace GG {
 				for (char c : item)
 					mask |= 1 << (c - 'a');
 
+				//make sure hash hold the maximal legth with the same key
+				//because this will make the product maximal if exist
+				//other wise the maximal legth will be missed by the later small one
 				maxlen[mask] = max(maxlen[mask], (int)item.size());
 
 				for (auto lenitem : maxlen) {
