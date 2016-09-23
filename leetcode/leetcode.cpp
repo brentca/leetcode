@@ -3579,7 +3579,8 @@ namespace GG {
 
 	/*357. Count Numbers with Unique Digits (medium)
 	https://leetcode.com/problems/count-numbers-with-unique-digits/
-	https://discuss.leetcode.com/topic/47983/java-dp-o-1-solution
+	https://discuss.leetcode.com/topic/47983/java-dp-o-1-solution/2
+	https://discuss.leetcode.com/topic/48332/java-o-1-with-explanation
 	*/
 	class Solution357 {
 	public:
@@ -3800,6 +3801,7 @@ namespace GG {
 			else if (0 == remain)
 				return 1;
 
+			//legal for jump from 2 to 9
 			int result = 0;
 			visit[cur] = true;
 			for (int i = 1; i < 10; ++i) {
@@ -5567,32 +5569,6 @@ namespace GG {
 		}
 	};
 	/*309. Best Time to Buy and Sell Stock with Cooldown end */
-
-
-	/*357. Count Numbers with Unique Digits (medium)
-	https://leetcode.com/problems/count-numbers-with-unique-digits/
-	https://discuss.leetcode.com/topic/47983/java-dp-o-1-solution/2
-	https://discuss.leetcode.com/topic/48332/java-o-1-with-explanation
-	*/
-	class Solution357 {
-	public:
-		int countNumbersWithUniqueDigits(int n) {
-			if (0 == n)     
-				return 1;
-
-			int res = 10;
-			int uniqueDigits = 9;
-			int availableNumber = 9;
-			while (n-- > 1 && availableNumber > 0) {
-				uniqueDigits = uniqueDigits * availableNumber;
-				res += uniqueDigits;
-				availableNumber--;
-			}
-
-			return res;
-		}
-	};
-	/*357. Count Numbers with Unique Digits end */
 
 
 	/*54. Spiral Matrix (medium)
@@ -20069,8 +20045,19 @@ using namespace LLIST;
 using namespace MYTEST;
 using namespace GG;
 
+int test(int* a, int &b, int c[]) {
+	int result = *a + b;
+	c[0] = 1;
+	return result;
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
+	int aa = 1; 
+	int bb = 2;
+	int cc[2] = { 0 };
+
+	test(&aa, bb, cc);
 	cout << __cplusplus << endl;
 	GG::main();
 	MyClass::main();
