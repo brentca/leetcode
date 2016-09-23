@@ -4054,11 +4054,9 @@ namespace GG {
 							else
 								return false;
 						}
-
-						buf.push("#");
 					}
-					else
-						buf.push("#");
+				
+					buf.push("#");
 				}
 				else if (preorder[i] != ',') {
 					strnum.push_back(preorder[i]);
@@ -4069,10 +4067,7 @@ namespace GG {
 					buf.push(strnum);
 			}
 
-			if (buf.size() == 1 && buf.top() == "#")
-				return true;
-
-			return false;
+			return 1 == buf.size() && "#" == buf.top();
 		}
 	};
 	/*331. Verify Preorder Serialization of a Binary Tree end */
@@ -4083,6 +4078,8 @@ namespace GG {
 	https://discuss.leetcode.com/topic/32929/o-n-o-1-after-median-virtual-indexing/21
 	https://discuss.leetcode.com/topic/41464/step-by-step-explanation-of-index-mapping-in-java
 	https://en.wikipedia.org/wiki/Quickselect
+	https://discuss.leetcode.com/topic/32861/3-lines-python-with-explanation-proof
+	https://discuss.leetcode.com/topic/32920/o-n-time-o-1-space-solution-with-detail-explanations
 	*/
 	class Solution324 {
 	public:
@@ -4118,6 +4115,8 @@ namespace GG {
 			int left = 0, right = n - 1;
 			i = 0;
 
+			//large number is put in odd index from left
+			//small number is put in even index from right
 			while (i <= right) {
 				if (nums[newindex(i, n)] > median)
 					swap(nums[newindex(left++, n)], nums[newindex(i++, n)]);
@@ -4144,6 +4143,84 @@ namespace GG {
 	/*324. Wiggle Sort II end */
 
 
+	/*323. Number of Connected Components in an Undirected Graph (medium)
+	https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/
+	https://www.youtube.com/watch?v=9pIvy6fksHs&index=4&list=PLUX6FBiUa2g4YWs6HkkCpXL6ru02i7y3Q
+	https://discuss.leetcode.com/topic/32752/easiest-2ms-java-solution
+	*/
+	class Solution323 {
+	public:
+		int countComponents(int n, vector<pair<int, int>>& edges) {
+			vector<int> root(n);
+
+			for (int i = 0; i < n; ++i)
+				root[i] = i;
+
+			for (auto item : edges) {
+				int p = item.first;
+				int q = item.second;
+
+				int rootp = findroot(root, p);
+				int rootq = findroot(root, q);
+
+				if (rootp != rootq) {
+					--n;
+					root[rootp] = rootq;
+				}
+			}
+
+			return n;
+		}
+
+		int findroot(vector<int>&root, int id) {
+			while (id != root[id]) {
+				root[id] = root[root[id]];
+				id = root[id];
+			}
+
+			return id;
+		}
+
+		int countComponents1(int n, vector<pair<int, int>>& edges) {
+			vector<bool> flag(n, false);
+			queue<int> nodes;
+			int result = 0;
+			unordered_map<int, unordered_set<int>> maps;
+
+			for (auto item : edges) {
+				maps[item.first].insert(item.second);
+				maps[item.second].insert(item.first);
+			}
+
+			for (auto item : maps) {
+				if (flag[item.first])
+					continue;
+
+				++result;
+				nodes.push(item.first);
+				while (!nodes.empty()) {
+					int cur = nodes.front();
+					flag[cur] = true;
+					nodes.pop();
+
+					for (auto next : maps[cur]) {
+						if (!flag[next])
+							nodes.push(next);
+					}
+				}
+			}
+
+			for (auto item : flag) {
+				if (!item)
+					++result;
+			}
+
+			return result;
+		}
+	};
+	/*323. Number of Connected Components in an Undirected Graph end */
+
+
 	/*320. Generalized Abbreviation (medium)
 	https://leetcode.com/problems/generalized-abbreviation/
 	https://discuss.leetcode.com/topic/32163/meet-in-google-interview-solution-with-concise-explanation
@@ -4151,7 +4228,8 @@ namespace GG {
 	*/
 	class Solution320 {
 	public:
-		void dfs(vector<string>& result, string word, int pos, int count, string cur) {
+		//count indicate how many chars have been abbriveated
+		void backtrack(vector<string>& result, string word, int pos, int count, string cur) {
 			if (pos == word.size()) {
 				if (count > 0)
 					cur += to_string(count);
@@ -4160,18 +4238,21 @@ namespace GG {
 				return;
 			}
 
+			//keep it
 			if (count > 0)
-				dfs(result, word, pos + 1, 0, cur + to_string(count) + word[pos]);
-			else
-				dfs(result, word, pos + 1, 0, cur + word[pos]);
+				 //has abbrivation before it, just abbriveate it.
+				backtrack(result, word, pos + 1, 0, cur + to_string(count) + word[pos]);
+			else //no abbrivation before it
+				backtrack(result, word, pos + 1, 0, cur + word[pos]);
 
-			dfs(result, word, pos + 1, count + 1, cur);
+			//abbriveate it
+			backtrack(result, word, pos + 1, count + 1, cur);
 		}
 
 		vector<string> generateAbbreviations(string word) {
 			vector<string> result;
 
-			dfs(result, word, 0, 0, "");
+			backtrack(result, word, 0, 0, "");
 
 			return result;
 		}
@@ -5674,84 +5755,6 @@ namespace GG {
 		}
 	};
 	/*274. H-Index end */
-
-
-	/*323. Number of Connected Components in an Undirected Graph (medium)
-	https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/
-	https://www.youtube.com/watch?v=9pIvy6fksHs&index=4&list=PLUX6FBiUa2g4YWs6HkkCpXL6ru02i7y3Q
-	https://discuss.leetcode.com/topic/32752/easiest-2ms-java-solution
-	*/
-	class Solution323 {
-	public:
-		int countComponents(int n, vector<pair<int, int>>& edges) {
-			vector<int> root(n);
-
-			for (int i = 0; i < n; ++i)
-				root[i] = i;
-
-			for (auto item : edges) {
-				int p = item.first;
-				int q = item.second;
-
-				int rootp = findroot(root, p);
-				int rootq = findroot(root, q);
-
-				if (rootp != rootq) {
-					--n;
-					root[rootp] = rootq;
-				}
-			}
-
-			return n;
-		}
-
-		int findroot(vector<int>&root, int id) {
-			while (id != root[id]) {
-				root[id] = root[root[id]];
-				id = root[id];
-			}
-
-			return id;
-		}
-
-		int countComponents1(int n, vector<pair<int, int>>& edges) {
-			vector<bool> flag(n, false);
-			queue<int> nodes;
-			int result = 0;
-			unordered_map<int, unordered_set<int>> maps;
-
-			for (auto item : edges) {
-				maps[item.first].insert(item.second);
-				maps[item.second].insert(item.first);
-			}
-
-			for (auto item : maps) {
-				if (flag[item.first])
-					continue;
-
-				++result;
-				nodes.push(item.first);
-				while (!nodes.empty()) {
-					int cur = nodes.front();
-					flag[cur] = true;
-					nodes.pop();
-
-					for (auto next : maps[cur]) {
-						if (!flag[next])
-							nodes.push(next);
-					}
-				}
-			}
-
-			for (auto item : flag) {
-				if (!item)
-					++result;
-			}
-
-			return result;
-		}
-	};
-	/*323. Number of Connected Components in an Undirected Graph end */
 
 
 	/*163. Missing Ranges (medium)
@@ -15360,37 +15363,6 @@ namespace SORT {
 		}
 	};
 	/*274. H-Index end */
-
-
-	/*324. Wiggle Sort II (medium)
-	https://leetcode.com/problems/wiggle-sort-ii/
-	https://discuss.leetcode.com/topic/32929/o-n-o-1-after-median-virtual-indexing/2
-	https://discuss.leetcode.com/topic/32920/o-n-time-o-1-space-solution-with-detail-explanations
-	*/
-	class Solution324 {
-	public:
-		void wiggleSort(vector<int>& nums) {
-			int len = nums.size();
-			auto midptr = nums.begin() + len / 2;
-
-			nth_element(nums.begin(), midptr, nums.end());
-			int mid = *midptr;
-
-			//(n | 1) calculates the nearest odd that is not less than n
-			#define A(i) nums[(1+2*i) % (len | 1)]
-			int i = 0, j = 0, k = len - 1;
-
-			while (j <= k) {
-				if (A(j) > mid)
-					swap(A(j++), A(i++));
-				else if (A(j) < mid)
-					swap(A(j), A(k--));
-				else
-					++j;
-			}
-		}
-	};
-	/*324. Wiggle Sort II end */
 
 
 	/*148. Sort List (medium)
