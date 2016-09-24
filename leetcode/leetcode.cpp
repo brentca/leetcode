@@ -2,6 +2,7 @@
 //
 
 #include "stdafx.h"
+#include <stdio.h>
 #include <vector>
 #include <string>
 #include <list>
@@ -16,7 +17,7 @@
 #include <numeric>
 #include <functional>
 #include <map>
-
+#include <iomanip> 
 using namespace std;
 
 //////////////////////////Tag GG//////////////////////////////////////////
@@ -20048,6 +20049,19 @@ int test(int* a, int &b, int c[]) {
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	printf("1=%0.7f\n", 0.55);
+	printf("2=%.07f\n", 0.55);
+	printf("3=%.7f\n", 0.55);
+
+	printf("%.6f\n", 0.5555555f);
+	printf("%.5f\n", 0.555555f);
+	printf("%.4f\n", 0.55555f);
+	printf("%.3f\n", 0.5555f);
+	printf("%.2f\n", 0.555f);
+	printf("%.1f\n", 0.55f);
+
+	float aa1 = 0.54;
+	std::cout << std::fixed << std::setprecision(1) << aa1;
 	int aa = 1; 
 	int bb = 2;
 	int cc[2] = { 0 };
