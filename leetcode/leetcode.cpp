@@ -163,6 +163,7 @@ namespace GG {
 
 
 	/*363. Max Sum of Rectangle No Larger Than K (hard)
+	Time = O(min(m,n)^2 * max(m,n) * log(max(m,n)))		Space = O(max(m, n)).
 	https://leetcode.com/problems/max-sum-of-sub-matrix-no-larger-than-k/
 	https://discuss.leetcode.com/topic/48875/accepted-c-codes-with-explanation-and-references
 	*/
@@ -4330,6 +4331,47 @@ namespace GG {
 	/*314. Binary Tree Vertical Order Traversal end */
 
 
+	/*313. Super Ugly Number (medium)
+	https://leetcode.com/problems/super-ugly-number/
+	https://discuss.leetcode.com/topic/31012/7-line-consice-o-kn-c-solution
+	https://discuss.leetcode.com/topic/52791/fastest-nth-ugly-number-ugly-number-ii-and-super-ugly-number-similar-solutions-java-dynamic-programming
+	https://discuss.leetcode.com/topic/24306/elegant-c-solution-o-n-space-time-with-detailed-explanation/2
+	*/
+	class Solution313 {
+	public:
+		int nthSuperUglyNumber(int n, vector<int>& primes) {
+			int len = primes.size();
+			vector<int> index(len, 0);
+			vector<int> result(n, INT_MAX);
+
+			//current prime generate by former multiply one of primes
+			//index[j] always point to the first unused index 
+			//in result for primes[j]
+			result[0] = 1;
+			for (int i = 1; i < n; ++i) {
+				for (int j = 0; j < len; ++j)
+					result[i] = min(result[i], result[index[j]] * primes[j]);
+
+				for (int j = 0; j < len; ++j)
+					index[j] += (result[i] == result[index[j]] * primes[j]);
+			}
+
+
+			return result[n - 1];
+		}
+
+		static void main() {
+			Solution313* test = new Solution313;
+			int result;
+			vector<int> primes = { 2, 7, 13, 19 };
+
+			result = test->nthSuperUglyNumber(10, primes);
+			delete test;
+		}
+	};
+	/*313. Super Ugly Number end */
+
+
 	/*310. Minimum Height Trees (medium)
 	https://leetcode.com/problems/minimum-height-trees/
 	https://discuss.leetcode.com/topic/30572/share-some-thoughts
@@ -4372,8 +4414,47 @@ namespace GG {
 	/*310. Minimum Height Trees end */
 
 
+	/*309. Best Time to Buy and Sell Stock with Cooldown (medium)
+	https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/
+	https://discuss.leetcode.com/topic/30421/share-my-thinking-process
+	*/
+	class Solution309 {
+	public:
+		int maxProfit(vector<int>& prices) {
+			int size = prices.size();
+			if (size < 2)
+				return 0;
+
+			int sell_pre = 0;
+			int sell = 0;
+			int buy_pre;// = -prices[0];
+			int buy = -prices[0];// = max(buy_pre, -price[1]);
+			//1)buy[i] = max(rest[i-1]-price, buy[i-1])
+			//sell[i] = max(buy[i-1]+price, sell[i-1])
+			//rest[i] = max(rest[i-1], buy[i-1], sell[i-1])
+			//****    = max(rest[i-1], sell[i-1]) as buy[i] <= rest[i]
+			//rest[i] <= sell[i], so rest[i-1] <= sell[i-1]
+			//->  rest[i] = sell[i-1]
+			//2) buy[i] = max(sell[i-2]-price, buy[i-1])
+			//	sell[i] = max(buy[i-1]+price, sell[i-1])
+			for (int i = 0; i < size; ++i) {
+				buy_pre = buy;
+				buy = max(sell_pre - prices[i], buy_pre);
+
+				sell_pre = sell;
+				sell = max(sell_pre, buy_pre + prices[i]);
+			}
+
+			return sell;
+		}
+	};
+	/*309. Best Time to Buy and Sell Stock with Cooldown end */
+
+
 	/*298. Binary Tree Longest Consecutive Sequence (medium)
+	Time = O(n)
 	https://leetcode.com/problems/binary-tree-longest-consecutive-sequence/
+	https://discuss.leetcode.com/topic/28234/easy-java-dfs-is-there-better-time-complexity-solution/8
 	*/
 	class Solution298 {
 	public:
@@ -4404,8 +4485,10 @@ namespace GG {
 
 
 	/*294. Flip Game II (medium)
+	Time = O(2 ^ n)
 	https://leetcode.com/problems/flip-game-ii/
 	https://discuss.leetcode.com/topic/27282/theory-matters-from-backtracking-128ms-to-dp-0ms
+	https://discuss.leetcode.com/topic/27351/java-backtracking-solution-with-time-optimization-through-dp-205ms-19ms/3
 	*/
 	class Solution294 {
 	public:
@@ -4455,6 +4538,7 @@ namespace GG {
 
 
 	/*289. Game of Life (medium)
+	Time = O(m * n)		Space = O(1)
 	https://leetcode.com/problems/game-of-life/
 	https://discuss.leetcode.com/topic/26112/c-o-1-space-o-mn-time
 	*/
@@ -4465,16 +4549,20 @@ namespace GG {
 			int n = m ? board[0].size() : 0;
 			int count;
 
+			//use two bits, next status + current status
 			for (int i = 0; i < m; ++i)
 				for (int j = 0; j < n; ++j) {
 					count = 0;
+					//cal the total alive cell including i,j
 					for (int row = max(i - 1, 0); row < min(i + 2, m); ++row)
 						for (int col = max(j - 1, 0); col < min(j + 2, n); ++col)
 							count += board[row][col] & 1;
 
+					//count == 3 if current is alive, its next status must be alive
+					//			 if current is dead, its next status is alive
+					//count - board[i][j] == 3 is to calculate the neighbors
 					if (count == 3 || count - board[i][j] == 3)
 						board[i][j] |= 2;
-
 				}
 
 			for (int i = 0; i < m; ++i)
@@ -4486,6 +4574,7 @@ namespace GG {
 
 
 	/*286. Walls and Gates (medium)
+	Time = O(m * n)		Space = O(1)
 	https://leetcode.com/problems/walls-and-gates/
 	https://discuss.leetcode.com/topic/35242/benchmarks-of-dfs-and-bfs
 	*/
@@ -4498,6 +4587,7 @@ namespace GG {
 				int row = i + item.first;
 				int col = j + item.second;
 
+				//rooms[row][col] < dis means alreay have a another closer gate
 				if (row < 0 || row >= rooms.size() ||
 					col < 0 || col >= rooms[0].size() || rooms[row][col] < dis)
 					continue;
@@ -4525,6 +4615,8 @@ namespace GG {
 				pair<int, int> cur = points.front();
 				points.pop();
 
+				//because this bfs, if the neightbor's value is not maximal, that means
+				//there already has a closer gate for it.
 				if (cur.first > 0 && numeric_limits<int>::max() == rooms[cur.first - 1][cur.second]) {
 					rooms[cur.first - 1][cur.second] = rooms[cur.first][cur.second] + 1;
 					points.push({ cur.first - 1 , cur.second });
@@ -4569,6 +4661,60 @@ namespace GG {
 	https://leetcode.com/problems/peeking-iterator/
 	https://discuss.leetcode.com/topic/24883/concise-java-solution
 	*/
+#if 0
+	// Below is the interface for Iterator, which is already defined for you.
+	// **DO NOT** modify the interface for Iterator.
+	class Iterator284 {
+		struct Data;
+		Data* data;
+	public:
+		Iterator284(const vector<int>& nums);
+		Iterator284(const Iterator284& iter);
+		virtual ~Iterator284();
+		// Returns the next element in the iteration.
+		int next();
+		// Returns true if the iteration has more elements.
+		bool hasNext() const;
+	};
+
+
+	class PeekingIterator284 : public Iterator284 {
+	public:
+		PeekingIterator284(const vector<int>& nums) : Iterator284(nums) {
+			// Initialize any member here.
+			// **DO NOT** save a copy of nums and manipulate it directly.
+			// You should only use the Iterator interface methods.
+
+		}
+
+		// Returns the next element in the iteration without advancing the iterator.
+		int peek() {
+			return Iterator284(*this).next();
+		}
+
+		// hasNext() and next() should behave the same as in the Iterator interface.
+		// Override them if needed.
+		int next() {
+			Iterator284::next();
+		}
+
+		bool hasNext() const {
+			return Iterator284::hasNext();
+		}
+
+		static void main() {
+			vector<int> nums1 = { 3, 2, 5 };
+			PeekingIterator284* test = new PeekingIterator284(nums1);
+			int result;
+
+			result = test->peek();
+			result = test->next();
+			test->hasNext();
+
+			delete test;
+		}
+	};
+#endif
 	/*284. Peeking Iterator end */
 
 
@@ -4688,6 +4834,7 @@ namespace GG {
 
 
 	/*279. Perfect Squares (medium)
+	Time = O(n ^ 2)		Space = O(n)
 	https://leetcode.com/problems/perfect-squares/
 	https://discuss.leetcode.com/topic/24255/summary-of-4-different-solutions-bfs-dp-static-dp-and-mathematics
 	*/
@@ -4717,6 +4864,7 @@ namespace GG {
 
 
 	/*274. H-Index (medium)
+	Time = O(n)		Space = O(n)
 	https://leetcode.com/problems/h-index/
 	https://discuss.leetcode.com/topic/23307/my-o-n-time-solution-use-java
 	*/
@@ -4760,13 +4908,9 @@ namespace GG {
 			string result;
 
 			for (auto item : strs) {
-				if (item.empty())
-					result += string("").append(8, '0');
-				else {
-					char tmp[9] = { 0 };
-					sprintf(tmp, "%08x", item.size());
-					result += string(tmp) + item;
-				}
+				char tmp[9] = { 0 };
+				sprintf(tmp, "%08x", item.size());
+				result += string(tmp) + item;
 			}
 
 			return result;
@@ -4796,6 +4940,7 @@ namespace GG {
 
 
 	/*261. Graph Valid Tree (medium)
+	Time = O(V * E)		Space = O(n)
 	https://leetcode.com/problems/graph-valid-tree/
 	https://discuss.leetcode.com/topic/21712/ac-java-union-find-solution/6
 	http://www.geeksforgeeks.org/union-find/
@@ -5671,36 +5816,6 @@ namespace GG {
 	/*17. Letter Combinations of a Phone Number end */
 
 
-	/*309. Best Time to Buy and Sell Stock with Cooldown (medium)
-	https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/
-	https://discuss.leetcode.com/topic/30421/share-my-thinking-process
-	*/
-	class Solution309 {
-	public:
-		int maxProfit(vector<int>& prices) {
-			int size = prices.size();
-			if (size < 2)
-				return 0;
-
-			int sell_pre = 0;
-			int sell = 0;
-			int buy_pre;// = -prices[0];
-			int buy = -prices[0];// = max(buy_pre, -price[1]);
-
-			for (int i = 0; i < size; ++i) {
-				buy_pre = buy;
-				buy = max(sell_pre - prices[i], buy_pre);
-
-				sell_pre = sell;
-				sell = max(sell_pre, buy_pre + prices[i]);
-			}
-
-			return sell;
-		}
-	};
-	/*309. Best Time to Buy and Sell Stock with Cooldown end */
-
-
 	/*54. Spiral Matrix (medium)
 	https://leetcode.com/problems/spiral-matrix/
 	https://discuss.leetcode.com/topic/15558/a-concise-c-implementation-based-on-directions
@@ -5935,47 +6050,6 @@ namespace GG {
 		}
 	};
 	/*286. Walls and Gates end */
-
-
-	/*313. Super Ugly Number (medium)
-	https://leetcode.com/problems/super-ugly-number/
-	https://discuss.leetcode.com/topic/31012/7-line-consice-o-kn-c-solution
-	https://discuss.leetcode.com/topic/52791/fastest-nth-ugly-number-ugly-number-ii-and-super-ugly-number-similar-solutions-java-dynamic-programming
-	https://discuss.leetcode.com/topic/24306/elegant-c-solution-o-n-space-time-with-detailed-explanation/2
-	*/
-	class Solution313 {
-	public:
-		int nthSuperUglyNumber(int n, vector<int>& primes) {
-			int len = primes.size();
-			vector<int> index(len, 0);
-			vector<int> result(n, INT_MAX);
-
-			//current prime generate by former multiply one of primes
-			//index[j] always point to the first unused index 
-			//in result for primes[j]
-			result[0] = 1;
-			for (int i = 1; i < n; ++i) {
-				for (int j = 0; j < len; ++j)
-					result[i] = min(result[i], result[index[j]] * primes[j]);
-
-				for (int j = 0; j < len; ++j)
-					index[j] += (result[i] == result[index[j]] * primes[j]);
-			}
-
-
-			return result[n - 1];
-		}
-
-		static void main() {
-			Solution313* test = new Solution313;
-			int result;
-			vector<int> primes = { 2, 7, 13, 19 };
-
-			result = test->nthSuperUglyNumber(10, primes);
-			delete test;
-		}
-	};
-	/*313. Super Ugly Number end */
 
 
 	/*270. Closest Binary Search Tree Value (easy)
@@ -12561,56 +12635,6 @@ namespace DP {
 	/*120. Triangle end */
 
 
-	/*309. Best Time to Buy and Sell Stock with Cooldown (medium)
-	https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/
-	*/
-	class Solution309 {
-	public:
-		int maxProfit(vector<int>& prices) {
-			int size = prices.size();
-			if (size < 2)
-				return 0;
-
-			int sell_pre = 0;
-			int sell = 0;
-			int buy_pre;// = -prices[0];
-			int buy = -prices[0];// = max(buy_pre, -price[1]);
-
-			for (int i = 0; i < size; ++i) {
-				buy_pre = buy;
-				buy = max(sell_pre - prices[i], buy_pre);
-
-				sell_pre = sell;
-				sell = max(sell_pre, buy_pre + prices[i]);
-			}
-
-			return sell;
-		}
-
-		int maxProfit1(vector<int>& prices) {
-			int size = prices.size();
-			if (size < 2)
-				return 0;
-
-			int* buy = new int[size];
-			int* sell = new int[size];
-
-			buy[0] = -prices[0];
-			sell[0] = 0;
-			sell[1] = max(0, prices[1] - prices[0]);
-			buy[1] = max(buy[0], sell[0] - prices[1]);
-
-			for (int i = 2; i < size; ++i) {
-				buy[i] = max(buy[i - 1], sell[i - 2] - prices[i]);
-				sell[i] = max(sell[i - 1], buy[i - 1] + prices[i]);
-			}
-
-			return sell[size - 1];
-		}
-	};
-	/*309. Best Time to Buy and Sell Stock with Cooldown end */
-
-
 	/*304. Range Sum Query 2D - Immutable (medium)
 	https://leetcode.com/problems/range-sum-query-2d-immutable/
 	https://discuss.leetcode.com/topic/29536/clean-c-solution-and-explaination-o-mn-space-with-o-1-time
@@ -14576,42 +14600,6 @@ namespace HEAP {
 		}
 	};
 	/*347. Top K Frequent Elements end */
-
-
-	/*313. Super Ugly Number (meduim)
-	https://leetcode.com/problems/super-ugly-number/
-	https://discuss.leetcode.com/topic/31012/7-line-consice-o-kn-c-solution
-	*/
-	class Solution313 {
-	public:
-		int nthSuperUglyNumber(int n, vector<int>& primes) {
-			vector<int> uglynumbs(n, INT_MAX);
-			vector<int> index(primes.size(), 0);
-
-			uglynumbs[0] = 1;
-
-			for (int i = 1; i < n; ++i) {
-				for (int j = 0; j < primes.size(); ++j)
-					uglynumbs[i] = min(uglynumbs[i], uglynumbs[index[j]] * primes[j]);
-				for (int j = 0; j < primes.size(); ++j)
-					index[j] += (uglynumbs[i] == uglynumbs[index[j]] * primes[j]);
-			}
-
-			return uglynumbs[n - 1];
-		}
-
-		static void main() {
-			Solution313* test = new Solution313;
-			int result;
-
-			vector<int> primes1 = { 2, 7, 13, 19 };
-			int n1 = 12;
-
-			result = test->nthSuperUglyNumber(n1, primes1);
-			delete test;
-		}
-	};
-	/*313. Super Ugly Number end */
 
 
 	/*215. Kth Largest Element in an Array (meduim)
@@ -18517,64 +18505,6 @@ public:
 * obj.unfollow(followerId,followeeId);
 */
 /*355. Design Twitter end*/
-
-
-#if 0
-/*284. Peeking Iterator(medium)*/
-// Below is the interface for Iterator, which is already defined for you.
-// **DO NOT** modify the interface for Iterator.
-class Iterator284 {
-	struct Data;
-	Data* data;
-public:
-	Iterator284(const vector<int>& nums);
-	Iterator284(const Iterator284& iter);
-	virtual ~Iterator284();
-	// Returns the next element in the iteration.
-	int next();
-	// Returns true if the iteration has more elements.
-	bool hasNext() const;
-};
-
-
-class PeekingIterator284 : public Iterator284 {
-public:
-	PeekingIterator284(const vector<int>& nums) : Iterator284(nums) {
-		// Initialize any member here.
-		// **DO NOT** save a copy of nums and manipulate it directly.
-		// You should only use the Iterator interface methods.
-
-	}
-
-	// Returns the next element in the iteration without advancing the iterator.
-	int peek() {
-		return Iterator284(*this).next();
-	}
-
-	// hasNext() and next() should behave the same as in the Iterator interface.
-	// Override them if needed.
-	int next() {
-		Iterator284::next();
-	}
-
-	bool hasNext() const {
-		return Iterator284::hasNext();
-	}
-
-	static void main(){
-		vector<int> nums1 = { 3, 2, 5 };
-		PeekingIterator284* test = new PeekingIterator284(nums1);
-		int result;
-
-		result = test->peek();
-		result = test->next();
-		test->hasNext();
-
-		delete test;
-	}
-};
-#endif
-/*284. Peeking Iterator end*/
 
 
 /*225. Implement Stack using Queues (easy)*/
