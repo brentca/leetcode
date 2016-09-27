@@ -4975,6 +4975,7 @@ namespace GG {
 
 
 	/*259. 3Sum Smaller (medium)
+	Time = O(n ^ 2)		Space = O(1)
 	https://leetcode.com/problems/3sum-smaller/
 	https://discuss.leetcode.com/topic/23421/simple-and-easy-understanding-o-n-2-java-solution
 	*/
@@ -4989,6 +4990,7 @@ namespace GG {
 				int j = i + 1, k = len - 1;
 
 				while (j < k) {
+					//the three value is the biggest for currentW
 					if (nums[i] + nums[j] + nums[k] < target) {
 						result += k - j;
 						++j;
@@ -5004,10 +5006,12 @@ namespace GG {
 	/*259. 3Sum Smaller end */
 
 
-
 	/*253. Meeting Rooms II (medium)
+	Time = O(n * log n)		Spacer = O(n)
 	https://leetcode.com/problems/meeting-rooms-ii/
+	https://discuss.leetcode.com/topic/20958/ac-java-solution-using-min-heap/19
 	https://discuss.leetcode.com/topic/20958/ac-java-solution-using-min-heap/6
+	http://www.cnblogs.com/yrbbest/p/5012534.html
 	*/
 	class Solution253 {
 	public:
@@ -5020,16 +5024,17 @@ namespace GG {
 			//auto comp = [](Interval a, Interval b) { return a.end < b.end; };
 			//priority_queue<Interval, decltype(comp)> heap(intervals.begin(), intervals.end());
 			priority_queue<int> heap;
-			int result = 1;
+			int result = 0;
 
 			for (auto item : intervals) {
 				while (!heap.empty() && item.start >= -heap.top())
 					heap.pop();
 
 				heap.push(-item.end);
+				result = max(result, (int)heap.size());
 			}
 
-			return heap.size();
+			return result;
 		}
 
 		static void main() {
