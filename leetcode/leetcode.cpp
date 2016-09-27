@@ -5057,7 +5057,7 @@ namespace GG {
 	https://leetcode.com/problems/flatten-2d-vector/
 	https://discuss.leetcode.com/topic/20697/7-9-lines-added-java-and-c-o-1-space
 	*/
-	class Vector2D251 {
+	class Vector2D251 {//Space = O(1)
 	public:
 		Vector2D251(vector<vector<int>>& vec2d) {
 			it = vec2d.begin();
@@ -5083,7 +5083,7 @@ namespace GG {
 		vector<vector<int>>::iterator iend;
 	};
 
-	class Vector2D251_1 {
+	class Vector2D251_1 {	//Space = O(n)
 	public:
 		Vector2D251_1(vector<vector<int>>& vec2d) {
 			if (!vec2d.empty()) {
