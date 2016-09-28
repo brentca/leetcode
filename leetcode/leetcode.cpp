@@ -5156,6 +5156,7 @@ namespace GG {
 
 
 	/*240. Search a 2D Matrix II (medium)
+	Time = O(m + n)		Space = O(1)
 	https://leetcode.com/problems/search-a-2d-matrix-ii/
 	https://discuss.leetcode.com/topic/20064/my-concise-o-m-n-java-solution/2
 	*/
@@ -5179,8 +5180,6 @@ namespace GG {
 					++i;
 			}
 
-
-
 			return false;
 		}
 	};
@@ -5195,6 +5194,7 @@ namespace GG {
 	class Solution230 {
 	public:
 		int kthSmallest(TreeNode* root, int k) {
+			//time = O(log n)	Space = O(k)
 			stack<TreeNode*> nodes;
 			nodes.push(root);
 
@@ -5216,6 +5216,20 @@ namespace GG {
 				nodes.push(tmp->right);
 			}
 
+		}
+
+		//time = O(log n)	Space = O(1)
+		int kthSmallest1(TreeNode* root, int& k) {
+			if (root) {
+				int x = kthSmallest(root->left, k);
+
+				//k == 0 means reach the kth node;
+				//k != 0 means kth node in the right sub tree or current node
+				//--k = 0 means current node is the kth node
+				return !k ? x : !--k ? root->val : kthSmallest(root->right, k);
+			}
+
+			return -1;
 		}
 	};
 	/*230. Kth Smallest Element in a BST end */
@@ -5337,6 +5351,7 @@ namespace GG {
 			expandIsland(grid, i, j - 1);
 		}
 
+		//Time = O(m * n)	Space = O(1)
 		int numIslands1(vector<vector<char>>& grid) {
 			if (grid.empty() || grid[0].empty())
 				return 0;
@@ -5356,6 +5371,7 @@ namespace GG {
 			return result;
 		}
 
+		//Time = O(m * n)	Space = O(total 1s in maximal island)
 		int numIslands(vector<vector<char>>& grid) {
 			if (grid.empty() || grid[0].empty())
 				return 0;
@@ -5428,6 +5444,7 @@ namespace GG {
 
 
 	/*173. Binary Search Tree Iterator (medium)
+	Time = O(1)		Space = O(h)
 	https://leetcode.com/problems/binary-search-tree-iterator/
 	https://discuss.leetcode.com/topic/6575/my-solutions-in-3-languages-with-stack
 	*/
@@ -5458,6 +5475,61 @@ namespace GG {
 		stack<TreeNode*> nodes;
 	};
 	/*173. Binary Search Tree Iterator end */
+
+
+	/*166. Fraction to Recurring Decimal (medium)
+	https://leetcode.com/problems/fraction-to-recurring-decimal/
+	https://discuss.leetcode.com/topic/6079/accepted-cpp-solution-with-explainations
+	*/
+	class Solution166 {
+	public:
+		string fractionToDecimal(long numerator, long denominator) {
+			string ret;
+
+			if (numerator == 0)
+				return "0";
+
+			if (numerator < 0 ^ denominator < 0)
+				ret += "-";
+
+			numerator = abs(numerator);
+			denominator = abs(denominator);
+
+			ret += to_string(numerator / denominator);
+
+			if (numerator % denominator == 0)
+				return ret;
+
+			ret += ".";
+
+			//<digit, postion in ret>
+			unordered_map<int, int> data;
+			for (long r = numerator % denominator; r; r %= denominator) {
+				if (data.count(r) > 0) {
+					ret.insert(data[r], 1, '(');
+					ret += ")";
+					break;
+				}
+
+				data[r] = ret.size();
+				r *= 10;
+				ret += to_string(r / denominator);
+			}
+
+			return ret;
+		}
+
+		static void main() {
+			Solution166* test = new Solution166;
+			string result;
+			long numerator1 = 1;
+			long denominator1 = 30;
+
+			result = test->fractionToDecimal(numerator1, denominator1);
+			delete test;
+		}
+	};
+	/*166. Fraction to Recurring Decimal end */
 
 
 	/*162. Find Peak Element (medium)
@@ -9044,60 +9116,6 @@ namespace MATH {
 		}
 	};
 	/*365. Water and Jug Problem end */
-
-
-	/*166. Fraction to Recurring Decimal (medium)
-	https://leetcode.com/problems/fraction-to-recurring-decimal/
-	https://discuss.leetcode.com/topic/6079/accepted-cpp-solution-with-explainations
-	*/
-	class Solution166 {
-	public:
-		string fractionToDecimal(long numerator, long denominator) {
-			string ret;
-
-			if (numerator == 0)
-				return "0";
-
-			if (numerator < 0 ^ denominator < 0)
-				ret += "-";
-
-			numerator = abs(numerator);
-			denominator = abs(denominator);
-
-			ret += to_string(numerator / denominator);
-
-			if (numerator % denominator == 0)
-				return ret;
-
-			ret += ".";
-
-			unordered_map<int, int> data;
-			for (long r = numerator % denominator; r; r %= denominator) {
-				if (data.count(r) > 0) {
-					ret.insert(data[r], 1, '(');
-					ret += ")";
-					break;
-				}
-
-				data[r] = ret.size();
-				r *= 10;
-				ret += to_string(r / denominator);
-			}
-
-			return ret;
-		}
-
-		static void main() {
-			Solution166* test = new Solution166;
-			string result;
-			long numerator1 = 1;
-			long denominator1 = 30;
-
-			result = test->fractionToDecimal(numerator1, denominator1);
-			delete test;
-		}
-	};
-	/*166. Fraction to Recurring Decimal end */
 
 
 	/*372. Super Pow (medium)
