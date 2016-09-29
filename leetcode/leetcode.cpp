@@ -5114,6 +5114,7 @@ namespace GG {
 
 
 	/*247. Strobogrammatic Number II (medium)
+	Time = O(2 ^ n)		Space = O(n)
 	https://leetcode.com/problems/strobogrammatic-number-ii/
 	https://discuss.leetcode.com/topic/20753/ac-clean-java-solution
 	*/
@@ -5532,6 +5533,85 @@ namespace GG {
 	/*166. Fraction to Recurring Decimal end */
 
 
+	/*163. Missing Ranges (medium)
+	https://leetcode.com/problems/missing-ranges/
+	https://discuss.leetcode.com/topic/18612/accepted-java-solution-with-explanation
+	*/
+	class Solution163 {
+	public:
+		//[0, 1, 3, 50, 75], lower = 0 and upper = 99, return ["2", "4->49", "51->74", "76->99"].
+		vector<string> findMissingRanges(vector<int>& nums, int lower, int upper) {
+			vector<string> result;
+			// the next number we need to find
+			int next = lower;
+
+			for (int i = 0; i < nums.size(); ++i) {
+				// not within the range yet
+				if (nums[i] < lower)
+					continue;
+
+				// continue to find the next one
+				if (nums[i] == next) {
+					++next;
+					continue;
+				}
+
+				next == nums[i] - 1 ? result.push_back(to_string(next)) :
+					result.push_back(to_string(next) + "->" + to_string(nums[i] - 1));
+
+				next = nums[i] + 1;
+			}
+
+			if (next <= upper)
+				next == upper ? result.push_back(to_string(next)) :
+				result.push_back(to_string(next) + "->" + to_string(upper));
+
+			return result;
+		}
+
+		vector<string> findMissingRanges1(vector<int>& nums, int lower, int upper) {
+			vector<string> result;
+
+			if (nums.empty()) {
+
+				if (lower == upper)
+					result.push_back(to_string(lower));
+				else
+					result.push_back(to_string(lower) + "->" + to_string(upper));
+				return result;
+			}
+
+			if (nums[0] > lower + 1)
+				result.push_back(to_string(lower) + "->" + to_string(nums[0] - 1));
+			else if (nums[0] > lower)
+				result.push_back(to_string(lower));
+
+			int lastpos = nums[0];
+			int len = nums.size();
+
+			for (int i = 0; i < len; ++i) {
+				if (nums[i] > lastpos + 2)
+					result.push_back(to_string(lastpos + 1) + "->" + to_string(nums[i] - 1));
+				else if (nums[i] > lastpos + 1)
+					result.push_back(to_string(lastpos + 1));
+
+				while (i < len - 1 && nums[i + 1] == nums[i] + 1)
+					++i;
+
+				lastpos = nums[i];
+			}
+
+			if (upper > nums[len - 1] + 1)
+				result.push_back(to_string(nums[len - 1] + 1) + "->" + to_string(upper));
+			else if (upper > nums[len - 1])
+				result.push_back(to_string(nums[len - 1] + 1));
+
+			return result;
+		}
+	};
+	/*163. Missing Ranges end */
+
+
 	/*162. Find Peak Element (medium)
 	https://leetcode.com/problems/find-peak-element/
 	https://discuss.leetcode.com/topic/5724/find-the-maximum-by-binary-search-recursion-and-iteration
@@ -5539,6 +5619,7 @@ namespace GG {
 	*/
 	class Solution162 {
 	public:
+		//Time = O(log n)		Space = O(1)
 		int findPeak(vector<int>& nums, int low, int high) {
 			if (low == high)
 				return low;
@@ -5559,6 +5640,30 @@ namespace GG {
 		int findPeakElement(vector<int>& nums) {
 			return findPeak(nums, 0, nums.size() - 1);
 		}
+
+		//Time = O(n)		Space = O(1)
+		int findPeakElement1(vector<int>& nums) {
+			int len = nums.size();
+
+			if (0 == len)
+				return -INT_MAX;
+			else if (1 == len)
+				return 0;
+			else if (nums[0] > nums[1])
+				return 0;
+
+			for (int i = 1; i < len; ++i) {
+				if (nums[i] > nums[i - 1]) {
+					if (len - 1 == i)
+						return i;
+
+					if (nums[i] > nums[i + 1])
+						return i;
+				}
+			}
+
+			return -INT_MAX;
+		}
 	};
 	/*162. Find Peak Element end */
 
@@ -5568,14 +5673,20 @@ namespace GG {
 	*/
 	class Solution139 {
 	public:
+		//Time = O(n ^ 2)		Space = O(n)
 		bool wordBreak(string s, unordered_set<string>& wordDict) {
 			if (wordDict.empty())
 				return false;
 
+			//dp[i] indicates [0, i) in the string can be broke or not
 			vector<bool> dp(s.size() + 1, false);
 
 			dp[0] = true;
 			for (int i = 1; i <= s.size(); ++i) {
+				//[0, i] divided into [0, j) + [j, i)
+				//check dp[j] and sub string (j,i-j)
+				//if exist one successful break, that means
+				//current string can be broke
 				for (int j = i - 1; j >= 0; --j) {
 					if (dp[j]) {
 						if (wordDict.count(s.substr(j, i - j)) > 0) {
@@ -5589,6 +5700,7 @@ namespace GG {
 			return dp[s.size()];
 		}
 
+		//Time maybe = O(2 ^ n)		Space = O(1)
 		bool wordBreak1(string s, unordered_set<string>& wordDict) {
 			if (s.empty() || wordDict.empty())
 				return true;
@@ -5951,82 +6063,6 @@ namespace GG {
 		}
 	};
 	/*274. H-Index end */
-
-
-	/*163. Missing Ranges (medium)
-	https://leetcode.com/problems/missing-ranges/
-	https://discuss.leetcode.com/topic/18612/accepted-java-solution-with-explanation
-	*/
-	class Solution163 {
-	public:
-		//[0, 1, 3, 50, 75], lower = 0 and upper = 99, return ["2", "4->49", "51->74", "76->99"].
-		vector<string> findMissingRanges(vector<int>& nums, int lower, int upper) {
-			vector<string> result;
-			int next = lower;
-
-			for (int i = 0; i < nums.size(); ++i) {
-				if (nums[i] < lower)
-					continue;
-
-				if (nums[i] == next) {
-					++next;
-					continue;
-				}
-
-				next == nums[i] - 1 ? result.push_back(to_string(next)):
-									  result.push_back(to_string(next) + "->" + to_string(nums[i] - 1));
-
-				next = nums[i] + 1;
-			}
-
-			if (next <= upper)
-				next == upper ? result.push_back(to_string(next)) :
-				result.push_back(to_string(next) + "->" + to_string(upper));
-
-			return result;
-		}
-
-		vector<string> findMissingRanges1(vector<int>& nums, int lower, int upper) {
-			vector<string> result;
-
-			if (nums.empty()) {
-
-				if (lower == upper)
-					result.push_back(to_string(lower));
-				else
-					result.push_back(to_string(lower) + "->" + to_string(upper));
-				return result;
-			}
-
-			if (nums[0] > lower + 1)
-				result.push_back(to_string(lower) + "->" + to_string(nums[0] - 1));
-			else if (nums[0] > lower)
-				result.push_back(to_string(lower));
-
-			int lastpos = nums[0];
-			int len = nums.size();
-
-			for (int i = 0; i < len; ++i) {
-				if (nums[i] > lastpos + 2)
-					result.push_back(to_string(lastpos + 1) + "->" + to_string(nums[i] - 1));
-				else if (nums[i] > lastpos + 1)
-					result.push_back(to_string(lastpos + 1));
-
-				while (i < len - 1 && nums[i + 1] == nums[i] + 1)
-					++i;
-
-				lastpos = nums[i];
-			}
-
-			if (upper > nums[len - 1] + 1)
-				result.push_back(to_string(nums[len - 1] + 1) + "->" + to_string(upper));
-			else if (upper > nums[len - 1])
-				result.push_back(to_string(nums[len - 1] + 1));
-
-			return result;
-		}
-	};
-	/*163. Missing Ranges end */
 
 
 	/*286. Walls and Gates (medium)
