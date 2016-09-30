@@ -5815,6 +5815,42 @@ namespace GG {
 	/*133. Clone Graph end */
 
 
+	/*54. Spiral Matrix (medium)
+	https://leetcode.com/problems/spiral-matrix/
+	https://discuss.leetcode.com/topic/15558/a-concise-c-implementation-based-on-directions
+	https://discuss.leetcode.com/topic/3713/super-simple-and-easy-to-understand-solution
+	*/
+	class Solution54 {
+	public:
+		vector<int> spiralOrder(vector<vector<int>>& matrix) {
+			vector<int> ret;
+
+			if (matrix.empty() || matrix[0].empty())
+				return ret;
+
+			int row = matrix.size();
+			int col = matrix[0].size();
+
+			vector<int> nstep = { col, row - 1 };
+			vector<pair<int, int>> direct = { { 0, 1 },{ 1, 0 },{ 0, -1 },{ -1, 0 } };
+
+			int cur = 0;
+			int irow = 0, icol = -1;
+
+			while (nstep[cur % 2]) {
+				for (int i = 0; i < nstep[cur % 2]; ++i) {
+					irow += direct[cur].first;
+					icol += direct[cur].second;
+					ret.push_back(matrix[irow][icol]);
+				}
+
+				--nstep[cur % 2];
+				cur = (cur + 1) % 4;
+			}
+		}
+	};
+	/*54. Spiral Matrix end */
+
 	/*50. Pow(x, n) (medium)
 	https://leetcode.com/problems/powx-n/
 	https://discuss.leetcode.com/topic/5425/short-and-easy-to-understand-solution/25
@@ -5879,6 +5915,7 @@ namespace GG {
 
 			int index = nums.size() - 1;
 
+			//try to find the first smaller number from right
 			while (index > 0) {
 				if (nums[index - 1] < nums[index])
 					break;
@@ -5886,12 +5923,15 @@ namespace GG {
 				--index;
 			}
 
+			//whole array is descending
 			if (index == 0)
 				reversesort(nums, 0, nums.size() - 1);
 			else {
+				//nums[index - 1] < nums[index]
 				int val = nums[index - 1];
 				int j = nums.size() - 1;
 
+				//try to find 
 				while (j >= index) {
 					if (nums[j] > val)
 						break;
@@ -6003,42 +6043,6 @@ namespace GG {
 		}
 	};
 	/*17. Letter Combinations of a Phone Number end */
-
-
-	/*54. Spiral Matrix (medium)
-	https://leetcode.com/problems/spiral-matrix/
-	https://discuss.leetcode.com/topic/15558/a-concise-c-implementation-based-on-directions
-	https://discuss.leetcode.com/topic/3713/super-simple-and-easy-to-understand-solution
-	*/
-	class Solution54 {
-	public:
-		vector<int> spiralOrder(vector<vector<int>>& matrix) {
-			vector<int> ret;
-
-			if (matrix.empty() || matrix[0].empty())
-				return ret;			
-
-			int row = matrix.size();
-			int col = matrix[0].size();
-
-			vector<int> nstep = { col, row - 1 };
-			vector<pair<int, int>> direct = { {0, 1}, {1, 0}, {0, -1}, {-1, 0} };
-
-			int cur = 0;
-			int irow = 0, icol = -1;
-
-			while (nstep[cur % 2]) {
-				for (int i = 0; i < nstep[cur % 2]; ++i) {
-					irow += direct[cur].first;
-					icol += direct[cur].second;
-				}
-
-				--nstep[cur % 2];
-				cur = (cur + 1) % 4;
-			}
-		}
-	};
-	/*54. Spiral Matrix end */
 
 
 	/*274. H-Index (medium)
@@ -7041,44 +7045,6 @@ namespace ARRAY {
 		}
 	};
 	/*154. Find Minimum in Rotated Sorted Array II end */
-
-
-	/*54. Spiral Matrix (medium)
-	https://leetcode.com/problems/spiral-matrix/
-	https://discuss.leetcode.com/topic/15558/a-concise-c-implementation-based-on-directions
-	*/
-	class Solution54 {
-	public:
-		vector<int> spiralOrder(vector<vector<int>>& matrix) {
-			vector<int> ret;
-			if (matrix.empty() || matrix[0].empty())
-				return ret;
-
-			int m = matrix.size();
-			int n = matrix[0].size();
-
-			vector<int> nstep = { n, m - 1 };
-			vector<pair<int, int>> dirs = { { 0, 1 },{ 1, 0 },{ 0, -1 },{ -1, 0 } };
-
-			int cur = 0;
-			int ir = 0, ic = -1;
-
-			while (nstep[cur % 2]) {
-				for (int i = 0; i < nstep[cur % 2]; ++i) {
-					ir += dirs[cur].first;
-					ic += dirs[cur].second;
-
-					ret.push_back(matrix[ir][ic]);
-				}
-
-				--nstep[cur % 2];
-				cur = (cur + 1) % 4;
-			}
-
-			return ret;
-		}
-	};
-	/*54. Spiral Matrix end */
 
 
 	/*228. Summary Ranges (medium)
