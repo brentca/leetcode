@@ -4578,7 +4578,7 @@ namespace GG {
 	https://leetcode.com/problems/walls-and-gates/
 	https://discuss.leetcode.com/topic/35242/benchmarks-of-dfs-and-bfs
 	*/
-	class Solution286_1 {
+	class Solution286 {
 	public:
 		void bsf(int i, int j, int dis, vector<vector<int>>& rooms) {
 			vector<pair<int, int>> offset = { { 1, 0 },{ -1, 0 },{ 0, 1 },{ 0, -1 } };
@@ -4652,6 +4652,20 @@ namespace GG {
 					if (0 == rooms[i][j])
 						bsf(i, j, 1, rooms);
 				}
+		}
+
+		static void main() {
+			Solution286* test = new Solution286;
+			vector<vector<int>> rooms1 = { { INT_MAX, -1, 0, INT_MAX },
+			{ INT_MAX, INT_MAX, INT_MAX, -1 },
+			{ INT_MAX, -1, INT_MAX, -1 },
+			{ 0, -1, INT_MAX, INT_MAX } };
+
+			vector<vector<int>> rooms2 = { { -1, INT_MAX, 0 },
+			{ INT_MAX, -1, INT_MAX },
+			{ INT_MAX, 0, INT_MAX } };
+			test->wallsAndGates(rooms2);
+			delete test;
 		}
 	};
 	/*286. Walls and Gates end */
@@ -5873,6 +5887,7 @@ namespace GG {
 
 	/*31. Next Permutation (medium)
 	https://leetcode.com/problems/next-permutation/
+	http://blog.csdn.net/wwh578867817/article/details/46506673
 	https://discuss.leetcode.com/topic/2542/share-my-o-n-time-solution
 	https://discuss.leetcode.com/topic/15216/a-simple-algorithm-from-wikipedia-with-c-implementation-can-be-used-in-permutations-and-permutations-ii
 	*/
@@ -5915,7 +5930,7 @@ namespace GG {
 
 			int index = nums.size() - 1;
 
-			//try to find the first smaller number from right
+			//try to find the first number larger than its left from right
 			while (index > 0) {
 				if (nums[index - 1] < nums[index])
 					break;
@@ -5931,7 +5946,7 @@ namespace GG {
 				int val = nums[index - 1];
 				int j = nums.size() - 1;
 
-				//try to find 
+				//find pos j to insert val
 				while (j >= index) {
 					if (nums[j] > val)
 						break;
@@ -5941,6 +5956,8 @@ namespace GG {
 
 				nums[index - 1] = nums[j];
 				nums[j] = val;
+				//because [index, end) is already descending, just exchange the pairs
+				//no need for sorting
 				reversesort(nums, index, nums.size() - 1);
 			}
 		}
@@ -5955,11 +5972,24 @@ namespace GG {
 				nums[end + start - i] = tmp;
 			}
 		}
+
+		static void main() {
+			auto_ptr<Solution31> test(new Solution31);
+			vector<int> nums1 = { 5, 3, 8, 7, 6, 4 };
+			test->nextPermutation(nums1);
+
+			vector<int> nums2 = { 5, 1, 5, 5, 2 };
+			test->nextPermutation(nums2);
+
+			vector<int> nums3 = { 5, 1, 5, 5, 2 };
+
+		}
 	};
 	/*31. Next Permutation end */
 
 
 	/*22. Generate Parentheses (medium)
+	Time = O(n!) 
 	https://leetcode.com/problems/generate-parentheses/
 	https://discuss.leetcode.com/topic/4485/concise-recursive-c-solution/2
 	https://discuss.leetcode.com/topic/3474/an-iterative-method
@@ -6045,128 +6075,121 @@ namespace GG {
 	/*17. Letter Combinations of a Phone Number end */
 
 
-	/*274. H-Index (medium)
-	https://leetcode.com/problems/h-index/
-	https://discuss.leetcode.com/topic/23307/my-o-n-time-solution-use-java
+
+	/*400. Nth Digit (easy)
+	https://leetcode.com/problems/nth-digit/
+	http://www.cnblogs.com/y119777/p/5882638.html
 	*/
-	class Solution274_2 {
+	class Solution400 {
 	public:
-		int hIndex(vector<int>& citations) {
-			int result = 0;
+		int findNthDigit(int n) {
+			int bits = 1;
+			long count = 9;
 
-			int len = citations.size();
-			sort(citations.begin(), citations.end());
-			for (int i = 0; i < len; ++i) {
-				if (len - i > citations[i])
-					result = max(result, citations[i]);
-				else
-					result = max(result, len - i);
+			while (n > bits * count) {
+				n -= bits * count;
+				++bits;
+				count *= 10;
 			}
 
-			return result;
-		}
-	};
-	/*274. H-Index end */
+			int start = count / 9;
+			int idx = (n - 1) / bits;
+			int offset = (n - 1) % bits;
 
-
-	/*286. Walls and Gates (medium)
-	https://leetcode.com/problems/walls-and-gates/
-	https://discuss.leetcode.com/topic/25265/java-bfs-solution-o-mn-time
-	https://discuss.leetcode.com/topic/33459/my-short-java-solution-very-easy-to-understand
-	*/
-	class Solution286 {
-	public:
-		void dsf(int i, int j, int dis, vector<vector<int>>& rooms) {
-			vector<pair<int, int>> offset = { { 1, 0 },{ -1, 0 },{ 0, 1 },{ 0, -1 } };
-
-			for (auto item : offset) {
-				int row = i + item.first;
-				int col = j + item.second;
-
-				if (row < 0 || row >= rooms.size() ||
-					col < 0 || col >= rooms[0].size() || rooms[row][col] < dis)
-					continue;
-
-				rooms[row][col] = min(rooms[row][col], dis);
-				dsf(row, col, dis + 1, rooms);
-			}
-		}
-
-		void wallsAndGates1(vector<vector<int>>& rooms) {
-			if (rooms.empty() || rooms[0].empty())
-				return;
-
-			int row = rooms.size();
-			int col = rooms[0].size();
-			vector<pair<int, int>> gates;
-
-			for (int i = 0; i < row; ++i)
-				for (int j = 0; j < col; ++j) {
-					if (0 == rooms[i][j])
-						dsf(i, j, 1, rooms);
-				}
-		}
-
-		void wallsAndGates(vector<vector<int>>& rooms) {
-			if (rooms.empty() || rooms[0].empty())
-				return;
-
-			int row = rooms.size();
-			int col = rooms[0].size();
-			queue<pair<int, int>> nodes;
-
-			for (int i = 0; i < row; ++i) {
-				for (int j = 0; j < col; ++j) {
-					if (rooms[i][j] == 0) 
-						nodes.push(make_pair(i, j));
-				}
-			}
-
-			//the queue starts from gates
-			//the next nearest level always in the top of queue
-			//so next possible position will be always nearest 
-			while (!nodes.empty()) {
-				int i = nodes.front().first;
-				int j = nodes.front().second;
-				nodes.pop();
-
-				if (i > 0 && INT_MAX == rooms[i - 1][j]) {
-					rooms[i - 1][j] = rooms[i][j] + 1;
-					nodes.push(make_pair(i, j));
-				}
-
-				if (i < row - 1 && INT_MAX == rooms[i + 1][j]) {
-					rooms[i + 1][j] = rooms[i][j] + 1;
-					nodes.push(make_pair(i + 1, j));
-				}
-
-				if (j > 0 && INT_MAX == rooms[i][j - 1]) {
-					rooms[i][j - 1] = rooms[i][j] + 1;
-					nodes.push(make_pair(i, j - 1));
-				}
-
-				if (j < col - 1 && INT_MAX == rooms[i][j + 1]) {
-					rooms[i][j + 1] = rooms[i][j] + 1;
-					nodes.push(make_pair(i, j + 1));
-				}
-			}
+			string str = to_string(start + idx);
+			return str[offset] - '0';
 		}
 
 		static void main() {
-			Solution286* test = new Solution286;
-			vector<vector<int>> rooms1 = { { INT_MAX, -1, 0, INT_MAX },
-											{ INT_MAX, INT_MAX, INT_MAX, -1 },
-											{ INT_MAX, -1, INT_MAX, -1 },
-											{ 0, -1, INT_MAX, INT_MAX } };
+			auto_ptr<Solution400> test(new Solution400);			
+			int result;
+			int n1 = 11;
 
-			vector<vector<int>> rooms2 = { { -1, INT_MAX, 0},
-											{ INT_MAX, -1, INT_MAX},
-											{ INT_MAX, 0, INT_MAX}};
-			test->wallsAndGates(rooms2);
-			delete test;
+			result = test->findNthDigit(n1);
+			result = result;
 		}
 	};
-	/*286. Walls and Gates end */
+	/*400. Nth Digit end */
+
+
+	/*389. Find the Difference (easy)
+	https://leetcode.com/problems/find-the-difference/
+	*/
+	class Solution389 {
+	public:
+		char findTheDifference(string s, string t) {
+			char c = 0;
+
+			for (auto item : s)
+				c ^= item;
+
+			for (auto item : t)
+				c ^= item;
+
+			return c;
+		}
+	};
+	/*389. Find the Difference end */
+
+
+	/*374. Guess Number Higher or Lower (easy)
+	https://leetcode.com/problems/guess-number-higher-or-lower/
+	https://discuss.leetcode.com/topic/51184/0ms-c-binary-search
+	*/
+	class Solution374 {
+	public:
+		int guessNumber(int n) {
+			int low = 1, high = n;
+
+			while (1) {
+				int mid = low + (high - low) / 2;
+
+				int res = 0;// guess(mid);
+				if (0 == res)
+					return mid;
+				else if (1 == res)
+					low = mid + 1;
+				else
+					high = mid - 1;
+			}
+
+			return 0;
+		}
+	};
+	/*374. Guess Number Higher or Lower end */
+
+
+	/*359. Logger Rate Limiter (easy)
+	https://leetcode.com/problems/logger-rate-limiter/
+	https://discuss.leetcode.com/topic/48359/short-c-java-python-bit-different
+	*/
+	class Logger {
+	public:
+		/** Initialize your data structure here. */
+		Logger() {
+		}
+
+		/** Returns true if the message should be printed in the given timestamp, otherwise returns false.
+		If this method returns false, the message will not be printed.
+		The timestamp is in seconds granularity. */
+		bool shouldPrintMessage(int timestamp, string message) {
+			if (map.count(message)) {
+				if (timestamp - map[message] >= 10) {
+					map[message] = timestamp;
+					return true;
+				}
+
+				return false;
+			}
+			else
+				map[message] = timestamp;
+
+			return true;
+		}
+
+		unordered_map<string, int> map;
+	};
+	/*359. Logger Rate Limiter end */
 
 
 	/*270. Closest Binary Search Tree Value (easy)
@@ -6263,39 +6286,6 @@ namespace GG {
 		}
 	};
 	/*266. Palindrome Permutation end */
-
-
-	/*359. Logger Rate Limiter (easy)
-	https://leetcode.com/problems/logger-rate-limiter/
-	https://discuss.leetcode.com/topic/48359/short-c-java-python-bit-different
-	*/
-	class Logger {
-	public:
-		/** Initialize your data structure here. */
-		Logger() {
-		}
-
-		/** Returns true if the message should be printed in the given timestamp, otherwise returns false.
-		If this method returns false, the message will not be printed.
-		The timestamp is in seconds granularity. */
-		bool shouldPrintMessage(int timestamp, string message) {
-			if (map.count(message)) {
-				if (timestamp - map[message] >= 10) {
-					map[message] = timestamp;
-					return true;
-				}
-
-				return false;
-			}
-			else
-				map[message] = timestamp;
-
-			return true;
-		}
-
-		unordered_map<string, int> map;
-	};
-	/*359. Logger Rate Limiter end */
 
 
 	/*326. Power of Three (easy)
@@ -6490,33 +6480,6 @@ namespace GG {
 		}
 	};
 	/*276. Paint Fence end */
-
-
-	/*374. Guess Number Higher or Lower (easy)
-	https://leetcode.com/problems/guess-number-higher-or-lower/
-	https://discuss.leetcode.com/topic/51184/0ms-c-binary-search
-	*/
-	class Solution374 {
-	public:
-		int guessNumber(int n) {
-			int low = 1, high = n;
-
-			while (1) {
-				int mid = low + (high - low) / 2;
-
-				int res = 0;// guess(mid);
-				if (0 == res)
-					return mid;
-				else if (1 == res)
-					low = mid + 1;
-				else
-					high = mid - 1;
-			}
-
-			return 0;
-		}
-	};
-	/*374. Guess Number Higher or Lower end */
 
 
 	/*346. Moving Average from Data Stream (easy)
@@ -6938,6 +6901,9 @@ namespace GG {
 	/*66. Plus One end */
 
 	static void main() {
+
+		Solution400::main();
+		Solution31::main();
 		Solution363::main();
 		Solution340::main();
 		Solution336::main();
@@ -14016,44 +13982,6 @@ namespace BACKTRACK {
 		}
 	};
 	/*22. Generate Parentheses end */
-
-	/*17. Letter Combinations of a Phone Number (medium)
-	https://leetcode.com/problems/letter-combinations-of-a-phone-number/
-	https://discuss.leetcode.com/topic/8465/my-java-solution-with-fifo-queue
-	*/
-	class Solution17 {
-	public:
-		vector<string> letterCombinations(string digits) {
-			vector<string> result;
-			if (digits.empty())
-				return result;
-
-			vector<string> strmap = { "", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz" };
-
-			result.push_back("");
-			for (int i = 0; i < digits.size(); ++i) {
-				int num = digits[i] - '0';
-
-				if (num < 0 || num > 9)
-					break;
-
-				string candidate = strmap[num];
-
-				if (candidate.empty()) continue;
-
-				vector<string> tmp;
-
-				for (int j = 0; j < candidate.size(); ++j)
-				for (int k = 0; k < result.size(); ++k)
-					tmp.push_back(result[k] + candidate[j]);
-
-				result.swap(tmp);
-			}
-
-			return result;
-		}
-	};
-	/*17. Letter Combinations of a Phone Number end */
 
 
 	/*89. Gray Code (medium)
