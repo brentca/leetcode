@@ -6192,6 +6192,186 @@ namespace GG {
 	/*359. Logger Rate Limiter end */
 
 
+	/*346. Moving Average from Data Stream (easy)
+	https://leetcode.com/problems/moving-average-from-data-stream/
+	https://discuss.leetcode.com/topic/44113/java-o-1-using-deque
+	*/
+	class MovingAverage346 {
+	public:
+		/** Initialize your data structure here. */
+		int m_total;
+		int m_size;
+		queue<int> nums;
+
+		MovingAverage346(int size) {
+			m_total = 0;
+			m_size = size;
+		}
+
+		double next(int val) {
+			if (nums.size() >= m_size) {
+				m_total -= nums.front();
+				nums.pop();
+			}
+
+			m_total += val;
+			nums.push(val);
+
+			return (double)m_total / nums.size();
+		}
+
+		static void main() {
+			MovingAverage346* test = new MovingAverage346(3);
+			double result;
+
+			result = test->next(1);		//output 1
+			result = test->next(10);	//output (1 + 10) / 2
+			result = test->next(3);		//output (1 + 10 + 3) / 3
+			result = test->next(5);		//output (10 + 3 + 5) / 3
+			delete test;
+		}
+	};
+	/*346. Moving Average from Data Stream end */
+
+
+	/*345. Reverse Vowels of a String (easy)
+	https://leetcode.com/problems/reverse-vowels-of-a-string/
+	https://discuss.leetcode.com/topic/53760/compare-three-java-solutions
+	*/
+	class Solution345 {
+	public:
+		bool isvowel(char c) {
+			if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' ||
+				c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U')
+				return true;
+
+			return false;
+		}
+
+		string reverseVowels(string s) {
+			string result(s);
+
+			int low = 0, high = s.size() - 1;
+
+			while (low < high) {
+				while (low < high && !isvowel(result[low]))
+					++low;
+
+				while (low < high && !isvowel(result[high]))
+					--high;
+
+				if (high <= low)
+					break;
+
+				swap(result[low], result[high]);
+				++low;
+				--high;
+			}
+
+			return result;
+		}
+	};
+	/*345. Reverse Vowels of a String end */
+
+
+	/*326. Power of Three (easy)
+	https://leetcode.com/problems/power-of-three/
+	https://discuss.leetcode.com/topic/43385/c-solution-no-loop-recursion
+	*/
+	class Solution326 {
+	public:
+		bool isPowerOfThree(int n) {
+			if (n < 1)
+				return false;
+
+			int t = pow(3, (int)(log(INT_MAX) / log(3)));
+			return (t%n == 0);
+		}
+	};
+	/*326. Power of Three end */
+
+
+	/*293. Flip Game (easy)
+	https://leetcode.com/problems/flip-game/
+	https://discuss.leetcode.com/topic/27190/8-lines-c-7-lines-python
+	*/
+	class Solution293 {
+	public:
+		vector<string> generatePossibleNextMoves(string s) {
+			vector<string> result;
+
+			if (s.empty())
+				return result;
+
+			for (int i = 0; i < s.size() - 1; ++i) {
+				if ('+' == s[i] && '+' == s[i + 1]) {
+					s[i] = s[i + 1] = '-';
+					result.push_back(s);
+					s[i] = s[i + 1] = '+';
+				}
+			}
+
+			return result;
+		}
+	};
+	/*293. Flip Game end */
+
+
+	/*288. Unique Word Abbreviation (easy)
+	https://leetcode.com/problems/unique-word-abbreviation/
+	https://discuss.leetcode.com/topic/25929/8-lines-in-c
+	*/
+	class ValidWordAbbr288 {
+	public:
+		ValidWordAbbr288(vector<string> &dictionary) {
+			for (auto item : dictionary) {
+				string key;
+				int len = item.size();
+
+				key = item[0] + to_string(len) + item[len - 1];
+				map[key].insert(item);
+			}
+		}
+
+		bool isUnique(string word) {
+			if (word.empty() || map.empty())
+				return true;
+
+			string key;
+			int len = word.size();
+
+			key = word[0] + to_string(len) + word[len - 1];
+
+			return map.count(key) && (map[key].count(word) == map[key].size());
+		}
+
+		static void main() {
+			vector<string> dic1;
+			vector<string> dic2 = { "a", "a" };
+			ValidWordAbbr288* test1 = new ValidWordAbbr288(dic1);
+			ValidWordAbbr288* test2 = new ValidWordAbbr288(dic2);
+			bool result;
+
+			string word1_1("");
+			string word1_2("a");
+
+			result = test1->isUnique(word1_1);
+			result = test1->isUnique(word1_2);
+
+			string word2_1("a");
+			string word2_2("aa");
+
+			result = test2->isUnique(word2_1);
+			result = test2->isUnique(word2_2);
+			delete test1;
+			delete test2;
+		}
+
+		unordered_map<string, unordered_set<string>> map;
+	};
+	/*288. Unique Word Abbreviation end */
+
+
 	/*270. Closest Binary Search Tree Value (easy)
 	https://leetcode.com/problems/closest-binary-search-tree-value/
 	*/
@@ -6288,23 +6468,6 @@ namespace GG {
 	/*266. Palindrome Permutation end */
 
 
-	/*326. Power of Three (easy)
-	https://leetcode.com/problems/power-of-three/
-	https://discuss.leetcode.com/topic/43385/c-solution-no-loop-recursion
-	*/
-	class Solution326 {
-	public:
-		bool isPowerOfThree(int n) {
-			if (n < 1)
-				return false;
-
-			int t = pow(3, (int)(log(INT_MAX) / log(3)));
-			return (t%n == 0);
-		}
-	};
-	/*326. Power of Three end */
-
-
 	/*257. Binary Tree Paths (easy)
 	https://leetcode.com/problems/binary-tree-paths/
 	https://discuss.leetcode.com/topic/21559/python-solutions-dfs-stack-bfs-queue-dfs-recursively
@@ -6334,33 +6497,6 @@ namespace GG {
 		}
 	};
 	/*257. Binary Tree Paths end */
-
-
-	/*293. Flip Game (easy)
-	https://leetcode.com/problems/flip-game/
-	https://discuss.leetcode.com/topic/27190/8-lines-c-7-lines-python
-	*/
-	class Solution293 {
-	public:
-		vector<string> generatePossibleNextMoves(string s) {
-			vector<string> result;
-
-			if (s.empty())
-				return result;
-
-			for (int i = 0; i < s.size() - 1; ++i) {
-				if ('+' == s[i] && '+' == s[i + 1]) {
-					s[i] = s[i + 1] = '-';
-					result.push_back(s);
-					s[i] = s[i + 1] = '+';
-				}
-			}
-
-			return result;
-		}
-	};
-	/*293. Flip Game end */
-
 
 
 	/*249. Group Shifted Strings (easy)
@@ -6482,48 +6618,6 @@ namespace GG {
 	/*276. Paint Fence end */
 
 
-	/*346. Moving Average from Data Stream (easy)
-	https://leetcode.com/problems/moving-average-from-data-stream/
-	https://discuss.leetcode.com/topic/44113/java-o-1-using-deque
-	*/
-	class MovingAverage346 {
-	public:
-		/** Initialize your data structure here. */
-		int m_total;
-		int m_size;
-		queue<int> nums;
-
-		MovingAverage346(int size) {
-			m_total = 0;
-			m_size = size;
-		}
-
-		double next(int val) {
-			if (nums.size() >= m_size) {
-				m_total -= nums.front();
-				nums.pop();
-			}
-
-			m_total += val;
-			nums.push(val);
-
-			return (double)m_total / nums.size();
-		}
-
-		static void main() {
-			MovingAverage346* test = new MovingAverage346(3);
-			double result;
-
-			result = test->next(1);		//output 1
-			result = test->next(10);	//output (1 + 10) / 2
-			result = test->next(3);		//output (1 + 10 + 3) / 3
-			result = test->next(5);		//output (10 + 3 + 5) / 3
-			delete test;
-		}
-	};
-	/*346. Moving Average from Data Stream end */
-
-
 	/*246. Strobogrammatic Number (easy)
 	https://leetcode.com/problems/strobogrammatic-number/
 	*/
@@ -6630,46 +6724,6 @@ namespace GG {
 		}
 	};
 	/*231. Power of Two end */
-
-
-	/*345. Reverse Vowels of a String (easy)
-	https://leetcode.com/problems/reverse-vowels-of-a-string/
-	https://discuss.leetcode.com/topic/53760/compare-three-java-solutions
-	*/
-	class Solution345 {
-	public:
-		bool isvowel(char c) {
-			if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' ||
-				c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U')
-				return true;
-
-			return false;
-		}
-
-		string reverseVowels(string s) {
-			string result(s);
-
-			int low = 0, high = s.size() - 1;
-
-			while (low < high) {
-				while (low < high && !isvowel(result[low]))
-					++low;
-
-				while (low < high && !isvowel(result[high]))
-					--high;
-
-				if (high <= low)
-					break;
-
-				swap(result[low], result[high]);
-				++low;
-				--high;
-			}
-
-			return result;
-		}
-	};
-	/*345. Reverse Vowels of a String end */
 
 
 	/*155. Min Stack (easy)
@@ -6802,61 +6856,6 @@ namespace GG {
 		}
 	};
 	/*20. Valid Parentheses end */
-
-
-	/*288. Unique Word Abbreviation (easy)
-	https://leetcode.com/problems/unique-word-abbreviation/
-	https://discuss.leetcode.com/topic/25929/8-lines-in-c
-	*/
-	class ValidWordAbbr288 {
-	public:
-		ValidWordAbbr288(vector<string> &dictionary) {
-			for (auto item : dictionary) {
-				string key;
-				int len = item.size();
-
-				key = item[0] + to_string(len) + item[len - 1];
-				map[key].insert(item);
-			}
-		}
-
-		bool isUnique(string word) {
-			if (word.empty() || map.empty())
-				return true;
-			
-			string key;
-			int len = word.size();
-
-			key = word[0] + to_string(len) + word[len - 1];
-
-			return map.count(key) && (map[key].count(word) == map[key].size());
-		}
-
-		static void main() {
-			vector<string> dic1;
-			vector<string> dic2 = {"a", "a"};
-			ValidWordAbbr288* test1 = new ValidWordAbbr288(dic1);
-			ValidWordAbbr288* test2 = new ValidWordAbbr288(dic2);
-			bool result;
-
-			string word1_1("");
-			string word1_2("a");
-
-			result = test1->isUnique(word1_1);
-			result = test1->isUnique(word1_2);
-
-			string word2_1("a");
-			string word2_2("aa");
-
-			result = test2->isUnique(word2_1);
-			result = test2->isUnique(word2_2);
-			delete test1;
-			delete test2;
-		}
-
-		unordered_map<string, unordered_set<string>> map;
-	};
-	/*288. Unique Word Abbreviation end */
 
 
 	/*66. Plus One (easy)
