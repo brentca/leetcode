@@ -18881,7 +18881,7 @@ public:
 		return true;
 	}
 
-	/*time O(n k ^ 2), space O(n)*/
+	/*time O(n *  k ^ 2), space O(n)*/
 	vector<vector<int>> palindromePairs(vector<string>& words) {
 		vector<vector<int>> result;
 
@@ -18899,7 +18899,7 @@ public:
 				string str1 = words[i].substr(0, j);
 				string str2 = words[i].substr(j);
 				vector<int> vec(2, 0);
-				if (isPalin(str1)){
+				if (isPalin(str1)) {
 					string str2rev = str2;
 					reverse(str2rev.begin(), str2rev.end());
 
@@ -18910,7 +18910,7 @@ public:
 					}
 				}
 
-				if (isPalin(str2)){
+				if (isPalin(str2)) {
 					string str1rev = str1;
 					reverse(str1rev.begin(), str1rev.end());
 
