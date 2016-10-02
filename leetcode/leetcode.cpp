@@ -49,6 +49,65 @@ namespace GG {
 	};
 
 
+	/*407. Trapping Rain Water II (hard)
+	https://leetcode.com/problems/trapping-rain-water-ii/
+	*/
+	class Solution407 {
+	public:
+		bool isborder(int i, int j, int row, int col) {
+			return 0 == i || i == row - 1 || 0 == j || j == col - 1;
+		}
+
+		bool islegal(int i, int j, int row, int col) {
+			return i >= 0 && i < row && j >= 0 && j < col;
+		}
+
+		int trapRainWater(vector<vector<int>>& heightMap) {
+			if (heightMap.size() < 3 || heightMap[0].size() < 3)
+				return 0;
+
+			int result;
+			int row = heightMap.size();
+			int col = heightMap[0].size();
+			vector<pair<int, int>> dire = { {1, 0}, {-1, 0}, {0, 1}, {0, -1} };
+
+			vector<vector<bool>> flag(row, vector<bool>(col, false));
+
+			for (int i = 1; i < row; ++i) {
+				for (int j = 1; j < col; ++j) {
+					int minheight = 0;
+					vector<pair<int, int>> witems;
+					queue<pair<int, int>> pos;
+
+					if (!flag[i][j]) {
+						bool havewater = true;
+
+						pos.push(make_pair(i, j));
+						while (!pos.empty()) {
+							pair<int, int> cur = pos.front();
+							pos.pop();
+							witems.push_back(cur);
+							flag[cur.first][cur.second] = true;
+							for (auto item : dire) {
+								int new_i = i + item.first;
+								int new_j = j + item.second;
+
+								if (!islegal(new_i, new_j, row, col) || flag[new_i][new_i])
+									continue;
+
+								//if ()
+							}
+						}
+					}
+				}
+			}
+
+			return result;
+		}
+	};
+	/*407. Trapping Rain Water II end */
+
+
 	/*391. Perfect Rectangle (hard)
 	https://leetcode.com/problems/perfect-rectangle/
 	https://discuss.leetcode.com/topic/55997/short-java-solution-with-explanation-updated
@@ -6372,6 +6431,41 @@ namespace GG {
 	/*288. Unique Word Abbreviation end */
 
 
+	/*276. Paint Fence (easy)
+	https://leetcode.com/problems/paint-fence/
+	https://discuss.leetcode.com/topic/23463/lucas-formula-maybe-o-1-and-3-4-liners
+	*/
+	class Solution276 {
+	public:
+		int numWays(int n, int k) {
+			vector<int> dp(n + 1, 0);
+
+			if (1 == n)
+				return k;
+			else if (2 == n)
+				return k * k;
+
+			dp[1] = k;
+			dp[2] = k * k;
+
+			for (int i = 3; i <= n; ++i)
+				dp[i] = (dp[i - 1] + dp[i - 2]) * (k - 1);
+
+			return dp[n];
+		}
+
+		static void main() {
+			Solution276* test = new Solution276;
+			int result;
+			int n1 = 4, k1 = 2;
+			result = test->numWays(n1, k1);
+
+			delete test;
+		}
+	};
+	/*276. Paint Fence end */
+
+
 	/*270. Closest Binary Search Tree Value (easy)
 	https://leetcode.com/problems/closest-binary-search-tree-value/
 	*/
@@ -6583,41 +6677,6 @@ namespace GG {
 	/*249. Group Shifted Strings end */
 
 
-	/*276. Paint Fence (easy)
-	https://leetcode.com/problems/paint-fence/
-	https://discuss.leetcode.com/topic/23463/lucas-formula-maybe-o-1-and-3-4-liners
-	*/
-	class Solution276 {
-	public:
-		int numWays(int n, int k) {
-			vector<int> dp(n + 1, 0);
-
-			if (1 == n)
-				return k;
-			else if (2 == n)
-				return k * k;
-
-			dp[1] = k;
-			dp[2] = k * k;
-
-			for (int i = 3; i <= n; ++i)
-				dp[i] = (dp[i - 1] + dp[i - 2]) * (k - 1);
-
-			return dp[n];
-		}
-
-		static void main() {
-			Solution276* test = new Solution276;
-			int result;
-			int n1 = 4, k1 = 2;
-			result = test->numWays(n1, k1);
-
-			delete test;
-		}
-	};
-	/*276. Paint Fence end */
-
-
 	/*246. Strobogrammatic Number (easy)
 	https://leetcode.com/problems/strobogrammatic-number/
 	*/
@@ -6787,7 +6846,9 @@ namespace GG {
 
 		void push(int x) {
 			nums.push(x);
-
+			// if x == currentMin, also push x to minStack
+			// because when popping, x == currentMin will be
+			// popped
 			if (minstack.empty() || minstack.top() >= x)
 				minstack.push(x);
 		}
@@ -6829,6 +6890,48 @@ namespace GG {
 	/*155. Min Stack end */
 
 
+	/*66. Plus One (easy)
+	https://leetcode.com/problems/plus-one/
+	https://discuss.leetcode.com/topic/4556/is-it-a-simple-code-c
+	*/
+	class Solution66 {
+	public:
+		vector<int> plusOne(vector<int>& digits) {
+			vector<int> result(digits);
+			int n = result.size();
+
+			for (int i = n - 1; i >= 0; --i) {
+				if (result[i] < 9) {
+					++result[i];
+					return result;
+				}
+				else
+					result[i] = 0;
+			}
+
+			result[0] = 0;
+			result.insert(result.begin(), 1);
+			return result;
+		}
+
+		static void main() {
+			Solution66* test = new Solution66;
+			vector<int> result;
+
+			vector<int> digits1 = { 0 };
+			result = test->plusOne(digits1);
+
+			vector<int> digits2 = { 9, 9 };
+			result = test->plusOne(digits2);
+
+			vector<int> digits3 = { 9, 8, 9 };
+			result = test->plusOne(digits3);
+			delete test;
+		}
+	};
+	/*66. Plus One end */
+
+
 	/*20. Valid Parentheses (easy)
 	https://leetcode.com/problems/valid-parentheses/
 	https://discuss.leetcode.com/topic/13231/2ms-c-sloution
@@ -6857,47 +6960,6 @@ namespace GG {
 	};
 	/*20. Valid Parentheses end */
 
-
-	/*66. Plus One (easy)
-	https://leetcode.com/problems/plus-one/
-	https://discuss.leetcode.com/topic/4556/is-it-a-simple-code-c
-	*/
-	class Solution66 {
-	public:
-		vector<int> plusOne(vector<int>& digits) {
-			vector<int> result(digits);
-			int n = result.size();
-
-			for (int i = n - 1; i >= 0; --i) {
-				if (result[i] < 9) {
-					++result[i];
-					return result;
-				}
-				else
-					result[i] = 0;
-			}
-
-			result[0] = 0;
-			result.insert(result.begin(), 1);
-			return result;
-		}		
-
-		static void main() {
-			Solution66* test = new Solution66;
-			vector<int> result;
-
-			vector<int> digits1 = { 0 };
-			result = test->plusOne(digits1);
-
-			vector<int> digits2 = { 9, 9 };
-			result = test->plusOne(digits2);
-
-			vector<int> digits3 = { 9, 8, 9 };
-			result = test->plusOne(digits3);
-			delete test;
-		}
-	};
-	/*66. Plus One end */
 
 	static void main() {
 
