@@ -20,6 +20,58 @@
 #include <iomanip> 
 using namespace std;
 
+#if 0
+
+/****************************air begin*********************************************/
+http://www.1point3acres.com/bbs/thread-191081-1-1.html
+https://github.com/WeizhengZhou/leetcode3/blob/master/airbnb.txt
+http://www.1point3acres.com/bbs/thread-191077-1-1.html
+
+/****************************air end*********************************************/
+
+
+/****************************app begin*********************************************/
+
+
+/****************************app end*********************************************/
+
+
+/****************************VM begin*********************************************/
+/ ---------------------------------- - VM OA---------------------------------- - /
+http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=198569&extra=page%3D2%26filter%3Dsortid%26sortid%3D311%26sortid%3D311
+1) vmware: 一个2d grid，可以向下用v，可以向右用h，从左上角开始走，到一个点有好几种hv的排列组合，返回他们按字母顺序的的排列，比如0，0 到2，2
+0 hhvv
+1 hvhv. 1point 3acres 璁哄潧
+2 hvvh
+3 vhhv
+4 vhvh
+5 vvhh
+比如给你（2，2）还有3那你就得返回vhhv
+
+
+http ://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=182050&extra=page%3D1%26filter%3Dsortid%26sortid%3D311%26sortid%3D311
+https://www.hackerrank.com/challenges/detect-the-domain-name
+2) 昨天收到的vmware oa邀请，在hackerrank上完成。60分钟6题。第1，2题75分，3，4题50分，5，6题100分。instruction上说了没指望全部做完，题目难度是1 - 6由易到难，所以建议顺序做。邀请上说做完会把分数和简历（？）发给vmware。.鍥磋鎴戜滑@1point 3 acres
+题目1，2题基本算法题.more info on 1point3acres.com
+3，4题文本处理题
+5，6题高级算法题（其实也没有太高级。。。）
+.From 1point 3acres bbs
+我碰到的题
+1, max difference in an array: 找i<j, a<a[j]情况下最大差a[j] - a, 否则返回－1。
+2, k subsequences : 找出所有和可被k整除的subsequence的个数，如：k = 3，［1，2，3，4，1］，返回4，分别为3，12，123，234。
+3, 把所有java / c++ / c source code里的注释弄出来：只需要考虑行注释// 和 块注释/* */就可以. Waral 鍗氬鏈夋洿澶氭枃绔?,
+4, 从html里将所有domain name 弄出来，形如abcd.abf.com。域名开头"www."或者"ww2."或者"web."将这些开头去掉， 如https ://abcd.abf.com/a/b取出abcd.abf.com，https://www.abf.com/a/b取出abf.com
+5, strongly connect group, 给node个数n，edge数量m，求largest minimum number of nodes that must form a strongly connected group.这个largest minimum也没有太明白
+6, wedding planner, 题目和地里某篇帖子的内容一样，帖子一下子找不到，大概意思是一个整数数列［10，20，50，100，500］对应一个float数列［1.2，2.5，3.8，6.9，10.4］，给一个整数，如果正好存在在整数数列里，返回对应float，如给10，返回1.2；否则给30，找到20，50，对应2.5，3.8，算出差到2.5, 3.8中30对应多少，返回。
+
+
+最后60分钟做了前三题，第四题没有通过所有case。第四题用正则表达式才能解，输入文件是真正的html，相当复杂。
+
+3) http://www.meetqun.com/forum.php?mod=forumdisplay&fid=36&filter=typeid&typeid=97
+/****************************VM end*********************************************/
+#endif 
+
+
 //////////////////////////Tag GG//////////////////////////////////////////
 namespace GG {
 	struct TreeNode {
