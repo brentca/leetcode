@@ -11,6 +11,8 @@
 #include <tchar.h>
 #include <vector>
 #include <queue>
+#include <unordered_map>
+
 using namespace std;
 namespace OOD{
 	/*respondent, manager, and director begin*/
@@ -191,6 +193,215 @@ namespace OOD{
 		vector<int> possibleScores() { vector<int>ret; return ret; }
 	};
 	/*deck card end*/
+
+	/*jukebox begin*/
+	class User {
+	public:
+		User(){}
+		User(string name, long id) : uname(name), uid(id){}
+		User(const User& other) { uname = other.uname; uid = other.uid; }
+		User& operator= (const User& other) { uname = other.uname; uid = other.uid; }
+
+		void setName(string strName) { uname = strName; }
+		void setId(long id) { uid = id; }
+
+		string getName() { return uname; }
+		long getId() { return uid; }
+
+	private:
+		string uname;
+		long uid;
+	};
+
+	class CD {
+	public:
+		CD(){}
+		/* data for id, artist, songs, etc */
+	};
+
+	class Song {
+	public:
+		Song(){}
+		/* data for id, CD (could be null), title, length, etc */
+	};
+
+	class Playlist {
+	public:
+		Playlist() {}
+		void addSong(Song song) { songs.push(song); }
+		Song getSong() { return songs.front(); }
+		void remvSong() { songs.pop(); }
+
+	private:
+		queue<Song> songs;
+	};
+
+	class CDPlayer {
+	public:
+		CDPlayer(){}
+		CDPlayer(CD& cd, Playlist& list) : cd(cd), playlist(list) {}
+
+		void playSong() {}
+
+		Playlist getPlaylist() { return playlist; }
+		void setPlaylist(Playlist& other) { playlist = other; }
+
+		CD getCD() { return cd; }
+		void setCD(CD& other) { cd = other; }
+
+	private:
+		CD cd;
+		Playlist playlist;
+	};
+
+	class SongSelector {
+	public:
+		SongSelector(){}
+		Song getCurrentSong() { return song; }
+
+	private:
+		Song song;
+	};
+
+	class JukeBox {
+	public:
+		JukeBox(CDPlayer& cdPlayer, User& user,
+			vector<CD>& cdCollection, SongSelector& ts) {}
+		Song getCurrentSong() { return ts.getCurrentSong(); }
+		void setUser(User& other) { user = other; }
+
+	private:
+		CDPlayer cdPlayer;
+		User user;
+		vector<CD> cdCollection;
+		SongSelector ts;
+	};
+	/*jukebox end*/
+
+	/*online book reader begin*/
+	class Reader {
+	public:
+		Reader(int id, string detail, int type) : uerid(id), details(detail), type(type){}
+		int uerid;
+		string details;
+		int type;
+		
+		void renewMembership() {}
+		// set/get userid, type
+	};
+
+	class Book {
+	public:
+		Book() {}
+		string details;
+		int id;
+		// set/get userid, type
+	};
+
+	class Display {
+	public:
+		void displayUser(Reader* user) { activeuser = user; refreshUsername(); }
+		void displayBook(Book* book) { 
+			activebook = book;
+			currpage = 0;
+			refreshTitle(); 
+			refreshDetails();
+			refreshPage();
+		}
+
+		void nextPage() { ++currpage; refreshPage(); }
+		void previousPage() { --currpage; refreshPage(); }
+
+	private:
+		Book* activebook;
+		Reader* activeuser;
+		int currpage;
+
+		void refreshUsername() { /* updates username display */ }
+		void refreshTitle() { /* updates title display */ }
+		void refreshDetails() { /* updates details display */ }
+		void refreshPage() { /* updated page display */ }
+	};
+
+	class UserManage {
+	public:
+		Reader* addUser(int id, string details, int accountType) {
+			if (users.count(id))
+				return users[id];
+
+			Reader* newuser = new Reader(id, details, accountType);
+			users[id] = newuser;
+			return newuser;
+		}
+
+		void removeUser(int id) {
+			if (0 == users.count(id))
+				return;
+
+			Reader* tmp = users[id];
+			users.erase(id);
+			delete tmp;
+		}
+
+		Reader* getUser(int id) {
+			Reader* ret = NULL;
+
+			if (users.count(id))
+				ret = users[id];
+			return ret;
+		}
+
+	private:
+		unordered_map<int, Reader*> users;
+	};
+
+	class Library {
+	public:
+		//add, remove book
+	private:
+		unordered_map<int, Book*> books;
+	};
+
+	class OnlineReaderSystem {
+	public:
+		OnlineReaderSystem() {}
+		Library* getLibrary() { return library; }
+		Display* getDisplay() { return display; }
+		UserManage* getUserManage() { return userManager; }
+
+		Book* getActiveBook() { return activeBook; }
+		void setActiveBook(Book* book) {
+			activeBook = book;
+			display->displayBook(activeBook);
+		}
+
+		void setActiveUser(Reader* user) {
+			activeUser = user;
+			display->displayUser(activeUser);
+		}
+	private:
+		Library* library;
+		UserManage* userManager;
+		Display* display;
+		Book* activeBook;
+		Reader* activeUser;
+	};
+
+	/*online book reader end*/
+
+
+	/*online book reader begin*/
+	/*jukebox end*/
+
+	/*online book reader begin*/
+	/*jukebox end*/
+
+
+	/*online book reader begin*/
+	/*jukebox end*/
+
+	/*online book reader begin*/
+	/*jukebox end*/
 }
 
 // TODO: reference additional headers your program requires here
