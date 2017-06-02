@@ -1,0 +1,498 @@
+1. Find the leftmost node of the lowest level:
+
+2. Two sum:  return true if there’s a pair summing up to a target
+
+3. Merge qua-tree:
+color: black, white, misc
+Class Qua-tree{
+Qua-tree[] children; //either 0 or 4 children
+int color;
+...
+}
+Merge two trees.
+black  is dominate color: black vs anything -> black
+
+4. video types: movie, tv, short videos..
+design classes
+Follow up: given a list of videos return the top 5 rated videos (rating is video's property,design class  )
+
+5.system design, store the livestreaming video and watch it later
+
+6.Binary Tree的serialization， deserialization
+
+7. telephone ，letter的combination String
+
+8.OOD Vending machine。difference abstract class concrete class
+
+9.spiral print matrix
+
+10.parkinglot
+
+11.ood how to design online order system
+
+12 merge interval, how to design top k
+
+13. LRU cache
+
+
+
+1. 一堆bq, 然后一个简单的system design, 就是 short url， 然后设计了一下 database model， 如何存储， 然后如果 read heavy， 就提了cache。然后shadow小哥 是security 组的，最后问了如何确保每个用户的 short url 的安全性
+2. 一堆bq, ood， 设计 repository, commit, branch。。 当时有点懵，但是一直在讨论，在最后也算是设计出来了，但是有种全程面试官带我飞的感觉。感觉这轮悬了
+3. 一堆bq， 给了一个maze, 小白鼠找cheese， 只有两个api ：
+     a. 一个是给方向（上下左右），然后返回能否往这个方向走，如果能就移动到这个位置，不能的话返回 false 并且原地不动。
+     b. 判断当前是否有cheese 
+    要求： 返回 任意一个吃到cheese的path。 不用写完整代码，讨论思路。可能这个不同于其他的地方就是对于这个maze 你完全不了解，只有那2个api，如何记录位置，路线，如果没有路了怎么办，怎么返回，之类的需要考虑
+
+午饭，妹子很开朗，竟然还是校友，聊的很开心。
+4. 一堆 bq， 然后cs 基础知识。然后 lc 239。只记得lc 有，但是没刷过。。回来看了lc, 觉得我的解法太蠢了， 简单粗暴，优化最后也没写出来。。T.T。 这轮估计也悬了
+5. 全程 bq. manager 人好好，聊到超时，最后自我感觉双方都扯的很开心。 当然了，只是自我感觉。。
+Sliding Window Maximum
+
+1.lc  zigzag的follow up，印度哥哥人很nice
+2.美国小哥，经典亚麻题， 给一推ip地址的log问出现top k是哪些，就写了hashmap+pq的解法然后follow up: 如果文件input size非常大怎么办， 类似于map reduce的解决思想
+3.这轮黑脸三姐和一个shadow， 先问给一个string，找到一个子串然后将这个字串替换成另一个string。 第二题是用trie，实现类似输入法一样的打出几个字母会自动补全给出其他的单词，中间楼主试图解释自己想法并且和她交流三姐不理。。。只说你觉得对就行。。。。。。。。。。。。。。。。。-google 1point3acres
+4.国人大哥！人很好。。题目类似word break cc150那题。。楼主写着写着想起来问如果有appleapplepie 这种但是给的input里只有一个apple算对么。大哥说这种就算不能break的。。代码最后写的有点乱大哥就说分析下复杂度。说觉得我面的不
+
+
+First ask the interviewer what kind of elevator?  there is only one elevator serving that building or multiple elevators serving the building simultaneously?
+this situation is that: there is one elevator serving the building.  there are many floors in the buliding. Maybe there are some users in different floor pressing the button simultaneously. This results in some requests to RequestProcessCenter for processing. The  RequestProcessCenter figure out the first request that need to be processed in such an algorithm that the distance between target floor and current floor is shortest.
+First describe the whole situation. and check it with your interviewer;
+Second sketch out the main classes and methods on the whiteboard;
+So we need the following classes:
+public class User {
+private name;
+public pressButton(int toFloor) {
+    Request req = new Request( toFloor);
+    RequestProcessCenter  center = RequestProcessCenter.getInstance();
+    center.addRequest(req);
+}
+}
+public class Request {
+    private int toFloor;
+    public Request(int _toFloor) {
+        toFloor = _toFloor;
+}
+public getToFloor() {
+    return toFloor;
+}
+}
+public class Elevator {
+    public static Elevator instance = null;
+    private int currentFloor;
+    public static Elevator( ) {
+        if (instance == null) {  // late loading and eager loading
+                    // connection pool
+            synchronized (Elevator.class) {
+                instance = new Elevator();
+}
+}
+return instance;
+}
+public getInstance() {
+    if (instance == null) {
+            synchronized (SingletonDemo.class) {
+                instance = new Elevator();
+}
+}
+return instance;
+}
+public getCurrentFloor() {
+    return currentFloor;
+}
+public moveToTargetFloor(int toFloor) {
+    currentFloor = toFloor;
+}
+public void moveUp();
+public void moveDown();
+}
+public RequestProcessCenter implements runnable {
+    public LinkedList<Request> queue;
+public RequestProcessCenter( ) {
+        queue = new LinkedList<Request>( );
+}
+public void run() {
+        while ( true ) {
+            processRequest( )
+}
+}
+public void addRequest(Request request) {
+    queue.add(request);
+}
+public void removeRequest(Request request) {
+    queue.remove(request);
+}
+public Request getNextRequest( ) {
+    Request shortestReq = null;
+    int shortest = Integer.MAX_VALUE;
+    int curFloor = Elevator.getInstance( ).getCurrentFloor( );
+    for (Request item : queue) {
+        int distance = Math.abs(curFloor - item.getToFloor( ) );
+        if (distance < shortest) {
+            shortest = distance;
+            shortestReq = item;
+}
+}
+return shortestReq;
+}
+public void processRequest( ) {
+    Request req = getNextRequest( );
+if (req != null) {
+        int toFloor = req.getToFloor( );
+        Elevator.getInstance.moveToTargetFloor( toFloor);
+        queue.remove(req);
+}
+   
+}
+}
+
+longest substring without duplicate character
+
+
+上周五AMS某组： 一共六轮，一轮系统设计， 两轮算法，两轮老板聊天加少量算法， 一轮HR聊天
+第一轮：白人资深工程师，设计一个发送消息的设计，发送消息包括邮件，短信和电话方式，写出相关主要的类。
+第二轮：白人老板，大量聊天问题. Waral 
+第三轮：一亚裔老板加一白人老板，大量聊天问题及两道简单级别的算法题。
+午饭： 店面面我的三哥带我吃饭. 1point3acres.com/bbs
+第四轮：头巾三哥，给一个整型二维数组，每个元素代表高度， 要求找出所有可以达到四个边界的点，每个点只能上下左右移动，只能往自己小或者相等的元素走，想象一下水往低处流。。。三哥一直让我给出最优解，说实话我知道暴力DFS。。这轮答得不好
+第五轮：HR小聊天，讲讲待遇，了解你对面试的感想，没啥实际意义。
+第六轮：白人工程师，给了一道听上去很牛逼，其实本质就是拓扑排序的题， 记录所有的点，然后找出所有入度为零的初始点即可。
+
+非technical的问题真的要好好准备。提前写一遍然后自己读读，不亚于刷题刷设计的重要性。
+. 
+面经来源地里，感谢各位的贡献，如果有人觉得侵犯版权或者隐私的，请DM我我去删除。
+括号里是具体帖子里比较重要一点思路或者重要的follow up question，楼主只是做一个微小的贡献
+
+System Design:
+1. Design a Uber 设计一个简单的Uber，包括检测周围空闲的车，用户打车付账流程和到目的地时间估计.
+(将城市化成许多个矩形block（区），可以借鉴二维k-d tree那个思想。每个车实时更新当前位置坐标和是否available，找用户最近八个区的空闲的车，然后时间就是车速和距离的关系，这个没错。地图api这种你需要什么和interviewr说就好了，如果不是考察项目的话一般都会说可以默认给出的。).鏈枃鍘熷垱鑷�1point3acres璁哄潧
+
+2.TinyURL
+(Write heavy? improve Security? 怎么scale? 一个region上的服务出问题了怎么处理?)
+
+3. Repository system, design commit fuction and branch function.
+
+4. Video/Movie System (given a list of videos, return top 5 rated videos)
+
+5. Sotre the livestreaming video and watch it later function
+
+6. cc150 JukeBox
+7. Amazon gift card printing machine. (实就是general的说一下你对一个application architecture的理解，面试官会引导你，比如用啥样的db，用rest/soap，某一步失败了怎么办，data consistency一类的随便扯一扯). 
+
+8. One hour delivery system
+
+9. Explain Agile, Waterfall, Pro & Cons
+
+10. Predict User purchase
+(先分析什么因素判断用户买不买这个商品，浏览记录，购买记录，在页面停留时间，浏览这类商品的次数，现在火的top 100商品等等。然后分析架构，
+给的答案是首先master slave避免single point failure，用户点击商品后先通过dymanic dns look up找到距离最近的CDN，然后http request传过来给那个cluster的master server, mater本身有cache看看这个请求的结果是不是已经cache过了有的话直接返回（这里cache的是这个请求对应的购物车html页面），没有的话master做负载均衡下传给空闲slave server（rmi call）, slave有自己的local cache因为对这个预测结果每个slave cache可以不consistent， 可以不用时刻recon每个不同的server cache。所有的数据存储都用in memory database并设置time to live， 因为这个是一个读取大于写的系统数据也不需要持久化不用支持transaction, scale也更容易。master如果挂了重启就可以，因为都是预测数据丢失了也无所谓。如果要更优化可以在浏览器端也做一层cache，如果用户反复点击同样的商品，就不用每次都make http call了)
+
+11. Card game , and write shuffle method
+
+12. Amazon Locker 就是Amazon买东西可以运到一个Locker然后pick up的那个.
+(仔细想一下你就会发现就是一个Parking Lot.Package有Small,Medium,Large.一个Location的 Lockers也有Small,Medium, Large。面试官主要想知道一个送货小哥去的时候怎么分配给他个大小合适的Locker。要写那个method。我就按照Parking Lot做的。我觉得一模一样。恩恩，我那时侯一开始考虑也想是不是Order生成的时候就匹配了一个Locker，还有挑选哪个Location,但跟面试观官交流以后，他就说假设只有一个Location然后主要想知道送货小哥去的时候怎么分配，别的先不考虑。)
+. visit 1point3acres.com for more.
+13. Reader System
+
+14. Parking Lot, Airport etc...(http://stackoverflow.com/questio ... n-an-oo-parking-lot )
+
+15. Amazon address book
+   (1. What's in web server
+    2. What's the API for address service
+    3. What's in the storage. From 1point 3acres bbs
+    4. How to improve the performance)
+(user 发送与address 相关的请求到web server，　然后web server 获取／更新相关的记录。大概说了下DNS根据user ip访问临近的web server, 问到了web server 里头有哪些与address 相关的function 以及参数，具体说了下getAddressLists. 期间提了下cache 面试官表情不对了。后边问了有多少个表，怎么设计，怎么提高profermance. 楼主提到说作no sql 做sharding。面试官说时间到了没有给反馈，多半是设计太狗血)
+. 
+16. Design system to store user info and address info. Address info changes frequently. Need to notify address change.
+
+17. Design a Log application. (就是开发从上面获取 bug log 信息，用户可以往上提交。开始我并不知道log application怎么工作的，是程序员往上提bug 还是test人员往上提。跟面试官一步步讨论的，然后写了些前后端的 process。中间很多问题，他们会顺着你的思路往下问)
+
+18. 给了一堆 商品，每个有不同的分类tag 比如 book, music, sports... 然后按顺序输出，就是输出这里他描述的特别不清楚，于是开始先按tag sort了，然后顺着输出。他说不行，想要控制每行的个数，然后就控制个数输出。然后他比较满意，follow up 了随意更改每行的个数，不要求写代码，也写上去了. 
+
+19. OOD。设计一个SQL parser（不是compiler，这里强调如何解析SQL语句中的变量，比如table name，和关键字， 比如select 语句），关键在于怎么用好interface. 
+https://github.com/alibaba/druid/tree/master/src/main/java/com/alibaba/druid/sql/parser
+
+20. 设计一个big integer类。实现其中的add和multiply。先是讨论了要使用的数据结构（数组和链表）并对比优缺点，然后用数组实现（非高效压缩那种的，一个数组元素是大数里的一位数）。multiply只要写伪代码，出了错，不过他不介意
+
+21. 设计个API，满足两个function，一个是往list里面丢string，还有一个是统计top k frequent element. 对于API实现scalability.
+. visit 1point3acres.com for more.
+22.  Design pattern: strategy, observer   设计模式那个就是duck/toyduck的变形。Observer那个也是比较教科书的东西
+
+23. 如果有一个service, 要求设计方法支持query，比如最后一秒的访问数，最后一分钟的访问数，。。。。最后一小时的访问数。。。
+(1.把timestamp 写到磁盘上，然后用hadoop 来算。面试官问pros and cons
+2. 为了改善读的速度，我说把这些timestamp存到in-memory buckets里面，最后还是 hadoop
+根据我的buckets排序思路提示我，可以不用存timestamp。。。。我有点惊呆了，但是转念一想，你这些query的时间段是last second/minute/hour。我觉得就可以只有这三个buckets，每次call 这个service的同时，检查当前的timestamp，如果超过1秒，我说就去aggregate/update last minute和last hour的总数就好了。。。 到最后我脑子里有点捣浆糊了，但是面试官看到我最后的思路解释说可以work))
+
+24. 手机公司的bill系统，手机计划有免费时段，比如晚7点到第二天早7点和周末免费。短信和数据有各自的价格，用超过计划允许的数量怎么办。最后完成的感觉还算不错。这一轮也问了oo的一些基础知识，比如inheritance 和 composition的区别，什么时候用哪种？
+
+
+
+
+
+Algo: 亚麻很少出原题，但经常出变型，感觉挺灵活的。难度比较上属于中等和偏简单，偶尔有些hard属于经典题或者bar raiser吧。仅供大家参考。
+
+1. Unique Path 变形（可以上下左右，可否回溯，不可return false且原地不动）
+2. lc239  
+3. Max Subtree Sum
+4. Longest Substring without duplicate char. 1point 3acres 璁哄潧
+5. Find leftmost node of the lowest level
+6. Two sum
+7. Merge qua-tree
+color: black, white, misc
+class Qua-tree
+{
+    Que-Tree[] children; //0 or 4 children
+        int color;
+        ....
+}. Waral 鍗氬鏈夋洿澶氭枃绔�,
+
+Merge two tree, black is dominate color: black vs anything -> black;
+
+8. 围棋判断一个子被capture与否，被capture的定义就是这子或这子属于的整块同色子区域被另外颜色子包围。 
+   (解法也很简单， dfs。 每次recusive call返回是否被capture, 遇到异色子或者出界都是true, 遇到同色子就recursively去call它)
+(那假设只有同色的子（没有对手的子），也算是被capture么？（这个点很好！！  可以当作edge case处理单独处理。）
+
+9. Latgest rectangle area
+10. Search word in Trie
+11.Lowest LCA
+12.Top k nearest point. 
+13.给出的是一个目标文件名，自己提出假设定出file class 和 directory class，找出所有符合目标文件名的文件的path
+14.job failure root search
+(相当于一颗倒的树，root fail了，找导致这个failure的最高的ancestor。DFS, 顺着fail的path往上找)
+15.多米诺骨牌，找出最少数量的能推倒所有牌的牌
+(大概思路就是循环把入度为0的点当作起点dfs，把能traverse的点mark as visited，把起点加入result，然后如果还剩下没有visited的点，就说明有环，所以就再loop剩下点，每一个dfs，mark能traverse到的点as visited，把起点加入result，如果碰到了之前visited的起点，就把这个起点从result里面删掉，加入当前的起点。)
+16. Shorest Path
+17.Find heavier ball in ball array
+18. Work Break
+19.  Word Ladder II(原题是变一个字母，这里是去掉一个字母).
+20. string to int
+21. int to roman
+22. There is list of price at each day，and only one selling window is allowed. The selling price  is the minimum price of start day and end day of that selling window, and price is flat during the selling window. The selling amount is constant per day. Find out the selling window gives maximum profit, output max profit.
+23. Graph. graph. 实现画板的brush功能： 一个画板上面已经有一些图案，用户在画板上点任意一点，画板会自动paint包含该点的封闭的多边形。实现这个功能
+24.Merge Interval
+25. Matrix原题. 
+26. 有一个Task clas包括两个int, start and end; 有个list有很多个Task, 计算需要多少Thread 来run这些task.
+27. Serialize and Deserialized Binary Tree  
+（中间穿插了多线程的问题，以及 abstract class 等知识。
+Follow up :
+    1. What if the TreeNode class value is string (instead of int) which may     including newline, space, comma
+
+    2. 如果不是二叉树，是多叉树怎么办？
+正确的方法是在序列化的时候 存孩子的数目，存数据的长度，再存数据。需要一个结构化的序列化操作。
+new line, space 这些只是给你增加难度，你可以把数据当成binary来存; 我的想法是可以存字符串的ASCII码或者UNICODE编码，然后用space或者newline隔开存到文件里
+）
+28. 一个matrix，里面有一些锁（1表示）和空白（0表示），问每个空白到最近的锁的距离。简单bfs
+29. 算法+search suggestion设计，算法：给个word，给个dict判断给定的word是不是anagram
+30. numbers of islands 
+（ follow up：有多少个形状不同的岛？
+这个Follow up是经典 number of distinct islands
+比之前的明显要难些。 需要用到hashing得思想。 
+每一个岛将遍历完的点id(每个cell 可以分配一个id, id = i*m+j) 组合起来， 返回字符串，比如 “1/2/3/5”  这个岛有四个点。如果另一个岛是 "11/12/13/15"  只要把它offset下， 第一位归1， 它也变成"1/2/3/5"， 所以这2个岛的shape是一样的。 将这些第一位归1的字符串往set里丢。自然就除重了
+中心思想： 将CELL ID组合来表示一个岛(hash to string)，然后变形string, 最后往set里丢。 done
+. 1point 3acres 璁哄潧
+）
+31. kth largest number in array，quick selection
+32. LRU cache
+33. Number to English words. Waral 鍗氬鏈夋洿澶氭枃绔�,
+34. Valid Parenthesis
+35. given n pairs of numbers (1122...nn) and arrange them so that the each number x is x spaces apart from another number x. . from: 1point3acres.com/bbs 
+(数字必须紧挨着，思路就是DFS)
+36. Given a dictionary of words and a word, return the word if it exists in dict, else return the top 5 words in the dict that are closest to the given word;. Waral
+37. 2D array is immutable. Give 2D array of 1s and 0s, 1 is island and 0 is sea. Return the maximum island size
+38. 给了一棵树，让给每个node 加一个pointer 指向sibling.
+(用了queue level order traverse 加了。然后follow up 让优化，no extra space).
+39. Reconstuct itinerary
+40. 一个non-negative integer array里找subarray sum。
+(followup: 数字可以为负)
+41. 有一堆时间连续的purchase records (id, timestamp, userId, productId)，找出最常被同一个用户连续购买的三个商品
+42. 找出数组中唯一出现奇数次的数字，保证只有一个，(hashset解决)
+43. reverse linkedlist
+44. Kindle界面是黑白的，黑色区域是一个shape，然后输入一个界面且可修改，返回shape的个数。
+(这里我用了二维数组作为输入，0是空白，1是用pixel。然后dfs即可。 其实就是Number of island.). more info on 1point3acres.com
+45. Intersection of two linked list
+46. Group anagrams
+47. Convert binary tree to double linked list.  In-order order
+48. 写一个class要求push/pop和get minimum都是O(1)
+49. 给一个数组的object，用里面的key来sort，keys 只有有限的几个 
+(这个题我先用的priority queue，让我继续优化，我用了bucket sort，到O(n), 让我继续优化用in-place，我用了两个pointer;
+我最后用2个pointer排序的，但是一个while loop 下面嵌套了四个sub while loop。比如，这些objects的key 只有 X, Y, Z. 排序的要求是把这三组按照XYZ的顺序排好。
+
+前两个sub while loop 对调X 和 Y或Z; 这轮结束后，X的位置应该都是在正确的位置上了
+后两个 sub while loop 对调 Y 和 Z。)
+
+50. wiggle sort 2 
+(给一个数组，里面有负数和正数，让输出负数／正数间隔的数组，我用了两个pointer从头到尾／从尾到头同时扫一遍。估计这题没法做成in-place，最后没时间写完code，只是大概说了一下，最后面试官觉得可以work)
+
+51. find # of distinct islands in 0-1 matrix.
+
+第一轮： BQ，CODING: 有一堆EVENT, 每个EVENT记录WINNER和LOSER, 比如【A,B】表示A 是WINNER， B是LOSER, 判断是否存在A赢B， B赢C， C赢A 的情况
+第二轮： HM，一堆BEHAVIOUR 问题， 建议好好准备
+第三轮： 系统设计， 类似LFU
+第四轮： 生些LRU
+第五轮： LUNCH. 
+第六轮： 给你一个数组【1，0，1,0,1,0】，1 代表陆地，0代表谁，你每次可以+1，-1 后者+n(n是 INPUT PARAMETER), 判断能否从数组的START POINT 到数组的尾端
+
+面试一共四轮 每轮45分钟 也许是面二级程旭猿的原因 每一轮或多或少都有一些系统设计和OO的内容在里面 而且每一轮前15分钟左右必定是behavior question+项目介绍第一轮是和两个人 题目是文件系统里记录下了大量的用户访问亚麻网站的顺序 比如从A网页跳转到B网页 再从B网页跳转到C网页 设计一个功能输出所有跳转记录里面的最长共同路径 这题其实就是"求最长的共同子字符串”的实际应用 用动态规划很容易解 代码写完分析下时间空间复杂度 第一关算是过了
+第二轮是一个经理 面的是系统设计 先让谈之前项目里比较突出的feature 然后进入题目 从很高的层面设计一个类似因斯特gram一样的照片分享平台 scale的问题是如果现在想支持500人以上的团队分享 要怎么优化刚才的设计 以及分享给不认识的random 第二关也算是有惊无险
+第三轮面试官定义了一个产品线的类 要求重复项 用hashmap和hashset就可以很容易解决 大家应该都没问题 第三关也顺利通过
+第四轮是亚麻名产抬高bar的人 问题比较复杂 假设一本电子书 可以被人分享里面部分的内容 但是被分享的内容不能超过整本书内容的百分之十 让设计一个模块来判断是否能分享当下的内容 这个问题问得十分模糊 基本上没有给任何定义 需要楼主一步一步逼问着他把这个模块的每个细节都设计出来 楼主刚开始以为这是一个strStr的问题 后来面试官提醒说 两段文字就算内容完全一致 但是出现在书的不同位置的话 就不能算是同样的内容 让楼主猛然惊醒 这是一个线段区间的问题 于是假设说有一个helper可以帮我们找到input文字在这本书里的开始和结束坐标 然后把已知的坐标集合排序后再插入新分享的内容坐标 减去重合部分后看总长度有没有超额 面试官同意这是个可行解 说可以开始写码了 楼主一开始觉得应该不难 结果开始写了以后发现edge case超多 比LC56,57都要复杂 写到最后时间用尽也没写完。。面试官说我了解你的思路了 让我谈test case如何写 我把刚所有的edge case都枚举了一遍 面试官点头认同 不得不说 亚麻名产抬高bar的人果然是名不虚传 难度和前三轮不是一个级别的. 涓€浜�-涓夊垎-鍦帮紝鐙鍙戝竷
+面完之后总体感觉是 亚麻二级程旭猿的面试已经不那么强调刷题了 他们更多地是考察你分析解决实际问题的能力 看你能否在短时间内设计出一个可行解 并把这个可行解细化到一个类的OO设计里 最后把其中的一个核心部分用代码实现 
+
+1：找string vector 里构成成分字母相同的 并返回 所有成份相同并且数量大于一个的 vector<vector<string>>
+. visit 1point3acres.com for more.
+2: LRU LCU 没要求写code
+3：string数字乘数字
+4：一个经过包装的题目 【a,a,a,a,a,b,b,b,b,】这样进来大量数据array， a以后不会有b出现，找a最多的
+5：number of island
+6：亚麻经典东西南北走会不会经过同一点。
+
+第一轮，一个韩国小伙(Alexa)，直接来了个最下生成树，这个东西多少年前课本上学过，之后没怎么接触过，然后一开始突然想什么floyd之类的东西了，后来突然想到最小生成数，直接greedy求解了。
+第二轮，一个三哥（S3)，主要聊我目前的东西，我们的东西各种设计思路。
+第三轮，Alexa的manager，主要是behavior question，没有coding,没有design.
+第四轮中午吃饭
+第五轮，S3的三哥，设计Key value store，针对各种问题进行设计方案解决。
+第六轮，S3的manager，在这之前觉得应该是大水果了，没想到给我来了个简单题目我居然挂掉了，找字符串里第一个unique字符。一开始想用笨方法解决，结果出了不少问题，等真的用正确思路时，时间也差不多了。
+
+
+1. 不幸碰到阿三，从一上来就板着个脸，问了一道LC上一道题的变体，说把一个array分成两个subsequence（不是subarray），让这两个subsequence的和最接近，返回这两个subsequence。. ，说是把上题的array改成integer stream，设计一个class，可以接收新的integer，然后可以随时返回两个和最接近的subsequence。
+
+2. 美白，LC原题，给一个matrix，全是0和1，要数数相连的1的“岛”的数量，轻松解决后又追问如果是要输出最大的岛的大小怎么办，稍微修改一下recursive的method，让它返回当前岛的大小就行。又追问如果要统计所有岛的形状，返回岛的形状的数量怎么办，我的解法是定义一个Shape类，让recursive method返回，再implement一个比较Shape的method，统计返回的形状数量就行。
+3. 老黑，先比较一下array和linked list的特点，再implement一个两头开的deque，要求get(int index), addToFirst(int num), addToLast(int num)都要平均O(1), 两个arraylist解决
+4. 国人，LC原题，能返回min的stack。又追问给两个array A和B，两个array的元素都一样，只是顺序不一样，要求用stack处理A，允许的操作有push和pop，让stack pop出来的数字正好可以组成B，如果不能实现返回空。
+
+最后一个一定要写code，其实很简单，不要想得太复杂，我问面试官A和B的元素是不是unique，说是，有了这点就简单多了。
+Stack<Integer> stack = new Stack<Integer>();
+StringBuilder sb = new StringBuilder();
+int i = 0, j = 0;
+while (i < A.length && j < B.length){
+    if (A == B[j]){
+       sb.append("push"+A+"pop"+A);
+        i++;
+        j++;. 
+    }else if (!stack.isEmpty() && B == stack.pop()){
+        sb.append("pop"+B);
+        j++;
+    }else{
+        sb.append("push"+A);
+        i++;
+    }
+}
+while (!stack.isEmpty()){. From 1point 3acres bbs
+    if (stack.peek() != B[j])
+        return "";
+    sb.append("pop"+B[j]);
+    j++;
+}
+return sb.toString();. 
+
+1） 两白人， 很nice ，问的input file, containing (id/price/date), convert externalid --> internal id, it is N-1 relationship. Then print out latest(like within 1 week) avg price for each internal id. 
+2)  白人，nice。 问的ood---youtube
+3） 两不明人种，不黑不棕，还行。问 两个sequence of numbers, equal size, how to re allocate to make two new sequence of equal size with closest total number sum.
+4)  华人mm，人不错，问的 bsf 一个常规题，given 2d character matrix , print out all paths which equals to a given string.
+
+第一轮，黑姐姐，超级和蔼可亲，先是BQ，然后问了一些arraylist和linkedlist的基本常识，然后让我实现一个arraydeque。
+第二轮，应该是华人大哥，还是先是BQ，deadline情景的那个，然后是实现minstack，第二题是给两个整型数组，a= {1,2,3}, b = {1,3,2} 然后写出一个方法，可以输出这样一个string：push1|pop1|push2|push3|pop3|pop2。其实就是数组是一些操作栈里数据的结果，然后你需要自己识别这些是什么操作，然后操作与操作间用“|”隔开
+第三轮，坑人的三哥，一进门我就觉得他态度不太好，很傲慢，然后跟我说会问我一道coding一道设计，coding题是要用现有的一个读取的方法读取云端的文件，然后显示在客户端上，客户端一页只能显示1024byte。然后在 白板上白板上写了这样一个东西：int read(int offset, char[] data)。解释说，这个方法是我可以调用的，会返回一个整数代表长度，offset是read这个动作的起始位置，char[] data是这个方法的输出。然后我就？？？？？我问他你这输出为啥写括号里啊？他叽里咕噜说这个就是输出。我说好吧，只能当他写了个伪码。写完了，说我这个调用read（）次数太多，问怎么减少调用次数，然后我就说辟个空间，先全都读出来，放在一个字符数组里，然后他说不行，放不下，一次只能存1024byte，再然后就到时间了，他还嘟囔了一句设计题还没做呢。
+第四轮，两个人，一个应该是印度裔的美国姐姐，没有奇怪的口音，超nice，说话好听，另一个是白人小哥哥，也特别好，因为全程没有问我问题，还是先BQ，最有挑战的项目，然后让设计电话本，实现添加联系人，删除联系人，查找联系人，随机get一个联系人，全部都要求O(1)的时间复杂度
+
+merge 两个排好序的array，不用额外的空间。 比如A有x个数，B有y个数，要求merge的结果，前x放进A里面，后y个放到B里面。
+比如： A: [1, 5, 8], B: [2, 3, 9] -> A:[1, 2, 3], B:[5, 8, 9]
+public void merge(int[] A, int[] B) {
+                int na = A.length, nb = B.length;
+                if (na == 0 || nb == 0)
+                        return;
+
+                // Find the swap position
+                int ia = 0, ib = 0;
+                while ((ia + ib) < na) {
+                        if (ib >= nb || A[ia] <= B[ib])
+                                ia++;
+                        else
+                                ib++;
+                }
+                // Swap elements
+                int j = ia;
+                for (int i = 0; i < ib; i++) {
+                        swap(A, j++, B, i);
+                }
+                // Sort each array
+                Arrays.sort(A);
+                Arrays.sort(B);
+        }
+
+第一轮：
+15min bq
+1. 有2种priority，觉得priority queue的效率低，要设计一种更高效的数据结构。.1point3acres缃�
+2. product recomendation，给一堆purchase record，给买了同样商品的客户之间推荐rating超过4的商品。例如：Alice买了商品{A， B， C}，评价是{3, 4, 5}, 然后Bob买了商品{B, D, F}评价是{4, 4, 4},要给bob推荐C，因为alice跟bob都买了B，而且alice觉得B好，然后得把C推荐给Bob
+
+第二轮：-google 1point3acres
+manager，问了半个小时bq。然后系统设计：亚麻商品的图片好多怎么存。
+
+第三轮：
+bar raiser, 半个小时bq，然后histogram，我脑残装没做过，谁知n方的解写出各种bug，最后没把O（n）解写出来。
+
+第四轮：
+15min bq，给两个很大的log file，找出两天都登录过的用户。然后外排序，外部binary search，一步一步写函数，写满整个白板...
+
+题目1 
+
+   _   _   _   _   _   _   _   
+|      |      |      |      |      |      
+   _   _   _   _   _   _   _     
+|      |      |  B  |   J  |      |      
+   _   _   _   _   _   _   _   
+|      |      |  B  |      |      |               
+   _   _   _   _   _   _   _    
+|      |  G  |      |   B |      |      
+   _   _   _   _   _   _   _   
+|      |      |      |      |      | 
+   _   _   _   _   _   _   _   . 鐗涗汉浜戦泦,涓€浜╀笁鍒嗗湴
+
+
+G   -Guard
+
+J - jewellery
+. from: 1point3acres.com/bbs 
+B - Block
+
+大概意思就是g 花 最短步数走到 J 避开所有 B
+
+参考 LC286
+
+这一问 比较简单 ，BFS 走完即可。空间，时间复杂度都是 O(MN) 
+
+但有个Tricky 的地方是， 面试那家伙就在图上标了一个 g， 我以为就一个 g. 惯性思维。 从g 出发 到j 就好。
+
+后来，我出于好奇问了他一下， 图里面有没有可能有多个g。 
+
+他贼贼的说有。 妈蛋。 我当时已经写完。 提出来一个改动比较小的方案， 遍历 matrix, 遇到 g ，call 一便上面方法复杂度 O(k*MN). 被他驳回了。
+鏉ユ簮涓€浜�.涓夊垎鍦拌鍧�. 
+然后提出改进。 换思路， 从 j 出发 遇到第一个G 返回，复杂度 O(MN)。BUG FREE, 通过。
+.1point3acres缃�
+
+
+. 1point3acres.com/bbs
+题目2
+在上面 题目基础上， 加 另一个 情况
+
+w- water..1point3acres缃�
+
+走到 water 那个 cell 需要 走三步 才能跨过去。. 鍥磋鎴戜滑@1point 3 acres
+
+同样问题 g 花 最短步数走到 J 避开所有 B. 鐗涗汉浜戦泦,涓€浜╀笁鍒嗗湴
+
+这是一个 带 weight 的 graph.
+
+代码大多数和上一题一样， 不同在于，. 鐣欏鐢宠璁哄潧-涓€浜╀笁鍒嗗湴
+用 priority queue 对 Position 排序， 排序方法以到position 的 步数为准。 每次从 pq poll 出的下一个位置为你下一个 检查点。
+
+面试官还问了，这样的思路是啥， 会不会miss 掉 点。 需要和他把思路理一边。
+
+第一题，divide two numbers, 不能用乘除法。这个题是lc原题了，说了下思路，然后三哥觉得我已经摸清楚这道题的坑在哪儿了， 就没让我写
+第二题，很奇怪。说给一堆人，这堆人里面会有一些人不喜欢对方。比如A, B, C三个人，A不喜欢B，B不喜欢C。问，现在要从这堆人里面选出一些人来，使得这些人都相互不讨厌，问最多能选出多少人来。.1point3acres缃�
+我当时一听这个题很懵逼啊，想说直接强搜。。。然后三个仿佛并不是很能理解这种办法，跟他讨论了半天也不知道他想说什么。。。后来还是强行用这个方法写了，由于讨论了太长时间直接拖了半小时。。
+
+1. Sr SDM + SDM. Behaviour question. 
+2. SDEIII. Behaviour question + 设计一个五子棋游戏，从ood到实现。. 
+3. Principal SDE. Video conference.  Behaviour question + 设计Google Map
+4. Hire manager + SDM.  Behaviour question
+5. SDEIII. Behaviour question + 一个2D坐标系中求出所有到原点最近的k个点
