@@ -97,16 +97,16 @@ private:
 };
 
 enum TYPE_COIN {
-	PENNY = 0,
-	NICKLE,
-	DIME,
-	QUARTER,
+	PENNY = 1,
+	NICKLE = 5,
+	DIME = 10,
+	QUARTER = 25,
 };
 
 class Coin {
 public:
 	Coin(TYPE_COIN type) {};
-	TYPE_COIN getType() { return type; }
+	int getValue() { return (int)type; }
 
 private:
 	TYPE_COIN type;
@@ -306,7 +306,7 @@ private:
         return hasChange;
     }
 
-    void updateCashInventory(List change) {
+    void updateCashInventory(list<Coin> change) {
         for(Coin c : change){
             cashInventory.deduct(c);
         }
@@ -320,11 +320,68 @@ public:
 
 
 class Inventory
-9.spiral print matrix
+9.spiral print matrix (LC54)
 
 10.parkinglot
 
 11.ood how to design online order system
+class User {
+public:
+	int id;
+	string name;
+	string address;
+};
+
+class UserManage {
+public:
+	void addUser(User &other);
+	void removeUser(User &other);
+	void updateUser(User &other);
+};
+
+class Product {
+public:
+	int id;
+	int total;
+	int unitprice;
+};
+
+class OrderItem {
+public:
+	int id;
+	int totals;
+	string time;
+	int status;
+	unordered_map<Product, int> items;
+};
+
+class OrderManage {
+public:
+	void addOrder(OrderItem& other);
+	void removeOder(int id);
+	void updateOrder(OrderItem& other);
+	bool isExpire(int id);
+	OrderItem getOrder(int id)
+
+private:
+	unordered_map<int, OrderItem> orders;
+};
+
+class OrderSystem {
+public:
+	void makeOrders(User& other)
+	void addInShopCart(User& other) {}
+	int checkOrderStatus(User& other, int id)
+
+private:
+	OrderManage* ordermag;
+	UserManage* usermag;
+	vector<Product> products;
+
+	unordered_map<User, unordered_map<Product, int>> shopcarts;
+};
+
+
 
 12 merge interval, how to design top k
 
@@ -345,6 +402,8 @@ class Inventory
 Sliding Window Maximum
 
 1.lc  zigzag的follow up，印度哥哥人很nice
+vector<pair<vector<int>::iterator, vector<int>::iterator>> ites;
+
 2.美国小哥，经典亚麻题， 给一推ip地址的log问出现top k是哪些，就写了hashmap+pq的解法然后follow up: 如果文件input size非常大怎么办， 类似于map reduce的解决思想
 3.这轮黑脸三姐和一个shadow， 先问给一个string，找到一个子串然后将这个字串替换成另一个string。 第二题是用trie，实现类似输入法一样的打出几个字母会自动补全给出其他的单词，中间楼主试图解释自己想法并且和她交流三姐不理。。。只说你觉得对就行。。。。。。。。。。。。。。。。。-google 1point3acres
 4.国人大哥！人很好。。题目类似word break cc150那题。。楼主写着写着想起来问如果有appleapplepie 这种但是给的input里只有一个apple算对么。大哥说这种就算不能break的。。代码最后写的有点乱大哥就说分析下复杂度。说觉得我面的不
@@ -450,6 +509,9 @@ longest substring without duplicate character
 第三轮：一亚裔老板加一白人老板，大量聊天问题及两道简单级别的算法题。
 午饭： 店面面我的三哥带我吃饭. 1point3acres.com/bbs
 第四轮：头巾三哥，给一个整型二维数组，每个元素代表高度， 要求找出所有可以达到四个边界的点，每个点只能上下左右移动，只能往自己小或者相等的元素走，想象一下水往低处流。。。三哥一直让我给出最优解，说实话我知道暴力DFS。。这轮答得不好
+//方法一 对每个点DFS + visit （visit 二维数组可以有三个状态，没访问过（-1），访问过（1），可以到达（2），在DFS的时候，先要判断每个点的这三个状态，） 
+//方法二 初始化visit为全0矩阵，可以分别从四个角选出最低点bfs， 能访问到的点，把对应visit的值++，全部结束后，去算visit里头，值为4的点数即可。
+
 第五轮：HR小聊天，讲讲待遇，了解你对面试的感想，没啥实际意义。
 第六轮：白人工程师，给了一道听上去很牛逼，其实本质就是拓扑排序的题， 记录所有的点，然后找出所有入度为零的初始点即可。
 
