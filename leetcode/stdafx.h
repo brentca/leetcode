@@ -390,15 +390,105 @@ namespace OOD{
 	/*online book reader end*/
 
 
-	/*online book reader begin*/
-	/*jukebox end*/
+	/*file system begin*/
+	class Directory;
+	class Entry {
+	public:
+		virtual int getSize() { return 0; };
 
-	/*online book reader begin*/
-	/*jukebox end*/
+		string getFullPath();
+
+	protected:
+		Directory* parent;
+		long created;
+		long lastUpdated;
+		long lastAccessed;
+		string name;
+	};
+
+	class File: public Entry {
+	public:
+		int getSize() { return size; }
+		string getContents() { return content; }
+		void setContents(string c) { content = c; }
+
+	private:
+		int size;
+		string content;
+	};
 
 
-	/*online book reader begin*/
-	/*jukebox end*/
+	class Directory : public Entry {
+	public:
+		int getSize();
+
+		string getPath() { return path; }
+	protected:
+		vector<Entry> getContents() { return contents; }
+		string path;
+		vector<Entry> contents;
+	};
+	/*file system end*/
+
+	/*hash table begin*/
+	template <class K, class V> class Cell {
+	private:
+		K key;
+		V value;
+
+	public:
+		Cell(K k, V v) : key(k), value(v) {}
+		K getKey() { return key; }
+		V getValue() { return value; }
+
+		bool equivalent(K k) { return key == k; }
+		bool equivalent(Cell& other) { return equivalent(other.getKey()); }
+	};
+
+	template <class K, class V> class MyHashMap{
+	public:
+		MyHashMap() {
+			items.resize(MAX_SIZE);
+		}
+
+		int hashCodeofKey(K key){
+			return key.hashCode() % items.size();
+		}
+
+		void put(K key, V value) {
+			bool found = false;
+
+			int x = hashCodeofKey(key);
+
+			for (auto it : items[x])
+				if (it.equivalent(key)) {
+					items[x].erase(it);
+					break;
+				}
+
+			Cell cell = new Cell(key, value);
+			items[x].insert(cell);
+		}
+
+		V get(K key) {
+			V value;
+			int x = hashCodeofKey(key);
+			for (auto it : items[x])
+				if (it.equivalent(key)) {
+					value = it.getValue();
+					break;
+				}
+
+			return value;
+		}
+
+	private:
+		const int MAX_SIZE = 10;
+		vector<list<Cell<K, V>*>> items;
+	};
+	/*hash table end*/
+
+
 
 	/*online book reader begin*/
 	/*jukebox end*/
