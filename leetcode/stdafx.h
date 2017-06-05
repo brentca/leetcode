@@ -431,9 +431,9 @@ namespace OOD{
 
 		string getPath() { return path; }
 	protected:
-		vector<Entry> getContents() { return contents; }
+		vector<Entry*> getContents() { return contents; }
 		string path;
-		vector<Entry> contents;
+		vector<Entry*> contents;
 	};
 	/*file system end*/
 
