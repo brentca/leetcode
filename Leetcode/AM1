@@ -18,7 +18,7 @@ Follow up: given a list of videos return the top 5 rated videos (rating is video
 
 class Video {
 public:
-	Item()
+	Video()
 	int getId() { return id;}
 	int getRating() { return rate;}
 
@@ -32,6 +32,11 @@ private:
 
 class Movie: public Video{ 
 
+};
+
+class TV: public Video{ 
+private:
+	int seasons; //第几季
 };
 
 5.system design, store the livestreaming video and watch it later
@@ -53,6 +58,7 @@ public:
 	vector<string> retirveList();
 
 private:
+	string curitem;
 	string location;
 	unordered_map<int, Video*> items;
 };
@@ -60,7 +66,7 @@ private:
 
 class WatchStream {
 public:
-	WatchStream(StoreStream* storage)
+	WatchStream(StreamInt* storage)
 	
 	void selectVideo(int id);
 	void startWatch();
@@ -71,7 +77,7 @@ public:
 
 private:
 	int curid;
-	StoreStream* curwatch;
+	StreamInt* curwatch;
 };
 
 
@@ -195,10 +201,10 @@ private:
             if(hasSufficientChange()){
                 itemInventory.deduct(currentItem);
                 return currentItem;
-            }           
+            }
+
             throw new NotSufficientChangeException("Not Sufficient change in 
                                                     Inventory");
-           
         }
 
         long remainingBalance = currentItem.getPrice() - currentBalance;

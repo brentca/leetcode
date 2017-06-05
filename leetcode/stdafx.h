@@ -101,7 +101,14 @@ namespace OOD{
 	class Deck {
 	public:
 		Deck() { dealidx = 0; }
-		void shuffle() {}
+		void shuffle() {
+			int len = cards.size();
+			for (int i = 0; i < len; ++i) {
+				int j = rand() % (len - i) + i;
+				swap(cards[j], cards[i]);
+			}
+		}
+
 		int remainCards() { return cards.size() - dealidx; }
 		void setDeckCards(vector<Card>& deckcards) {
 			cards.clear();
