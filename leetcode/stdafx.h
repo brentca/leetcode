@@ -405,6 +405,7 @@ namespace OOD{
 
 		string getFullPath();
 
+		string getName() { return name; }
 	protected:
 		Directory* parent;
 		long created;
@@ -424,15 +425,12 @@ namespace OOD{
 		string content;
 	};
 
-
 	class Directory : public Entry {
 	public:
 		int getSize();
 
-		string getPath() { return path; }
 	protected:
 		vector<Entry*> getContents() { return contents; }
-		string path;
 		vector<Entry*> contents;
 	};
 	/*file system end*/
@@ -463,8 +461,6 @@ namespace OOD{
 		}
 
 		void put(K key, V value) {
-			bool found = false;
-
 			int x = hashCodeofKey(key);
 
 			for (auto it : items[x])
@@ -474,7 +470,7 @@ namespace OOD{
 				}
 
 			Cell cell = new Cell(key, value);
-			items[x].insert(cell);
+			items[x].push_back(cell);
 		}
 
 		V get(K key) {

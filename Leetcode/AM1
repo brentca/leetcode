@@ -47,7 +47,7 @@ public:
 	string descriptions;
 };
 
-class StreamInt {
+class StorageInt {
 public:
 	void setLocation(string loc);
 
@@ -66,7 +66,7 @@ private:
 
 class WatchStream {
 public:
-	WatchStream(StreamInt* storage)
+	WatchStream(StorageInt* storage)
 	
 	void selectVideo(int id);
 	void startWatch();
@@ -77,7 +77,7 @@ public:
 
 private:
 	int curid;
-	StreamInt* curwatch;
+	StorageInt* curwatch;
 };
 
 
@@ -760,6 +760,7 @@ return sb.toString();.
 
 merge 两个排好序的array，不用额外的空间。 比如A有x个数，B有y个数，要求merge的结果，前x放进A里面，后y个放到B里面。
 比如： A: [1, 5, 8], B: [2, 3, 9] -> A:[1, 2, 3], B:[5, 8, 9]
+O(max(m * log(m), n * log(n))
 public void merge(int[] A, int[] B) {
                 int na = A.length, nb = B.length;
                 if (na == 0 || nb == 0)
@@ -783,6 +784,29 @@ public void merge(int[] A, int[] B) {
                 Arrays.sort(B);
         }
 
+
+	O(m*n)
+	void merge(int ar1[], int ar2[], int m, int n)
+	{
+		// Iterate through all elements of ar2[] starting from
+		// the last element
+		for (int i=n-1; i>=0; i--)
+		{
+			/* Find the smallest element greater than ar2[i]. Move all
+			   elements one position ahead till the smallest greater
+			   element is not found */
+			int j, last = ar1[m-1];
+			for (j=m-2; j >= 0 && ar1[j] > ar2[i]; j--)
+				ar1[j+1] = ar1[j];
+ 
+			// If there was a greater element
+			if (j != m-2 || last > ar2[i])
+			{
+				ar1[j+1] = ar2[i];
+				ar2[i] = last;
+			}
+		}
+	}
 第一轮：
 15min bq
 1. 有2种priority，觉得priority queue的效率低，要设计一种更高效的数据结构。.1point3acres缃�
