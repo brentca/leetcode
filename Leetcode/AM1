@@ -58,15 +58,27 @@ public:
 	vector<string> retirveList();
 
 private:
-	string curitem;
+	Video curitem;
 	string location;
 	unordered_map<int, Video*> items;
 };
 
+class Player {
+public:
+	void setSource(Video& item);
+	void startWatch();
+	void moveBack();
+	void moveForward();
+	void pauseWatch();
+	void stopWatch();
+
+private:
+	Video curitem;
+};
 
 class WatchStream {
 public:
-	WatchStream(StorageInt* storage)
+	WatchStream(StorageInt* storage, Player* player)
 	
 	void selectVideo(int id);
 	void startWatch();
@@ -78,6 +90,7 @@ public:
 private:
 	int curid;
 	StorageInt* curwatch;
+	Player* player;
 };
 
 
