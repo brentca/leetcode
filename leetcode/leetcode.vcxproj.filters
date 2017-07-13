@@ -37,5 +37,11 @@
     <None Include="AM1">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Uber Collection 1.xlsx">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Uber Ready">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

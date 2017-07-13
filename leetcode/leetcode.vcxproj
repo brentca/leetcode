@@ -154,6 +154,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="AM1" />
+    <None Include="Uber Collection 1.xlsx" />
+    <None Include="Uber Ready" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
