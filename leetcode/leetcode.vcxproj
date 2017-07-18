@@ -154,6 +154,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="AM1" />
+    <None Include="lc tags.xlsx" />
     <None Include="Uber Collection 1.xlsx" />
     <None Include="Uber Ready" />
   </ItemGroup>
