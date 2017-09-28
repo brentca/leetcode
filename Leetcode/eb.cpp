@@ -13,7 +13,7 @@ http ://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=293203&extra=page%
 	follow up : use recursive
 
 	第三轮：
-	1) choose k randome value equally from a stream of integers.
+	1) choose k randome value equally from a stream of integers.//http://www.geeksforgeeks.org/reservoir-sampling/
 	2) maximum subarray, array contains positvie and negative integers.
 
 	第四轮：
@@ -115,6 +115,8 @@ http ://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=293203&extra=page%
 #include <string>
 #include <sstream>
 #include <list>
+#include <vector>
+#include <algorithm>
 #include "eb.h"
 
 using namespace std;
@@ -183,8 +185,199 @@ namespace EB {
 		}
 	};
 
-	list<int*> reverseList()
+	class ListNode
+	{
+	public:
+		ListNode(int value) :val(value), next(nullptr) {}
+		int val;
+		ListNode* next;
+	};
+
+
+	ListNode* reverPairInList1(ListNode* head) {
+		if (nullptr == head || nullptr == head->next)
+			return head;
+
+		ListNode* newhead = head->next;
+		ListNode* next = newhead->next;
+		newhead->next = head;
+		head->next = reverPairInList1(next);
+		return newhead;
+	}
+
+	ListNode* reverPairInList2(ListNode* head) {
+		if (nullptr == head || nullptr == head->next)
+			return head;
+
+		ListNode dummy(0);
+		ListNode* pre = &dummy;
+		ListNode* next = nullptr;
+		ListNode* cur = head;
+		while (cur) {
+			pre->next = cur;
+			
+			if (nullptr == cur->next)
+				break;
+
+			next = cur->next->next;
+			pre->next = cur->next;
+			pre->next->next = cur;
+
+			cur->next = next;
+			pre = cur;
+			cur = next;
+		}
+
+		return dummy.next;
+	}
+
+	//http://www.geeksforgeeks.org/reservoir-sampling/
+	void selectKItems(vector<int> data, int k){
+		int i = 0;
+		// reservoir[] is the output array. Initialize it with
+		// first k elements from stream[]
+		vector<int> reservoir(k);
+		for (i = 0; i < k; i++)
+			reservoir[i] = data[i];
+
+		// Use a different seed value so that we don't get
+		// same result each time we run this program
+		//srand(time(NULL));
+
+		// Iterate from the (k+1)th element to nth element
+		for (; i < data.size(); i++)
+		{
+			// Pick a random index from 0 to i.
+			int j = rand() % (i + 1);
+
+			// If the randomly  picked index is smaller than k, then replace
+			// the element present at the index with new element from stream
+			if (j < k)
+				reservoir[j] = data[i];
+		}
+	}
+
+	//https://leetcode.com/problems/maximum-subarray/description/
+	int maxSubArray(vector<int> nums) {
+		if (nums.empty())
+			return 0;
+
+		int sum = 0;
+		int res = nums[0];
+		for (int i = 0; i < nums.size(); ++i) {
+			if (sum > 0)
+				sum += nums[i];
+			else
+				sum = nums[i];
+
+			res = max(res, sum);
+		}
+
+		return res;
+	}
+
+	//http://www.geeksforgeeks.org/check-binary-representation-number-palindrome/
+	bool isKthBitSet(int x, int k){
+		return (x & (1 << (k - 1))) ? true : false;
+	}
+
+	bool isPalindrome(unsigned int x){
+		int l = 1; // Initialize left position
+		int r = sizeof(int) * 8; // initialize right position
+
+		// One by one compare bits
+		while (l < r){
+			if (isKthBitSet(x, l) != isKthBitSet(x, r))
+				return false;
+
+			l++, r--;
+		}
+
+		return true;
+	}
+	class ReverseString
+	{
+	public:
+		string reverseString(string s) {
+			string str;
+			int len = s.size();
+			str.resize(len);
+			for (int i = len - 1; i >= 0; --i)
+				str[len - i - 1] = s[i];
+
+			return str;
+		}
+
+		void reverse(string &s, int i, int j) {
+			while (j - i > 1) {
+				char t = s[i];
+				s[i] = s[j - 1];
+				s[j - 1] = t;
+				++i; --j;
+			}
+		}
+
+		void reverseWords(string &s) {
+			// first remove all leading, tailing and duplicate spaces
+			bool hasMetChar = false;
+			int len = 0;
+			for (int j = 0; j < s.length(); j++) {
+				if (!hasMetChar) {
+					if (s[j] != ' '){
+						hasMetChar = true;
+						s[len++] = s[j];
+					}
+				}
+				else if (s[j] != ' ' || s[len - 1] != ' ') {
+					s[len++] = s[j];
+				}
+			}
+			// remove the last space
+			if (len > 0 && s[len - 1] == ' ') {
+				--len;
+			}
+			// shrink the string
+			s.resize(len);
+
+			// reverse each word
+			for (int i = -1, j = 0; j <= s.length(); ++j) {
+				if (s[j] == ' ' || s[j] == '\0') {
+					reverse(s, i + 1, j);
+					i = j;
+				}
+			}
+			// reverse the whole string
+			reverse(s, 0, s.length());
+		}
+	};
+
+	//https://stackoverflow.com/questions/23673812/algorithm-for-largest-word-formed-from-perodic-table-elements
 	void EB_main(){
+		{
+			//int i = 1000000000b;
+			//int foo = 0b00100101;
+			cout << isPalindrome(0xFFFFFFFF) << endl;
+			cout << isPalindrome(0xFFFEFFFF) << endl;
+			ListNode node1(1);
+			ListNode node2(2);
+			ListNode node3(3);
+			ListNode node4(4);
+			ListNode node5(5);
+
+			node1.next = &node2;
+			node2.next = &node3;
+			node3.next = &node4;
+			node4.next = &node5;
+
+			ListNode* after1 = reverPairInList1(&node1);
+			ListNode* after2 = reverPairInList1(after1);
+
+			after1 = reverPairInList2(&node1);
+			after2 = reverPairInList2(after1);
+
+			int i;
+			i = 0;
+		}
 		TreeNode::test();
 		int i = 0;
 	}
