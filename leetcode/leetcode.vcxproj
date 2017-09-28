@@ -153,6 +153,7 @@
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\Study\AAAAAAAAA\e------b pre.docx" />
     <None Include="..\..\..\Study\AAAAAAAAA\TCPIP\TCPIP.docx" />
     <None Include="AM1" />
     <None Include="lc tags.xlsx" />
