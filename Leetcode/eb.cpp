@@ -107,11 +107,11 @@ http ://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=293839&extra=page%
 	  3.他指定了一个project让我说一下。 然后做题，给一个array，求window average
 		  4.纯聊天，system design
 		  5.外面包装了一个夊杂的描述，实质是求longest increasing subsequence
-	  https ://www.youtube.com/watch?v=CE2b_-XfVDk
+	  https://www.youtube.com/watch?v=CE2b_-XfVDk
 
 	  CC150
-	  https ://youtu.be/aClxtDcdpsQ
-  https ://www.youtube.com/watch?v=rEJzOhC5ZtQ
+	  https://youtu.be/aClxtDcdpsQ
+  https://www.youtube.com/watch?v=rEJzOhC5ZtQ
 
 Select Sort: repeatedly pick the smallest element to append to the result.
 	Stable with O(n) extra space, for example using lists
