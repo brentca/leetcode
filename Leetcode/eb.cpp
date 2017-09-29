@@ -503,6 +503,16 @@ namespace EB {
 		
 		return res;
 	}
+
+	void shuffle(vector<int> m_cards) {
+		int len = m_cards.size();
+
+		for (int i = 0; i < len; ++i) {
+			int j = rand() % (len - i) + i;
+			swap(m_cards[j], m_cards[i]);
+		}
+	}
+
 	//https://stackoverflow.com/questions/23673812/algorithm-for-largest-word-formed-from-perodic-table-elements
 	void EB_main(){
 		{
