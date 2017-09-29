@@ -503,7 +503,9 @@ namespace EB {
 		
 		return res;
 	}
-
+	//http://www.geeksforgeeks.org/shuffle-a-given-array/
+	//The probability of ith element going to second position = (probability that ith element is not picked in previous iteration) x (probability that ith element is picked in this iteration)
+	//So the probability = ((n - 1) / n) x(1 / (n - 1)) = 1 / n
 	void shuffle(vector<int> m_cards) {
 		int len = m_cards.size();
 
