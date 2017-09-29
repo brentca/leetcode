@@ -1,5 +1,6 @@
 ﻿#if 0
-//////////////////////// begin///////////////////////////
+//////////////////////// begin///////////////////////////.
+polynomial exponent factorial
 http://mm.fancymore.com/reading/java-threadpools.html
 
 http ://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=293203&extra=page%3D1%26filter%3Dsortid%26sortid%3D311%26searchoption%5B3046%5D%5Bvalue%5D%3D16%26searchoption%5B3046%5D%5Btype%5D%3Dradio%26sortid%3D311
@@ -28,7 +29,7 @@ http ://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=293839&extra=page%
 	  第一轮：土耳其小哥，问了简历＋给了一个array num, 让转化成BST
 	  第二轮 : 中国小哥，人很好，特别nice，longest panlindrome subsequence 我写了基础解法，让优化成o(nlongn) (lc 300)
 			第三轮：印度manager，leetcode phone keyboard 那道题的变形
-			第四轮：烙印，斐波那契数列，shuffle an array，又问了简历 project和引申问题
+			第四轮：烙印，斐波那契数列，shuffle an array，又问了简历 project和引申问题 O(1.6n)
 
 		http ://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=223664&extra=page%3D1%26filter%3Dsortid%26sortid%3D311%26searchoption%5B3046%5D%5Bvalue%5D%3D16%26searchoption%5B3046%5D%5Btype%5D%3Dradio%26sortid%3D311
 	  每輪都喜歡對一些基本的東西裝傻
@@ -52,8 +53,9 @@ http ://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=293839&extra=page%
 		  第二轮
 		  given[2, 3, 6, 7, 8] array and target T, find the count of all the possible permutations in the candidate array so that the sum of permutations is T.
 		  For example, target 5, we have[[2, 3], [3, 2]]. return 2;
+	  //for simple use two loop or can use O(n) space for unoredered_set to keep track. if have duplicable, unordered_map
 	  follow up : combinations instead of permutations.上面的例子, return 1.
-
+		  
 		  第三轮.三哥manager， Culture， behavior question.
 
 		  第四轮.Design :
@@ -68,10 +70,13 @@ http ://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=293839&extra=page%
 		  1. 第一轮， 跟Hiring manager一起吃个饭，然后到会议室里了解一下情况，大多都是behavior question.
 		  2. 第二轮，两道题，一道题是，在一个unsorted number array 里，有一个数字出现概率大于50% 用O(n)时间 和O(1)空间去找到他；
 	  http ://wiki.jikexueyuan.com/project/for-offer/question-twenty-nine.html
+	  可以考虑在遍历数组的时候保存两个值： 一个是数组中的一个数字， 一个是次数。当我们遍历到下～个数字的时候，如果下一个数字和我们之前保存的数字相同，则次数加 l ：如果下一个数字和我们之前保存的数字，不同，则次数减 1 。
+
 	  第二题是power(x, n);
   http://www.cnblogs.com/littlepanpc/p/3811373.html
 	  3. 第三轮，跟另一个manager谈，大多都是现在的项目，你觉得ebay有什么可以改进的东西什么的。
 		  4. 第四轮，两个题， 1. number array，比如[4, 1, 3, 2.....] 按照up, left, down, right, 顺序走，判断是否cross each other;
+	  //use hash to keep very passed point's position, for every move will check the hash
 	  2. delete node in BST.
 
 	  http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=236055&extra=page%3D1%26filter%3Dsortid%26sortid%3D311%26searchoption%5B3046%5D%5Bvalue%5D%3D16%26searchoption%5B3046%5D%5Btype%5D%3Dradio%26sortid%3D311
@@ -88,7 +93,7 @@ http ://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=293839&extra=page%
 		  b.how to get top 10 frequent words in a large file(cannot fit into memory) ?
 		  c.how to get top n frequent words in a large file(cannot fit into memory, n could be dynamically changed, this function would be called for several times) ?
 		  d.how to get top n frequent words in a word stream ?
-
+	  http://www.geeksforgeeks.org/find-the-k-most-frequent-words-from-a-file/
 		  第二轮：
 		  1. 问了简历上一个项目，聊了20多分钟，问的偏重设计，很细。
 		  2. Decide whether one binary tree is a binary search tree ?
@@ -127,6 +132,12 @@ Quick Sort
 #include <vector>
 #include <algorithm>
 #include <unordered_set>
+#include <unordered_map>
+#include <time.h>
+#include <queue>
+#include <tuple>
+#include <functional>
+#include <array>
 #include "eb.h"
 
 using namespace std;
@@ -515,9 +526,207 @@ namespace EB {
 		}
 	}
 
+	TreeNode* deleteNode(TreeNode* root, int key) {
+		TreeNode* result = NULL;
+		if (NULL == root)
+			return root;
+
+		if (root->val == key) {
+			if (NULL == root->right) {
+				result = root->left;
+				delete root;
+				return result;
+			}
+			else if (NULL == root->left){
+				result = root->right;
+				delete root;
+				return result;
+			}
+			else {
+				TreeNode* cur = root->right;
+				while (cur->left)
+					cur = cur->left;
+				swap(cur->val, root->val);
+				root->right = deleteNode(root->right, key);
+				return root;
+			}
+		}
+		else if (root->val > key)
+			root->left = deleteNode(root->left, key);
+		else
+			root->right = deleteNode(root->right, key);
+
+
+		return root;
+	}
+
+//https://stackoverflow.com/questions/22055495/algorithm-to-merge-multiple-sorted-sequences-into-one-sorted-sequence-in-c
+	vector<int> mergeNArray(vector<vector<int>> nums) {
+		typedef tuple <int, vector<int>::iterator, vector<int>::iterator> element;
+		priority_queue<element, vector<element>, greater<element>> heaps;
+
+		//must use &, otherwise it will be a copy and its iterator will be invalid
+		for (auto& it : nums) {
+			if (!nums.empty())
+				heaps.emplace(it.front(), it.begin(), it.end());
+		}
+
+		vector<int> res;
+		while (!heaps.empty()) {
+			auto temp = heaps.top();
+			heaps.pop();
+			
+			if (get<1>(temp) != get<2>(temp)) {
+				res.push_back(get<0>(temp));
+				++(get<1>(temp));
+				get<0>(temp) = *get<1>(temp);
+				heaps.push(temp);
+				//heaps.emplace(*get<1>(temp), get<1>(temp), get<2>(temp));
+			}
+		}
+
+		copy(res.begin(), res.end(), std::ostream_iterator<int>(std::cout));
+		return res;
+	}
+	
+	class LRUCache {
+	public:
+		LRUCache(int capacity) {
+			cap = capacity;
+			cur = 0;
+		}
+
+		int get(int key) {
+			if (0 == hsh.count(key))
+				return -1;
+
+			//auto it = hsh.find(key);
+
+			data.erase(hsh[key].second);
+			data.push_front(key);
+			//it->second.second = data.begin();
+			hsh[key] = make_pair(hsh[key].first, data.begin());
+			return hsh[key].first;
+		}
+
+		void put(int key, int value) {
+			if (hsh.count(key))
+			{
+				get(key);
+				hsh[key].first = value;
+			}
+			else
+			{
+				++cur;
+				if (cur > cap)
+				{
+					int oldkey = data.back();
+					data.pop_back();
+					hsh.erase(oldkey);
+					cur = cap;
+				}
+
+				data.push_front(key);
+				hsh[key] = make_pair(value, data.begin());
+			}
+		}
+
+		int cap;
+		int cur;
+		list<int> data;
+		unordered_map<int, pair<int, list<int>::iterator>> hsh;
+	};
+
+	//http://www.cnblogs.com/littlepanpc/p/3811373.html
+	int ipow1(int base, int exp) {
+		int result = 1;
+		while (exp != 0) {
+			if ((exp & 1) == 1) {
+				result *= base;
+			}
+			exp >>= 1;
+			base *= base;
+		}
+		return result;
+	}
+
+	/* when exp is bigger than zero */
+	long ipow2(long base, long exp) {
+		if (exp == 0) {
+			return 1;
+		}
+		if (exp == 1) {
+			return base;
+		}
+
+		if (exp % 2 == 0) {
+			long half = ipow2(base, exp / 2);
+			return half * half;
+		}
+		else {
+			long half = ipow2(base, (exp - 1) / 2);
+			return base * half * half;
+		}
+	}
+
+	template <class T> 
+	class MyStack {
+	public:
+		MyStack(int max) {
+			curidx = 0;
+			data.resize(max);
+		}
+
+		void push(T node) {
+			if (curidx < data.size())
+				data[curidx++] = node;
+		}
+
+		T top() {
+			if (isempty())
+				return T(-1);
+			else
+				return data[curidx-1];
+		}
+		bool isfull() {
+			return curidx == data.size();
+		}
+
+		bool isempty() {
+			return curidx == 0;
+		}
+
+		void pop() {
+			if (!isempty())
+				--curidx;
+		}
+
+	private:
+		const int STACK_CAP = 100;
+		vector<T> data;
+		int curidx;
+	};
+
 	//https://stackoverflow.com/questions/23673812/algorithm-for-largest-word-formed-from-perodic-table-elements
 	void EB_main(){
 		{
+			MyStack<int> teststack(3);
+
+			teststack.push(1);
+			teststack.push(2);
+			teststack.push(3);
+			cout << teststack.isempty() << "," << teststack.top() << endl;
+			teststack.pop();
+			cout << teststack.isempty() << "," << teststack.top() << endl;
+			teststack.pop();
+			cout << teststack.isempty() << "," << teststack.top() << endl;
+			teststack.pop();
+			cout << teststack.isempty() << "," << teststack.top() << endl;
+			//vector<vector<int>> nums22 = { { 1, 5, 6, 16, 90 }, { 2, 2, 5, 17, 91 } };
+			vector<vector<int>> nums22 = { { 1, 5, 6, 16, 90 }, { 2, 5, 17, 91 } };
+			//mergeNArray(nums22);
+
+
 			vector<int> nums1 = { 5 , 4, 6, 3, 1, 8 };
 			TreeNode* root = arraytoBST(nums1);
 			cout << root->val << endl;
@@ -549,3 +758,164 @@ namespace EB {
 		int i = 0;
 	}
 }
+
+/*parking lot design begin*/
+enum SpotType
+{
+	T_MOTO,
+	T_COMPACT,
+	T_SUV
+};
+
+class Spot
+{
+public:
+	Spot() {}
+	~Spot() {}
+
+	bool     m_available;
+	SpotType m_type;
+};
+
+class Vehicle
+{
+public:
+	Vehicle(int len, int wid) : m_length(len), m_width(wid), m_parked(false), m_spot(nullptr) {};
+	~Vehicle(){}
+
+	virtual SpotType getParkType() = 0;
+
+	bool isParked() {
+		return m_parked;
+	}
+
+	void parkVehicle(Spot* s) {
+		m_spot = s;
+		m_spot->m_available = false;
+		m_parked = true;
+	}
+
+	Spot* removeVehicle() {
+		if (nullptr != m_spot)
+			m_spot->m_available = true;
+
+		m_parked = false;
+		Spot* result = m_spot;
+		m_spot = nullptr;
+
+		return result;
+	}
+
+private:
+	int m_length;
+	int m_width;
+	bool m_parked;
+	Spot* m_spot;
+};
+
+class Moto : public Vehicle {
+public:
+	Moto(int len, int wid) : Vehicle(len, wid) {}
+	SpotType getParkType() {
+		return T_MOTO;
+	}
+};
+
+class Compact : public Vehicle {
+public:
+	Compact(int len, int wid) : Vehicle(len, wid) {}
+	SpotType getParkType() {
+		return T_COMPACT;
+	}
+};
+
+
+class Suv : public Vehicle {
+public:
+	Suv(int len, int wid) : Vehicle(len, wid) {}
+	SpotType getParkType() {
+		return T_SUV;
+	}
+};
+
+class Level {
+public:
+	Level() {};
+
+	void setSpots(vector<Spot*> spots) {
+		for (auto item : spots)
+			m_spots.push_back(item);
+	}
+
+	Spot* findSpot(SpotType type) {
+		Spot* result = nullptr;
+		for (auto item : m_spots) {
+			if (item->m_available && item->m_type == type) {
+				result = item;
+				break;
+			}
+		}
+
+		return result;
+	}
+
+private:
+	vector<Spot*> m_spots;
+};
+
+class ParkingLot {
+private:
+	vector<Level> m_levels;
+	static ParkingLot* m_pIns;
+
+	unordered_map<Vehicle*, time_t> m_parkInfo;
+	ParkingLot(){}
+	// Stop the compiler generating methods of copy the object
+	ParkingLot(const ParkingLot &copy);					// Not Implemented
+	ParkingLot& operator = (const ParkingLot & copy);    // Not Implemented
+
+	time_t getCurrentTime() {
+		return time(0);
+	}
+
+	double calculateFee(Vehicle *v) { return 0; }
+
+public:
+	static ParkingLot *getInstance(){
+		if (nullptr == m_pIns)
+			m_pIns = new ParkingLot();
+
+		return m_pIns;
+	}
+
+	// NOTE: vehicleEnter and leave is not thread safe!
+	bool vehicleEnter(Vehicle *v) {
+		Spot* spot = nullptr;
+
+		for (auto level : m_levels) {
+			spot = level.findSpot(v->getParkType());
+			if (spot)
+				break;
+		}
+
+		if (nullptr == spot)
+			return false;
+
+		v->parkVehicle(spot);
+		m_parkInfo[v] = getCurrentTime();
+		return true;
+	}
+
+	bool vehicleLeave(Vehicle *v, double *fee) {
+		*fee = 0;
+
+		if (nullptr == v || !v->isParked())
+			return false;
+
+		Spot* spot = v->removeVehicle();
+		spot->m_available = true;
+		*fee = calculateFee(v);
+		m_parkInfo.erase(v);
+	}
+};
+/*parking lot design end*/
