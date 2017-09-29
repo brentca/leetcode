@@ -24,7 +24,7 @@ http ://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=293203&extra=page%
 	  1）periodic table, longest englishwords
 		  2）BQs
 
-	  http ://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=293839&extra=page%3D1%26filter%3Dsortid%26sortid%3D311%26searchoption%5B3046%5D%5Bvalue%5D%3D16%26searchoption%5B3046%5D%5Btype%5D%3Dradio%26sortid%3D311
+http ://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=293839&extra=page%3D1%26filter%3Dsortid%26sortid%3D311%26searchoption%5B3046%5D%5Bvalue%5D%3D16%26searchoption%5B3046%5D%5Btype%5D%3Dradio%26sortid%3D311
 	  第一轮：土耳其小哥，问了简历＋给了一个array num, 让转化成BST
 	  第二轮 : 中国小哥，人很好，特别nice，longest panlindrome subsequence 我写了基础解法，让优化成o(nlongn) (lc 300)
 			第三轮：印度manager，leetcode phone keyboard 那道题的变形
@@ -107,7 +107,16 @@ http ://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=293203&extra=page%
 	  CC150
 	  https ://youtu.be/aClxtDcdpsQ
   https ://www.youtube.com/watch?v=rEJzOhC5ZtQ
-	  //////////////////////// end///////////////////////////
+
+Select Sort: repeatedly pick the smallest element to append to the result.
+	Stable with O(n) extra space, for example using lists
+Insert Sort: repeatedly add new element to the sorted result.
+	Stable; i.e., does not change the relative order of elements with equal keys
+	In - place; i.e., only requires a constant amount O(1) of additional memory space
+Bubble Sort: repeatedly compare neighbor pairs and swap if necessary.
+Quick Sort
+	Is usually done in - place with O(log n) stack space
+//////////////////////// end///////////////////////////
 #endif
 
 #include <stdio.h>
@@ -117,11 +126,74 @@ http ://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=293203&extra=page%
 #include <list>
 #include <vector>
 #include <algorithm>
+#include <unordered_set>
 #include "eb.h"
 
 using namespace std;
 namespace EB {
-	
+	int partition(vector<int>& nums, int low, int high)
+	{
+		int pivot = nums[low];
+		int left = low + 1, right = high;
+
+		while (left <= right) {
+			if (nums[left] > pivot && nums[right] < pivot)
+				swap(nums[left++], nums[right--]);
+
+			if (nums[left] <= pivot)
+				++left;
+
+			if (nums[right] >= pivot)
+				--right;
+		}
+
+		//right must point to the last element which is larger than pivot
+		swap(nums[low], nums[right]);
+		return right;
+	}
+
+	void quickSort(vector<int>& nums, int first, int last)
+	{
+		int pivotElement;
+
+		if (first < last)
+		{
+			pivotElement = partition(nums, first, last);
+			quickSort(nums, first, pivotElement - 1);
+			quickSort(nums, pivotElement + 1, last);
+		}
+	}
+
+	void heapadjust(vector<int>& nums, int s, int m) {
+		int ori = nums[s];
+
+		for (int j = 2 * s; j <= m; j *= 2) {
+			if (j < m && nums[j] < nums[j + 1])
+				++j;
+
+			if (ori >= nums[j])
+				break;
+
+			swap(nums[s], nums[j]);
+			s = j;
+		}
+
+		nums[s] = ori;
+	}
+
+	int findKthLargest(vector<int>& nums, int k) {
+		int len = nums.size();
+		for (int i = len / 2; i >= 0; --i)
+			heapadjust(nums, i, len - 1);
+
+		for (int i = 0; i < k; ++i) {
+			swap(nums[0], nums[len - i - 1]);
+			heapadjust(nums, 0, len - i - 2);
+		}
+
+		return nums[len - k];
+	}
+
 	class TreeNode {
 	public:
 		TreeNode(int value) : val(value), left(nullptr), right(nullptr){}
@@ -351,9 +423,92 @@ namespace EB {
 		}
 	};
 
+	//merger 3 unsorted no duplcate integer array
+	//1. 可以各自排序，然后两两合并
+	//2. 可以用hash去重，然后再排序
+	vector<int> mergefor3(vector<int> num1, vector<int> num2, vector<int> num3) {
+		unordered_set<int> data;
+		for (auto it : num1)
+			data.insert(it);
+
+		for (auto it : num2)
+			data.insert(it);
+
+		for (auto it : num3)
+			data.insert(it);
+
+		vector<int> res(data.begin(), data.end());
+		
+		sort(res.begin(), res.end());
+		return res;
+	}
+
+	//http://www.algolist.net/Data_structures/Binary_search_tree/Insertion
+	TreeNode* addtoBST(int val, TreeNode* root) {
+		if (nullptr == root) {
+			root = new TreeNode(val);
+			return root;
+		}
+
+		if (val < root->val) {
+			if (nullptr == root->left)
+				root->left = new TreeNode(val);
+			else
+				addtoBST(val, root->left);
+		}
+		else {
+			if (nullptr == root->right)
+				root->right = new TreeNode(val);
+			else
+				addtoBST(val, root->right);
+		}
+
+		return root;
+	}
+
+	TreeNode* arraytoBST(vector<int> nums) {
+		if (nums.empty())
+			return nullptr;
+		TreeNode* root = nullptr;
+		
+		root = addtoBST(nums[0], root);
+		
+		for (int i = 1; i < nums.size(); ++i)
+			addtoBST(nums[i], root);
+
+		return root;
+	}
+
+	//phone keyboard
+	vector<string> letterCombinations(string digits) {
+		vector<string> res;
+		if (digits.empty())
+			return res;
+
+		res.push_back("");
+		vector<string> strmap = {"", "", "abc", "def","ghi","jkl","mno","pqrs","tuv","wxyz" };
+		
+		for (auto it : digits) {
+			if (it < '2' || it > '9')
+				continue;
+
+			string candidates = strmap[it - '0'];
+			vector<string> tmp;
+			for (auto pre : res)
+				for (auto next : candidates)
+					tmp.push_back(pre + next);
+
+			res.swap(tmp);
+		}
+		
+		return res;
+	}
 	//https://stackoverflow.com/questions/23673812/algorithm-for-largest-word-formed-from-perodic-table-elements
 	void EB_main(){
 		{
+			vector<int> nums1 = { 5 , 4, 6, 3, 1, 8 };
+			TreeNode* root = arraytoBST(nums1);
+			cout << root->val << endl;
 			//int i = 1000000000b;
 			//int foo = 0b00100101;
 			cout << isPalindrome(0xFFFFFFFF) << endl;
