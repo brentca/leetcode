@@ -103,6 +103,14 @@ http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=184156&extra=page%3
 	5.外面包装了一个夊杂的描述，实质是求longest increasing subsequence
 	  https://www.youtube.com/watch?v=CE2b_-XfVDk
 
+http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=187188&extra=page%3D1%26filter%3Dsortid%26sortid%3D311%26searchoption%5B3089%5D%5Bvalue%5D%5B3%5D%3D3%26searchoption%5B3089%5D%5Btype%5D%3Dcheckbox%26searchoption%5B3046%5D%5Bvalue%5D%3D16%26searchoption%5B3046%5D%5Btype%5D%3Dradio%26sortid%3D311
+	1.  Print a Binary Tree in Vertical Order。一个二叉树从左到右从上到下遍历，不是层级遍历。想象每个节点有一个xy坐标，先输出x小的，再大的。x坐标一样的，先输出y上面的.geeksforgeeks 上原题.
+	2. a) 判断一个string是否是 valid的 IPv4 地址 bool isValid(string str)    b) 设计一个Cache系统，如果是分布式的cache系统要怎么设计，设计的时候要考虑什么因素
+	3. 给一个 二叉树， 每个节点除了左右指针还有parent指针，给任意两个节点找最近公共祖先。follow up 是要求用O(1)的空间复杂度和O(logN)的时间复杂度
+	4. 海量query，要求统计query的次数。follow up 如何在有限内存无法hold所有的query文件下统计词频， hash 分桶。
+	follow up2， 建立倒排索引，query string 对应多个user ID, 如何找出两个query的共有user id， 即找 两个user id 集合的交集。 Naive 方案O(N2), follow up3, 如果user id list有序，要求O(N)的时间复杂度
+
+
 CC150
 https://youtu.be/aClxtDcdpsQ
 https://www.youtube.com/watch?v=rEJzOhC5ZtQ
@@ -132,6 +140,7 @@ Quick Sort
 #include <tuple>
 #include <functional>
 #include <array>
+#include <map>
 #include "eb.h"
 
 using namespace std;
@@ -720,6 +729,207 @@ public:
 	}
 };
 
+//给 3 输出 111,112,113,121,122,123,132,133,211,212,213,221,222,223,
+//231,232,233,311,312,313,321,322,323,331,332,333 (27个数)
+void dfs(vector<vector<int> > &results, int n, vector<int> & sol) {
+	if (sol.size() == n) {
+		results.push_back(sol);
+		return;
+	}
+		for (int i = 1; i <= n; i++) {
+			sol.push_back(i);
+			dfs(results, n, sol);
+			sol.pop_back();
+		}
+}
+
+vector<vector<int> > getSets(int n) {
+	vector<vector<int> > results;
+	if (n == 0) return results; 
+		vector<int> sol;
+	dfs(results, n, sol);
+	return results;
+}
+
+//Longest Palindromic Subsequence
+//https://www.youtube.com/watch?v=_nCsPn7_OgI
+//use n*n matrix, dp[i][j] means max palindromic subsequence length of a[i...j]
+//if a[i] == a[j], then dp[i][j] = dp[i+1][j-1] + 2
+//else dp[i][j] = max(dp[i][j-1], dp[i+1][j])
+
+/*314. Binary Tree Vertical Order Traversal (medium)
+https://leetcode.com/problems/binary-tree-vertical-order-traversal/
+https://discuss.leetcode.com/topic/31954/5ms-java-clean-solution
+*/
+class Solution314 {
+public:
+	vector<vector<int>> verticalOrder(TreeNode* root) {
+		vector<vector<int>> result;
+
+		if (nullptr == root)
+			return result;
+
+		queue<pair<TreeNode*, int>> que;
+		map<int, vector<int>> data;
+
+		que.push({ root , 0 });
+		while (!que.empty()) {
+			TreeNode* cur = que.front().first;
+			int val = que.front().second;
+
+			que.pop();
+			data[val].push_back(root->val);
+			if (nullptr != cur->left)
+				que.push({ cur->left , val - 1 });
+
+			if (nullptr != cur->right)
+				que.push({ cur->right , val + 1 });
+		}
+
+		for (auto item : data)
+			result.push_back(item.second);
+
+		return result;
+	}
+};
+/*314. Binary Tree Vertical Order Traversal end */
+
+TreeNode* lowestCommonAncestor2(TreeNode* root, TreeNode* p, TreeNode* q) {
+	//iterative solution
+
+	unordered_map<TreeNode*, TreeNode*> mm;
+	mm[root] = NULL;
+	queue<TreeNode*> qq;
+	qq.push(root);
+
+	//get the parent child nodes
+	while (mm.count(p) == 0 || mm.count(q) == 0) {
+		TreeNode* tmp = qq.front();
+		qq.pop();
+		if (tmp->left) {
+			mm[tmp->left] = tmp;
+			qq.push(tmp->left);
+		}
+		if (tmp->right) {
+			mm[tmp->right] = tmp;
+			qq.push(tmp->right);
+		}
+	}
+
+	//get path from root to p
+	unordered_set<TreeNode*> ss;
+	while (p != NULL) {
+		ss.insert(p);
+		p = mm[p];
+	}
+
+	//check the lowerst common parent in above path
+	while (ss.count(q) == 0) {
+		q = mm[q];
+	}
+
+	return q;
+}
+
+TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+	if (NULL == root || p == root || q == root)
+		return root;
+
+	TreeNode* left = lowestCommonAncestor(root->left, p, q);
+	TreeNode* right = lowestCommonAncestor(root->right, p, q);
+
+	return left ? (right ? root : left) : right;
+}
+
+/*295. Find Median from Data Stream (hard)*/
+class MedianFinder295 {
+public:
+
+	// Adds a number into the data structure.
+	void addNum(int num) {
+		small.push(num);
+		large.push(-small.top());
+		small.pop();
+
+		if (large.size() > small.size())
+		{
+			small.push(-large.top());
+			large.pop();
+		}
+	}
+
+	// Returns the median of current data stream
+	double findMedian() {
+		return small.size() > large.size() ? small.top() : (small.top() - large.top()) / 2.0;
+	}
+
+	priority_queue<long> small, large;
+
+	static void main() {
+		MedianFinder295* test = new MedianFinder295;
+		double result;
+
+		test->addNum(1);
+		test->addNum(2);
+		result = test->findMedian();
+
+		delete test;
+	}
+};
+
+
+//10. Vending machine
+//https://ece.uwaterloo.ca/~se464/06ST/lecture/05_oo-design.pdf
+//http://javarevisited.blogspot.ca/2016/06/design-vending-machine-in-java.html
+/*
+You need to design a Vending Machine which
+Accepts coins of 1,5,10,25 Cents i.e. penny, nickel, dime, and quarter.
+Allow user to select products Coke(25), Pepsi(35), Soda(45)
+Allow user to take refund by canceling the request.
+Return selected product and remaining change if any
+Allow reset operation for vending machine supplier.
+VendingMachine
+It defines the public API of vending machine, usually all high-level functionality should go in this class
+
+VendingMachineImpl
+Sample implementation of Vending Machine
+
+VendingMachineFactory
+A Factory class to create different kinds of Vending Machine
+
+Item
+Java Enum to represent Item served by Vending Machine
+
+Inventory
+Java class to represent an Inventory, used for creating case and item inventory inside Vending Machine
+
+Coin
+Another Java Enum to represent Coins supported by Vending Machine
+
+Bucket
+A parameterized class to hold two objects. It's kind of Pair class.
+
+
+public interface VendingMachine { 
+	public long selectItemAndGetPrice(Item item); 
+	public void insertCoin(Coin coin); 
+	public List<Coin> refund(); 
+	public Bucket<Item, List<Coin>> collectItemAndChange(); 
+	public void reset(); 
+}
+
+public class VendingMachineImpl implements VendingMachine { 
+	private Inventory<Coin> cashInventory = new Inventory<Coin>(); 
+	private Inventory<Item> itemInventory = new Inventory<Item>();   
+	private long totalSales; 
+	private Item currentItem; 
+	private long currentBalance;
+	....
+}
+
+Read more: http://javarevisited.blogspot.com/2016/06/design-vending-machine-in-java.html#ixzz4u8Ku9IPv
+
+*/
 //https://stackoverflow.com/questions/23673812/algorithm-for-largest-word-formed-from-perodic-table-elements
 void EB_main() {
 	{
