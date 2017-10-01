@@ -96,6 +96,10 @@ http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=101186&extra=page%3
 http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=184156&extra=page%3D1%26filter%3Dsortid%26sortid%3D311%26searchoption%5B3046%5D%5Bvalue%5D%3D16%26searchoption%5B3046%5D%5Btype%5D%3Dradio%26sortid%3D311
 	等了一周都没消息，应该是跪了，五轮
 	1.上来问我特长是什么，以后想做什么。题目是给一个array，找k percentile的数，特简单的题，我纠结percentile搞了很久，后来提醒了一下，quickselect搞定
+		The kth percentile is a value in a data set that splits the data into two pieces : The 
+		lower piece contains k percent of the data, and the upper piece contains the rest of 
+		the data(which amounts to[100 – k] percent, because the total amount of data is 100 % ).
+		Note : k is any number between 0 and 100.
 	2.让我介绍一下自己，然后是longest common subarray
 		http://www.geeksforgeeks.org/longest-common-substring/
 	3.他指定了一个project让我说一下。 然后做题，给一个array，求window average
@@ -110,10 +114,203 @@ http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=187188&extra=page%3
 	4. 海量query，要求统计query的次数。follow up 如何在有限内存无法hold所有的query文件下统计词频， hash 分桶。
 	follow up2， 建立倒排索引，query string 对应多个user ID, 如何找出两个query的共有user id， 即找 两个user id 集合的交集。 Naive 方案O(N2), follow up3, 如果user id list有序，要求O(N)的时间复杂度
 
+//10. Vending machine
+//https://ece.uwaterloo.ca/~se464/06ST/lecture/05_oo-design.pdf
+//http://javarevisited.blogspot.ca/2016/06/design-vending-machine-in-java.html
+/*
+You need to design a Vending Machine which
+Accepts coins of 1,5,10,25 Cents i.e. penny, nickel, dime, and quarter.
+Allow user to select products Coke(25), Pepsi(35), Soda(45)
+Allow user to take refund by canceling the request.
+Return selected product and remaining change if any
+Allow reset operation for vending machine supplier.
+VendingMachine
+It defines the public API of vending machine, usually all high-level functionality should go in this class
+
+VendingMachineImpl
+Sample implementation of Vending Machine
+
+VendingMachineFactory
+A Factory class to create different kinds of Vending Machine
+
+Item
+Java Enum to represent Item served by Vending Machine
+
+Inventory
+Java class to represent an Inventory, used for creating case and item inventory inside Vending Machine
+
+Coin
+Another Java Enum to represent Coins supported by Vending Machine
+
+Bucket
+A parameterized class to hold two objects. It's kind of Pair class.
+
+
+public interface VendingMachine {
+public long selectItemAndGetPrice(Item item);
+public void insertCoin(Coin coin);
+public List<Coin> refund();
+public Bucket<Item, List<Coin>> collectItemAndChange();
+public void reset();
+}
+
+public class VendingMachineImpl implements VendingMachine {
+private Inventory<Coin> cashInventory = new Inventory<Coin>();
+private Inventory<Item> itemInventory = new Inventory<Item>();
+private long totalSales;
+private Item currentItem;
+private long currentBalance;
+
+
+long selectItemAndGetPrice(Item item) {
+	if(itemInventory.hasItem(item)){
+		currentItem = item;
+		return currentItem.getPrice();
+	}
+	throw new SoldOutException("Sold Out, Please buy another item");
+}
+
+void insertCoin(Coin coin) {
+	currentBalance = currentBalance + coin.getDenomination();
+	cashInventory.add(coin);
+}
+
+Bucket<Item, List<Coin>> collectItemAndChange() {
+	Item item = collectItem();
+	totalSales = totalSales + currentItem.getPrice();
+
+	List<Coin> change = collectChange();
+
+	return new Bucket<Item, List<Coin>>(item, change);
+}
+
+Item collectItem() throws NotSufficientChangeException,
+	NotFullPaidException{
+		if(isFullPaid()){
+		if(hasSufficientChange()){
+			itemInventory.deduct(currentItem);
+			return currentItem;
+		}
+		throw new NotSufficientChangeException("Not Sufficient change in
+		Inventory");
+	}
+	long remainingBalance = currentItem.getPrice() - currentBalance;
+	throw new NotFullPaidException("Price not full paid, remaining : ",
+	remainingBalance);
+}
+
+List<Coin> collectChange() {
+	long changeAmount = currentBalance - currentItem.getPrice();
+	List<Coin> change = getChange(changeAmount);
+	updateCashInventory(change);
+	currentBalance = 0;
+	currentItem = null;
+	return change;
+}
+
+List<Coin> refund(){
+	List<Coin> refund = getChange(currentBalance);
+	updateCashInventory(refund);
+	currentBalance = 0;
+	currentItem = null;
+	return refund;
+}
+
+private boolean isFullPaid() {
+	if(currentBalance >= currentItem.getPrice()){
+		return true;
+	}
+	return false;
+}
+
+List<Coin> getChange(long amount) throws NotSufficientChangeException{
+	List<Coin> changes = Collections.EMPTY_LIST;
+
+	if(amount > 0){
+		changes = new ArrayList<Coin>();
+		long balance = amount;
+		while(balance > 0){
+		if(balance >= Coin.QUARTER.getDenomination()
+			&& cashInventory.hasItem(Coin.QUARTER)){
+			changes.add(Coin.QUARTER);
+			balance = balance - Coin.QUARTER.getDenomination();
+			continue;
+		} else if(balance >= Coin.DIME.getDenomination()
+			&& cashInventory.hasItem(Coin.DIME)) {
+			changes.add(Coin.DIME);
+			balance = balance - Coin.DIME.getDenomination();
+			continue;
+		}else if(balance >= Coin.NICKLE.getDenomination()
+			&& cashInventory.hasItem(Coin.NICKLE)) {
+			changes.add(Coin.NICKLE);
+			balance = balance - Coin.NICKLE.getDenomination();
+			continue;
+		}else if(balance >= Coin.PENNY.getDenomination()
+			&& cashInventory.hasItem(Coin.PENNY)) {
+			changes.add(Coin.PENNY);
+			balance = balance - Coin.PENNY.getDenomination();
+			continue;
+		}else{
+			throw new NotSufficientChangeException("NotSufficientChange,
+			Please try another product");
+		}
+	}
+
+	return changes;
+}
+
+public void reset(){
+	cashInventory.clear();
+	itemInventory.clear();
+	totalSales = 0;
+	currentItem = null;
+	currentBalance = 0;
+}
+
+void printStats(){
+	System.out.println("Total Sales : " + totalSales);
+	System.out.println("Current Item Inventory : " + itemInventory);
+	System.out.println("Current Cash Inventory : " + cashInventory);
+}
+
+boolean hasSufficientChange()
+boolean hasSufficientChangeForAmount(long amount)
+void updateCashInventory(List change)
+long getTotalSales()
+....
+}
+
+Read more: http://javarevisited.blogspot.com/2016/06/design-vending-machine-in-java.html#ixzz4u8Ku9IPv
+*/
+
+http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=291573&extra=page%3D1%26filter%3Dsortid%26sortid%3D311%26searchoption%5B3046%5D%5Bvalue%5D%3D16%26searchoption%5B3046%5D%5Btype%5D%3Dradio%26sortid%3D311
+Interviewer是个三姐， 人还不错。先是问了几个很基础的java问题，然后开始做题。
+第一题：
+how to check if a string is Palindrome.
+我就用two pointer做的，她也没说啥。到面试快结束时，她说可以reverse string然后比较是否相等。
+
+第二题：
+LC 5: Longest Palindromic Substring由于题目刷的不好，开始时没想出来dp解法，就用two pointer做了一下。
+然后她问能不能用dp，想了一两分钟，然后在google doc里给她讲我的dp思路，然后写出来。
+
+第三题：
+也很简单，check if a Integer is Palindrome.
+我也没能给出leetcode上vote最多的那个方法，还是reverse然后比较大小，告诉她要处理溢出和负数的情况。
 
 CC150
 https://youtu.be/aClxtDcdpsQ
 https://www.youtube.com/watch?v=rEJzOhC5ZtQ
+
+Deadlock
+
+Deadlock describes a situation where two or more threads are blocked forever, 
+waiting for each other.Deadlock occurs when multiple threads need the same 
+locks but obtain them in different order.A Java multithreaded program may 
+suffer from the deadlock condition because the synchronized keyword causes 
+the executing thread to block while waiting for the lock, or monitor, 
+associated with the specified object.Here is an example.
+
+One of the best ways to prevent the potential for deadlock is to avoid acquiring more than one lock at a time, which is often practical.
 
 Select Sort: repeatedly pick the smallest element to append to the result.
 	Stable with O(n) extra space, for example using lists
@@ -877,59 +1074,25 @@ public:
 	}
 };
 
+class Solution3 {
+public:
+	int lengthOfLongestSubstring(string s) {
+		vector<int> pos(256, -1);
 
-//10. Vending machine
-//https://ece.uwaterloo.ca/~se464/06ST/lecture/05_oo-design.pdf
-//http://javarevisited.blogspot.ca/2016/06/design-vending-machine-in-java.html
-/*
-You need to design a Vending Machine which
-Accepts coins of 1,5,10,25 Cents i.e. penny, nickel, dime, and quarter.
-Allow user to select products Coke(25), Pepsi(35), Soda(45)
-Allow user to take refund by canceling the request.
-Return selected product and remaining change if any
-Allow reset operation for vending machine supplier.
-VendingMachine
-It defines the public API of vending machine, usually all high-level functionality should go in this class
+		int result = 0;
+		int offset = 0;
+		for (int i = 0; i < s.size(); ++i)
+		{
+			offset = max(pos[s[i]] + 1, offset);
 
-VendingMachineImpl
-Sample implementation of Vending Machine
+			result = max(result, i - offset + 1);
+			pos[s[i]] = i;
+		}
 
-VendingMachineFactory
-A Factory class to create different kinds of Vending Machine
+		return result;
+	}
+};
 
-Item
-Java Enum to represent Item served by Vending Machine
-
-Inventory
-Java class to represent an Inventory, used for creating case and item inventory inside Vending Machine
-
-Coin
-Another Java Enum to represent Coins supported by Vending Machine
-
-Bucket
-A parameterized class to hold two objects. It's kind of Pair class.
-
-
-public interface VendingMachine { 
-	public long selectItemAndGetPrice(Item item); 
-	public void insertCoin(Coin coin); 
-	public List<Coin> refund(); 
-	public Bucket<Item, List<Coin>> collectItemAndChange(); 
-	public void reset(); 
-}
-
-public class VendingMachineImpl implements VendingMachine { 
-	private Inventory<Coin> cashInventory = new Inventory<Coin>(); 
-	private Inventory<Item> itemInventory = new Inventory<Item>();   
-	private long totalSales; 
-	private Item currentItem; 
-	private long currentBalance;
-	....
-}
-
-Read more: http://javarevisited.blogspot.com/2016/06/design-vending-machine-in-java.html#ixzz4u8Ku9IPv
-
-*/
 //https://stackoverflow.com/questions/23673812/algorithm-for-largest-word-formed-from-perodic-table-elements
 void EB_main() {
 	{
