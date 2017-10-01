@@ -297,6 +297,20 @@ LC 5: Longest Palindromic Substring由于题目刷的不好，开始时没想出
 也很简单，check if a Integer is Palindrome.
 我也没能给出leetcode上vote最多的那个方法，还是reverse然后比较大小，告诉她要处理溢出和负数的情况。
 
+http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=223971&extra=page%3D1%26filter%3Dsortid%26sortid%3D311%26searchoption%5B3046%5D%5Bvalue%5D%3D16%26searchoption%5B3046%5D%5Btype%5D%3Dradio%26sortid%3D311
+Onsite:
+1. OOD 的5个principle 逐一解释.....https ://scotch.io/bar-talk/s-o-l ... ect-oriented-design
+2. 简化后背景，其实就是两个array的intersection&union
+3. 老板Lunch。 都是一些很简单的算法题... 和Top k一个难度.
+4. 简化背景后就是permutation
+5. (坑)LC原题 Gas Station--> 虽然做过，但是不是高频题，不常看, 不太熟练，坑坑洼洼的做好了。 烙印还要求用数学证明一下....需要面试Search组的童鞋建议看一下吧...
+6. refactor一段有很多if block的代码。 + first missing integer
+
+http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=270887&extra=page%3D1%26filter%3Dsortid%26sortid%3D311%26searchoption%5B3046%5D%5Bvalue%5D%3D16%26searchoption%5B3046%5D%5Btype%5D%3Dradio%26sortid%3D311
+1 given a num, find the immediate larger element in a BST.num may be not in the BST   鏉ユ簮涓€浜�.涓夊垎鍦拌鍧�.
+2 maximum pairs of valid ‘(’ and ‘)’ in a string s. ((()))) -> 3()()() -> 1
+If s has invaid pairs e.g. ((), throw exception.
+
 CC150
 https://youtu.be/aClxtDcdpsQ
 https://www.youtube.com/watch?v=rEJzOhC5ZtQ
@@ -310,7 +324,23 @@ suffer from the deadlock condition because the synchronized keyword causes
 the executing thread to block while waiting for the lock, or monitor, 
 associated with the specified object.Here is an example.
 
-One of the best ways to prevent the potential for deadlock is to avoid acquiring more than one lock at a time, which is often practical.
+One of the best ways to prevent the potential for deadlock is to avoid acquiring
+more than one lock at a time, which is often practical.
+
+Difference between final, finally and finalize
+Final is a keyword.
+Finally is a block.
+Finalize is a method.
+
+Final is used to apply restrictions on class, method and variable.Final class 
+can't be inherited, final method can't be overridden and final variable value 
+can't be changed.
+
+Finally is used to place important code, it will be executed whether exception 
+is handled or not.
+
+Finalize is used to perform clean up processing just before object is garbage 
+collected.
 
 Select Sort: repeatedly pick the smallest element to append to the result.
 	Stable with O(n) extra space, for example using lists
@@ -1090,6 +1120,54 @@ public:
 		}
 
 		return result;
+	}
+};
+
+class Solution139 {
+public:
+	bool wordBreak(string s, unordered_set<string>& wordDict) {
+		if (wordDict.empty())
+			return false;
+
+		vector<int> dp(s.size() + 1, false);
+		dp[0] = true;
+
+		for (int i = 1; i <= s.size(); ++i)
+		{
+			for (int j = i - 1; j >= 0; --j)
+			{
+				if (dp[j])
+				{
+					string word = s.substr(j, i - j);
+					if (wordDict.find(word) != wordDict.end())
+					{
+						dp[i] = true;
+						break;
+					}
+				}
+			}
+		}
+
+		return dp[s.size()];
+	}
+};
+
+class Solution264 {
+public:
+	int nthUglyNumber(int n) {
+		if (n <= 0) return false; // get rid of corner cases 
+		if (n == 1) return true; // base case
+		int t2 = 0, t3 = 0, t5 = 0; //pointers for 2, 3, 5
+		vector<int> k(n);
+		k[0] = 1;
+		for (int i = 1; i < n; i++)
+		{
+			k[i] = min(k[t2] * 2, min(k[t3] * 3, k[t5] * 5));
+			if (k[i] == k[t2] * 2) t2++;
+			if (k[i] == k[t3] * 3) t3++;
+			if (k[i] == k[t5] * 5) t5++;
+		}
+		return k[n - 1];
 	}
 };
 
