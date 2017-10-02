@@ -1006,11 +1006,12 @@ void dfs(vector<vector<int> > &results, int n, vector<int> & sol) {
 		results.push_back(sol);
 		return;
 	}
-		for (int i = 1; i <= n; i++) {
-			sol.push_back(i);
-			dfs(results, n, sol);
-			sol.pop_back();
-		}
+
+	for (int i = 1; i <= n; i++) {
+		sol.push_back(i);
+		dfs(results, n, sol);
+		sol.pop_back();
+	}
 }
 
 vector<vector<int> > getSets(int n) {
