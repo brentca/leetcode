@@ -85,6 +85,9 @@ http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=236055&extra=page%3
 		LinkedList 是基于链表结构实现，所以在类中包含了 first 和 last 两个指针(Node)。Node 
 		中包含了上一个节点和下一个节点的引用，这样就构成了双向的链表。每个 Node 只能知道自己的前
 		一个节点和后一个节点，但对于链表来说，这已经足够了。
+		ConcurrentHashMap允许多个修改操作并发进行，其关键在于使用了锁分离技术。它使用了多个锁来控制对hash表的不同部分进行的修改。
+		ConcurrentHashMap内部使用段(Segment)来表示这些不同的部分，每个段其实就是一个小的hash table，它们有自己的锁。只要多个
+		修改操作发生在不同的段上，它们就可以并发进行。
 	4.打印出一个数组里element右边所有值都比他小的所有element，我说两个for从后向前，他说行
 
 http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=101186&extra=page%3D1%26filter%3Dsortid%26sortid%3D311%26searchoption%5B3046%5D%5Bvalue%5D%3D16%26searchoption%5B3046%5D%5Btype%5D%3Dradio%26sortid%3D311
