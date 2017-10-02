@@ -79,6 +79,12 @@ http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=236055&extra=page%3
 	2.后来让口述bubble sort， selection sort， insertsort， 我说我忘了，能上能换成quick sort 和 merge sort，哥说可以，哥人还是很好的，开头开了几个玩笑气氛就上错。
 	它给的例子我实在口述上来，我就索性自己写了一个quicksort，它go through了一下说可以。
 	3.问linkedlist 怎么实现的
+		LinkedList 和 ArrayList 一样，都实现了 List 接口，但其内部的数据结构有本质的不同。
+		LinkedList 是基于链表实现的（通过名字也能区分开来），所以它的插入和删除操作比 ArrayList 
+		更加高效。但也是由于其为基于链表的，所以随机访问的效率要比 ArrayList 差。
+		LinkedList 是基于链表结构实现，所以在类中包含了 first 和 last 两个指针(Node)。Node 
+		中包含了上一个节点和下一个节点的引用，这样就构成了双向的链表。每个 Node 只能知道自己的前
+		一个节点和后一个节点，但对于链表来说，这已经足够了。
 	4.打印出一个数组里element右边所有值都比他小的所有element，我说两个for从后向前，他说行
 
 http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=101186&extra=page%3D1%26filter%3Dsortid%26sortid%3D311%26searchoption%5B3046%5D%5Bvalue%5D%3D16%26searchoption%5B3046%5D%5Btype%5D%3Dradio%26sortid%3D311
