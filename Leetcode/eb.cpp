@@ -881,16 +881,13 @@ public:
 	}
 
 	void put(int key, int value) {
-		if (hsh.count(key))
-		{
+		if (hsh.count(key)) {
 			get(key);
 			hsh[key].first = value;
 		}
-		else
-		{
+		else {
 			++cur;
-			if (cur > cap)
-			{
+			if (cur > cap) {
 				int oldkey = data.back();
 				data.pop_back();
 				hsh.erase(oldkey);
