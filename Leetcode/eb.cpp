@@ -98,6 +98,7 @@ http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=101186&extra=page%3
 		c.how to get top n frequent words in a large file(cannot fit into memory, n could be dynamically changed, this function would be called for several times) ?
 		d.how to get top n frequent words in a word stream ?
 		http://www.geeksforgeeks.org/find-the-k-most-frequent-words-from-a-file/
+		We can use Trie and Min Heap. 
 	第二轮：
 		1. 问了简历上一个项目，聊了20多分钟，问的偏重设计，很细。
 		2. Decide whether one binary tree is a binary search tree ?
@@ -1238,6 +1239,35 @@ public:
 		return false;
 	}
 };
+
+int LCSubStr(char *X, char *Y, int m, int n) {
+	// Create a table to store lengths of longest common suffixes of
+	// substrings.   Notethat LCSuff[i][j] contains length of longest
+	// common suffix of X[0..i-1] and Y[0..j-1]. The first row and
+	// first column entries have no logical meaning, they are used only
+	// for simplicity of program
+	//int LCSuff[m + 1][n + 1];
+	vector<vector<int>> LCSuff(m + 1, vector<int>(n + 1));
+	int result = 0;  // To store length of the longest common substring
+
+					 /* Following steps build LCSuff[m+1][n+1] in bottom up fashion. */
+	for (int i = 0; i <= m; i++)
+	{
+		for (int j = 0; j <= n; j++)
+		{
+			if (i == 0 || j == 0)
+				LCSuff[i][j] = 0;
+
+			else if (X[i - 1] == Y[j - 1])
+			{
+				LCSuff[i][j] = LCSuff[i - 1][j - 1] + 1;
+				result = max(result, LCSuff[i][j]);
+			}
+			else LCSuff[i][j] = 0;
+		}
+	}
+	return result;
+}
 
 //https://stackoverflow.com/questions/23673812/algorithm-for-largest-word-formed-from-perodic-table-elements
 void EB_main() {
