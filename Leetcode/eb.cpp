@@ -540,6 +540,12 @@ ListNode* reverPairInList2(ListNode* head) {
 }
 
 //http://www.geeksforgeeks.org/reservoir-sampling/
+//Case 1: For last n-k stream items, i.e., for stream[i] where k <= i < n 
+//stream[n-2] ] = [k/(n-1)]*[(n-1)/n] = k/n.
+//Case 2: For first k stream items, i.e., for stream[i] where 0 <= i < k 
+//The probability that an item from stream[0..k-1] is in final array = Probability that 
+//the item is not picked when items stream[k], stream[k+1], …. stream[n-1] are considered 
+//= [k/(k+1)] x [(k+1)/(k+2)] x [(k+2)/(k+3)] x … x [(n-1)/n] = k/n
 void selectKItems(vector<int> data, int k) {
 	int i = 0;
 	// reservoir[] is the output array. Initialize it with
@@ -1168,6 +1174,59 @@ public:
 			if (k[i] == k[t5] * 5) t5++;
 		}
 		return k[n - 1];
+	}
+};
+
+//Repeated Substring Pattern
+class Solution459 {
+public:
+	//Roughly speaking, dp[i+1] stores the maximum number of characters that the string is repeating itself up to position i.
+	//Therefore, if a string repeats a length 5 substring 4 times, then the last entry would be of value 15.
+	//To check if the string is repeating itself, we just need the last entry to be non - zero and str.size() to divide(str.size() - last entry).
+	bool repeatedSubstringPattern(string s) {
+		int i = 1, j = 0, len = s.size();
+		vector<int> dp(len + 1, 0);
+
+		while (i < len)
+		{
+			if (s[i] == s[j])
+				dp[++i] = ++j;
+			else if (0 == j)
+				++i;
+			else
+				j = dp[j];
+		}
+
+		return dp[len] && (dp[len] % (len - dp[len]) == 0);
+	}
+
+	bool repeatedSubstringPattern1(string s) {
+		int len = s.size();
+
+		for (int i = len / 2; i > 0; --i)
+		{
+			int num = len / i;
+
+			if (0 == (len % i))
+			{
+				bool flag = true;
+				string str = s.substr(0, i);
+
+				for (int j = 1; j < num; ++j)
+				{
+					if (str != s.substr(i * j, i))
+					{
+						flag = false;
+						break;
+					}
+				}
+
+				if (flag)
+					return true;
+			}
+		}
+
+		return false;
 	}
 };
 
