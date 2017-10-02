@@ -317,7 +317,7 @@ Onsite:
 6. refactor一段有很多if block的代码。 + first missing integer
 
 http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=270887&extra=page%3D1%26filter%3Dsortid%26sortid%3D311%26searchoption%5B3046%5D%5Bvalue%5D%3D16%26searchoption%5B3046%5D%5Btype%5D%3Dradio%26sortid%3D311
-1 given a num, find the immediate larger element in a BST.num may be not in the BST   鏉ユ簮涓€浜�.涓夊垎鍦拌鍧�.
+1 given a num, find the immediate larger element in a BST.num may be not in the BST
 2 maximum pairs of valid ‘(’ and ‘)’ in a string s. ((()))) -> 3()()() -> 1
 If s has invaid pairs e.g. ((), throw exception.
 
@@ -336,6 +336,11 @@ associated with the specified object.Here is an example.
 
 One of the best ways to prevent the potential for deadlock is to avoid acquiring
 more than one lock at a time, which is often practical.
+Following are some techniques available that help mitigate the deadlock problem:
+1)Non Overlapping Locks
+2)Lock Ordering
+3)Lock Timeout
+4)Single Thread
 
 Difference between final, finally and finalize
 Final is a keyword.
@@ -504,6 +509,31 @@ public:
 		ins = nullptr;
 	}
 };
+
+TreeNode* findimLagerElementBST(TreeNode* root, int num) {
+	TreeNode* res = nullptr;
+
+	if (nullptr == root)
+		return res;
+
+	while (root && num > root->val)
+		root = root->right;
+
+	if (root) {
+		if (root->val == num) {
+			res = root->right;
+			TreeNode* pre = res;
+			while (pre) {
+				res = pre;
+				pre = res->left;
+			}
+		}
+		else
+			res = root;
+	}
+
+	return res;
+}
 
 class ListNode{
 public:
