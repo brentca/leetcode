@@ -1156,6 +1156,7 @@ public:
 	}
 };
 
+//longest substring without repeating character
 class Solution3 {
 public:
 	int lengthOfLongestSubstring(string s) {
