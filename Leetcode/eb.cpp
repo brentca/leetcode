@@ -434,11 +434,16 @@ namespace EB {
 		nums[s] = ori;
 	}
 
+	// O(n) + k * long(n)
 	int findKthLargest(vector<int>& nums, int k) {
 		int len = nums.size();
+		if (k < 1 || k > len)
+			return 0;
+		//O(n)
 		for (int i = len / 2; i >= 0; --i)
 			heapadjust(nums, i, len - 1);
 
+		//O(klog(n))
 		for (int i = 0; i < k; ++i) {
 			swap(nums[0], nums[len - i - 1]);
 			heapadjust(nums, 0, len - i - 2);
@@ -580,7 +585,10 @@ ListNode* reverPairInList2(ListNode* head) {
 }
 
 //http://www.geeksforgeeks.org/reservoir-sampling/
-//Case 1: For last n-k stream items, i.e., for stream[i] where k <= i < n 
+//Case 1: For last n-k stream items, i.e., 
+//[Probability that one of the first k indexes is picked in iteration for 
+//stream[n - 2]] X[Probability that the index picked in iteration for stream[n - 1] 
+//for stream[i] where k <= i < n
 //stream[n-2] ] = [k/(n-1)]*[(n-1)/n] = k/n.
 //Case 2: For first k stream items, i.e., for stream[i] where 0 <= i < k 
 //The probability that an item from stream[0..k-1] is in final array = Probability that 
