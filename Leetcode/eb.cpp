@@ -739,7 +739,9 @@ TreeNode* addtoBST(int val, TreeNode* root) {
 		return root;
 	}
 
-	if (val < root->val) {
+	if (root->val == val)
+		return root;
+	else if (val < root->val) {
 		if (nullptr == root->left)
 			root->left = new TreeNode(val);
 		else
