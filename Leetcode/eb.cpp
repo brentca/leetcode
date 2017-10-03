@@ -1125,15 +1125,13 @@ TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
 /*295. Find Median from Data Stream (hard)*/
 class MedianFinder295 {
 public:
-
 	// Adds a number into the data structure.
 	void addNum(int num) {
 		small.push(num);
 		large.push(-small.top());
 		small.pop();
 
-		if (large.size() > small.size())
-		{
+		if (large.size() > small.size()) {
 			small.push(-large.top());
 			large.pop();
 		}
@@ -1165,8 +1163,7 @@ public:
 
 		int result = 0;
 		int offset = 0;
-		for (int i = 0; i < s.size(); ++i)
-		{
+		for (int i = 0; i < s.size(); ++i) {
 			offset = max(pos[s[i]] + 1, offset);
 
 			result = max(result, i - offset + 1);
@@ -1186,15 +1183,11 @@ public:
 		vector<int> dp(s.size() + 1, false);
 		dp[0] = true;
 
-		for (int i = 1; i <= s.size(); ++i)
-		{
-			for (int j = i - 1; j >= 0; --j)
-			{
-				if (dp[j])
-				{
+		for (int i = 1; i <= s.size(); ++i) {
+			for (int j = i - 1; j >= 0; --j) {
+				if (dp[j]) {
 					string word = s.substr(j, i - j);
-					if (wordDict.find(word) != wordDict.end())
-					{
+					if (wordDict.find(word) != wordDict.end()) {
 						dp[i] = true;
 						break;
 					}
@@ -1214,8 +1207,7 @@ public:
 		int t2 = 0, t3 = 0, t5 = 0; //pointers for 2, 3, 5
 		vector<int> k(n);
 		k[0] = 1;
-		for (int i = 1; i < n; i++)
-		{
+		for (int i = 1; i < n; i++) {
 			k[i] = min(k[t2] * 2, min(k[t3] * 3, k[t5] * 5));
 			if (k[i] == k[t2] * 2) t2++;
 			if (k[i] == k[t3] * 3) t3++;
@@ -1235,8 +1227,7 @@ public:
 		int i = 1, j = 0, len = s.size();
 		vector<int> dp(len + 1, 0);
 
-		while (i < len)
-		{
+		while (i < len) {
 			if (s[i] == s[j])
 				dp[++i] = ++j;
 			else if (0 == j)
@@ -1251,19 +1242,15 @@ public:
 	bool repeatedSubstringPattern1(string s) {
 		int len = s.size();
 
-		for (int i = len / 2; i > 0; --i)
-		{
+		for (int i = len / 2; i > 0; --i) {
 			int num = len / i;
 
-			if (0 == (len % i))
-			{
+			if (0 == (len % i)) {
 				bool flag = true;
 				string str = s.substr(0, i);
 
-				for (int j = 1; j < num; ++j)
-				{
-					if (str != s.substr(i * j, i))
-					{
+				for (int j = 1; j < num; ++j) {
+					if (str != s.substr(i * j, i)) {
 						flag = false;
 						break;
 					}
@@ -1289,21 +1276,18 @@ int LCSubStr(char *X, char *Y, int m, int n) {
 	int result = 0;  // To store length of the longest common substring
 
 					 /* Following steps build LCSuff[m+1][n+1] in bottom up fashion. */
-	for (int i = 0; i <= m; i++)
-	{
-		for (int j = 0; j <= n; j++)
-		{
+	for (int i = 0; i <= m; i++) {
+		for (int j = 0; j <= n; j++) {
 			if (i == 0 || j == 0)
 				LCSuff[i][j] = 0;
-
-			else if (X[i - 1] == Y[j - 1])
-			{
+			else if (X[i - 1] == Y[j - 1]) {
 				LCSuff[i][j] = LCSuff[i - 1][j - 1] + 1;
 				result = max(result, LCSuff[i][j]);
 			}
 			else LCSuff[i][j] = 0;
 		}
 	}
+
 	return result;
 }
 
