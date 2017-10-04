@@ -1454,7 +1454,7 @@ private:
 	ParkingLot(){}
 	// Stop the compiler generating methods of copy the object
 	ParkingLot(const ParkingLot &copy);					// Not Implemented
-	ParkingLot& operator = (const ParkingLot & copy);    // Not Implemented
+	ParkingLot& operator= (const ParkingLot & copy);    // Not Implemented
 
 	time_t getCurrentTime() {
 		return time(0);
