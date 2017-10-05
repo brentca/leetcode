@@ -1520,6 +1520,11 @@ int kthSmallest(TreeNode* root, int k) {
 //https://stackoverflow.com/questions/23673812/algorithm-for-largest-word-formed-from-perodic-table-elements
 void EB_main() {
 	{
+		vector<int> num22 = { 10, 9, 2, 5, 3, 7, 101, 18 };
+		vector<int> num23 = { 2, 5, 7, 8, 6 };
+		Solution300 test300;
+
+		cout << test300.lengthOfLIS(num23) << endl;
 		MyStack<int> teststack(3);
 
 		teststack.push(1);
