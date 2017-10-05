@@ -566,11 +566,11 @@ ListNode* reverPairInList2(ListNode* head) {
 	ListNode* pre = &dummy;
 	ListNode* next = nullptr;
 	ListNode* cur = head;
-	while (cur) {
-		pre->next = cur;
-			
-		if (nullptr == cur->next)
+	while (cur) {			
+		if (nullptr == cur->next) {
+			pre->next = cur;
 			break;
+		}
 
 		next = cur->next->next;
 		pre->next = cur->next;
@@ -837,6 +837,82 @@ TreeNode* deleteNode(TreeNode* root, int key) {
 	else
 		root->right = deleteNode(root->right, key);
 
+
+	return root;
+}
+
+TreeNode* deleteNode2(TreeNode* root, int key) {
+	if (nullptr == root)
+		return nullptr;
+
+	TreeNode* parent = nullptr;
+	TreeNode* cur = root;
+	bool forleft = false;
+	while (cur) {
+		if (cur->val == key)
+			break;
+		else if (cur->val > key) {
+			parent = cur;
+			forleft = true;
+			cur = cur->left;
+		}
+		else {
+			forleft = false;
+			parent = cur;
+			cur = cur->right;
+		}
+	}
+
+	if (nullptr == cur)
+		return root;
+
+	if (nullptr == cur->left && nullptr == cur->right) {
+		delete cur;
+		cur = nullptr;
+		if (nullptr == parent)
+			root = nullptr;
+		else if (forleft)
+			parent->left = nullptr;
+		else
+			parent->right = nullptr;
+	}
+	else if (nullptr == cur->left || nullptr == cur->right) {
+		TreeNode* next = nullptr;
+		if (cur->left)
+			next = cur->left;
+		else
+			next = cur->right;
+
+		if (nullptr == parent)
+			root = next;
+		else if (forleft)
+			parent->left = next;
+		else
+			parent->right = next;
+		delete cur;
+		cur = nullptr;
+	}
+	else {
+		TreeNode* parent_replacement = cur;
+		TreeNode* replacement = cur->left;
+
+		forleft = true;
+
+		while (replacement->right) {
+			parent_replacement = replacement;
+			replacement = replacement->right;
+			forleft = false;
+		}
+
+		swap(replacement->val, cur->val);
+
+		if (forleft)
+			cur->left = replacement->left;
+		else
+			parent_replacement->right = replacement->left;
+		delete replacement;
+		replacement = nullptr;
+	}
 
 	return root;
 }
