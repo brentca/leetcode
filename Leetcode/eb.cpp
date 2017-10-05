@@ -841,81 +841,65 @@ TreeNode* deleteNode(TreeNode* root, int key) {
 	return root;
 }
 
-TreeNode* deleteNode2(TreeNode* root, int key) {
-	if (nullptr == root)
-		return nullptr;
+class Solution450 {
+public:
+	TreeNode* deleteNode(TreeNode* root, int key) {
+		if (nullptr == root)
+			return root;
 
-	TreeNode* parent = nullptr;
-	TreeNode* cur = root;
-	bool forleft = false;
-	while (cur) {
-		if (cur->val == key)
-			break;
-		else if (cur->val > key) {
-			parent = cur;
-			forleft = true;
-			cur = cur->left;
+		TreeNode* cur = root;
+		TreeNode* pre = nullptr;
+		while (nullptr != cur && cur->val != key) {
+			pre = cur;
+			if (key > cur->val)
+				cur = cur->right;
+			else
+				cur = cur->left;
 		}
-		else {
-			forleft = false;
-			parent = cur;
-			cur = cur->right;
-		}
-	}
 
-	if (nullptr == cur)
+		if (nullptr == pre)
+			return deleteNode(cur);
+		else if (pre->left == cur)
+			pre->left = deleteNode(cur);
+		else
+			pre->right = deleteNode(cur);
+
 		return root;
+	}
 
-	if (nullptr == cur->left && nullptr == cur->right) {
-		delete cur;
-		cur = nullptr;
-		if (nullptr == parent)
+	TreeNode* deleteNode(TreeNode* root) {
+		if (nullptr == root)
+			return root;
+
+		if (nullptr == root->left || nullptr == root->right) {
+			TreeNode* cur = root->left;
+			if (nullptr == root->left)
+				cur = root->right;
+
+			delete root;
 			root = nullptr;
-		else if (forleft)
-			parent->left = nullptr;
-		else
-			parent->right = nullptr;
-	}
-	else if (nullptr == cur->left || nullptr == cur->right) {
-		TreeNode* next = nullptr;
-		if (cur->left)
-			next = cur->left;
-		else
-			next = cur->right;
-
-		if (nullptr == parent)
-			root = next;
-		else if (forleft)
-			parent->left = next;
-		else
-			parent->right = next;
-		delete cur;
-		cur = nullptr;
-	}
-	else {
-		TreeNode* parent_replacement = cur;
-		TreeNode* replacement = cur->left;
-
-		forleft = true;
-
-		while (replacement->right) {
-			parent_replacement = replacement;
-			replacement = replacement->right;
-			forleft = false;
+			return cur;
 		}
 
-		swap(replacement->val, cur->val);
+		TreeNode* pre = nullptr;
+		TreeNode* next = root->right;
 
-		if (forleft)
-			cur->left = replacement->left;
+		while (nullptr != next->left) {
+			pre = next;
+			next = next->left;
+		}
+
+		if (nullptr == pre)
+			root->right = next->right;
 		else
-			parent_replacement->right = replacement->left;
-		delete replacement;
-		replacement = nullptr;
-	}
+			pre->left = next->right;
 
-	return root;
-}
+		swap(root->val, next->val);
+		delete next;
+		next = nullptr;
+		return root;
+	}
+};
 
 //https://stackoverflow.com/questions/22055495/algorithm-to-merge-multiple-sorted-sequences-into-one-sorted-sequence-in-c
 vector<int> mergeNArray(vector<vector<int>> nums) {
