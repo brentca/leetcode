@@ -394,70 +394,138 @@ Quick Sort
 
 using namespace std;
 namespace EB {
-	int partition(vector<int>& nums, int low, int high){
-		int pivot = nums[low];
-		int left = low + 1, right = high;
+int partition(vector<int>& nums, int low, int high){
+	int pivot = nums[low];
+	int left = low + 1, right = high;
 
-		while (left <= right) {
-			if (nums[left] > pivot && nums[right] < pivot)
-				swap(nums[left++], nums[right--]);
+	while (left <= right) {
+		if (nums[left] > pivot && nums[right] < pivot)
+			swap(nums[left++], nums[right--]);
 
-			if (nums[left] <= pivot)
-				++left;
+		if (nums[left] <= pivot)
+			++left;
 
-			if (nums[right] >= pivot)
-				--right;
-		}
-
-		//right must point to the last element which is larger than pivot
-		swap(nums[low], nums[right]);
-		return right;
+		if (nums[right] >= pivot)
+			--right;
 	}
 
-	void quickSort(vector<int>& nums, int first, int last){
-		int pivotElement;
+	//right must point to the last element which is larger than pivot
+	swap(nums[low], nums[right]);
+	return right;
+}
 
-		if (first < last) {
-			pivotElement = partition(nums, first, last);
-			quickSort(nums, first, pivotElement - 1);
-			quickSort(nums, pivotElement + 1, last);
-		}
+void quickSort(vector<int>& nums, int first, int last){
+	int pivotElement;
+
+	if (first < last) {
+		pivotElement = partition(nums, first, last);
+		quickSort(nums, first, pivotElement - 1);
+		quickSort(nums, pivotElement + 1, last);
+	}
+}
+
+void heapadjust(vector<int>& nums, int s, int m) {
+	int ori = nums[s];
+
+	for (int j = 2 * s; j <= m; j *= 2) {
+		if (j < m && nums[j] < nums[j + 1])
+			++j;
+
+		if (ori >= nums[j])
+			break;
+
+		swap(nums[s], nums[j]);
+		s = j;
 	}
 
-	void heapadjust(vector<int>& nums, int s, int m) {
-		int ori = nums[s];
+	nums[s] = ori;
+}
 
-		for (int j = 2 * s; j <= m; j *= 2) {
-			if (j < m && nums[j] < nums[j + 1])
-				++j;
+// O(n) + k * long(n)
+int findKthLargest(vector<int>& nums, int k) {
+	int len = nums.size();
+	if (k < 1 || k > len)
+		return 0;
+	//O(n)
+	for (int i = len / 2; i >= 0; --i)
+		heapadjust(nums, i, len - 1);
 
-			if (ori >= nums[j])
-				break;
-
-			swap(nums[s], nums[j]);
-			s = j;
-		}
-
-		nums[s] = ori;
+	//O(klog(n))
+	for (int i = 0; i < k; ++i) {
+		swap(nums[0], nums[len - i - 1]);
+		heapadjust(nums, 0, len - i - 2);
 	}
 
-	// O(n) + k * long(n)
-	int findKthLargest(vector<int>& nums, int k) {
-		int len = nums.size();
-		if (k < 1 || k > len)
+	return nums[len - k];
+}
+
+class Solution300 {
+public:
+	int findPos(const vector<int>& table, int value, int length) {
+		int low = 0, high = length - 1;
+		int mid;
+
+		while (low <= high) {
+			//mid = (low +  high) / 2;
+
+			mid = low + (high - low) / 2;
+
+			if (table[mid] >= value)
+				high = mid - 1;
+			else
+				low = mid + 1;
+		}
+
+		return low;
+	}
+
+	int lengthOfLIS(vector<int>& nums) {
+		int result = 1;
+		int total = nums.size();
+
+		if (total < 1)
 			return 0;
-		//O(n)
-		for (int i = len / 2; i >= 0; --i)
-			heapadjust(nums, i, len - 1);
 
-		//O(klog(n))
-		for (int i = 0; i < k; ++i) {
-			swap(nums[0], nums[len - i - 1]);
-			heapadjust(nums, 0, len - i - 2);
+		vector<int> table(total);
+		table[0] = nums[0];
+		int len = 1;
+		for (int i = 1; i < total; ++i)
+		{
+			if (nums[i] > table[len - 1])
+				table[len++] = nums[i];
+			else
+			{
+				int pos = findPos(table, nums[i], len);
+				table[pos] = nums[i];
+			}
 		}
 
-		return nums[len - k];
+		return len;
 	}
+
+	int lengthOfLIS1(vector<int>& nums) {
+		int result = 1;
+		int total = nums.size();
+
+		if (total < 1)
+			return 0;
+
+		vector<int> s(total, 1);
+
+		for (int i = 1; i < total; ++i)
+		{
+			for (int j = i - 1; j >= 0; --j)
+			{
+				if (nums[i] > nums[j])
+					s[i] = max(s[i], s[j] + 1);
+			}
+
+			result = max(result, s[i]);
+		}
+
+		return result;
+	}
+};
 
 class TreeNode {
 public:
