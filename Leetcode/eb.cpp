@@ -947,6 +947,70 @@ long ipow2(long base, long exp) {
 	}
 }
 
+double myPow(double x, int n) {
+	if (0 == n)
+		return 1;
+
+	if (n < 0) 
+		return 1 / x*myPow(1 / x, -(++n));
+
+	return (0 == n % 2) ? myPow(x*x, n / 2) : x * myPow(x*x, n / 2);
+}
+
+/*209. Minimum Size Subarray Sum (medium)
+https://leetcode.com/problems/minimum-size-subarray-sum/
+https://discuss.leetcode.com/topic/13749/two-ac-solutions-in-java-with-time-complexity-of-n-and-nlogn-with-explanation
+*/
+class Solution209 {
+public:
+	int minSubArrayLen1(int s, vector<int>& nums) {
+		if (nums.empty())
+			return 0;
+
+		int ret = 0, total, j, len;
+
+		for (int i = 0; i < nums.size(); ++i) {
+			total = 0;
+			for (j = i; j < nums.size(); ++j) {
+				if (total + nums[j] < s)
+					total += nums[j];
+				else
+					break;
+			}
+
+			len = j - i + 1;
+			if (j < nums.size() && total + nums[j] >= s)
+				ret = min(ret == 0 ? len : ret, len);
+		}
+
+		return ret;
+	}
+
+	int minSubArrayLen(int s, vector<int>& nums) {
+		if (nums.empty())
+			return 0;
+		int ret = INT_MAX, total = 0, start = 0, end = 0, len;
+
+		while (end < nums.size()) {
+			// move right silder forward till total >= s
+			while (end < nums.size() && total < s)
+				total += nums[end++];
+
+			if (total < s)
+				break;
+			// move left slider forward while maintaining total >= s
+			while (start < end && total >= s)
+				total -= nums[start++];
+			// record if it's the minimum
+			if (end - start + 1 < ret)
+				ret = end - start + 1;
+		}
+
+		return ret == INT_MAX ? 0 : ret;
+	}
+};
+/*209. Minimum Size Subarray Sum end */
+
 template <class T> 
 class MyStack {
 public:
