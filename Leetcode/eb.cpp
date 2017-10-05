@@ -383,6 +383,7 @@ Quick Sort
 #include <functional>
 #include <array>
 #include <map>
+#include <stack>
 #include "eb.h"
 
 using namespace std;
@@ -1414,6 +1415,32 @@ int LCSubStr(char *X, char *Y, int m, int n) {
 	}
 
 	return result;
+}
+
+int kthSmallest(TreeNode* root, int k) {
+	stack<TreeNode*> order;
+	TreeNode* tmp;
+	order.push(root);
+
+	while (!order.empty()) {
+		tmp = order.top();
+		while (tmp) {
+			order.push(tmp->left);
+			tmp = tmp->left;
+		}
+
+		order.pop();
+		tmp = order.top();
+		order.pop();
+		--k;
+
+		if (0 == k)
+			return tmp->val;
+
+		order.push(tmp->right);
+	}
+
+	return 0;
 }
 
 //https://stackoverflow.com/questions/23673812/algorithm-for-largest-word-formed-from-perodic-table-elements
