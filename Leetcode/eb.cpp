@@ -79,6 +79,12 @@ http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=236055&extra=page%3
 	2.后来让口述bubble sort， selection sort， insertsort， 我说我忘了，能上能换成quick sort 和 merge sort，哥说可以，哥人还是很好的，开头开了几个玩笑气氛就上错。
 	它给的例子我实在口述上来，我就索性自己写了一个quicksort，它go through了一下说可以。
 	3.问linkedlist 怎么实现的
+	LinkedList 是基于链表结构实现，所以在类中包含了 first 和 last 两个指针(Node)。Node 中包含了上一个节点和下一个节点的引用，
+	这样就构成了双向的链表。每个 Node 只能知道自己的前一个节点和后一个节点，但对于链表来说，这已经足够了。
+	ArrayList 继承了 AbstractList，实现了 List。它是一个数组队列，提供了相关的添加、删除、修改、遍历等功能。
+
+	ArrayList 实现了 RandmoAccess 接口，即提供了随机访问功能。RandmoAccess 是 java 中用来被 List 实现，为 List 提供快速访问功能的。
+	在 ArrayList 中，我们即可以通过元素的序号快速获取元素对象；这就是快速随机访问。
 		LinkedList 和 ArrayList 一样，都实现了 List 接口，但其内部的数据结构有本质的不同。
 		LinkedList 是基于链表实现的（通过名字也能区分开来），所以它的插入和删除操作比 ArrayList 
 		更加高效。但也是由于其为基于链表的，所以随机访问的效率要比 ArrayList 差。
