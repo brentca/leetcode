@@ -1733,3 +1733,11 @@ public:
 
 }
 /*parking lot design end*/
+#if 0
+1. rent
+http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=298835&extra=page%3D1%26filter%3Dsortid%26sortid%3D319%26searchoption%5B3120%5D%5Bvalue%5D%3D1%26searchoption%5B3120%5D%5Btype%5D%3Dradio%26sortid%3D319
+https://www.mitbbs.com/article_t/HouseRental/31283107.html
+
+2. visa
+https://global.inszoom.com/CorpDocs/docs_sec_reset_pswd.aspx?Q=ZqH9XQBl2PPEgvViOt7FUeHCpi0tCoRTSpe%2FGm2FBLuA2tTRKeoEaQujIZiJ3Vyd
+#endif
