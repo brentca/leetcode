@@ -1740,4 +1740,13 @@ https://www.mitbbs.com/article_t/HouseRental/31283107.html
 
 2. visa
 https://global.inszoom.com/CorpDocs/docs_sec_reset_pswd.aspx?Q=ZqH9XQBl2PPEgvViOt7FUeHCpi0tCoRTSpe%2FGm2FBLuA2tTRKeoEaQujIZiJ3Vyd
+
+3. auto move
+http://www.rolia.net/zh/topic.php?f=0&t=391430    //换牌照
+http://bestmovingmovers.com/thank-you/
+http://www.autoplextransport.com/
+
+4. usa topic
+http://www.rolia.net/zh/list.php?f=0&c=5250
+
 #endif
