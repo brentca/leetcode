@@ -1749,4 +1749,9 @@ http://www.autoplextransport.com/
 4. usa topic
 http://www.rolia.net/zh/list.php?f=0&c=5250
 
+
+
+--------------------------------------------------java------------------------------------------------
+https://www.w3cschool.cn/java/java-networking.html
+https://docs.oracle.com/javase/tutorial/java/javaOO/objectcreation.html
 #endif
