@@ -1737,6 +1737,8 @@ public:
 1. rent
 http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=298835&extra=page%3D1%26filter%3Dsortid%26sortid%3D319%26searchoption%5B3120%5D%5Bvalue%5D%3D1%26searchoption%5B3120%5D%5Btype%5D%3Dradio%26sortid%3D319
 https://www.mitbbs.com/article_t/HouseRental/31283107.html
+https://www.mitbbs.com/article_t/HouseRental/31283407.html
+http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=299691&extra=page%3D1%26filter%3Dsortid%26sortid%3D319%26searchoption%5B3056%5D%5Bvalue%5D%3D1%26searchoption%5B3056%5D%5Btype%5D%3Dradio%26searchoption%5B3120%5D%5Bvalue%5D%3D1%26searchoption%5B3120%5D%5Btype%5D%3Dradio%26sortid%3D319
 
 2. visa
 https://global.inszoom.com/CorpDocs/docs_sec_reset_pswd.aspx?Q=ZqH9XQBl2PPEgvViOt7FUeHCpi0tCoRTSpe%2FGm2FBLuA2tTRKeoEaQujIZiJ3Vyd
@@ -1757,7 +1759,8 @@ http://forum.iask.ca/threads/%E5%8A%A0%E6%8B%BF%E5%A4%A7%E7%9A%84%E8%BD%A6%E5%B8
 http://www.rolia.net/zh/list.php?f=0&c=5250
 
 
-
+5. 美签
+https://www.wuyou868.com/insurance/visa-help/%E8%80%81%E4%BA%BA%E6%9D%A5%E5%8A%A0%E6%8B%BF%E5%A4%A7%E6%8E%A2%E4%BA%B2,%E7%94%B3%E8%AF%B7b2%E7%BE%8E%E7%AD%BE-%E5%AE%9E%E4%BE%8B%E5%88%86%E4%BA%AB.html
 --------------------------------------------------java------------------------------------------------
 https://www.w3cschool.cn/java/java-networking.html
 https://docs.oracle.com/javase/tutorial/java/javaOO/objectcreation.html
