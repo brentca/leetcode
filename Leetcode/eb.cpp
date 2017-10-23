@@ -1754,6 +1754,12 @@ http://www.broadwayexpress.net/
 
 
 http://forum.iask.ca/threads/%E5%8A%A0%E6%8B%BF%E5%A4%A7%E7%9A%84%E8%BD%A6%E5%B8%A6%E5%8E%BB%E7%BE%8E%E5%9B%BD%E4%B8%8A%E7%89%8C.773766/
+http://www.weiming.info/zhuti/Automobile/35250007/
+http://bbs.comefromchina.com/threads/950682/
+http://sharonlp41.pixnet.net/blog/post/46663462-%E8%B7%A8%E5%9C%8B%E6%90%AC%E5%AE%B6%E5%BE%9Ecanada-%E8%87%B3usa%E7%B4%80%E9%8C%84%EF%BC%88%E4%B8%8B%EF%BC%89%E5%87%BA%E7%99%BC%EF%BC%81%E5%85%AC%E8%B7%AF
+http://www.vancanada.com/644141.html
+ http://forum.iask.ca/threads/%E6%B8%A9%E5%93%A5%E5%8D%8E%E6%B1%BD%E8%BD%A6%E6%89%98%E8%BF%90%E5%88%B0%E5%A4%9A%E4%BC%A6%E5%A4%9A-%E6%8A%A5%E4%BB%B71350-%E5%8F%AF%E8%A1%8C%E5%90%97.509609/
+  http://www.jlinkcargo.ca/home.html
 
 4. usa topic
 http://www.rolia.net/zh/list.php?f=0&c=5250
@@ -1761,6 +1767,9 @@ http://www.rolia.net/zh/list.php?f=0&c=5250
 
 5. 美签
 https://www.wuyou868.com/insurance/visa-help/%E8%80%81%E4%BA%BA%E6%9D%A5%E5%8A%A0%E6%8B%BF%E5%A4%A7%E6%8E%A2%E4%BA%B2,%E7%94%B3%E8%AF%B7b2%E7%BE%8E%E7%AD%BE-%E5%AE%9E%E4%BE%8B%E5%88%86%E4%BA%AB.html
+
+6. 考驾照
+http://pass-dmv-test.com/quiz-131-zh.html
 --------------------------------------------------java------------------------------------------------
 https://www.w3cschool.cn/java/java-networking.html
 https://docs.oracle.com/javase/tutorial/java/javaOO/objectcreation.html
