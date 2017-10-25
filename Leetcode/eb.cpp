@@ -1739,6 +1739,7 @@ http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=298835&extra=page%3
 https://www.mitbbs.com/article_t/HouseRental/31283107.html
 https://www.mitbbs.com/article_t/HouseRental/31283407.html
 http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=299691&extra=page%3D1%26filter%3Dsortid%26sortid%3D319%26searchoption%5B3056%5D%5Bvalue%5D%3D1%26searchoption%5B3056%5D%5Btype%5D%3Dradio%26searchoption%5B3120%5D%5Bvalue%5D%3D1%26searchoption%5B3120%5D%5Btype%5D%3Dradio%26sortid%3D319
+ http://www.1point3acres.com/bbs/forum.php?mod=viewthread&tid=300031&extra=page%3D1%26filter%3Dsortid%26sortid%3D319%26searchoption%5B3120%5D%5Bvalue%5D%3D1%26searchoption%5B3120%5D%5Btype%5D%3Dradio%26sortid%3D319
 
 2. visa
 https://global.inszoom.com/CorpDocs/docs_sec_reset_pswd.aspx?Q=ZqH9XQBl2PPEgvViOt7FUeHCpi0tCoRTSpe%2FGm2FBLuA2tTRKeoEaQujIZiJ3Vyd
