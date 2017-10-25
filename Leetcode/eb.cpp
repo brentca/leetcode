@@ -1771,6 +1771,12 @@ https://www.wuyou868.com/insurance/visa-help/%E8%80%81%E4%BA%BA%E6%9D%A5%E5%8A%A
 
 6. 考驾照
 http://pass-dmv-test.com/quiz-131-zh.html
+
+
+7. 银行
+http://www.chineseinla.com/f/page_viewtopic/t_353348.html
+http://www.slyar.com/blog/open-account-at-boa-los-angeles.html
+
 --------------------------------------------------java------------------------------------------------
 https://www.w3cschool.cn/java/java-networking.html
 https://docs.oracle.com/javase/tutorial/java/javaOO/objectcreation.html
