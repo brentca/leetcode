@@ -1768,6 +1768,8 @@ http://www.rolia.net/zh/list.php?f=0&c=5250
 
 5. 美签
 https://www.wuyou868.com/insurance/visa-help/%E8%80%81%E4%BA%BA%E6%9D%A5%E5%8A%A0%E6%8B%BF%E5%A4%A7%E6%8E%A2%E4%BA%B2,%E7%94%B3%E8%AF%B7b2%E7%BE%8E%E7%AD%BE-%E5%AE%9E%E4%BE%8B%E5%88%86%E4%BA%AB.html
+http://info.vanpeople.com/?action-viewnews-itemid-504165
+http://forum.yorkbbs.ca/immi/4100789.aspx
 
 6. 考驾照
 http://pass-dmv-test.com/quiz-131-zh.html
