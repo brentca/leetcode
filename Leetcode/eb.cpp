@@ -1782,4 +1782,6 @@ http://www.slyar.com/blog/open-account-at-boa-los-angeles.html
 --------------------------------------------------java------------------------------------------------
 https://www.w3cschool.cn/java/java-networking.html
 https://docs.oracle.com/javase/tutorial/java/javaOO/objectcreation.html
+http://blog.csdn.net/lvxiangan/article/details/54145846
+http://www.cnblogs.com/GnagWang/archive/2011/02/27/1966606.html
 #endif
