@@ -3,12 +3,6 @@
 // stdafx.obj will contain the pre-compiled type information
 
 #include "stdafx.h"
-
-
-// Application.cpp : Defines the entry point for the console application.
-//
-
-#include "stdafx.h"
 #include <iostream>
 #include <vector>
 #include <assert.h>
@@ -222,9 +216,8 @@ public:
 				visited.clear();
 				it = data.begin();
 				reachend = false;
-			}
-
-			if (it == data.end()) {
+			} 
+			else if (it == data.end()) {
 				reachend = true;
 				it = data.begin();
 			}
@@ -266,7 +259,6 @@ public:
 			"29,22,2.1,SanJose",
 			"30,23,1.1,SanJose"
 		};
-
 
 		vector<string> result = sol.display(data1, 12);
 		assert(32 == result.size());
@@ -1795,7 +1787,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	MinVertices::main();
 	CotinueNum::main();
 	GuessWord::main();
-	Wizards::main()
+	Wizards::main();
 	NumberofRectangles::main();
 	return 0;
 }
