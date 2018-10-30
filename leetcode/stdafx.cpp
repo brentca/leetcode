@@ -2,6 +2,9 @@
 // leetcode.pch will be the pre-compiled header
 // stdafx.obj will contain the pre-compiled type information
 
+// Application.cpp : Defines the entry point for the console application.
+//
+
 #include "stdafx.h"
 #include <iostream>
 #include <vector>
@@ -520,7 +523,7 @@ public:
 		int minV = INT_MAX, maxV = INT_MIN;
 		int num = 0;
 		while (getline(fin, line)) {
-			int val = stol(line);
+			int val = stoi(line);
 			minV = min(minV, val);
 			maxV = max(maxV, val);
 			++num;
@@ -1214,7 +1217,8 @@ public:
 				continue;
 
 			vector<int> currDist(target.length() + 1);
-			currDist[0] = curr.length();
+			//currDist[0] = curr.length();
+			currDist[0] = 0;
 
 			for (int j = 1; j < prevDist.size(); ++j) {
 				if (target[j - 1] == (char)(i + 'a'))
@@ -1511,7 +1515,8 @@ public:
 class MinVertices {
 public:
 	vector<int> getMin(vector<vector<int>> edges, int n) {
-		map<int, set<int>> nodes;
+		//map<int, set<int>> nodes;
+		unordered_map<int, unordered_set<int>> nodes;
 		for (auto it : edges) {
 			nodes[it[0]].emplace(it[1]);
 		}
@@ -1529,7 +1534,8 @@ public:
 		return ret;
 	}
 
-	void search(set<int>& res, map<int, set<int>>& nodes, int cur, int start,
+	//void search(set<int>& res, map<int, set<int>>& nodes, int cur, int start,
+	void search(set<int>& res, unordered_map<int, unordered_set<int>>& nodes, int cur, int start,
 		set<int>& visited, set<int>& currVisited) {
 		currVisited.emplace(cur);
 		visited.emplace(cur);
